@@ -1,0 +1,2532 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..0b6f7b1
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,18 @@
++# Local configuration containing Supabase keys. Never commit.
++assets/js/config.js
++
++# Environment files
++.env
++.env.*
++
++# OS and editor noise
++.DS_Store
++Thumbs.db
++*.swp
++
++# Dependencies (if tooling is ever added)
++node_modules/
++
++# Local scratch files
++*.local.*
++scratch/
+diff --git a/CLAUDE.md b/CLAUDE.md
+new file mode 100644
+index 0000000..e9c8632
+--- /dev/null
++++ b/CLAUDE.md
+@@ -0,0 +1,125 @@
++# CLAUDE.md
++
++Operating rules for any Claude Code session working in this repository.
++Read this file in full at the start of every session, then read
++docs/SESSIONS.md for the current state of work.
++
++## What this repository is
++
++A public repository containing the shell of an internal portal for the
++merchant onboarding programme: a login-gated dashboard, an API reference
++viewer ("swagger") and a prototype gallery. All substantive content
++(API specs, endpoint details, user records, prototype registry) lives
++in Supabase, never in this repo. The repo holds only structure, styling
++and rendering logic.
++
++Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
++
++## Repo map
++
++    index.html            Login page (entry point, unguarded)
++    dashboard.html        Post-login hub
++    reference.html        API reference viewer
++    users.html            User register
++    prototypes/           Prototype pages plus gallery index
++    assets/css/           tokens.css (design tokens) and main.css
++    assets/js/            Auth, guard, UI and page modules
++    supabase/             schema.sql, policies.sql, seed.sql
++    docs/                 Architecture, security, sessions, design
++
++## Non-negotiable security rules
++
++1. This repo is public. Never commit keys, tokens, passwords, real
++   merchant names, live internal endpoint URLs, or any credential of
++   any kind. When in doubt, it goes in Supabase, not in git.
++2. assets/js/config.js is gitignored. Never create, commit or print
++   its contents. Never inline Supabase URLs or keys into any file.
++3. The service_role key must never appear anywhere: not in files, not
++   in commit messages, not in session logs, not in terminal output.
++4. Before every commit, run git status and confirm no ignored or
++   sensitive file has been force-added.
++5. Any new Supabase table must get RLS enabled and policies written in
++   supabase/policies.sql in the same change. A table without policies
++   is publicly readable via the anon key.
++6. Sample data in seed.sql must stay generic. No real payloads.
++
++## Git and GitHub practice
++
++- Clone shallow when starting fresh: git clone --depth 1 <url>. Deepen
++  only if history is actually needed (git fetch --unshallow).
++- Work on a branch per feature: feat/<short-name>, fix/<short-name>,
++  docs/<short-name>. Never commit directly to main except for docs and
++  session-log updates.
++- Commit small and atomic, message in the imperative: "Add endpoint
++  params table", not "Added" or "misc changes".
++- Never force-push main. Never rewrite published history.
++- Never use git add -f. If git refuses to add a file, that is the
++  .gitignore doing its job.
++
++## Working with large files
++
++- Read targeted ranges, not whole files. Locate the region with grep
++  or a search first, then read only the lines needed.
++- Edit with precise string replacements rather than rewriting a file
++  end to end. Rewrites churn diffs and risk losing content.
++- Keep files under roughly 500 lines. If a module approaches that,
++  split it before extending it.
++- Never paste large file contents into commit messages, logs, or
++  docs/SESSIONS.md. Reference paths and line ranges instead.
++
++## Session management, resume prompts and credits
++
++Sessions are tracked in docs/SESSIONS.md. The workflow:
++
++1. Session start: read CLAUDE.md, then the latest entry in
++   docs/SESSIONS.md. Confirm the branch and pick up from "Next steps".
++2. During work: keep a running sense of what is done versus in
++   progress. Commit completed units as you go so an interrupted
++   session loses nothing.
++3. Session end, or when credits or context are running low: STOP
++   feature work early and spend the remaining budget writing a
++   checkpoint entry in docs/SESSIONS.md using the template there:
++   date, branch, what was completed, what is half-done and exactly
++   where, next steps in order, and open decisions. Commit it.
++4. The checkpoint doubles as the resume prompt. A new session begins
++   by pasting the resume template from docs/SESSIONS.md, which points
++   back to the latest checkpoint.
++
++A checkpoint that lets a cold session resume in one message is more
++valuable than one more half-finished feature. When credit exhaustion
++is likely, checkpoint first.
++
++## Front-end rules
++
++- Follow docs/DESIGN.md exactly. All colour, type and spacing values
++  come from assets/css/tokens.css; never hard-code values in pages or
++  main.css.
++- No emojis anywhere: not in UI, docs, commit messages or code
++  comments. No decorative icons, gradients or filler copy.
++- Plain HTML, CSS and JavaScript. No frameworks, no build step, no
++  new dependencies beyond the Supabase CDN client without explicit
++  agreement from the repo owner recorded in docs/SESSIONS.md.
++- Every new protected page includes, in order: the Supabase CDN
++  script, config.js, supabase.js, guard.js, ui.js, then its own page
++  module. Pages below the repo root set data-root on body.
++- Interface copy is plain, specific and in sentence case. Buttons say
++  what they do. Errors say what went wrong and how to fix it.
++- All dynamic content rendered into the DOM goes through App.escape.
++
++## Adding common things
++
++- New prototype: create the page under prototypes/, follow the script
++  include order above, then insert a registry row into the prototypes
++  table. Do not hand-edit navigation.
++- New API spec content: rows in api_specs and api_endpoints via the
++  Supabase dashboard or SQL editor. The repo does not change.
++- New table: schema in supabase/schema.sql, policies in
++  supabase/policies.sql, both in the same commit.
++
++## Definition of done for any change
++
++- Works when served locally and from a static host.
++- No console errors; unauthenticated access redirects to login.
++- No hard-coded design values; no sensitive data introduced.
++- Relevant docs updated; session log updated if the change is part of
++  a tracked piece of work.
+diff --git a/README.md b/README.md
+index 197947a..52313fc 100644
+--- a/README.md
++++ b/README.md
+@@ -1,2 +1,56 @@
+-# prototypes
+-A general repository for Claude prototyping
++# Onboarding Portal - prototypes and API reference
++
++The shell of an internal portal for the merchant onboarding programme:
++a login-gated dashboard, an API reference viewer and a prototype
++gallery. This repository is public by design and therefore contains
++only structure, styling and rendering logic. All substantive content
++(API specs, endpoints, users, the prototype registry) lives in
++Supabase behind Row Level Security. See docs/SECURITY.md before
++committing anything.
++
++## Layout
++
++    index.html            Login (entry point)
++    dashboard.html        Post-login hub
++    reference.html        API reference viewer ("swagger")
++    users.html            User register
++    prototypes/           Prototype pages and gallery
++    assets/css/           tokens.css (design tokens), main.css
++    assets/js/            Auth, guard, UI and page modules
++    supabase/             schema.sql, policies.sql, seed.sql
++    docs/                 ARCHITECTURE, SECURITY, SESSIONS, DESIGN
++
++Working in this repo with Claude Code? Read CLAUDE.md first; it is
++binding.
++
++## Setup
++
++1. Create a Supabase project at supabase.com (free tier is fine).
++2. In the Supabase SQL editor, run in order:
++   supabase/schema.sql, then supabase/policies.sql, then optionally
++   supabase/seed.sql for sample content.
++3. Copy assets/js/config.example.js to assets/js/config.js and fill in
++   the Project URL and anon public key from Project settings, API.
++   config.js is gitignored; never commit it.
++4. In the Supabase dashboard, Authentication then Users, add your
++   first user (email and password, auto-confirm on). Then in the SQL
++   editor promote it:
++   update public.profiles set role = 'admin' where email = 'you@example.com';
++5. Serve the folder with any static server, for example:
++   python3 -m http.server 8000
++   and open http://localhost:8000. Sign in with the user from step 4.
++
++## Day-to-day use
++
++Reference material is updated by editing rows in the api_specs and
++api_endpoints tables in Supabase; the viewer reflects changes on
++reload with no commits or deploys. Prototypes are pages added under
++prototypes/ plus a registry row in the prototypes table.
++
++## Documentation
++
++- docs/ARCHITECTURE.md - how the pieces fit together
++- docs/SECURITY.md - the security model and hard rules
++- docs/SESSIONS.md - session log, checkpoint and resume templates
++- docs/DESIGN.md - binding visual and writing standards
++- CLAUDE.md - operating rules for Claude Code sessions
+diff --git a/assets/css/main.css b/assets/css/main.css
+new file mode 100644
+index 0000000..ce79323
+--- /dev/null
++++ b/assets/css/main.css
+@@ -0,0 +1,585 @@
++/* ------------------------------------------------------------------
++   main.css - Layout and components. Values come from tokens.css only.
++------------------------------------------------------------------- */
++
++*,
++*::before,
++*::after {
++  box-sizing: border-box;
++}
++
++html,
++body {
++  margin: 0;
++  padding: 0;
++}
++
++body {
++  font-family: var(--font-body);
++  font-size: var(--text-md);
++  line-height: 1.55;
++  color: var(--ink);
++  background: var(--paper);
++  -webkit-font-smoothing: antialiased;
++}
++
++h1,
++h2,
++h3 {
++  margin: 0;
++  font-weight: var(--weight-semibold);
++  line-height: 1.25;
++}
++
++p {
++  margin: 0 0 var(--s-3);
++}
++
++a {
++  color: var(--accent);
++  text-decoration: none;
++}
++
++a:hover {
++  color: var(--accent-strong);
++  text-decoration: underline;
++}
++
++code,
++pre {
++  font-family: var(--font-mono);
++  font-size: var(--text-sm);
++}
++
++:focus-visible {
++  outline: 2px solid var(--accent);
++  outline-offset: 2px;
++}
++
++@media (prefers-reduced-motion: reduce) {
++  *,
++  *::before,
++  *::after {
++    animation: none !important;
++    transition: none !important;
++  }
++}
++
++/* Eyebrow: uppercase mono label used to mark sections of the system */
++.eyebrow {
++  font-family: var(--font-mono);
++  font-size: var(--text-xs);
++  font-weight: var(--weight-medium);
++  letter-spacing: var(--tracking-wide);
++  text-transform: uppercase;
++  color: var(--muted);
++}
++
++/* ---------------------------------------------------------------
++   Top navigation
++--------------------------------------------------------------- */
++
++.nav {
++  position: sticky;
++  top: 0;
++  z-index: 10;
++  display: flex;
++  align-items: center;
++  gap: var(--s-5);
++  height: var(--nav-height);
++  padding: 0 var(--s-5);
++  background: var(--surface);
++  border-bottom: 1px solid var(--line);
++}
++
++.nav-brand {
++  font-family: var(--font-mono);
++  font-size: var(--text-sm);
++  font-weight: var(--weight-semibold);
++  letter-spacing: var(--tracking-wide);
++  text-transform: uppercase;
++  color: var(--ink);
++}
++
++.nav-brand:hover {
++  color: var(--ink);
++  text-decoration: none;
++}
++
++.nav-links {
++  display: flex;
++  gap: var(--s-4);
++  margin-right: auto;
++}
++
++.nav-links a {
++  font-size: var(--text-sm);
++  color: var(--muted);
++  padding: var(--s-1) 0;
++  border-bottom: 2px solid transparent;
++}
++
++.nav-links a:hover {
++  color: var(--ink);
++  text-decoration: none;
++}
++
++.nav-links a[aria-current="page"] {
++  color: var(--ink);
++  border-bottom-color: var(--accent);
++}
++
++.nav-user {
++  font-size: var(--text-sm);
++  color: var(--faint);
++}
++
++/* ---------------------------------------------------------------
++   Page scaffold
++--------------------------------------------------------------- */
++
++.page {
++  max-width: var(--content-max);
++  margin: 0 auto;
++  padding: var(--s-6) var(--s-5) var(--s-8);
++}
++
++.page-head {
++  margin-bottom: var(--s-6);
++}
++
++.page-head h1 {
++  font-size: var(--text-xl);
++  margin-top: var(--s-1);
++}
++
++.page-head .lede {
++  color: var(--muted);
++  max-width: 44rem;
++  margin-top: var(--s-2);
++}
++
++/* ---------------------------------------------------------------
++   Cards
++--------------------------------------------------------------- */
++
++.card {
++  background: var(--surface);
++  border: 1px solid var(--line);
++  border-radius: var(--radius);
++  box-shadow: var(--shadow);
++  padding: var(--s-5);
++}
++
++.card-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
++  gap: var(--s-4);
++}
++
++.card h2 {
++  font-size: var(--text-lg);
++  margin-bottom: var(--s-2);
++}
++
++.card .card-meta {
++  color: var(--faint);
++  font-size: var(--text-sm);
++}
++
++a.card {
++  display: block;
++  color: var(--ink);
++}
++
++a.card:hover {
++  text-decoration: none;
++  border-color: var(--line-strong);
++  box-shadow: var(--shadow-raised);
++}
++
++.stat {
++  font-size: var(--text-2xl);
++  font-weight: var(--weight-semibold);
++  font-variant-numeric: tabular-nums;
++}
++
++/* ---------------------------------------------------------------
++   Forms and buttons
++--------------------------------------------------------------- */
++
++.field {
++  margin-bottom: var(--s-4);
++}
++
++.field label {
++  display: block;
++  font-size: var(--text-sm);
++  font-weight: var(--weight-medium);
++  margin-bottom: var(--s-1);
++}
++
++.field input,
++.field select {
++  width: 100%;
++  padding: var(--s-2) var(--s-3);
++  font: inherit;
++  font-size: var(--text-sm);
++  color: var(--ink);
++  background: var(--surface);
++  border: 1px solid var(--line-strong);
++  border-radius: var(--radius-sm);
++}
++
++.field input:focus,
++.field select:focus {
++  outline: 2px solid var(--accent);
++  outline-offset: 0;
++  border-color: var(--accent);
++}
++
++.button {
++  display: inline-block;
++  padding: var(--s-2) var(--s-4);
++  font: inherit;
++  font-size: var(--text-sm);
++  font-weight: var(--weight-medium);
++  color: #ffffff;
++  background: var(--accent);
++  border: 1px solid var(--accent);
++  border-radius: var(--radius-sm);
++  cursor: pointer;
++}
++
++.button:hover {
++  background: var(--accent-strong);
++  border-color: var(--accent-strong);
++}
++
++.button.secondary {
++  color: var(--ink);
++  background: var(--surface);
++  border-color: var(--line-strong);
++}
++
++.button.secondary:hover {
++  background: var(--paper);
++}
++
++.button.quiet {
++  color: var(--muted);
++  background: transparent;
++  border-color: transparent;
++  padding: var(--s-1) var(--s-2);
++}
++
++.button.quiet:hover {
++  color: var(--ink);
++  background: var(--paper);
++}
++
++/* ---------------------------------------------------------------
++   Notices
++--------------------------------------------------------------- */
++
++.notice {
++  padding: var(--s-3) var(--s-4);
++  font-size: var(--text-sm);
++  border: 1px solid var(--line);
++  border-radius: var(--radius-sm);
++  background: var(--surface);
++  color: var(--muted);
++}
++
++.notice.error {
++  background: var(--danger-soft);
++  border-color: var(--danger);
++  color: var(--danger);
++}
++
++.notice.hidden {
++  display: none;
++}
++
++/* ---------------------------------------------------------------
++   Tables
++--------------------------------------------------------------- */
++
++.table-wrap {
++  background: var(--surface);
++  border: 1px solid var(--line);
++  border-radius: var(--radius);
++  overflow-x: auto;
++}
++
++table {
++  width: 100%;
++  border-collapse: collapse;
++  font-size: var(--text-sm);
++}
++
++th {
++  text-align: left;
++  font-family: var(--font-mono);
++  font-size: var(--text-xs);
++  font-weight: var(--weight-medium);
++  letter-spacing: var(--tracking-wide);
++  text-transform: uppercase;
++  color: var(--muted);
++  padding: var(--s-3) var(--s-4);
++  border-bottom: 1px solid var(--line);
++  white-space: nowrap;
++}
++
++td {
++  padding: var(--s-3) var(--s-4);
++  border-bottom: 1px solid var(--line);
++  vertical-align: top;
++}
++
++tr:last-child td {
++  border-bottom: none;
++}
++
++td.mono {
++  font-family: var(--font-mono);
++  font-size: var(--text-sm);
++}
++
++/* ---------------------------------------------------------------
++   Badges
++--------------------------------------------------------------- */
++
++.badge {
++  display: inline-block;
++  padding: 0.1rem var(--s-2);
++  font-family: var(--font-mono);
++  font-size: var(--text-xs);
++  font-weight: var(--weight-semibold);
++  letter-spacing: 0.03em;
++  border-radius: var(--radius-sm);
++  color: var(--muted);
++  background: var(--paper);
++  border: 1px solid var(--line);
++}
++
++.badge.get    { color: var(--m-get);    background: var(--m-get-bg);    border-color: transparent; }
++.badge.post   { color: var(--m-post);   background: var(--m-post-bg);   border-color: transparent; }
++.badge.put    { color: var(--m-put);    background: var(--m-put-bg);    border-color: transparent; }
++.badge.patch  { color: var(--m-patch);  background: var(--m-patch-bg);  border-color: transparent; }
++.badge.delete { color: var(--m-delete); background: var(--m-delete-bg); border-color: transparent; }
++
++.badge.live       { color: var(--ok);     background: var(--ok-soft);     border-color: transparent; }
++.badge.draft      { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
++.badge.deprecated { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
++.badge.admin      { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
++
++/* ---------------------------------------------------------------
++   Login
++--------------------------------------------------------------- */
++
++.login-shell {
++  min-height: 100vh;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  padding: var(--s-5);
++}
++
++.login-card {
++  width: 100%;
++  max-width: 24rem;
++  background: var(--surface);
++  border: 1px solid var(--line);
++  border-radius: var(--radius);
++  box-shadow: var(--shadow-raised);
++  padding: var(--s-6);
++}
++
++.login-card .wordmark {
++  font-family: var(--font-mono);
++  font-size: var(--text-md);
++  font-weight: var(--weight-semibold);
++  letter-spacing: var(--tracking-wide);
++  text-transform: uppercase;
++}
++
++.login-card .wordmark span {
++  color: var(--accent);
++}
++
++.login-card .lede {
++  color: var(--muted);
++  font-size: var(--text-sm);
++  margin: var(--s-2) 0 var(--s-5);
++}
++
++/* ---------------------------------------------------------------
++   Reference viewer (the swagger)
++--------------------------------------------------------------- */
++
++.ref-layout {
++  display: grid;
++  grid-template-columns: var(--sidebar-width) 1fr;
++  gap: var(--s-5);
++  align-items: start;
++}
++
++.ref-sidebar {
++  position: sticky;
++  top: calc(var(--nav-height) + var(--s-4));
++  background: var(--surface);
++  border: 1px solid var(--line);
++  border-radius: var(--radius);
++  padding: var(--s-4);
++  max-height: calc(100vh - var(--nav-height) - var(--s-6));
++  overflow-y: auto;
++}
++
++.ref-sidebar .group {
++  margin-bottom: var(--s-4);
++}
++
++.ref-sidebar .group:last-child {
++  margin-bottom: 0;
++}
++
++.ref-sidebar ul {
++  list-style: none;
++  margin: var(--s-2) 0 0;
++  padding: 0;
++}
++
++.ref-sidebar li a {
++  display: flex;
++  align-items: baseline;
++  gap: var(--s-2);
++  padding: var(--s-1) var(--s-2);
++  border-radius: var(--radius-sm);
++  color: var(--ink);
++  font-family: var(--font-mono);
++  font-size: var(--text-sm);
++  overflow-wrap: anywhere;
++}
++
++.ref-sidebar li a:hover {
++  background: var(--paper);
++  text-decoration: none;
++}
++
++.endpoint {
++  background: var(--surface);
++  border: 1px solid var(--line);
++  border-radius: var(--radius);
++  margin-bottom: var(--s-4);
++  scroll-margin-top: calc(var(--nav-height) + var(--s-4));
++}
++
++.endpoint > summary {
++  display: flex;
++  align-items: baseline;
++  gap: var(--s-3);
++  padding: var(--s-3) var(--s-4);
++  cursor: pointer;
++  list-style: none;
++}
++
++.endpoint > summary::-webkit-details-marker {
++  display: none;
++}
++
++.endpoint > summary:hover {
++  background: var(--paper);
++}
++
++.endpoint .path {
++  font-family: var(--font-mono);
++  font-size: var(--text-sm);
++  font-weight: var(--weight-medium);
++  overflow-wrap: anywhere;
++}
++
++.endpoint .summary-text {
++  color: var(--muted);
++  font-size: var(--text-sm);
++  margin-left: auto;
++  text-align: right;
++}
++
++.endpoint-body {
++  border-top: 1px solid var(--line);
++  padding: var(--s-4);
++}
++
++.endpoint-body h3 {
++  font-family: var(--font-mono);
++  font-size: var(--text-xs);
++  font-weight: var(--weight-medium);
++  letter-spacing: var(--tracking-wide);
++  text-transform: uppercase;
++  color: var(--muted);
++  margin: var(--s-4) 0 var(--s-2);
++}
++
++.endpoint-body h3:first-child {
++  margin-top: 0;
++}
++
++.codeblock {
++  position: relative;
++  background: var(--paper);
++  border: 1px solid var(--line);
++  border-radius: var(--radius-sm);
++}
++
++.codeblock pre {
++  margin: 0;
++  padding: var(--s-3) var(--s-4);
++  overflow-x: auto;
++}
++
++.codeblock .copy {
++  position: absolute;
++  top: var(--s-2);
++  right: var(--s-2);
++}
++
++.spec-picker {
++  display: flex;
++  align-items: center;
++  gap: var(--s-3);
++  margin-bottom: var(--s-5);
++}
++
++.spec-picker select {
++  padding: var(--s-2) var(--s-3);
++  font: inherit;
++  font-size: var(--text-sm);
++  border: 1px solid var(--line-strong);
++  border-radius: var(--radius-sm);
++  background: var(--surface);
++}
++
++/* ---------------------------------------------------------------
++   Responsive
++--------------------------------------------------------------- */
++
++@media (max-width: 56rem) {
++  .ref-layout {
++    grid-template-columns: 1fr;
++  }
++
++  .ref-sidebar {
++    position: static;
++    max-height: none;
++  }
++
++  .endpoint .summary-text {
++    display: none;
++  }
++
++  .nav {
++    gap: var(--s-3);
++    overflow-x: auto;
++  }
++}
+diff --git a/assets/css/tokens.css b/assets/css/tokens.css
+new file mode 100644
+index 0000000..79c42f0
+--- /dev/null
++++ b/assets/css/tokens.css
+@@ -0,0 +1,80 @@
++/* ------------------------------------------------------------------
++   tokens.css - Design tokens for the onboarding portal prototype hub.
++   Every colour, size and type decision used anywhere in the UI must
++   come from this file. Do not hard-code values in main.css or pages.
++   See docs/DESIGN.md for the rules governing these tokens.
++------------------------------------------------------------------- */
++
++:root {
++  /* Colour: cool, near-monochrome surface set with one petrol accent */
++  --ink: #171a20;            /* primary text */
++  --muted: #5c6572;          /* secondary text, labels */
++  --faint: #8b93a1;          /* tertiary text, placeholders */
++  --paper: #f6f7f9;          /* page background */
++  --surface: #ffffff;        /* cards, panels, nav */
++  --line: #e2e5ea;           /* borders, dividers */
++  --line-strong: #c9ced6;    /* emphasised borders, inputs */
++
++  --accent: #0e6c64;         /* primary action, active states */
++  --accent-strong: #0a524c;  /* hover / pressed */
++  --accent-soft: #e2efed;    /* tinted backgrounds for accent */
++
++  --danger: #b0272e;
++  --danger-soft: #f7e6e7;
++  --warn: #8f6400;
++  --warn-soft: #f6efdd;
++  --ok: #1d6f42;
++  --ok-soft: #e3f0e9;
++
++  /* HTTP method badge colours (convention-led, muted tints) */
++  --m-get: #0e6c64;
++  --m-get-bg: #e2efed;
++  --m-post: #1f5fa8;
++  --m-post-bg: #e5edf7;
++  --m-put: #8f6400;
++  --m-put-bg: #f6efdd;
++  --m-patch: #64509b;
++  --m-patch-bg: #ece8f5;
++  --m-delete: #b0272e;
++  --m-delete-bg: #f7e6e7;
++
++  /* Type */
++  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
++    "Helvetica Neue", Arial, sans-serif;
++  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono",
++    Menlo, Consolas, monospace;
++
++  --text-xs: 0.75rem;   /* 12px - eyebrows, badges, meta */
++  --text-sm: 0.8125rem; /* 13px - table data, code */
++  --text-md: 0.9375rem; /* 15px - body */
++  --text-lg: 1.125rem;  /* 18px - card titles */
++  --text-xl: 1.5rem;    /* 24px - page titles */
++  --text-2xl: 2rem;     /* 32px - login wordmark */
++
++  --weight-normal: 400;
++  --weight-medium: 500;
++  --weight-semibold: 600;
++
++  --tracking-wide: 0.08em; /* uppercase mono eyebrows */
++
++  /* Space: 4px base scale */
++  --s-1: 0.25rem;
++  --s-2: 0.5rem;
++  --s-3: 0.75rem;
++  --s-4: 1rem;
++  --s-5: 1.5rem;
++  --s-6: 2rem;
++  --s-7: 3rem;
++  --s-8: 4rem;
++
++  /* Shape and depth */
++  --radius: 6px;
++  --radius-sm: 4px;
++  --shadow: 0 1px 2px rgba(23, 26, 32, 0.06);
++  --shadow-raised: 0 4px 16px rgba(23, 26, 32, 0.08);
++
++  /* Layout */
++  --nav-height: 3.25rem;
++  --content-max: 72rem;
++  --sidebar-width: 17rem;
++}
+diff --git a/assets/js/auth.js b/assets/js/auth.js
+new file mode 100644
+index 0000000..e69bdf4
+--- /dev/null
++++ b/assets/js/auth.js
+@@ -0,0 +1,53 @@
++// ------------------------------------------------------------------
++// auth.js - Login page logic for index.html.
++// Sign-ups are not offered here by design: accounts are created by
++// an admin in the Supabase dashboard (Authentication > Users).
++// ------------------------------------------------------------------
++
++(function () {
++  "use strict";
++
++  document.addEventListener("DOMContentLoaded", async function () {
++    if (!window.App || !App.db) return;
++
++    // Already signed in: go straight to the dashboard.
++    var existing = await App.db.auth.getSession();
++    if (existing.data && existing.data.session) {
++      window.location.replace("dashboard.html");
++      return;
++    }
++
++    var form = document.getElementById("login-form");
++    var email = document.getElementById("login-email");
++    var password = document.getElementById("login-password");
++    var submit = document.getElementById("login-submit");
++    var notice = document.getElementById("login-notice");
++
++    if (!form) return;
++
++    form.addEventListener("submit", async function (event) {
++      event.preventDefault();
++      notice.classList.add("hidden");
++      submit.disabled = true;
++      submit.textContent = "Signing in";
++
++      var result = await App.db.auth.signInWithPassword({
++        email: email.value.trim(),
++        password: password.value,
++      });
++
++      if (result.error) {
++        notice.textContent =
++          result.error.message === "Invalid login credentials"
++            ? "Email or password not recognised. Check both and try again."
++            : result.error.message;
++        notice.classList.remove("hidden");
++        submit.disabled = false;
++        submit.textContent = "Sign in";
++        return;
++      }
++
++      window.location.replace("dashboard.html");
++    });
++  });
++})();
+diff --git a/assets/js/config.example.js b/assets/js/config.example.js
+new file mode 100644
+index 0000000..9edc9c6
+--- /dev/null
++++ b/assets/js/config.example.js
+@@ -0,0 +1,16 @@
++// ------------------------------------------------------------------
++// config.example.js
++//
++// Copy this file to config.js in the same directory and fill in the
++// values from your Supabase project (Project settings > API).
++//
++// config.js is listed in .gitignore and must never be committed.
++// The anon key is safe to expose to browsers ONLY because Row Level
++// Security is enabled on every table (see supabase/policies.sql).
++// The service_role key must never appear anywhere in this repo.
++// ------------------------------------------------------------------
++
++window.APP_CONFIG = {
++  SUPABASE_URL: "https://YOUR-PROJECT-REF.supabase.co",
++  SUPABASE_ANON_KEY: "YOUR-ANON-PUBLIC-KEY",
++};
+diff --git a/assets/js/dashboard.js b/assets/js/dashboard.js
+new file mode 100644
+index 0000000..41d6fd3
+--- /dev/null
++++ b/assets/js/dashboard.js
+@@ -0,0 +1,72 @@
++// ------------------------------------------------------------------
++// dashboard.js - Loads counts and recent activity for dashboard.html.
++// ------------------------------------------------------------------
++
++(function () {
++  "use strict";
++
++  async function countRows(table) {
++    var result = await App.db
++      .from(table)
++      .select("*", { count: "exact", head: true });
++    return result.error ? "-" : result.count;
++  }
++
++  function setStat(id, value) {
++    var el = document.getElementById(id);
++    if (el) el.textContent = value;
++  }
++
++  async function loadRecent() {
++    var host = document.getElementById("recent-specs");
++    if (!host) return;
++
++    var result = await App.db
++      .from("api_specs")
++      .select("id, title, version, status, updated_at")
++      .order("updated_at", { ascending: false })
++      .limit(5);
++
++    if (result.error || !result.data || result.data.length === 0) {
++      host.innerHTML =
++        '<p class="notice">No specs yet. Add rows to the api_specs table ' +
++        "in Supabase and they will appear here and in the reference viewer.</p>";
++      return;
++    }
++
++    var html = '<div class="table-wrap"><table><thead><tr>' +
++      "<th>Spec</th><th>Version</th><th>Status</th><th>Updated</th>" +
++      "</tr></thead><tbody>";
++
++    result.data.forEach(function (spec) {
++      var updated = spec.updated_at
++        ? new Date(spec.updated_at).toLocaleDateString()
++        : "";
++      html +=
++        "<tr>" +
++        '<td><a href="reference.html?spec=' + App.escape(spec.id) + '">' +
++        App.escape(spec.title) + "</a></td>" +
++        '<td class="mono">' + App.escape(spec.version) + "</td>" +
++        "<td>" + App.statusBadge(spec.status) + "</td>" +
++        "<td>" + App.escape(updated) + "</td>" +
++        "</tr>";
++    });
++
++    html += "</tbody></table></div>";
++    host.innerHTML = html;
++  }
++
++  App.onAuthed(async function () {
++    var counts = await Promise.all([
++      countRows("api_specs"),
++      countRows("api_endpoints"),
++      countRows("prototypes"),
++      countRows("profiles"),
++    ]);
++    setStat("stat-specs", counts[0]);
++    setStat("stat-endpoints", counts[1]);
++    setStat("stat-prototypes", counts[2]);
++    setStat("stat-users", counts[3]);
++    loadRecent();
++  });
++})();
+diff --git a/assets/js/gallery.js b/assets/js/gallery.js
+new file mode 100644
+index 0000000..5da5208
+--- /dev/null
++++ b/assets/js/gallery.js
+@@ -0,0 +1,54 @@
++// ------------------------------------------------------------------
++// gallery.js - Prototype registry for prototypes/index.html.
++// Prototypes are registered as rows in the prototypes table, so the
++// gallery and dashboard update without navigation code changes.
++// ------------------------------------------------------------------
++
++(function () {
++  "use strict";
++
++  App.onAuthed(async function () {
++    var host = document.getElementById("prototype-list");
++
++    var result = await App.db
++      .from("prototypes")
++      .select("title, description, path, status, tags")
++      .order("title", { ascending: true });
++
++    if (result.error) {
++      host.innerHTML =
++        '<p class="notice error">Could not load prototypes: ' +
++        App.escape(result.error.message) + "</p>";
++      return;
++    }
++
++    if (!result.data || result.data.length === 0) {
++      host.innerHTML =
++        '<p class="notice">No prototypes registered. Add a page under ' +
++        "prototypes/ and insert a matching row into the prototypes table " +
++        "so it appears here.</p>";
++      return;
++    }
++
++    var html = '<div class="card-grid">';
++    result.data.forEach(function (proto) {
++      var href = proto.path
++        ? App.root + "/" + String(proto.path).replace(/^\/+/, "")
++        : "#";
++      var tags = (proto.tags || [])
++        .map(function (tag) {
++          return '<span class="badge">' + App.escape(tag) + "</span>";
++        })
++        .join(" ");
++      html +=
++        '<a class="card" href="' + App.escape(href) + '">' +
++        "<h2>" + App.escape(proto.title) + "</h2>" +
++        "<p>" + App.escape(proto.description || "") + "</p>" +
++        '<p class="card-meta">' + App.statusBadge(proto.status) +
++        (tags ? " " + tags : "") + "</p>" +
++        "</a>";
++    });
++    html += "</div>";
++    host.innerHTML = html;
++  });
++})();
+diff --git a/assets/js/guard.js b/assets/js/guard.js
+new file mode 100644
+index 0000000..2daacce
+--- /dev/null
++++ b/assets/js/guard.js
+@@ -0,0 +1,44 @@
++// ------------------------------------------------------------------
++// guard.js - Blocks unauthenticated access to protected pages.
++//
++// Include on every page except index.html (the login page). Pages
++// nested below the repo root must set data-root on <body>, for
++// example <body data-root=".."> for prototypes/index.html.
++//
++// Page scripts should wait for auth before fetching data:
++//   App.onAuthed(function (session) { ... });
++// ------------------------------------------------------------------
++
++(function () {
++  "use strict";
++
++  window.App = window.App || {};
++  App.root = (document.body && document.body.dataset.root) || ".";
++
++  App.requireAuth = (async function () {
++    if (!App.db) return null;
++    var result = await App.db.auth.getSession();
++    var session = result.data ? result.data.session : null;
++    if (!session) {
++      window.location.replace(App.root + "/index.html");
++      return null;
++    }
++    App.session = session;
++    return session;
++  })();
++
++  App.onAuthed = function (fn) {
++    App.requireAuth.then(function (session) {
++      if (session) fn(session);
++    });
++  };
++
++  // If the session ends in another tab, drop back to login.
++  if (App.db) {
++    App.db.auth.onAuthStateChange(function (event) {
++      if (event === "SIGNED_OUT") {
++        window.location.replace(App.root + "/index.html");
++      }
++    });
++  }
++})();
+diff --git a/assets/js/reference.js b/assets/js/reference.js
+new file mode 100644
+index 0000000..2d3f83d
+--- /dev/null
++++ b/assets/js/reference.js
+@@ -0,0 +1,239 @@
++// ------------------------------------------------------------------
++// reference.js - The reference viewer ("swagger") for reference.html.
++//
++// Reads from two Supabase tables:
++//   api_specs      one row per spec (title, version, status, spec jsonb)
++//   api_endpoints  one row per endpoint, linked by spec_id
++//
++// Endpoint rows are the primary source. If a spec has no endpoint
++// rows but its spec column holds an OpenAPI 3 document, the paths in
++// that document are rendered instead, so whole specs can be pasted
++// into a single JSONB column as a starting point.
++// ------------------------------------------------------------------
++
++(function () {
++  "use strict";
++
++  var picker, sidebar, content, meta;
++
++  function codeblock(value) {
++    var text =
++      typeof value === "string" ? value : JSON.stringify(value, null, 2);
++    return (
++      '<div class="codeblock">' +
++      '<button class="button quiet copy" type="button">Copy</button>' +
++      "<pre><code>" + App.escape(text) + "</code></pre>" +
++      "</div>"
++    );
++  }
++
++  function paramsTable(params) {
++    if (!params || params.length === 0) return "";
++    var html =
++      '<h3>Parameters</h3><div class="table-wrap"><table><thead><tr>' +
++      "<th>Name</th><th>In</th><th>Type</th><th>Required</th><th>Description</th>" +
++      "</tr></thead><tbody>";
++    params.forEach(function (p) {
++      html +=
++        "<tr>" +
++        '<td class="mono">' + App.escape(p.name) + "</td>" +
++        "<td>" + App.escape(p.in || "body") + "</td>" +
++        '<td class="mono">' + App.escape(p.type || (p.schema && p.schema.type) || "") + "</td>" +
++        "<td>" + (p.required ? "yes" : "no") + "</td>" +
++        "<td>" + App.escape(p.description || "") + "</td>" +
++        "</tr>";
++    });
++    return html + "</tbody></table></div>";
++  }
++
++  function endpointBlock(ep) {
++    var anchor = "ep-" + ep.id;
++    var html = '<details class="endpoint" id="' + anchor + '">';
++    html +=
++      "<summary>" +
++      App.methodBadge(ep.method) +
++      '<span class="path">' + App.escape(ep.path) + "</span>" +
++      '<span class="summary-text">' + App.escape(ep.summary || "") + "</span>" +
++      "</summary>";
++    html += '<div class="endpoint-body">';
++    if (ep.description) {
++      html += "<p>" + App.escape(ep.description) + "</p>";
++    }
++    html += paramsTable(ep.params);
++    if (ep.request_example) {
++      html += "<h3>Request example</h3>" + codeblock(ep.request_example);
++    }
++    if (ep.response_example) {
++      html += "<h3>Response example</h3>" + codeblock(ep.response_example);
++    }
++    html += "</div></details>";
++    return html;
++  }
++
++  function groupByTag(endpoints) {
++    var groups = {};
++    var order = [];
++    endpoints.forEach(function (ep) {
++      var tag = ep.tag || "General";
++      if (!groups[tag]) {
++        groups[tag] = [];
++        order.push(tag);
++      }
++      groups[tag].push(ep);
++    });
++    return { groups: groups, order: order };
++  }
++
++  function render(endpoints) {
++    if (!endpoints || endpoints.length === 0) {
++      sidebar.innerHTML = "";
++      content.innerHTML =
++        '<p class="notice">This spec has no endpoints yet. Add rows to ' +
++        "the api_endpoints table, or store an OpenAPI 3 document in the " +
++        "spec column of api_specs.</p>";
++      return;
++    }
++
++    var grouped = groupByTag(endpoints);
++    var sideHtml = "";
++    var mainHtml = "";
++
++    grouped.order.forEach(function (tag) {
++      sideHtml +=
++        '<div class="group"><span class="eyebrow">' + App.escape(tag) +
++        "</span><ul>";
++      mainHtml +=
++        '<h2 class="eyebrow" style="margin: var(--s-5) 0 var(--s-3)">' +
++        App.escape(tag) + "</h2>";
++      grouped.groups[tag].forEach(function (ep) {
++        sideHtml +=
++          '<li><a href="#ep-' + ep.id + '">' +
++          App.methodBadge(ep.method) +
++          "<span>" + App.escape(ep.path) + "</span></a></li>";
++        mainHtml += endpointBlock(ep);
++      });
++      sideHtml += "</ul></div>";
++    });
++
++    sidebar.innerHTML = sideHtml;
++    content.innerHTML = mainHtml;
++
++    // Copy buttons and open-on-anchor behaviour.
++    content.querySelectorAll(".codeblock .copy").forEach(function (button) {
++      button.addEventListener("click", function () {
++        App.copyText(button.parentElement.querySelector("code").textContent, button);
++      });
++    });
++    sidebar.querySelectorAll("a").forEach(function (link) {
++      link.addEventListener("click", function () {
++        var target = document.getElementById(link.getAttribute("href").slice(1));
++        if (target) target.open = true;
++      });
++    });
++  }
++
++  // Fallback: derive endpoint objects from an OpenAPI 3 document.
++  function endpointsFromOpenApi(doc) {
++    var endpoints = [];
++    var paths = (doc && doc.paths) || {};
++    var counter = 0;
++    Object.keys(paths).forEach(function (path) {
++      Object.keys(paths[path]).forEach(function (method) {
++        var op = paths[path][method];
++        if (!op || typeof op !== "object") return;
++        counter += 1;
++        var responses = op.responses || {};
++        var firstResponse = responses["200"] || responses["201"] || null;
++        endpoints.push({
++          id: "oas-" + counter,
++          method: method,
++          path: path,
++          tag: (op.tags && op.tags[0]) || "General",
++          summary: op.summary || "",
++          description: op.description || "",
++          params: op.parameters || [],
++          request_example: null,
++          response_example: firstResponse,
++        });
++      });
++    });
++    return endpoints;
++  }
++
++  async function loadSpec(specId, specs) {
++    var spec = specs.find(function (s) { return s.id === specId; });
++    if (!spec) return;
++
++    meta.innerHTML =
++      App.statusBadge(spec.status) +
++      ' <span class="card-meta">' +
++      App.escape(spec.description || "") + "</span>";
++
++    var result = await App.db
++      .from("api_endpoints")
++      .select("*")
++      .eq("spec_id", specId)
++      .order("tag", { ascending: true })
++      .order("sort_order", { ascending: true });
++
++    if (result.error) {
++      content.innerHTML =
++        '<p class="notice error">Could not load endpoints: ' +
++        App.escape(result.error.message) + "</p>";
++      return;
++    }
++
++    var endpoints = result.data;
++    if ((!endpoints || endpoints.length === 0) && spec.spec) {
++      endpoints = endpointsFromOpenApi(spec.spec);
++    }
++    render(endpoints);
++  }
++
++  App.onAuthed(async function () {
++    picker = document.getElementById("spec-picker");
++    sidebar = document.getElementById("ref-sidebar");
++    content = document.getElementById("ref-content");
++    meta = document.getElementById("spec-meta");
++
++    var result = await App.db
++      .from("api_specs")
++      .select("id, title, version, status, description, spec")
++      .order("title", { ascending: true });
++
++    if (result.error) {
++      content.innerHTML =
++        '<p class="notice error">Could not load specs: ' +
++        App.escape(result.error.message) + "</p>";
++      return;
++    }
++
++    var specs = result.data || [];
++    if (specs.length === 0) {
++      content.innerHTML =
++        '<p class="notice">No specs found. Insert a row into the ' +
++        "api_specs table in Supabase to begin. supabase/seed.sql contains " +
++        "a worked sample.</p>";
++      return;
++    }
++
++    specs.forEach(function (spec) {
++      var option = document.createElement("option");
++      option.value = spec.id;
++      option.textContent = spec.title + " (" + spec.version + ")";
++      picker.appendChild(option);
++    });
++
++    var requested = new URLSearchParams(window.location.search).get("spec");
++    var initial = specs.some(function (s) { return s.id === requested; })
++      ? requested
++      : specs[0].id;
++    picker.value = initial;
++
++    picker.addEventListener("change", function () {
++      loadSpec(picker.value, specs);
++    });
++
++    loadSpec(initial, specs);
++  });
++})();
+diff --git a/assets/js/supabase.js b/assets/js/supabase.js
+new file mode 100644
+index 0000000..fefbe80
+--- /dev/null
++++ b/assets/js/supabase.js
+@@ -0,0 +1,39 @@
++// ------------------------------------------------------------------
++// supabase.js - Initialises the Supabase client as App.db.
++// Requires: the supabase-js CDN script and config.js loaded first.
++// If config.js is missing, renders a setup notice instead of failing
++// silently.
++// ------------------------------------------------------------------
++
++(function () {
++  "use strict";
++
++  window.App = window.App || {};
++
++  var configured =
++    window.APP_CONFIG &&
++    window.APP_CONFIG.SUPABASE_URL &&
++    window.APP_CONFIG.SUPABASE_URL.indexOf("YOUR-PROJECT-REF") === -1 &&
++    window.APP_CONFIG.SUPABASE_ANON_KEY &&
++    window.APP_CONFIG.SUPABASE_ANON_KEY.indexOf("YOUR-ANON") === -1;
++
++  if (!configured) {
++    App.db = null;
++    document.addEventListener("DOMContentLoaded", function () {
++      document.body.innerHTML =
++        '<div class="login-shell"><div class="login-card">' +
++        '<div class="wordmark">Setup required</div>' +
++        '<p class="lede">No Supabase configuration was found. Copy ' +
++        "<code>assets/js/config.example.js</code> to " +
++        "<code>assets/js/config.js</code> and add your project URL and " +
++        "anon key. See README.md, step 3.</p>" +
++        "</div></div>";
++    });
++    return;
++  }
++
++  App.db = window.supabase.createClient(
++    window.APP_CONFIG.SUPABASE_URL,
++    window.APP_CONFIG.SUPABASE_ANON_KEY
++  );
++})();
+diff --git a/assets/js/ui.js b/assets/js/ui.js
+new file mode 100644
+index 0000000..ddaf3c6
+--- /dev/null
++++ b/assets/js/ui.js
+@@ -0,0 +1,91 @@
++// ------------------------------------------------------------------
++// ui.js - Shared UI: top navigation, HTML escaping, badges, copy.
++// Renders navigation into <header id="app-nav"></header>.
++// ------------------------------------------------------------------
++
++(function () {
++  "use strict";
++
++  window.App = window.App || {};
++
++  App.escape = function (value) {
++    if (value === null || value === undefined) return "";
++    return String(value)
++      .replace(/&/g, "&amp;")
++      .replace(/</g, "&lt;")
++      .replace(/>/g, "&gt;")
++      .replace(/"/g, "&quot;")
++      .replace(/'/g, "&#39;");
++  };
++
++  App.methodBadge = function (method) {
++    var m = String(method || "").toUpperCase();
++    var cls = m.toLowerCase();
++    var known = ["get", "post", "put", "patch", "delete"];
++    if (known.indexOf(cls) === -1) cls = "";
++    return '<span class="badge ' + cls + '">' + App.escape(m) + "</span>";
++  };
++
++  App.statusBadge = function (status) {
++    var s = String(status || "").toLowerCase();
++    return '<span class="badge ' + App.escape(s) + '">' + App.escape(s) + "</span>";
++  };
++
++  App.copyText = function (text, button) {
++    navigator.clipboard.writeText(text).then(function () {
++      if (!button) return;
++      var previous = button.textContent;
++      button.textContent = "Copied";
++      window.setTimeout(function () {
++        button.textContent = previous;
++      }, 1200);
++    });
++  };
++
++  function renderNav() {
++    var host = document.getElementById("app-nav");
++    if (!host) return;
++
++    var root = App.root || ".";
++    var links = [
++      { href: root + "/dashboard.html", label: "Dashboard" },
++      { href: root + "/reference.html", label: "API reference" },
++      { href: root + "/prototypes/index.html", label: "Prototypes" },
++      { href: root + "/users.html", label: "Users" },
++    ];
++
++    var current = window.location.pathname.split("/").slice(-2).join("/");
++
++    var html = '<nav class="nav">';
++    html +=
++      '<a class="nav-brand" href="' + root + '/dashboard.html">' +
++      'Onboarding <span style="color: var(--accent)">/</span> Portal</a>';
++    html += '<div class="nav-links">';
++    links.forEach(function (link) {
++      var target = link.href.split("/").slice(-2).join("/");
++      var isCurrent = current === target;
++      html +=
++        '<a href="' + link.href + '"' +
++        (isCurrent ? ' aria-current="page"' : "") + ">" +
++        App.escape(link.label) + "</a>";
++    });
++    html += "</div>";
++    html += '<span class="nav-user" id="nav-user"></span>';
++    html += '<button class="button quiet" id="nav-signout" type="button">Sign out</button>';
++    html += "</nav>";
++    host.innerHTML = html;
++
++    document.getElementById("nav-signout").addEventListener("click", function () {
++      if (App.db) App.db.auth.signOut();
++    });
++
++    if (App.onAuthed) {
++      App.onAuthed(function (session) {
++        var el = document.getElementById("nav-user");
++        if (el && session.user) el.textContent = session.user.email || "";
++      });
++    }
++  }
++
++  document.addEventListener("DOMContentLoaded", renderNav);
++})();
+diff --git a/assets/js/users.js b/assets/js/users.js
+new file mode 100644
+index 0000000..e1090a9
+--- /dev/null
++++ b/assets/js/users.js
+@@ -0,0 +1,57 @@
++// ------------------------------------------------------------------
++// users.js - User list for users.html, read from the profiles table.
++// Accounts are created in the Supabase dashboard; this page is a
++// read-only register of who has access and at what level.
++// ------------------------------------------------------------------
++
++(function () {
++  "use strict";
++
++  App.onAuthed(async function () {
++    var host = document.getElementById("user-table");
++
++    var result = await App.db
++      .from("profiles")
++      .select("email, display_name, role, created_at")
++      .order("created_at", { ascending: true });
++
++    if (result.error) {
++      host.innerHTML =
++        '<p class="notice error">Could not load users: ' +
++        App.escape(result.error.message) + "</p>";
++      return;
++    }
++
++    if (!result.data || result.data.length === 0) {
++      host.innerHTML =
++        '<p class="notice">No profiles found. Profiles are created ' +
++        "automatically when a user is added in Supabase " +
++        "(Authentication, then Users, then Add user).</p>";
++      return;
++    }
++
++    var html = '<div class="table-wrap"><table><thead><tr>' +
++      "<th>Name</th><th>Email</th><th>Role</th><th>Added</th>" +
++      "</tr></thead><tbody>";
++
++    result.data.forEach(function (profile) {
++      var added = profile.created_at
++        ? new Date(profile.created_at).toLocaleDateString()
++        : "";
++      html +=
++        "<tr>" +
++        "<td>" + App.escape(profile.display_name || "") + "</td>" +
++        '<td class="mono">' + App.escape(profile.email || "") + "</td>" +
++        "<td>" +
++        (profile.role === "admin"
++          ? '<span class="badge admin">admin</span>'
++          : '<span class="badge">member</span>') +
++        "</td>" +
++        "<td>" + App.escape(added) + "</td>" +
++        "</tr>";
++    });
++
++    html += "</tbody></table></div>";
++    host.innerHTML = html;
++  });
++})();
+diff --git a/dashboard.html b/dashboard.html
+new file mode 100644
+index 0000000..3165ffe
+--- /dev/null
++++ b/dashboard.html
+@@ -0,0 +1,58 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <meta name="robots" content="noindex">
++  <title>Dashboard - Onboarding Portal</title>
++  <link rel="stylesheet" href="assets/css/tokens.css">
++  <link rel="stylesheet" href="assets/css/main.css">
++</head>
++<body>
++  <header id="app-nav"></header>
++
++  <main class="page">
++    <div class="page-head">
++      <span class="eyebrow">Overview</span>
++      <h1>Dashboard</h1>
++      <p class="lede">Current state of the reference material and prototype
++        registry. All content is served from the database, not this repo.</p>
++    </div>
++
++    <div class="card-grid" style="margin-bottom: var(--s-6)">
++      <a class="card" href="reference.html">
++        <span class="eyebrow">API reference</span>
++        <p class="stat" id="stat-specs">-</p>
++        <p class="card-meta">Specs published</p>
++      </a>
++      <a class="card" href="reference.html">
++        <span class="eyebrow">Endpoints</span>
++        <p class="stat" id="stat-endpoints">-</p>
++        <p class="card-meta">Documented endpoints</p>
++      </a>
++      <a class="card" href="prototypes/index.html">
++        <span class="eyebrow">Prototypes</span>
++        <p class="stat" id="stat-prototypes">-</p>
++        <p class="card-meta">Registered prototypes</p>
++      </a>
++      <a class="card" href="users.html">
++        <span class="eyebrow">Access</span>
++        <p class="stat" id="stat-users">-</p>
++        <p class="card-meta">Portal users</p>
++      </a>
++    </div>
++
++    <span class="eyebrow">Recently updated specs</span>
++    <div id="recent-specs" style="margin-top: var(--s-3)">
++      <p class="notice">Loading</p>
++    </div>
++  </main>
++
++  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
++  <script src="assets/js/config.js"></script>
++  <script src="assets/js/supabase.js"></script>
++  <script src="assets/js/guard.js"></script>
++  <script src="assets/js/ui.js"></script>
++  <script src="assets/js/dashboard.js"></script>
++</body>
++</html>
+diff --git a/docs/ARCHITECTURE.md b/docs/ARCHITECTURE.md
+new file mode 100644
+index 0000000..ef298f5
+--- /dev/null
++++ b/docs/ARCHITECTURE.md
+@@ -0,0 +1,77 @@
++# Architecture
++
++How the portal fits together. Read alongside SECURITY.md.
++
++## The shape of the system
++
++The repository is a static site: HTML pages, two stylesheets and a set
++of small JavaScript modules. There is no build step and no server-side
++code. Supabase provides everything dynamic: authentication, the user
++register, API specs, endpoint detail and the prototype registry.
++
++The consequence of this split is the core design rule: the repo can be
++public because it contains only structure and rendering logic. All
++substance lives behind Supabase Row Level Security.
++
++## Page flow
++
++1. index.html is the only unguarded page. It signs users in with
++   Supabase email and password auth, then redirects to the dashboard.
++   If a session already exists, it redirects immediately.
++2. Every other page includes guard.js, which checks for a session
++   before anything renders and bounces unauthenticated visitors back
++   to index.html.
++3. dashboard.html is the hub: counts, recent spec activity, and routes
++   into the reference viewer, prototype gallery and user register.
++4. reference.html renders the selected spec from the database.
++5. prototypes/index.html renders the prototype registry as cards that
++   link to prototype pages stored in the same directory.
++
++## JavaScript module order
++
++Each protected page loads scripts in a fixed order, each attaching to
++a shared window.App namespace:
++
++    supabase CDN client   provides window.supabase
++    config.js             gitignored; defines window.APP_CONFIG
++    supabase.js           creates App.db, or renders a setup notice
++    guard.js              App.requireAuth promise, App.onAuthed(fn)
++    ui.js                 nav rendering, App.escape, badges, copy
++    <page module>         waits on App.onAuthed before fetching
++
++Page modules never fetch before authentication resolves, and never
++insert unescaped strings into the DOM.
++
++## Data model
++
++Four tables, defined in supabase/schema.sql:
++
++- profiles: one row per user, created by trigger on signup, carrying
++  email, display name and role (admin or member).
++- api_specs: one row per spec, with title, version, status and an
++  optional full OpenAPI 3 document in a JSONB column.
++- api_endpoints: one row per endpoint (method, path, tag, summary,
++  description, params, request and response examples, sort order),
++  linked to a spec. This is the primary editing surface.
++- prototypes: registry rows (title, description, path, status, tags)
++  that drive the gallery and dashboard.
++
++The reference viewer prefers api_endpoints rows and falls back to
++parsing the spec JSONB when a spec has no endpoint rows, so a whole
++OpenAPI document can be pasted in as a starting point and broken out
++into rows later.
++
++## Updating content
++
++Day-to-day updates to reference material are database edits made in
++the Supabase dashboard: no commits, no deploys, and nothing sensitive
++enters git history. The repo changes only when structure, styling or
++rendering behaviour changes.
++
++## Hosting
++
++Any static host works: GitHub Pages, Netlify, Vercel, or opening the
++files locally. The only per-environment artefact is assets/js/config.js,
++which is created by hand from config.example.js and never committed.
++For hosted deployments, add the deployed URL to the Supabase auth
++redirect allow-list (Authentication, then URL configuration).
+diff --git a/docs/DESIGN.md b/docs/DESIGN.md
+new file mode 100644
+index 0000000..24bbe5f
+--- /dev/null
++++ b/docs/DESIGN.md
+@@ -0,0 +1,61 @@
++# Design standards
++
++The visual and writing rules for every page in this portal. These are
++binding on all future work; CLAUDE.md requires them.
++
++## Character
++
++An internal engineering document, not a marketing site. The register
++is a well-set technical reference: quiet surfaces, disciplined type,
++and one signature device that marks the system as its own: uppercase,
++letter-spaced monospace eyebrows labelling every section, echoing the
++method badges and paths of the API reference at the heart of the tool.
++
++## Tokens are law
++
++Every colour, size, weight and space comes from assets/css/tokens.css.
++No hex values, pixel sizes or font stacks anywhere else. If a design
++need is not expressible in current tokens, add a token first, then use
++it.
++
++Palette: near-monochrome cool greys on an off-white paper, one petrol
++accent (--accent) for actions and active states. HTTP method badges use
++conventional muted tints (get teal, post blue, put amber, patch violet,
++delete red) because convention is information in an API reference.
++Status badges: live green, draft amber, deprecated red.
++
++Type: the system UI stack for prose, the system monospace stack for
++paths, code, table headers, eyebrows and the wordmark. Scale and
++weights are fixed in tokens.css; do not invent sizes.
++
++Space: the 4px scale in tokens.css. Prefer more whitespace over more
++borders. Radius 6px, shadows barely-there.
++
++## Rules
++
++- No emojis anywhere. No decorative icons, gradients, illustrations or
++  stock imagery. If an element does not carry information, remove it.
++- Density with legibility: tables for records, cards for routes,
++  definition-style blocks for endpoints. Never center-align prose.
++- Structural devices must encode something true: eyebrows name real
++  sections, badges state real methods and statuses. No numbering or
++  labelling for decoration.
++- Motion: none beyond native browser behaviour. The portal is a
++  reference; it should feel instant and still.
++- Accessibility floor: visible keyboard focus (tokens define it),
++  labels on every input, aria-current on active nav, reduced-motion
++  respected, contrast at WCAG AA or better.
++- Responsive floor: usable at 360px wide; the reference sidebar stacks
++  above content on narrow screens.
++
++## Writing in the interface
++
++- Sentence case everywhere, including buttons and table headers
++  (the mono eyebrow style is a visual treatment, not a licence for
++  shouting in copy).
++- Buttons say what they do: "Sign in", "Copy", never "Submit" or "OK".
++- Errors state what went wrong and what to do next. No apologies, no
++  vagueness.
++- Empty states direct the next action, naming the exact table or file
++  involved.
++- No filler, no exclamation marks, no marketing adjectives.
+diff --git a/docs/SECURITY.md b/docs/SECURITY.md
+new file mode 100644
+index 0000000..8507a6a
+--- /dev/null
++++ b/docs/SECURITY.md
+@@ -0,0 +1,69 @@
++# Security model
++
++This repository is public. This document defines what that means and
++what keeps the portal's content private anyway.
++
++## The boundary is the database, not the login page
++
++Anyone can read every file in this repo, view the page source, and see
++the Supabase project URL and anon key once config.js is deployed. None
++of that is a secret:
++
++- The anon key is designed to be shipped to browsers. On its own it
++  grants only what Row Level Security policies allow.
++- With RLS enabled and the policies in supabase/policies.sql applied,
++  an unauthenticated holder of the anon key can read and write
++  nothing. A signed-in member can read content but not change it.
++  Only admins can write.
++
++The login page is a front door for people. RLS is the lock. Never rely
++on the JavaScript guard for security; it is a user-experience feature
++that redirects people to sign in, and nothing more.
++
++## What must never enter the repo
++
++- The service_role key, under any circumstances. It bypasses RLS
++  entirely. It belongs in the Supabase dashboard and nowhere else.
++- assets/js/config.js (gitignored). Even though the anon key is not
++  secret, keeping config out of git keeps environments clean and keeps
++  the habit unambiguous.
++- Real merchant names, live internal endpoint URLs, credentials,
++  personal data, or realistic payloads containing any of these. All of
++  that belongs in database rows, which RLS protects.
++- Screenshots or logs that reveal any of the above.
++
++If sensitive material is ever committed, rotating the exposed value is
++mandatory; deleting the commit is not enough, because forks, clones
++and caches persist.
++
++## Rules for every new table
++
++1. Enable RLS in the same change that creates the table.
++2. Write explicit policies in supabase/policies.sql: who can select,
++   who can write, always scoped to authenticated, with admin checks
++   through the is_admin() function.
++3. Assume a table with no policies is world-readable via the anon key,
++   because with RLS off, it is.
++
++## Account and access practice
++
++- Accounts are created by an admin in the Supabase dashboard
++  (Authentication, then Users, then Add user). Self-service signup is
++  not offered by the portal and should remain disabled in the
++  Supabase auth settings for this project.
++- Grant the admin role sparingly, via SQL:
++  update public.profiles set role = 'admin' where email = '...';
++- Remove leavers in the Supabase dashboard; the profile row cascades.
++- Use strong, unique passwords for the Supabase account itself and
++  enable MFA on it. The dashboard account is the real crown jewels.
++
++## Residual risks to keep in mind
++
++- Content is only as private as the weakest RLS policy. Review
++  policies.sql whenever the schema changes.
++- Members can read everything members can read; there is no
++  per-document access control in this skeleton. If that is ever
++  needed, it becomes new RLS policy work, not front-end work.
++- The repo being public means its structure, table names and rendering
++  logic are visible. That is accepted by design; nothing in structure
++  alone should be sensitive.
+diff --git a/docs/SESSIONS.md b/docs/SESSIONS.md
+new file mode 100644
+index 0000000..daeb661
+--- /dev/null
++++ b/docs/SESSIONS.md
+@@ -0,0 +1,58 @@
++# Session log
++
++Rolling record of work on this repository. Every Claude Code session
++reads the latest entry at the start and writes a checkpoint at the
++end, or earlier if credits or context are running low. The rules for
++when to checkpoint are in CLAUDE.md.
++
++## Checkpoint template
++
++Copy this block to the top of the Log section and fill it in. Newest
++entries first.
++
++    ## YYYY-MM-DD - <short title>
++    Branch: <branch name>
++    Completed:
++    - <finished unit of work, with file paths>
++    In progress:
++    - <half-done item, exact file and state, e.g. "reference.js:
++      params table renders, examples not yet wired">
++    Next steps:
++    1. <the single next action, precisely>
++    2. <then this>
++    Open decisions:
++    - <anything awaiting the repo owner's call>
++
++## Resume prompt template
++
++Paste this as the first message of a new Claude Code session:
++
++    Read CLAUDE.md in full, then read docs/SESSIONS.md and find the
++    most recent checkpoint. Confirm which branch it names and check it
++    out. Summarise the checkpoint back to me in three lines, then
++    carry out its "Next steps" in order. Follow all rules in CLAUDE.md,
++    especially the security rules and the checkpoint-before-credits
++    rule. Do not start any work beyond the listed next steps without
++    asking.
++
++## Log
++
++## 2026-07-08 - Initial skeleton
++Branch: main
++Completed:
++- Full skeleton: login (index.html), dashboard, reference viewer,
++  user register, prototype gallery; token-driven CSS; Supabase
++  schema, RLS policies and sample seed; CLAUDE.md and docs set.
++In progress:
++- None.
++Next steps:
++1. Repo owner applies the skeleton patch and pushes to main.
++2. Repo owner creates the Supabase project, runs schema.sql then
++   policies.sql then seed.sql, creates the first user, promotes it
++   to admin, and creates assets/js/config.js locally.
++3. Verify login, dashboard counts, reference viewer rendering the
++   sample spec, user register, and gallery.
++Open decisions:
++- Hosting target (GitHub Pages assumed).
++- Whether an in-portal admin editor for specs is wanted, or whether
++  editing stays in the Supabase dashboard for now.
+diff --git a/index.html b/index.html
+new file mode 100644
+index 0000000..1612c4e
+--- /dev/null
++++ b/index.html
+@@ -0,0 +1,38 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <meta name="robots" content="noindex">
++  <title>Sign in - Onboarding Portal</title>
++  <link rel="stylesheet" href="assets/css/tokens.css">
++  <link rel="stylesheet" href="assets/css/main.css">
++</head>
++<body>
++  <main class="login-shell">
++    <div class="login-card">
++      <div class="wordmark">Onboarding <span>/</span> Portal</div>
++      <p class="lede">Reference material and prototypes for the merchant
++        onboarding programme. Access is by invitation.</p>
++
++      <form id="login-form">
++        <div class="field">
++          <label for="login-email">Email</label>
++          <input id="login-email" type="email" autocomplete="username" required>
++        </div>
++        <div class="field">
++          <label for="login-password">Password</label>
++          <input id="login-password" type="password" autocomplete="current-password" required>
++        </div>
++        <p id="login-notice" class="notice error hidden" role="alert"></p>
++        <button id="login-submit" class="button" type="submit">Sign in</button>
++      </form>
++    </div>
++  </main>
++
++  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
++  <script src="assets/js/config.js"></script>
++  <script src="assets/js/supabase.js"></script>
++  <script src="assets/js/auth.js"></script>
++</body>
++</html>
+diff --git a/prototypes/index.html b/prototypes/index.html
+new file mode 100644
+index 0000000..baf7761
+--- /dev/null
++++ b/prototypes/index.html
+@@ -0,0 +1,35 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <meta name="robots" content="noindex">
++  <title>Prototypes - Onboarding Portal</title>
++  <link rel="stylesheet" href="../assets/css/tokens.css">
++  <link rel="stylesheet" href="../assets/css/main.css">
++</head>
++<body data-root="..">
++  <header id="app-nav"></header>
++
++  <main class="page">
++    <div class="page-head">
++      <span class="eyebrow">Registry</span>
++      <h1>Prototypes</h1>
++      <p class="lede">Mocks, prototypes and working designs for the
++        onboarding portal. Each entry is registered in the prototypes table;
++        the page files live in this directory.</p>
++    </div>
++
++    <div id="prototype-list">
++      <p class="notice">Loading</p>
++    </div>
++  </main>
++
++  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
++  <script src="../assets/js/config.js"></script>
++  <script src="../assets/js/supabase.js"></script>
++  <script src="../assets/js/guard.js"></script>
++  <script src="../assets/js/ui.js"></script>
++  <script src="../assets/js/gallery.js"></script>
++</body>
++</html>
+diff --git a/reference.html b/reference.html
+new file mode 100644
+index 0000000..0afdeef
+--- /dev/null
++++ b/reference.html
+@@ -0,0 +1,44 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <meta name="robots" content="noindex">
++  <title>API reference - Onboarding Portal</title>
++  <link rel="stylesheet" href="assets/css/tokens.css">
++  <link rel="stylesheet" href="assets/css/main.css">
++</head>
++<body>
++  <header id="app-nav"></header>
++
++  <main class="page">
++    <div class="page-head">
++      <span class="eyebrow">Reference</span>
++      <h1>API reference</h1>
++      <p class="lede">Inbound APIs for new and returning merchants. Content
++        is drawn live from the api_specs and api_endpoints tables; update
++        the database and this page updates for everyone.</p>
++    </div>
++
++    <div class="spec-picker">
++      <label class="eyebrow" for="spec-picker">Spec</label>
++      <select id="spec-picker"></select>
++      <span id="spec-meta"></span>
++    </div>
++
++    <div class="ref-layout">
++      <aside class="ref-sidebar" id="ref-sidebar" aria-label="Endpoint index"></aside>
++      <section id="ref-content">
++        <p class="notice">Loading</p>
++      </section>
++    </div>
++  </main>
++
++  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
++  <script src="assets/js/config.js"></script>
++  <script src="assets/js/supabase.js"></script>
++  <script src="assets/js/guard.js"></script>
++  <script src="assets/js/ui.js"></script>
++  <script src="assets/js/reference.js"></script>
++</body>
++</html>
+diff --git a/supabase/policies.sql b/supabase/policies.sql
+new file mode 100644
+index 0000000..6f73f38
+--- /dev/null
++++ b/supabase/policies.sql
+@@ -0,0 +1,120 @@
++-- ------------------------------------------------------------------
++-- policies.sql - Row Level Security. Run AFTER schema.sql.
++--
++-- This file is the security boundary of the whole portal. The anon
++-- key in the browser is only safe because these policies exist:
++--
++--   * Unauthenticated visitors can read and write NOTHING.
++--   * Signed-in users can read specs, endpoints, prototypes and the
++--     user list.
++--   * Only admins (profiles.role = 'admin') can write.
++--
++-- If a table is ever added without enabling RLS and adding policies,
++-- its contents are exposed to anyone with the anon key. Treat any
++-- new table as public until this file covers it.
++-- ------------------------------------------------------------------
++
++-- Admin check. SECURITY DEFINER so the lookup on profiles does not
++-- recurse through profiles' own RLS policies.
++create or replace function public.is_admin()
++returns boolean
++language sql
++stable
++security definer
++set search_path = public
++as $$
++  select exists (
++    select 1 from public.profiles
++    where id = auth.uid() and role = 'admin'
++  );
++$$;
++
++-- ---------------------------------------------------------------
++-- profiles
++-- ---------------------------------------------------------------
++
++alter table public.profiles enable row level security;
++
++drop policy if exists "profiles: members read all" on public.profiles;
++create policy "profiles: members read all"
++  on public.profiles for select
++  to authenticated
++  using (true);
++
++drop policy if exists "profiles: users update own name" on public.profiles;
++create policy "profiles: users update own name"
++  on public.profiles for update
++  to authenticated
++  using (id = auth.uid())
++  with check (id = auth.uid() and role = (select p.role from public.profiles p where p.id = auth.uid()));
++
++drop policy if exists "profiles: admins manage" on public.profiles;
++create policy "profiles: admins manage"
++  on public.profiles for all
++  to authenticated
++  using (public.is_admin())
++  with check (public.is_admin());
++
++-- ---------------------------------------------------------------
++-- api_specs
++-- ---------------------------------------------------------------
++
++alter table public.api_specs enable row level security;
++
++drop policy if exists "api_specs: members read" on public.api_specs;
++create policy "api_specs: members read"
++  on public.api_specs for select
++  to authenticated
++  using (true);
++
++drop policy if exists "api_specs: admins write" on public.api_specs;
++create policy "api_specs: admins write"
++  on public.api_specs for all
++  to authenticated
++  using (public.is_admin())
++  with check (public.is_admin());
++
++-- ---------------------------------------------------------------
++-- api_endpoints
++-- ---------------------------------------------------------------
++
++alter table public.api_endpoints enable row level security;
++
++drop policy if exists "api_endpoints: members read" on public.api_endpoints;
++create policy "api_endpoints: members read"
++  on public.api_endpoints for select
++  to authenticated
++  using (true);
++
++drop policy if exists "api_endpoints: admins write" on public.api_endpoints;
++create policy "api_endpoints: admins write"
++  on public.api_endpoints for all
++  to authenticated
++  using (public.is_admin())
++  with check (public.is_admin());
++
++-- ---------------------------------------------------------------
++-- prototypes
++-- ---------------------------------------------------------------
++
++alter table public.prototypes enable row level security;
++
++drop policy if exists "prototypes: members read" on public.prototypes;
++create policy "prototypes: members read"
++  on public.prototypes for select
++  to authenticated
++  using (true);
++
++drop policy if exists "prototypes: admins write" on public.prototypes;
++create policy "prototypes: admins write"
++  on public.prototypes for all
++  to authenticated
++  using (public.is_admin())
++  with check (public.is_admin());
++
++-- ---------------------------------------------------------------
++-- After running this file, promote your own account to admin:
++--
++--   update public.profiles set role = 'admin'
++--   where email = 'you@example.com';
++-- ---------------------------------------------------------------
+diff --git a/supabase/schema.sql b/supabase/schema.sql
+new file mode 100644
+index 0000000..e432275
+--- /dev/null
++++ b/supabase/schema.sql
+@@ -0,0 +1,130 @@
++-- ------------------------------------------------------------------
++-- schema.sql - Tables, triggers and indexes for the onboarding portal.
++-- Run this FIRST in the Supabase SQL editor, then policies.sql, then
++-- (optionally) seed.sql.
++-- ------------------------------------------------------------------
++
++-- ---------------------------------------------------------------
++-- profiles: one row per portal user, extends Supabase auth.users.
++-- Created automatically by trigger when a user is added.
++-- ---------------------------------------------------------------
++
++create table if not exists public.profiles (
++  id uuid primary key references auth.users (id) on delete cascade,
++  email text,
++  display_name text,
++  role text not null default 'member' check (role in ('admin', 'member')),
++  created_at timestamptz not null default now()
++);
++
++create or replace function public.handle_new_user()
++returns trigger
++language plpgsql
++security definer
++set search_path = public
++as $$
++begin
++  insert into public.profiles (id, email, display_name)
++  values (
++    new.id,
++    new.email,
++    coalesce(new.raw_user_meta_data ->> 'display_name', split_part(new.email, '@', 1))
++  );
++  return new;
++end;
++$$;
++
++drop trigger if exists on_auth_user_created on auth.users;
++create trigger on_auth_user_created
++  after insert on auth.users
++  for each row execute function public.handle_new_user();
++
++-- ---------------------------------------------------------------
++-- Shared updated_at trigger function.
++-- ---------------------------------------------------------------
++
++create or replace function public.set_updated_at()
++returns trigger
++language plpgsql
++as $$
++begin
++  new.updated_at = now();
++  return new;
++end;
++$$;
++
++-- ---------------------------------------------------------------
++-- api_specs: one row per API specification. The spec column can
++-- hold a full OpenAPI 3 document as JSONB; the viewer falls back to
++-- it when no api_endpoints rows exist for the spec.
++-- ---------------------------------------------------------------
++
++create table if not exists public.api_specs (
++  id uuid primary key default gen_random_uuid(),
++  title text not null,
++  version text not null default '0.1.0',
++  status text not null default 'draft' check (status in ('draft', 'live', 'deprecated')),
++  description text,
++  spec jsonb,
++  created_at timestamptz not null default now(),
++  updated_at timestamptz not null default now()
++);
++
++drop trigger if exists api_specs_updated_at on public.api_specs;
++create trigger api_specs_updated_at
++  before update on public.api_specs
++  for each row execute function public.set_updated_at();
++
++-- ---------------------------------------------------------------
++-- api_endpoints: one row per endpoint, for piecemeal editing.
++-- params, request_example and response_example are JSONB so payload
++-- shapes stay structured. params is an array of objects:
++--   [{ "name": "...", "in": "path|query|header|body",
++--      "type": "...", "required": true, "description": "..." }]
++-- ---------------------------------------------------------------
++
++create table if not exists public.api_endpoints (
++  id uuid primary key default gen_random_uuid(),
++  spec_id uuid not null references public.api_specs (id) on delete cascade,
++  method text not null check (method in ('get', 'post', 'put', 'patch', 'delete')),
++  path text not null,
++  tag text not null default 'General',
++  summary text,
++  description text,
++  params jsonb not null default '[]'::jsonb,
++  request_example jsonb,
++  response_example jsonb,
++  sort_order integer not null default 100,
++  created_at timestamptz not null default now(),
++  updated_at timestamptz not null default now()
++);
++
++create index if not exists api_endpoints_spec_idx
++  on public.api_endpoints (spec_id, tag, sort_order);
++
++drop trigger if exists api_endpoints_updated_at on public.api_endpoints;
++create trigger api_endpoints_updated_at
++  before update on public.api_endpoints
++  for each row execute function public.set_updated_at();
++
++-- ---------------------------------------------------------------
++-- prototypes: registry of prototype pages under prototypes/ in the
++-- repo. The gallery and dashboard render from this table so adding
++-- a prototype is a database insert, not a navigation code change.
++-- ---------------------------------------------------------------
++
++create table if not exists public.prototypes (
++  id uuid primary key default gen_random_uuid(),
++  title text not null,
++  description text,
++  path text not null,
++  status text not null default 'draft' check (status in ('draft', 'live', 'deprecated')),
++  tags text[] not null default '{}',
++  created_at timestamptz not null default now(),
++  updated_at timestamptz not null default now()
++);
++
++drop trigger if exists prototypes_updated_at on public.prototypes;
++create trigger prototypes_updated_at
++  before update on public.prototypes
++  for each row execute function public.set_updated_at();
+diff --git a/supabase/seed.sql b/supabase/seed.sql
+new file mode 100644
+index 0000000..f9a2468
+--- /dev/null
++++ b/supabase/seed.sql
+@@ -0,0 +1,121 @@
++-- ------------------------------------------------------------------
++-- seed.sql - OPTIONAL sample data. Run AFTER schema.sql and
++-- policies.sql, from the Supabase SQL editor (which runs with full
++-- privileges, so RLS does not block the inserts).
++--
++-- Everything below is deliberately generic sample content used to
++-- prove the viewer works end to end. Replace it with real material
++-- directly in the database. Never copy real merchant data, live
++-- endpoints or credentials into this file: the repo is public.
++-- ------------------------------------------------------------------
++
++-- Sample spec ------------------------------------------------------
++
++insert into public.api_specs (id, title, version, status, description)
++values (
++  '11111111-1111-1111-1111-111111111111',
++  'Merchant Onboarding API (sample)',
++  '0.1.0',
++  'draft',
++  'Worked sample demonstrating the reference viewer. Replace with real specs in the database.'
++);
++
++-- Sample endpoints -------------------------------------------------
++
++insert into public.api_endpoints
++  (spec_id, method, path, tag, summary, description, params, request_example, response_example, sort_order)
++values
++(
++  '11111111-1111-1111-1111-111111111111',
++  'post',
++  '/v1/merchants',
++  'Merchants',
++  'Create a merchant application',
++  'Starts an onboarding application for a new merchant. Returns the application in a pending state.',
++  '[
++    {"name": "legal_name", "in": "body", "type": "string", "required": true, "description": "Registered legal name of the business."},
++    {"name": "country", "in": "body", "type": "string", "required": true, "description": "ISO 3166-1 alpha-2 country code."},
++    {"name": "contact_email", "in": "body", "type": "string", "required": true, "description": "Primary contact for the application."}
++  ]'::jsonb,
++  '{"legal_name": "Example Trading Ltd", "country": "GB", "contact_email": "ops@example.com"}'::jsonb,
++  '{"id": "mch_123", "status": "pending", "created_at": "2026-01-01T00:00:00Z"}'::jsonb,
++  10
++),
++(
++  '11111111-1111-1111-1111-111111111111',
++  'get',
++  '/v1/merchants/{merchant_id}',
++  'Merchants',
++  'Retrieve a merchant application',
++  'Returns the current state of a merchant application, including outstanding requirements.',
++  '[
++    {"name": "merchant_id", "in": "path", "type": "string", "required": true, "description": "Identifier returned when the application was created."}
++  ]'::jsonb,
++  null,
++  '{"id": "mch_123", "status": "in_review", "requirements": ["proof_of_address"]}'::jsonb,
++  20
++),
++(
++  '11111111-1111-1111-1111-111111111111',
++  'patch',
++  '/v1/merchants/{merchant_id}',
++  'Merchants',
++  'Update a merchant application',
++  'Updates fields on an application while it is still pending or in review.',
++  '[
++    {"name": "merchant_id", "in": "path", "type": "string", "required": true, "description": "Application identifier."},
++    {"name": "contact_email", "in": "body", "type": "string", "required": false, "description": "Replacement contact address."}
++  ]'::jsonb,
++  '{"contact_email": "finance@example.com"}'::jsonb,
++  '{"id": "mch_123", "status": "in_review"}'::jsonb,
++  30
++),
++(
++  '11111111-1111-1111-1111-111111111111',
++  'post',
++  '/v1/merchants/{merchant_id}/documents',
++  'Documents',
++  'Attach a verification document',
++  'Uploads a document reference against an outstanding requirement.',
++  '[
++    {"name": "merchant_id", "in": "path", "type": "string", "required": true, "description": "Application identifier."},
++    {"name": "type", "in": "body", "type": "string", "required": true, "description": "Requirement the document satisfies, for example proof_of_address."},
++    {"name": "file_token", "in": "body", "type": "string", "required": true, "description": "Token from the file upload service."}
++  ]'::jsonb,
++  '{"type": "proof_of_address", "file_token": "tok_abc"}'::jsonb,
++  '{"id": "doc_456", "status": "received"}'::jsonb,
++  10
++),
++(
++  '11111111-1111-1111-1111-111111111111',
++  'get',
++  '/v1/merchants/{merchant_id}/status',
++  'Status',
++  'Poll onboarding status',
++  'Lightweight endpoint for returning merchants and integrators to poll application progress.',
++  '[
++    {"name": "merchant_id", "in": "path", "type": "string", "required": true, "description": "Application identifier."}
++  ]'::jsonb,
++  null,
++  '{"status": "approved", "approved_at": "2026-01-02T00:00:00Z"}'::jsonb,
++  10
++);
++
++-- Sample prototype registry entries --------------------------------
++
++insert into public.prototypes (title, description, path, status, tags)
++values
++(
++  'API reference viewer',
++  'The reference viewer itself, registered here as the first working prototype.',
++  'reference.html',
++  'live',
++  array['reference', 'core']
++),
++(
++  'Merchant onboarding flow (placeholder)',
++  'Reserved slot for the first onboarding UI mock. Create the page under prototypes/ and update this row.',
++  'prototypes/index.html',
++  'draft',
++  array['onboarding', 'mock']
++);
+diff --git a/users.html b/users.html
+new file mode 100644
+index 0000000..a6013d0
+--- /dev/null
++++ b/users.html
+@@ -0,0 +1,35 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <meta name="robots" content="noindex">
++  <title>Users - Onboarding Portal</title>
++  <link rel="stylesheet" href="assets/css/tokens.css">
++  <link rel="stylesheet" href="assets/css/main.css">
++</head>
++<body>
++  <header id="app-nav"></header>
++
++  <main class="page">
++    <div class="page-head">
++      <span class="eyebrow">Access</span>
++      <h1>Users</h1>
++      <p class="lede">Everyone with access to this portal. Accounts are
++        created by an admin in the Supabase dashboard under Authentication,
++        then Users; a profile row appears here automatically.</p>
++    </div>
++
++    <div id="user-table">
++      <p class="notice">Loading</p>
++    </div>
++  </main>
++
++  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
++  <script src="assets/js/config.js"></script>
++  <script src="assets/js/supabase.js"></script>
++  <script src="assets/js/guard.js"></script>
++  <script src="assets/js/ui.js"></script>
++  <script src="assets/js/users.js"></script>
++</body>
++</html>
