@@ -1,0 +1,18 @@
+# Local configuration containing Supabase keys. Never commit.
+assets/js/config.js
+
+# Environment files
+.env
+.env.*
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.swp
+
+# Dependencies (if tooling is ever added)
+node_modules/
+
+# Local scratch files
+*.local.*
+scratch/

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>API reference - Onboarding Portal</title>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <header id="app-nav"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="eyebrow">Reference</span>
+      <h1>API reference</h1>
+      <p class="lede">Inbound APIs for new and returning merchants. Content
+        is drawn live from the api_specs and api_endpoints tables; update
+        the database and this page updates for everyone.</p>
+    </div>
+
+    <div class="spec-picker">
+      <label class="eyebrow" for="spec-picker">Spec</label>
+      <select id="spec-picker"></select>
+      <span id="spec-meta"></span>
+    </div>
+
+    <div class="ref-layout">
+      <aside class="ref-sidebar" id="ref-sidebar" aria-label="Endpoint index"></aside>
+      <section id="ref-content">
+        <p class="notice">Loading</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/guard.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/reference.js"></script>
+</body>
+</html>

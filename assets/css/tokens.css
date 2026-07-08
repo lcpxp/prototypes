@@ -1,0 +1,80 @@
+/* ------------------------------------------------------------------
+   tokens.css - Design tokens for the onboarding portal prototype hub.
+   Every colour, size and type decision used anywhere in the UI must
+   come from this file. Do not hard-code values in main.css or pages.
+   See docs/DESIGN.md for the rules governing these tokens.
+------------------------------------------------------------------- */
+
+:root {
+  /* Colour: cool, near-monochrome surface set with one petrol accent */
+  --ink: #171a20;            /* primary text */
+  --muted: #5c6572;          /* secondary text, labels */
+  --faint: #8b93a1;          /* tertiary text, placeholders */
+  --paper: #f6f7f9;          /* page background */
+  --surface: #ffffff;        /* cards, panels, nav */
+  --line: #e2e5ea;           /* borders, dividers */
+  --line-strong: #c9ced6;    /* emphasised borders, inputs */
+
+  --accent: #0e6c64;         /* primary action, active states */
+  --accent-strong: #0a524c;  /* hover / pressed */
+  --accent-soft: #e2efed;    /* tinted backgrounds for accent */
+
+  --danger: #b0272e;
+  --danger-soft: #f7e6e7;
+  --warn: #8f6400;
+  --warn-soft: #f6efdd;
+  --ok: #1d6f42;
+  --ok-soft: #e3f0e9;
+
+  /* HTTP method badge colours (convention-led, muted tints) */
+  --m-get: #0e6c64;
+  --m-get-bg: #e2efed;
+  --m-post: #1f5fa8;
+  --m-post-bg: #e5edf7;
+  --m-put: #8f6400;
+  --m-put-bg: #f6efdd;
+  --m-patch: #64509b;
+  --m-patch-bg: #ece8f5;
+  --m-delete: #b0272e;
+  --m-delete-bg: #f7e6e7;
+
+  /* Type */
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono",
+    Menlo, Consolas, monospace;
+
+  --text-xs: 0.75rem;   /* 12px - eyebrows, badges, meta */
+  --text-sm: 0.8125rem; /* 13px - table data, code */
+  --text-md: 0.9375rem; /* 15px - body */
+  --text-lg: 1.125rem;  /* 18px - card titles */
+  --text-xl: 1.5rem;    /* 24px - page titles */
+  --text-2xl: 2rem;     /* 32px - login wordmark */
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  --tracking-wide: 0.08em; /* uppercase mono eyebrows */
+
+  /* Space: 4px base scale */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+
+  /* Shape and depth */
+  --radius: 6px;
+  --radius-sm: 4px;
+  --shadow: 0 1px 2px rgba(23, 26, 32, 0.06);
+  --shadow-raised: 0 4px 16px rgba(23, 26, 32, 0.08);
+
+  /* Layout */
+  --nav-height: 3.25rem;
+  --content-max: 72rem;
+  --sidebar-width: 17rem;
+}

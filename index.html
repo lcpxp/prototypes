@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Sign in - Onboarding Portal</title>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <main class="login-shell">
+    <div class="login-card">
+      <div class="wordmark">Onboarding <span>/</span> Portal</div>
+      <p class="lede">Reference material and prototypes for the merchant
+        onboarding programme. Access is by invitation.</p>
+
+      <form id="login-form">
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" type="email" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input id="login-password" type="password" autocomplete="current-password" required>
+        </div>
+        <p id="login-notice" class="notice error hidden" role="alert"></p>
+        <button id="login-submit" class="button" type="submit">Sign in</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>

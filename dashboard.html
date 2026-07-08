@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Dashboard - Onboarding Portal</title>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <header id="app-nav"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="eyebrow">Overview</span>
+      <h1>Dashboard</h1>
+      <p class="lede">Current state of the reference material and prototype
+        registry. All content is served from the database, not this repo.</p>
+    </div>
+
+    <div class="card-grid" style="margin-bottom: var(--s-6)">
+      <a class="card" href="reference.html">
+        <span class="eyebrow">API reference</span>
+        <p class="stat" id="stat-specs">-</p>
+        <p class="card-meta">Specs published</p>
+      </a>
+      <a class="card" href="reference.html">
+        <span class="eyebrow">Endpoints</span>
+        <p class="stat" id="stat-endpoints">-</p>
+        <p class="card-meta">Documented endpoints</p>
+      </a>
+      <a class="card" href="prototypes/index.html">
+        <span class="eyebrow">Prototypes</span>
+        <p class="stat" id="stat-prototypes">-</p>
+        <p class="card-meta">Registered prototypes</p>
+      </a>
+      <a class="card" href="users.html">
+        <span class="eyebrow">Access</span>
+        <p class="stat" id="stat-users">-</p>
+        <p class="card-meta">Portal users</p>
+      </a>
+    </div>
+
+    <span class="eyebrow">Recently updated specs</span>
+    <div id="recent-specs" style="margin-top: var(--s-3)">
+      <p class="notice">Loading</p>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/supabase.js"></script>
+  <script src="assets/js/guard.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>
