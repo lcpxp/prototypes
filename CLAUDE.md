@@ -125,3 +125,23 @@ is likely, checkpoint first.
 - No hard-coded design values; no sensitive data introduced.
 - Relevant docs updated; session log updated if the change is part of
   a tracked piece of work.
+
+<!-- harness:start -->
+## Verification harness
+
+- Commands: `npm run setup` (once per clone), `npm test` (full
+  suite), `npm run map` (regenerate codemap). Zero dependencies;
+  Node built-in test runner.
+- Definition of done now includes: a benchmark in tests/ covers the
+  change and the whole suite is green. Gates in tests/checks/
+  enforce the security, structure, style and size rules above
+  mechanically; the pre-commit hook runs them.
+- File size budgets: tests/size-budget.json (js/css soft 300 hard
+  500; html 250/400; md 200/300). Over soft = schedule a split;
+  over hard = split before extending. Exceptions are listed in the
+  JSON with an exit plan.
+- Navigation: read docs/CODEMAP.md (generated file + symbol index)
+  and jump to file:line rather than reading whole files. llms.txt
+  is the entry point for external crawlers. Never hand-edit either.
+- Full process and rationale: docs/HARNESS.md.
+<!-- harness:end -->

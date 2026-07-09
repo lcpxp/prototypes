@@ -1,0 +1,11 @@
+# <type>: <imperative summary, max 60 chars>
+# types: feat fix docs test refactor chore
+#
+# Why:
+# -
+#
+# Verified:
+# - npm test green
+# -
+#
+# Refs: docs/SESSIONS.md checkpoint / issue link if any
