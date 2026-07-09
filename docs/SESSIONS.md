@@ -37,22 +37,26 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
-## 2026-07-08 - Initial skeleton
+## 2026-07-09 - LPio hub and silo structure
 Branch: main
 Completed:
-- Full skeleton: login (index.html), dashboard, reference viewer,
-  user register, prototype gallery; token-driven CSS; Supabase
-  schema, RLS policies and sample seed; CLAUDE.md and docs set.
+- Reframed the experience around LPio / LaunchPad IO as a top-level
+  project hub rather than a single onboarding portal.
+- Updated navigation, dashboard copy and login copy to reflect a
+  broader workspace for guidance, reference material and prototypes.
+- Added a dedicated project-silo entry point at silos/ with a starter
+  standalone tooling silo example.
 In progress:
 - None.
 Next steps:
-1. Repo owner applies the skeleton patch and pushes to main.
-2. Repo owner creates the Supabase project, runs schema.sql then
-   policies.sql then seed.sql, creates the first user, promotes it
-   to admin, and creates assets/js/config.js locally.
+1. Add any future standalone project folders under silos/ and link them
+   from silos/index.html.
+2. Create the Supabase project, run schema.sql then policies.sql then
+   seed.sql, create the first user, promote it to admin, and create
+   assets/js/config.js locally.
 3. Verify login, dashboard counts, reference viewer rendering the
    sample spec, user register, and gallery.
 Open decisions:
 - Hosting target (GitHub Pages assumed).
-- Whether an in-portal admin editor for specs is wanted, or whether
-  editing stays in the Supabase dashboard for now.
+- Whether additional silo-specific pages should be created for each
+  workstream as they emerge.

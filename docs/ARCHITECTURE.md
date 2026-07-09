@@ -9,6 +9,11 @@ of small JavaScript modules. There is no build step and no server-side
 code. Supabase provides everything dynamic: authentication, the user
 register, API specs, endpoint detail and the prototype registry.
 
+LPio is the overarching project shell. It is designed so that different
+streams of work can live as discrete silos (for example, a portal mock,
+a standalone tool prototype, or a set of swagger-style reference files)
+while still being discoverable from one hub.
+
 The consequence of this split is the core design rule: the repo can be
 public because it contains only structure and rendering logic. All
 substance lives behind Supabase Row Level Security.
@@ -22,9 +27,12 @@ substance lives behind Supabase Row Level Security.
    before anything renders and bounces unauthenticated visitors back
    to index.html.
 3. dashboard.html is the hub: counts, recent spec activity, and routes
-   into the reference viewer, prototype gallery and user register.
-4. reference.html renders the selected spec from the database.
-5. prototypes/index.html renders the prototype registry as cards that
+   into the reference viewer, prototype gallery, project silos and user
+   register.
+4. silos/index.html is the central entry to project-specific workstreams.
+   Each silo can be its own folder or page and can be linked from here.
+5. reference.html renders the selected spec from the database.
+6. prototypes/index.html renders the prototype registry as cards that
    link to prototype pages stored in the same directory.
 
 ## JavaScript module order

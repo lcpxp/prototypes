@@ -63,6 +63,7 @@
       countRows("prototypes"),
       countRows("profiles"),
     ]);
+    setStat("stat-silos", "4");
     setStat("stat-specs", counts[0]);
     setStat("stat-endpoints", counts[1]);
     setStat("stat-prototypes", counts[2]);

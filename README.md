@@ -1,12 +1,13 @@
-# Onboarding Portal - prototypes and API reference
+# LPio - LaunchPad IO
 
-The shell of an internal portal for the merchant onboarding programme:
-a login-gated dashboard, an API reference viewer and a prototype
-gallery. This repository is public by design and therefore contains
-only structure, styling and rendering logic. All substantive content
-(API specs, endpoints, users, the prototype registry) lives in
-Supabase behind Row Level Security. See docs/SECURITY.md before
-committing anything.
+LPio is a public repository that acts as a top-level project hub for
+developer material, guidance, prototypes and independent workstreams.
+It provides a central place to store, share and work on material while
+letting each area live in its own silo when needed. This repository is
+public by design and therefore contains only structure, styling and
+rendering logic. All substantive content (API specs, endpoints, users,
+the prototype registry) lives in Supabase behind Row Level Security.
+See docs/SECURITY.md before committing anything.
 
 ## Layout
 
@@ -14,6 +15,7 @@ committing anything.
     dashboard.html        Post-login hub
     reference.html        API reference viewer ("swagger")
     users.html            User register
+    silos/                Central project-silo index and standalone silo pages
     prototypes/           Prototype pages and gallery
     assets/css/           tokens.css (design tokens), main.css
     assets/js/            Auth, guard, UI and page modules

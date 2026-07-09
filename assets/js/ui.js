@@ -49,7 +49,8 @@
     var root = App.root || ".";
     var links = [
       { href: root + "/dashboard.html", label: "Dashboard" },
-      { href: root + "/reference.html", label: "API reference" },
+      { href: root + "/silos/", label: "Project silos" },
+      { href: root + "/reference.html", label: "Developer material" },
       { href: root + "/prototypes/index.html", label: "Prototypes" },
       { href: root + "/users.html", label: "Users" },
     ];
@@ -59,7 +60,7 @@
     var html = '<nav class="nav">';
     html +=
       '<a class="nav-brand" href="' + root + '/dashboard.html">' +
-      'Onboarding <span style="color: var(--accent)">/</span> Portal</a>';
+      'LPio <span style="color: var(--accent)">/</span> LaunchPad IO</a>';
     html += '<div class="nav-links">';
     links.forEach(function (link) {
       var target = link.href.split("/").slice(-2).join("/");
