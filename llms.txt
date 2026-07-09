@@ -1,0 +1,22 @@
+# LPio - LaunchPad IO (static shell of a project hub)
+
+> Public repository holding only the structure, styling and rendering
+> logic of LPio, a login-gated project hub (dashboard, API reference
+> viewer, prototype gallery, project silos). All substantive content
+> and credentials live in Supabase, never in this repo.
+
+## Start here
+- CLAUDE.md: operating rules for agent sessions (security rules are non-negotiable)
+- docs/SESSIONS.md: rolling session log; latest checkpoint = current state of work
+- docs/CODEMAP.md: generated index of every file, its size, purpose and JS symbols
+
+## Architecture and process
+- docs/ARCHITECTURE.md: how pages, guard, and Supabase fit together
+- docs/SECURITY.md: threat model and RLS approach
+- docs/DESIGN.md: design system; all values from assets/css/tokens.css
+- docs/HARNESS.md: test harness, benchmarks, size budgets, commit conventions
+
+## Verification
+- Run `npm test` (Node built-in test runner, zero dependencies)
+- tests/checks/: security, structure, style and size gates
+- tests/unit/: functioning benchmarks pinning module behaviour

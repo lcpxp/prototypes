@@ -37,6 +37,35 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-09 - Test harness and security remediation
+Branch: feat/test-harness
+Completed:
+- SECURITY: assets/js/config.js was tracked in this public repo
+  (.gitignore had the comment but not the rule). Untracked it,
+  fixed .gitignore. Keys must be rotated; old values remain in
+  git history, rotation is the remediation.
+- Zero-dependency test harness (node --test): security, structure,
+  style and size gates in tests/checks/; behaviour benchmarks in
+  tests/unit/ (ui.js App.escape and badges pinned).
+- Size budgets in tests/size-budget.json; main.css 585 lines
+  listed as explicit debt with an exit plan.
+- Generated navigation: docs/CODEMAP.md + llms.txt via
+  scripts/gen-codemap.js, refreshed by the pre-commit hook.
+- Git hygiene: .githooks/pre-commit, .gitmessage template,
+  npm run setup for fresh clones. docs/HARNESS.md process doc.
+- Fixed hard-coded #ffffff in main.css to var(--surface).
+In progress:
+- None.
+Next steps:
+1. Rotate the Supabase anon key (Dashboard, Settings, API) and
+   recreate assets/js/config.js locally from config.example.js.
+2. Commit this work on feat/test-harness and merge to main.
+3. Schedule the main.css split (base/components/pages) per
+   tests/size-budget.json exception note.
+Open decisions:
+- Owner approval recorded here: tooling limited to Node built-ins
+  and git only; no npm packages added (CLAUDE.md dependency rule).
+
 ## 2026-07-09 - LPio hub and silo structure
 Branch: main
 Completed:

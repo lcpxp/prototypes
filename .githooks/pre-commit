@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Pre-commit gate. Fast (<2s), zero dependencies.
+# 1. Hard-blocks committing the local config file.
+# 2. Runs the check suites (security, structure, style, size).
+# 3. Regenerates the codemap so navigation aids never go stale.
+set -euo pipefail
+
+if git diff --cached --name-only --diff-filter=AMC | grep -qx "assets/js/config.js"; then
+  echo "BLOCKED: assets/js/config.js is staged. It must never be committed."
+  exit 1
+fi
+
+if ! node --test "tests/checks/*.test.js" >/dev/null 2>&1; then
+  echo "BLOCKED: check suite failed. Run 'npm test' to see details."
+  exit 1
+fi
+
+node scripts/gen-codemap.js --quiet
+git add docs/CODEMAP.md llms.txt

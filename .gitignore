@@ -1,4 +1,5 @@
 # Local configuration containing Supabase keys. Never commit.
+assets/js/config.js
 
 # Environment files
 .env

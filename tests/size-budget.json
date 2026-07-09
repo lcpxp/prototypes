@@ -1,0 +1,25 @@
+{
+  "comment": "Line budgets per file type. soft = warning (plan a split); hard = test failure (split before extending). Grounded in published agent-workflow guidance: source files ~500 lines max so a single read stays cheap; agent-facing docs ~200-300 lines because instruction adherence degrades as context grows.",
+  "byExtension": {
+    ".js":   { "soft": 300, "hard": 500 },
+    ".css":  { "soft": 300, "hard": 500 },
+    ".html": { "soft": 250, "hard": 400 },
+    ".sql":  { "soft": 300, "hard": 500 },
+    ".md":   { "soft": 200, "hard": 300 }
+  },
+  "generated": ["docs/CODEMAP.md", "llms.txt", "skeleton.patch"],
+  "exceptions": {
+    "assets/css/main.css": {
+      "hard": 650,
+      "note": "Pre-harness monolith at 585 lines. Refactor task: split into base.css, components.css, pages.css, each under 300 lines, then remove this exception."
+    },
+    "docs/SESSIONS.md": {
+      "hard": 1000,
+      "note": "Rolling log. When it passes 600 lines, move entries older than 30 days to docs/sessions-archive/YYYY-MM.md."
+    },
+    "docs/HARNESS.md": {
+      "hard": 400,
+      "note": "Process reference, read on demand rather than every session."
+    }
+  }
+}
