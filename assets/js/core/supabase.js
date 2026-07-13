@@ -1,8 +1,15 @@
 // ------------------------------------------------------------------
 // supabase.js - Initialises the Supabase client as App.db.
-// Requires: the supabase-js CDN script and config.js loaded first.
-// If config.js is missing, renders a setup notice instead of failing
-// silently.
+//
+// The project URL and anon key below are PUBLIC by design. The anon
+// key only grants what Row Level Security allows (see docs/SECURITY.md),
+// so it is safe to ship to the browser and is committed here so the
+// static site works everywhere - including GitHub Pages - with no
+// setup step. The service_role key must NEVER appear in this repo.
+//
+// To point a local build at a different Supabase project, define
+// window.APP_CONFIG (SUPABASE_URL, SUPABASE_ANON_KEY) before this
+// script runs; those values take precedence over the defaults below.
 // ------------------------------------------------------------------
 
 (function () {
@@ -10,30 +17,19 @@
 
   window.App = window.App || {};
 
-  var configured =
-    window.APP_CONFIG &&
-    window.APP_CONFIG.SUPABASE_URL &&
-    window.APP_CONFIG.SUPABASE_URL.indexOf("YOUR-PROJECT-REF") === -1 &&
-    window.APP_CONFIG.SUPABASE_ANON_KEY &&
-    window.APP_CONFIG.SUPABASE_ANON_KEY.indexOf("YOUR-ANON") === -1;
+  var PUBLIC_CONFIG = {
+    SUPABASE_URL: "https://zlmkofbkobmhnslfnqsf.supabase.co",
+    SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbWtvZmJrb2JtaG5zbGZucXNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MzU3NzUsImV4cCI6MjA5OTExMTc3NX0.GbxNfkwmwLW_kvzDNz2MJ0ipZ2jxdT5-1_75sDf1Bs8",
+  };
 
-  if (!configured) {
-    App.db = null;
-    document.addEventListener("DOMContentLoaded", function () {
-      document.body.innerHTML =
-        '<div class="login-shell"><div class="login-card">' +
-        '<div class="wordmark">Setup required</div>' +
-        '<p class="lede">No Supabase configuration was found. Copy ' +
-        "<code>assets/js/core/config.example.js</code> to " +
-        "<code>assets/js/core/config.js</code> and add your project URL " +
-        "and anon key. See docs/SETUP.md.</p>" +
-        "</div></div>";
-    });
-    return;
-  }
+  var override = window.APP_CONFIG;
+  var config =
+    override && override.SUPABASE_URL && override.SUPABASE_ANON_KEY
+      ? override
+      : PUBLIC_CONFIG;
 
   App.db = window.supabase.createClient(
-    window.APP_CONFIG.SUPABASE_URL,
-    window.APP_CONFIG.SUPABASE_ANON_KEY
+    config.SUPABASE_URL,
+    config.SUPABASE_ANON_KEY
   );
 })();

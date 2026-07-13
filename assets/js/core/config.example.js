@@ -1,13 +1,14 @@
 // ------------------------------------------------------------------
-// config.example.js
+// config.example.js - OPTIONAL local override.
 //
-// Copy this file to config.js in the same directory and fill in the
-// values from your Supabase project (Project settings > API).
+// The app already ships with the public Supabase project config built
+// into supabase.js, so nothing here is required to run or deploy.
 //
-// config.js is listed in .gitignore and must never be committed.
-// The anon key is safe to expose to browsers ONLY because Row Level
-// Security is enabled on every table (see supabase/policies.sql).
-// The service_role key must never appear anywhere in this repo.
+// Create config.js (same directory) from this file ONLY to point a
+// local build at a DIFFERENT Supabase project. When present it is
+// loaded before supabase.js and takes precedence. config.js is
+// gitignored and must never be committed. The service_role key must
+// never appear anywhere in this repo.
 // ------------------------------------------------------------------
 
 window.APP_CONFIG = {

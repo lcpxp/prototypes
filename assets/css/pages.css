@@ -1,49 +1,9 @@
 /* ------------------------------------------------------------------
-   pages.css - Page-specific styling: the login screen and the
-   reference viewer. Everything reusable belongs in components.css.
-   Mobile-first: single column by default, the sidebar layout
-   arrives at the 48rem breakpoint.
+   pages.css - The reference viewer ("swagger") page. Everything
+   reusable belongs in components.css; the sign-in page has its
+   own login.css. Mobile-first: single column by default, the
+   sidebar layout arrives at the 48rem breakpoint.
 ------------------------------------------------------------------- */
-
-/* ---------------------------------------------------------------
-   Login
---------------------------------------------------------------- */
-
-.login-shell {
-  min-block-size: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--gutter);
-}
-
-.login-card {
-  inline-size: 100%;
-  max-inline-size: var(--login-max);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-raised);
-  padding: var(--section-gap);
-}
-
-.login-card .wordmark {
-  font-family: var(--font-mono);
-  font-size: var(--text-md);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-}
-
-.login-card .wordmark span {
-  color: var(--accent);
-}
-
-.login-card .lede {
-  color: var(--muted);
-  font-size: var(--text-sm);
-  margin-block: var(--s-2) var(--s-5);
-}
 
 /* ---------------------------------------------------------------
    Reference viewer (the swagger)

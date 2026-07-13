@@ -11,31 +11,54 @@
   <link rel="stylesheet" href="assets/css/layout.css">
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="assets/css/pages.css">
+  <link rel="stylesheet" href="assets/css/login.css">
 </head>
 <body>
   <main class="login-shell">
-    <div class="login-card">
-      <div class="wordmark">LPio <span>/</span> LaunchPad IO</div>
-      <p class="lede">A shared workspace for developer guidance, reference material,
-        prototypes and independent project silos. Access is by invitation.</p>
+    <section class="login-brand">
+      <a class="login-wordmark" href=".">LPio <span>/</span> LaunchPad IO</a>
+      <div class="login-brand-body">
+        <h1 class="login-headline">The LaunchPad project hub.</h1>
+        <p class="login-blurb">Guidance, API reference, prototypes and independent
+          project silos for the merchant onboarding portal, together in one
+          place.</p>
+      </div>
+      <ul class="login-points">
+        <li><span class="eyebrow">Reference</span> Live API specs and endpoints</li>
+        <li><span class="eyebrow">Prototypes</span> From small tests to full replicas</li>
+        <li><span class="eyebrow">Access</span> Per-person, per-module control</li>
+      </ul>
+    </section>
 
-      <form id="login-form">
-        <div class="field">
-          <label for="login-email">Email</label>
-          <input id="login-email" type="email" autocomplete="username" required>
+    <section class="login-main">
+      <div class="login-card">
+        <a class="login-wordmark login-wordmark-compact" href=".">LPio <span>/</span> LaunchPad IO</a>
+        <div class="login-head">
+          <h2>Sign in</h2>
+          <p class="login-sub">Access is by invitation. Use the email and password
+            you were given.</p>
         </div>
-        <div class="field">
-          <label for="login-password">Password</label>
-          <input id="login-password" type="password" autocomplete="current-password" required>
-        </div>
-        <p id="login-notice" class="notice error hidden" role="alert"></p>
-        <button id="login-submit" class="button" type="submit">Sign in</button>
-      </form>
-    </div>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="login-email">Email</label>
+            <input id="login-email" type="email" autocomplete="username"
+              autocapitalize="none" spellcheck="false" required autofocus>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password" autocomplete="current-password" required>
+          </div>
+          <p id="login-notice" class="notice error hidden" role="alert" aria-live="polite"></p>
+          <button id="login-submit" class="button button-block" type="submit">Sign in</button>
+        </form>
+
+        <p class="login-foot">Trouble signing in? Ask an admin to check your account.</p>
+      </div>
+    </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/core/config.js"></script>
   <script src="assets/js/core/supabase.js"></script>
   <script src="assets/js/core/auth.js"></script>
 </body>
