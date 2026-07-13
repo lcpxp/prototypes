@@ -1,28 +1,110 @@
 // ------------------------------------------------------------------
-// users.js - User list for modules/users/, read from the profiles table.
-// Accounts are created in the Supabase dashboard; this page is a
-// read-only register of who has access and at what level.
+// users.js - User and access management for modules/users/.
+// Admins get a role select and one toggle per module for every
+// user, backed by the profiles and module_access tables. Everyone
+// else sees a read-only register. Enforcement lives in the database
+// policies (supabase/policies.sql); this page is only the
+// management surface.
 // ------------------------------------------------------------------
 
 (function () {
   "use strict";
 
-  App.onAuthed(async function () {
-    var host = document.getElementById("user-table");
+  var host, session;
 
-    var result = await App.db
+  function notice(text, isError) {
+    var el = document.getElementById("users-notice");
+    if (!el) return;
+    el.innerHTML = text
+      ? '<p class="notice' + (isError ? " error" : "") + '">' +
+        App.escape(text) + "</p>"
+      : "";
+  }
+
+  function roleBadge(role) {
+    return role === App.registry.roles.admin
+      ? '<span class="badge admin">admin</span>'
+      : '<span class="badge">member</span>';
+  }
+
+  function roleCell(profile) {
+    if (profile.id === session.user.id) {
+      // Never let an admin demote themselves from the UI.
+      return roleBadge(profile.role) + ' <span class="card-meta">(you)</span>';
+    }
+    var options = [App.registry.roles.member, App.registry.roles.admin]
+      .map(function (role) {
+        return '<option value="' + role + '"' +
+          (profile.role === role ? " selected" : "") + ">" + role + "</option>";
+      })
+      .join("");
+    return '<select data-user="' + App.escape(profile.id) +
+      '" aria-label="Role for ' + App.escape(profile.email || "") + '">' +
+      options + "</select>";
+  }
+
+  function toggleCell(profile, mod, deniedMap) {
+    var isAdmin = profile.role === App.registry.roles.admin;
+    var allowed = isAdmin || !deniedMap[profile.id + ":" + mod.key];
+    return '<label class="toggle"><input type="checkbox"' +
+      (allowed ? " checked" : "") + (isAdmin ? " disabled" : "") +
+      ' data-user="' + App.escape(profile.id) +
+      '" data-module="' + App.escape(mod.key) +
+      '" aria-label="' + App.escape(mod.title + " access for " + (profile.email || "")) +
+      '"><span class="track" aria-hidden="true"></span></label>';
+  }
+
+  function render(profiles, deniedMap) {
+    var admin = App.access.admin;
+    var modules = App.registry.modules;
+
+    var head = "<th>Name</th><th>Email</th><th>Role</th>";
+    if (admin) {
+      modules.forEach(function (mod) {
+        head += "<th>" + App.escape(mod.title) + "</th>";
+      });
+    }
+    head += "<th>Added</th>";
+
+    var body = "";
+    profiles.forEach(function (profile) {
+      var added = profile.created_at
+        ? new Date(profile.created_at).toLocaleDateString()
+        : "";
+      body += "<tr><td>" + App.escape(profile.display_name || "") + "</td>" +
+        '<td class="mono">' + App.escape(profile.email || "") + "</td>" +
+        "<td>" + (admin ? roleCell(profile) : roleBadge(profile.role)) + "</td>";
+      if (admin) {
+        modules.forEach(function (mod) {
+          body += "<td>" + toggleCell(profile, mod, deniedMap) + "</td>";
+        });
+      }
+      body += "<td>" + App.escape(added) + "</td></tr>";
+    });
+
+    host.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
+      head + "</tr></thead><tbody>" + body + "</tbody></table></div>";
+  }
+
+  async function load() {
+    var profileQuery = App.db
       .from(App.registry.tables.profiles)
-      .select("email, display_name, role, created_at")
+      .select("id, email, display_name, role, created_at")
       .order("created_at", { ascending: true });
 
-    if (result.error) {
-      host.innerHTML =
-        '<p class="notice error">Could not load users: ' +
-        App.escape(result.error.message) + "</p>";
+    var results = App.access.admin
+      ? await Promise.all([
+          profileQuery,
+          App.db.from(App.registry.tables.moduleAccess)
+            .select("user_id, module_key, allowed"),
+        ])
+      : [await profileQuery, { data: [] }];
+
+    if (results[0].error) {
+      notice("Could not load users: " + results[0].error.message, true);
       return;
     }
-
-    if (!result.data || result.data.length === 0) {
+    if (!results[0].data || results[0].data.length === 0) {
       host.innerHTML =
         '<p class="notice">No profiles found. Profiles are created ' +
         "automatically when a user is added in Supabase " +
@@ -30,28 +112,58 @@
       return;
     }
 
-    var html = '<div class="table-wrap"><table><thead><tr>' +
-      "<th>Name</th><th>Email</th><th>Role</th><th>Added</th>" +
-      "</tr></thead><tbody>";
-
-    result.data.forEach(function (profile) {
-      var added = profile.created_at
-        ? new Date(profile.created_at).toLocaleDateString()
-        : "";
-      html +=
-        "<tr>" +
-        "<td>" + App.escape(profile.display_name || "") + "</td>" +
-        '<td class="mono">' + App.escape(profile.email || "") + "</td>" +
-        "<td>" +
-        (profile.role === App.registry.roles.admin
-          ? '<span class="badge admin">admin</span>'
-          : '<span class="badge">member</span>') +
-        "</td>" +
-        "<td>" + App.escape(added) + "</td>" +
-        "</tr>";
+    var deniedMap = {};
+    (results[1].data || []).forEach(function (row) {
+      if (!row.allowed) deniedMap[row.user_id + ":" + row.module_key] = true;
     });
 
-    html += "</tbody></table></div>";
-    host.innerHTML = html;
+    render(results[0].data, deniedMap);
+  }
+
+  async function saveToggle(input) {
+    var result = await App.db
+      .from(App.registry.tables.moduleAccess)
+      .upsert(
+        {
+          user_id: input.dataset.user,
+          module_key: input.dataset.module,
+          allowed: input.checked,
+        },
+        { onConflict: "user_id,module_key" }
+      );
+    if (result.error) {
+      input.checked = !input.checked;
+      notice("Could not save access change: " + result.error.message, true);
+      return;
+    }
+    notice("");
+  }
+
+  async function saveRole(select) {
+    var result = await App.db
+      .from(App.registry.tables.profiles)
+      .update({ role: select.value })
+      .eq("id", select.dataset.user);
+    if (result.error) {
+      notice("Could not save role change: " + result.error.message, true);
+    } else {
+      notice("");
+    }
+    // Re-render either way: a role change moves toggles into or out
+    // of the always-on admin state, and a failure needs a reset.
+    load();
+  }
+
+  App.onAuthed(function (authedSession) {
+    session = authedSession;
+    host = document.getElementById("user-table");
+
+    host.addEventListener("change", function (event) {
+      var target = event.target;
+      if (target.matches(".toggle input")) saveToggle(target);
+      if (target.matches("select[data-user]")) saveRole(target);
+    });
+
+    load();
   });
 })();

@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="../../assets/css/pages.css">
 </head>
-<body data-root="../..">
+<body data-root="../.." data-module="users">
   <header id="app-nav"></header>
 
   <main class="page">
@@ -20,9 +20,12 @@
       <h1>Users</h1>
       <p class="lede">Everyone with access to LPio. Accounts are created by
         an admin in the Supabase dashboard under Authentication, then Users;
-        a profile row appears here automatically.</p>
+        a profile row appears here automatically. Admins can set each
+        user's role and toggle their access to every module; the same
+        rules are enforced by the database, not just this page.</p>
     </div>
 
+    <div id="users-notice"></div>
     <div id="user-table">
       <p class="notice">Loading</p>
     </div>

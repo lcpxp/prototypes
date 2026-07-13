@@ -46,12 +46,33 @@ create trigger on_auth_user_created
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   new.updated_at = now();
   return new;
 end;
 $$;
+
+-- ---------------------------------------------------------------
+-- module_access: per-user, per-module grants. Module keys come from
+-- assets/js/core/registry.js. Absence of a row means allowed, so new
+-- users and newly added modules start open; rows record explicit
+-- toggles made on the users page. Admins always have access.
+-- ---------------------------------------------------------------
+
+create table if not exists public.module_access (
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  module_key text not null,
+  allowed boolean not null default true,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, module_key)
+);
+
+drop trigger if exists module_access_updated_at on public.module_access;
+create trigger module_access_updated_at
+  before update on public.module_access
+  for each row execute function public.set_updated_at();
 
 -- ---------------------------------------------------------------
 -- api_specs: one row per API specification. The spec column can

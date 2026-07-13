@@ -59,10 +59,16 @@ insert unescaped strings into the DOM.
 
 ## Data model
 
-Four tables, defined in supabase/schema.sql:
+Five tables, defined in supabase/schema.sql:
 
 - profiles: one row per user, created by trigger on signup, carrying
   email, display name and role (admin or member).
+- module_access: per-user, per-module grants keyed by the module
+  keys in assets/js/core/registry.js. Absence of a row means
+  allowed; admins always have access. Read policies on the content
+  tables consult these grants via has_module_access(), and guard.js
+  mirrors them in the UI (nav filtering plus a dashboard redirect
+  for denied modules).
 - api_specs: one row per spec, with title, version, status and an
   optional full OpenAPI 3 document in a JSONB column.
 - api_endpoints: one row per endpoint (method, path, tag, summary,

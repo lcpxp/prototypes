@@ -92,5 +92,10 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", renderNav);
+  document.addEventListener("DOMContentLoaded", function () {
+    // Wait for the grant map so hidden modules never flash into the
+    // nav; without a guard (login page) render immediately.
+    if (App.accessReady) App.accessReady.then(renderNav);
+    else renderNav();
+  });
 })();

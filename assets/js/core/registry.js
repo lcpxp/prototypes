@@ -53,6 +53,7 @@
       apiSpecs: "api_specs",
       apiEndpoints: "api_endpoints",
       prototypes: "prototypes",
+      moduleAccess: "module_access",
     },
     roles: {
       admin: "admin",

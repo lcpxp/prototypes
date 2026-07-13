@@ -95,7 +95,20 @@
     host.innerHTML = html;
   }
 
+  // Explain a redirect from a module the user has no grant for.
+  function showDeniedNotice() {
+    var key = new URLSearchParams(window.location.search).get("denied");
+    var el = document.getElementById("page-notice");
+    if (!key || !el) return;
+    var mod = App.registry.modules.find(function (m) { return m.key === key; });
+    el.innerHTML =
+      '<p class="notice error">You do not have access to ' +
+      App.escape(mod ? mod.title : key) +
+      ". Ask an admin to enable it for you on the users page.</p>";
+  }
+
   App.onAuthed(function () {
+    showDeniedNotice();
     renderCards();
     loadRecent();
   });

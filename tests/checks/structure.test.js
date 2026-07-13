@@ -56,6 +56,18 @@ test("pages below the repo root set data-root on <body>", () => {
   }
 });
 
+test("module pages declare a data-module key known to the registry", () => {
+  const registry = read("assets/js/core/registry.js");
+  const knownKeys = [...registry.matchAll(/key: "([a-z0-9-]+)"/g)].map((m) => m[1]);
+  for (const page of protectedPages().filter((p) => p.includes("/"))) {
+    const m = read(page).match(/<body[^>]*\sdata-module="([^"]*)"/);
+    assert.ok(m,
+      `${page}: module page must set data-module on <body> so guard.js can enforce access.`);
+    assert.ok(knownKeys.includes(m[1]),
+      `${page}: data-module "${m[1]}" is not a key in assets/js/core/registry.js (${knownKeys.join(", ")}).`);
+  }
+});
+
 test("login page uses auth.js and never loads guard.js", () => {
   const srcs = scriptSrcs(read(LOGIN_PAGE));
   assert.ok(srcs.some((s) => s.endsWith("assets/js/core/auth.js")),
