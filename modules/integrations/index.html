@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:,">
+  <title>Integrations - LPio / LaunchPad IO</title>
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/layout.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="../../assets/css/pages.css">
+</head>
+<body data-root="../.." data-module="integrations">
+  <header id="app-nav"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="eyebrow">Integrations</span>
+      <h1>Integration overview</h1>
+      <p class="lede">Every third-party service connected to Launchpad in
+        one table. Select an integration for its full detail: purpose,
+        direction, status and integration notes. Rows live in the
+        integrations table, so adding or amending one is a database edit
+        with no code change.</p>
+    </div>
+
+    <section id="integration-list">
+      <p class="notice">Loading</p>
+    </section>
+  </main>
+
+  <dialog class="modal" id="integration-modal">
+    <div class="modal-head">
+      <h2 id="integration-modal-title"></h2>
+      <button class="button quiet" id="integration-modal-close" type="button">Close</button>
+    </div>
+    <div id="integration-modal-body"></div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../assets/js/core/supabase.js"></script>
+  <script src="../../assets/js/core/registry.js"></script>
+  <script src="../../assets/js/core/guard.js"></script>
+  <script src="../../assets/js/core/ui.js"></script>
+  <script src="../../assets/js/pages/integrations.js"></script>
+</body>
+</html>

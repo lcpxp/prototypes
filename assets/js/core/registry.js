@@ -32,6 +32,14 @@
         statLabel: "Specs published",
       },
       {
+        key: "integrations",
+        title: "Integrations",
+        path: "modules/integrations/",
+        description: "Third-party services connected to Launchpad",
+        statTable: "integrations",
+        statLabel: "Connected services",
+      },
+      {
         key: "prototypes",
         title: "Prototypes",
         path: "modules/prototypes/",
@@ -53,6 +61,7 @@
       apiSpecs: "api_specs",
       apiEndpoints: "api_endpoints",
       prototypes: "prototypes",
+      integrations: "integrations",
       moduleAccess: "module_access",
     },
     // Spec families group api_specs rows into distinct reference

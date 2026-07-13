@@ -102,6 +102,34 @@ values
   10
 );
 
+-- Sample integrations ----------------------------------------------
+-- Generic placeholders only. Record real integrations directly in
+-- the database; the repo is public.
+
+insert into public.integrations
+  (name, category, purpose, direction, status, docs_url, detail, sort_order)
+values
+(
+  'Company registry (sample)',
+  'Verification',
+  'Company existence and officer checks during onboarding.',
+  'outbound',
+  'live',
+  'https://docs.example.com/registry',
+  '{"Auth": "API key", "Data exchanged": "Company number, officers"}'::jsonb,
+  10
+),
+(
+  'Screening provider (sample)',
+  'Compliance',
+  'Sanctions and adverse media screening.',
+  'outbound',
+  'planned',
+  null,
+  '{}'::jsonb,
+  20
+);
+
 -- Sample prototype registry entries --------------------------------
 
 insert into public.prototypes (title, description, path, status, tags)

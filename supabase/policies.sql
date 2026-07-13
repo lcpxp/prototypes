@@ -120,6 +120,25 @@ create policy "api_endpoints: admins write"
   with check (public.is_admin());
 
 -- ---------------------------------------------------------------
+-- integrations
+-- ---------------------------------------------------------------
+
+alter table public.integrations enable row level security;
+
+drop policy if exists "integrations: members read" on public.integrations;
+create policy "integrations: members read"
+  on public.integrations for select
+  to authenticated
+  using (public.has_module_access('integrations'));
+
+drop policy if exists "integrations: admins write" on public.integrations;
+create policy "integrations: admins write"
+  on public.integrations for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+-- ---------------------------------------------------------------
 -- prototypes
 -- ---------------------------------------------------------------
 

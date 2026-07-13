@@ -281,5 +281,65 @@ td.mono {
 
 .badge.live       { color: var(--ok);     background: var(--ok-soft);     border-color: transparent; }
 .badge.draft      { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
+.badge.planned    { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
+.badge.pilot      { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
 .badge.deprecated { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
 .badge.admin      { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
+
+/* ---------------------------------------------------------------
+   Modal: a native <dialog>. Open with showModal() so focus is
+   trapped and Escape closes; clicking the backdrop also closes.
+   Markup:
+     <dialog class="modal">
+       <div class="modal-head"><h2>...</h2>
+         <button class="button quiet">Close</button></div>
+       ...body...
+     </dialog>
+--------------------------------------------------------------- */
+
+dialog.modal {
+  inline-size: min(40rem, calc(100vw - 2 * var(--gutter)));
+  max-block-size: calc(100vh - 2 * var(--s-6));
+  margin: auto;
+  padding: var(--s-5);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-raised);
+}
+
+dialog.modal::backdrop {
+  background: var(--scrim);
+}
+
+.modal-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-block-end: var(--s-4);
+}
+
+.modal-head h2 {
+  font-size: var(--text-lg);
+}
+
+/* Key-value detail grid used inside modals */
+.kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--s-2) var(--s-4);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.kv dt {
+  color: var(--muted);
+  font-weight: var(--weight-medium);
+}
+
+.kv dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
