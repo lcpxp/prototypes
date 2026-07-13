@@ -13,13 +13,18 @@ method badges and paths of the API reference at the heart of the tool.
 
 ## Stylesheet architecture
 
-Five files, loaded in this order on every page, each with one job:
+Five core files, loaded in this order on every page, each with one job:
 
     tokens.css      values only: colour (light and dark), type, space
     base.css        reset, typography, global element styles
     layout.css      navigation, page scaffold, grids
     components.css  cards, forms, buttons, tables, badges, toggles
-    pages.css       login and reference-viewer specifics
+    pages.css       reference-viewer specifics
+
+A page may load one page-specific sheet after these five (for example
+login.css on the sign-in page). Keep each file under 300 lines; when a
+page's styles grow, give the page its own sheet rather than swelling
+pages.css.
 
 Rules that keep it coherent:
 

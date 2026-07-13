@@ -1,27 +1,45 @@
 # Setup and day-to-day use
 
-How to stand up a working copy of the hub. The repo is the static
-shell; everything dynamic comes from a Supabase project you own.
+The app ships with the public Supabase config built into
+assets/js/core/supabase.js, so it runs and deploys with no
+configuration step. This doc covers viewing it, running it locally,
+and standing up your own backend.
 
-## First-time setup
+## Viewing the deployed site
+
+Every push to main runs the tests and, if green, publishes the site
+to GitHub Pages (.github/workflows/deploy.yml). The deploy's URL shows
+on the workflow run and in the repo's Pages settings. Nothing to
+configure: the first run enables Pages automatically.
+
+## Running locally
+
+Serve the folder with any static server, for example:
+
+    python3 -m http.server 8000
+
+then open http://localhost:8000. It uses the built-in public config,
+so sign in works immediately with a valid account.
+
+To point a local build at a DIFFERENT Supabase project, copy
+assets/js/core/config.example.js to assets/js/core/config.js and fill
+in that project's URL and anon key. config.js is gitignored, loads
+before supabase.js when present, and overrides the built-in config.
+Never commit it.
+
+## Standing up your own Supabase backend
 
 1. Create a Supabase project at supabase.com (free tier is fine).
-2. In the Supabase SQL editor, run in order: supabase/schema.sql,
-   then supabase/policies.sql, then optionally supabase/seed.sql for
-   sample content.
-3. Copy assets/js/core/config.example.js to assets/js/core/config.js
-   and fill in the Project URL and anon public key from Project
-   settings, API. config.js is gitignored; never commit it.
-4. In the Supabase dashboard, Authentication then Users, add your
-   first user (email and password, auto-confirm on). Then in the SQL
-   editor promote it:
+2. In the SQL editor, run in order: supabase/schema.sql,
+   supabase/policies.sql, then optionally supabase/seed.sql. Apply
+   later changes from supabase/migrations/ in filename order.
+3. Put the new project's URL and anon key into supabase.js (or a local
+   config.js for testing before you commit).
+4. Authentication then Users: add your first user (auto-confirm on),
+   then promote it in the SQL editor:
    update public.profiles set role = 'admin' where email = 'you@example.com';
-5. Serve the folder with any static server, for example:
-   python3 -m http.server 8000
-   and open http://localhost:8000. Sign in with the user from step 4.
-
-In Supabase Auth settings, enable leaked password protection and keep
-self-service signup disabled; accounts are created by admins only.
+5. In Auth settings, enable leaked password protection and keep
+   self-service signup disabled; accounts are created by admins only.
 
 ## Day-to-day use
 
@@ -30,13 +48,5 @@ self-service signup disabled; accounts are created by admins only.
   commits or deploys.
 - Prototypes: add a page under modules/prototypes/ plus a registry
   row in the prototypes table. The gallery and dashboard pick it up.
-- Users and access: manage accounts in the Supabase dashboard;
+- Users and access: manage accounts in the Supabase dashboard; set
   roles and per-module access from the users module in the hub.
-
-## Hosting
-
-Any static host works (GitHub Pages, Netlify, Vercel). The only
-per-environment artefact is assets/js/core/config.js, created by hand
-from config.example.js and never committed. Add the deployed URL to
-the Supabase auth redirect allow-list (Authentication, then URL
-configuration).

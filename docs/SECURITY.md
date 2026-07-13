@@ -6,11 +6,12 @@ what keeps the portal's content private anyway.
 ## The boundary is the database, not the login page
 
 Anyone can read every file in this repo, view the page source, and see
-the Supabase project URL and anon key once config.js is deployed. None
-of that is a secret:
+the Supabase project URL and anon key, which are committed in
+assets/js/core/supabase.js. None of that is a secret:
 
 - The anon key is designed to be shipped to browsers. On its own it
-  grants only what Row Level Security policies allow.
+  grants only what Row Level Security policies allow, so it is
+  committed on purpose and deploys with the static site.
 - With RLS enabled and the policies in supabase/policies.sql applied,
   an unauthenticated holder of the anon key can read and write
   nothing. A signed-in member can read content but not change it.
@@ -24,9 +25,11 @@ that redirects people to sign in, and nothing more.
 
 - The service_role key, under any circumstances. It bypasses RLS
   entirely. It belongs in the Supabase dashboard and nowhere else.
-- assets/js/core/config.js (gitignored). Even though the anon key is
-  not secret, keeping config out of git keeps environments clean and
-  keeps the habit unambiguous.
+  The credential gate reads any committed JWT's role and fails the
+  build on anything that is not the public anon key.
+- assets/js/core/config.js stays gitignored. It is only an optional
+  local override to point at a different project; the committed
+  supabase.js already carries the public config.
 - Real merchant names, live internal endpoint URLs, credentials,
   personal data, or realistic payloads containing any of these. All of
   that belongs in database rows, which RLS protects.

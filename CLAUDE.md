@@ -38,9 +38,13 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
 1. This repo is public. Never commit keys, tokens, passwords, real
    merchant names, live internal endpoint URLs, or any credential of
    any kind. When in doubt, it goes in Supabase, not in git.
-2. assets/js/core/config.js is gitignored. Never create, commit or
-   print its contents. Never inline Supabase URLs or keys into any
-   file.
+2. The public Supabase URL and anon key live in
+   assets/js/core/supabase.js on purpose: the anon key only grants
+   what RLS allows, so it is safe to ship and to deploy publicly.
+   That is the ONLY credential that may be committed.
+   assets/js/core/config.js stays gitignored - it is just an optional
+   local override to point at a different project - and must never be
+   committed.
 3. The service_role key must never appear anywhere: not in files, not
    in commit messages, not in session logs, not in terminal output.
 4. Before every commit, run git status and confirm no ignored or
@@ -54,16 +58,15 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
 
 - Clone shallow when starting fresh: git clone --depth 1 <url>. Deepen
   only if history is actually needed (git fetch --unshallow).
-- Work on a branch per feature: feat/<short-name>, fix/<short-name>,
-  docs/<short-name>. Never commit directly to main except for docs and
-  session-log updates.
-- Commit small and atomic, message in the imperative: "Add endpoint
-  params table", not "Added" or "misc changes".
-- Merge small and often: open a PR and merge to main after each
-  completed, tested unit of work rather than accumulating a long-lived
-  branch. A "unit" is a phase of a larger task (see docs/SESSIONS.md
-  checkpoints), not the whole task; each one should leave main green.
-  Rebase onto the latest main before merging if main has moved.
+- Work trunk-based. Commit straight to main in small, atomic commits
+  with clear imperative messages ("Add endpoint params table", not
+  "Added" or "misc changes"). Every push to main auto-deploys to
+  GitHub Pages (.github/workflows/deploy.yml), so keep each commit
+  green and reviewable on its own.
+- Keep branches to a minimum: use a short-lived branch only when a
+  change is genuinely risky or spans several commits that would leave
+  main broken midway, then merge it back promptly and delete it.
+  Avoid long-lived and per-session branches.
 - Never force-push main. Never rewrite published history.
 - Never use git add -f. If git refuses to add a file, that is the
   .gitignore doing its job.
@@ -112,9 +115,10 @@ is likely, checkpoint first.
   new dependencies beyond the Supabase CDN client without explicit
   agreement from the repo owner recorded in docs/SESSIONS.md.
 - Every new protected page includes, in order: the Supabase CDN
-  script, then core/config.js, core/supabase.js, core/registry.js,
-  core/guard.js, core/ui.js, then its own page module from
-  assets/js/pages/. Pages below the repo root set data-root on body.
+  script, then core/supabase.js, core/registry.js, core/guard.js,
+  core/ui.js, then its own page module from assets/js/pages/. Pages
+  below the repo root set data-root on body. (supabase.js carries the
+  public config; there is no separate config.js include.)
 - Interface copy is plain, specific and in sentence case. Buttons say
   what they do. Errors say what went wrong and how to fix it.
 - All dynamic content rendered into the DOM goes through App.escape.
@@ -140,6 +144,8 @@ is likely, checkpoint first.
 - No hard-coded design values; no sensitive data introduced.
 - Relevant docs updated; session log updated if the change is part of
   a tracked piece of work.
+- Committed to main; the GitHub Pages deploy workflow is green and the
+  change is reviewable at the Pages URL.
 
 <!-- harness:start -->
 ## Verification harness

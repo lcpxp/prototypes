@@ -42,12 +42,16 @@ Each protected page loads scripts in a fixed order, each attaching to
 a shared window.App namespace:
 
     supabase CDN client   provides window.supabase
-    core/config.js        gitignored; defines window.APP_CONFIG
-    core/supabase.js      creates App.db, or renders a setup notice
+    core/supabase.js      creates App.db from the built-in public config
     core/registry.js      App.registry: modules, tables, roles
     core/guard.js         App.requireAuth promise, App.onAuthed(fn)
     core/ui.js            nav rendering, App.escape, badges, copy
     pages/<module>.js     waits on App.onAuthed before fetching
+
+supabase.js carries the public project URL and anon key, so the site
+works with no configuration. An optional, gitignored core/config.js
+may define window.APP_CONFIG before supabase.js to override them for a
+local build against a different project.
 
 The registry is the single source of truth for what the hub contains.
 Navigation and dashboard cards are generated from it, so adding a
@@ -91,9 +95,12 @@ rendering behaviour changes.
 
 ## Hosting
 
-Any static host works: GitHub Pages, Netlify, Vercel, or opening the
-files locally. The only per-environment artefact is
-assets/js/core/config.js, created by hand from config.example.js and
-never committed.
+The canonical deployment is GitHub Pages, published by
+.github/workflows/deploy.yml on every push to main after the tests
+pass. Because the public config is built into supabase.js, the
+deployed static site works with no per-environment artefact. Any other
+static host (Netlify, Vercel, or opening the files locally) works the
+same way.
+
 For hosted deployments, add the deployed URL to the Supabase auth
 redirect allow-list (Authentication, then URL configuration).
