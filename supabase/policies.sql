@@ -5,13 +5,22 @@
 -- key in the browser is only safe because these policies exist:
 --
 --   * Unauthenticated visitors can read and write NOTHING.
---   * Signed-in users can read specs, endpoints, prototypes and the
---     user list.
+--   * Signed-in users can read content tables their module grants
+--     allow, plus the user list.
 --   * Only admins (profiles.role = 'admin') can write.
 --
 -- If a table is ever added without enabling RLS and adding policies,
 -- its contents are exposed to anyone with the anon key. Treat any
 -- new table as public until this file covers it.
+--
+-- Performance rules baked into every policy here (enforced by
+-- tests/checks/perf.test.js):
+--   * auth.uid() and the helper functions are always wrapped in a
+--     scalar subselect - (select auth.uid()) - so Postgres evaluates
+--     them once per query, not once per row.
+--   * No "for all" policies. Admin writes are separate insert/update/
+--     delete policies so a select only ever evaluates one permissive
+--     policy. Reads already admit admins via has_module_access.
 -- ------------------------------------------------------------------
 
 -- Admin check. SECURITY DEFINER so the lookup on profiles does not
@@ -25,7 +34,7 @@ set search_path = public
 as $$
   select exists (
     select 1 from public.profiles
-    where id = auth.uid() and role = 'admin'
+    where id = (select auth.uid()) and role = 'admin'
   );
 $$;
 
@@ -44,7 +53,7 @@ set search_path = public
 as $$
   select public.is_admin() or not exists (
     select 1 from public.module_access
-    where user_id = auth.uid() and module_key = key and not allowed
+    where user_id = (select auth.uid()) and module_key = key and not allowed
   );
 $$;
 
@@ -55,246 +64,152 @@ grant execute on function public.has_module_access(text) to authenticated;
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
 
 -- ---------------------------------------------------------------
--- profiles
+-- Content tables. All eleven follow one pattern, applied by the
+-- loop below: a single read policy gated on the owning module's
+-- grant, and admin-only insert/update/delete policies.
+-- ---------------------------------------------------------------
+
+alter table public.api_specs            enable row level security;
+alter table public.api_endpoints        enable row level security;
+alter table public.integrations         enable row level security;
+alter table public.prototypes           enable row level security;
+alter table public.work_areas           enable row level security;
+alter table public.roadmap_milestones   enable row level security;
+alter table public.roadmap_items        enable row level security;
+alter table public.roadmap_dependencies enable row level security;
+alter table public.work_documents       enable row level security;
+alter table public.backlog_items        enable row level security;
+alter table public.work_notes           enable row level security;
+
+do $$
+declare
+  entry record;
+begin
+  for entry in
+    select * from (values
+      ('api_specs',            '(select public.has_module_access(''reference''))'),
+      ('api_endpoints',        '(select public.has_module_access(''reference''))'),
+      ('integrations',         '(select public.has_module_access(''integrations''))'),
+      ('prototypes',           '(select public.has_module_access(''prototypes''))'),
+      -- work_areas is shared: readable behind either the roadmap or
+      -- the backlog grant, since both modules group by it.
+      ('work_areas',           '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('roadmap_milestones',   '(select public.has_module_access(''roadmap''))'),
+      ('roadmap_items',        '(select public.has_module_access(''roadmap''))'),
+      ('roadmap_dependencies', '(select public.has_module_access(''roadmap''))'),
+      ('work_documents',       '(select public.has_module_access(''backlog''))'),
+      ('backlog_items',        '(select public.has_module_access(''backlog''))'),
+      ('work_notes',           '(select public.has_module_access(''backlog''))')
+    ) as v(tbl, read_expr)
+  loop
+    execute format('drop policy if exists "%s: members read" on public.%I',
+      entry.tbl, entry.tbl);
+    execute format('drop policy if exists "%s: admins write" on public.%I',
+      entry.tbl, entry.tbl);
+    execute format('drop policy if exists "%s: admins insert" on public.%I',
+      entry.tbl, entry.tbl);
+    execute format('drop policy if exists "%s: admins update" on public.%I',
+      entry.tbl, entry.tbl);
+    execute format('drop policy if exists "%s: admins delete" on public.%I',
+      entry.tbl, entry.tbl);
+    execute format('create policy "%s: members read" on public.%I
+      for select to authenticated using (%s)',
+      entry.tbl, entry.tbl, entry.read_expr);
+    execute format('create policy "%s: admins insert" on public.%I
+      for insert to authenticated with check ((select public.is_admin()))',
+      entry.tbl, entry.tbl);
+    execute format('create policy "%s: admins update" on public.%I
+      for update to authenticated using ((select public.is_admin()))
+      with check ((select public.is_admin()))',
+      entry.tbl, entry.tbl);
+    execute format('create policy "%s: admins delete" on public.%I
+      for delete to authenticated using ((select public.is_admin()))',
+      entry.tbl, entry.tbl);
+  end loop;
+end $$;
+
+-- ---------------------------------------------------------------
+-- profiles: everyone reads their own row; the user list needs the
+-- users module grant. Users may edit their own row but never their
+-- own role; admins may change anything.
 -- ---------------------------------------------------------------
 
 alter table public.profiles enable row level security;
 
 drop policy if exists "profiles: members read all" on public.profiles;
 drop policy if exists "profiles: members read" on public.profiles;
+drop policy if exists "profiles: users update own name" on public.profiles;
+drop policy if exists "profiles: admins manage" on public.profiles;
+drop policy if exists "profiles: update own or admin" on public.profiles;
+drop policy if exists "profiles: admins insert" on public.profiles;
+drop policy if exists "profiles: admins delete" on public.profiles;
+
 create policy "profiles: members read"
   on public.profiles for select
   to authenticated
-  using (id = auth.uid() or public.has_module_access('users'));
+  using (id = (select auth.uid()) or (select public.has_module_access('users')));
 
-drop policy if exists "profiles: users update own name" on public.profiles;
-create policy "profiles: users update own name"
+create policy "profiles: update own or admin"
   on public.profiles for update
   to authenticated
-  using (id = auth.uid())
-  with check (id = auth.uid() and role = (select p.role from public.profiles p where p.id = auth.uid()));
+  using (id = (select auth.uid()) or (select public.is_admin()))
+  with check (
+    (select public.is_admin())
+    or (id = (select auth.uid())
+        and role = (select p.role from public.profiles p
+                    where p.id = (select auth.uid())))
+  );
 
-drop policy if exists "profiles: admins manage" on public.profiles;
-create policy "profiles: admins manage"
-  on public.profiles for all
+create policy "profiles: admins insert"
+  on public.profiles for insert
   to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  with check ((select public.is_admin()));
+
+create policy "profiles: admins delete"
+  on public.profiles for delete
+  to authenticated
+  using ((select public.is_admin()));
 
 -- ---------------------------------------------------------------
--- api_specs
--- ---------------------------------------------------------------
-
-alter table public.api_specs enable row level security;
-
-drop policy if exists "api_specs: members read" on public.api_specs;
-create policy "api_specs: members read"
-  on public.api_specs for select
-  to authenticated
-  using (public.has_module_access('reference'));
-
-drop policy if exists "api_specs: admins write" on public.api_specs;
-create policy "api_specs: admins write"
-  on public.api_specs for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
--- ---------------------------------------------------------------
--- api_endpoints
--- ---------------------------------------------------------------
-
-alter table public.api_endpoints enable row level security;
-
-drop policy if exists "api_endpoints: members read" on public.api_endpoints;
-create policy "api_endpoints: members read"
-  on public.api_endpoints for select
-  to authenticated
-  using (public.has_module_access('reference'));
-
-drop policy if exists "api_endpoints: admins write" on public.api_endpoints;
-create policy "api_endpoints: admins write"
-  on public.api_endpoints for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
--- ---------------------------------------------------------------
--- integrations
--- ---------------------------------------------------------------
-
-alter table public.integrations enable row level security;
-
-drop policy if exists "integrations: members read" on public.integrations;
-create policy "integrations: members read"
-  on public.integrations for select
-  to authenticated
-  using (public.has_module_access('integrations'));
-
-drop policy if exists "integrations: admins write" on public.integrations;
-create policy "integrations: admins write"
-  on public.integrations for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
--- ---------------------------------------------------------------
--- prototypes
--- ---------------------------------------------------------------
-
-alter table public.prototypes enable row level security;
-
-drop policy if exists "prototypes: members read" on public.prototypes;
-create policy "prototypes: members read"
-  on public.prototypes for select
-  to authenticated
-  using (public.has_module_access('prototypes'));
-
-drop policy if exists "prototypes: admins write" on public.prototypes;
-create policy "prototypes: admins write"
-  on public.prototypes for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
--- ---------------------------------------------------------------
--- work_areas: the shared area taxonomy. Readable behind either the
--- roadmap or the backlog grant, since both modules group by it.
--- ---------------------------------------------------------------
-
-alter table public.work_areas enable row level security;
-
-drop policy if exists "work_areas: members read" on public.work_areas;
-create policy "work_areas: members read"
-  on public.work_areas for select
-  to authenticated
-  using (public.has_module_access('roadmap') or public.has_module_access('backlog'));
-
-drop policy if exists "work_areas: admins write" on public.work_areas;
-create policy "work_areas: admins write"
-  on public.work_areas for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
--- ---------------------------------------------------------------
--- roadmap tables: one pattern for all, keyed to the roadmap module
--- grant for reads, admin-only writes.
--- ---------------------------------------------------------------
-
-alter table public.roadmap_milestones enable row level security;
-
-drop policy if exists "roadmap_milestones: members read" on public.roadmap_milestones;
-create policy "roadmap_milestones: members read"
-  on public.roadmap_milestones for select
-  to authenticated
-  using (public.has_module_access('roadmap'));
-
-drop policy if exists "roadmap_milestones: admins write" on public.roadmap_milestones;
-create policy "roadmap_milestones: admins write"
-  on public.roadmap_milestones for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
-alter table public.roadmap_items enable row level security;
-
-drop policy if exists "roadmap_items: members read" on public.roadmap_items;
-create policy "roadmap_items: members read"
-  on public.roadmap_items for select
-  to authenticated
-  using (public.has_module_access('roadmap'));
-
-drop policy if exists "roadmap_items: admins write" on public.roadmap_items;
-create policy "roadmap_items: admins write"
-  on public.roadmap_items for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
-alter table public.roadmap_dependencies enable row level security;
-
-drop policy if exists "roadmap_dependencies: members read" on public.roadmap_dependencies;
-create policy "roadmap_dependencies: members read"
-  on public.roadmap_dependencies for select
-  to authenticated
-  using (public.has_module_access('roadmap'));
-
-drop policy if exists "roadmap_dependencies: admins write" on public.roadmap_dependencies;
-create policy "roadmap_dependencies: admins write"
-  on public.roadmap_dependencies for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
--- ---------------------------------------------------------------
--- work intake tables: one pattern for all three, keyed to the
--- backlog module grant for reads, admin-only writes.
--- ---------------------------------------------------------------
-
-alter table public.work_documents enable row level security;
-
-drop policy if exists "work_documents: members read" on public.work_documents;
-create policy "work_documents: members read"
-  on public.work_documents for select
-  to authenticated
-  using (public.has_module_access('backlog'));
-
-drop policy if exists "work_documents: admins write" on public.work_documents;
-create policy "work_documents: admins write"
-  on public.work_documents for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
-alter table public.backlog_items enable row level security;
-
-drop policy if exists "backlog_items: members read" on public.backlog_items;
-create policy "backlog_items: members read"
-  on public.backlog_items for select
-  to authenticated
-  using (public.has_module_access('backlog'));
-
-drop policy if exists "backlog_items: admins write" on public.backlog_items;
-create policy "backlog_items: admins write"
-  on public.backlog_items for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
-alter table public.work_notes enable row level security;
-
-drop policy if exists "work_notes: members read" on public.work_notes;
-create policy "work_notes: members read"
-  on public.work_notes for select
-  to authenticated
-  using (public.has_module_access('backlog'));
-
-drop policy if exists "work_notes: admins write" on public.work_notes;
-create policy "work_notes: admins write"
-  on public.work_notes for all
-  to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
-
--- ---------------------------------------------------------------
--- module_access
+-- module_access: users see their own grants; only admins write.
 -- ---------------------------------------------------------------
 
 alter table public.module_access enable row level security;
 
 drop policy if exists "module_access: users read own" on public.module_access;
+drop policy if exists "module_access: admins manage" on public.module_access;
+drop policy if exists "module_access: admins insert" on public.module_access;
+drop policy if exists "module_access: admins update" on public.module_access;
+drop policy if exists "module_access: admins delete" on public.module_access;
+
 create policy "module_access: users read own"
   on public.module_access for select
   to authenticated
-  using (user_id = auth.uid() or public.is_admin());
+  using (user_id = (select auth.uid()) or (select public.is_admin()));
 
-drop policy if exists "module_access: admins manage" on public.module_access;
-create policy "module_access: admins manage"
-  on public.module_access for all
+create policy "module_access: admins insert"
+  on public.module_access for insert
   to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  with check ((select public.is_admin()));
+
+create policy "module_access: admins update"
+  on public.module_access for update
+  to authenticated
+  using ((select public.is_admin()))
+  with check ((select public.is_admin()));
+
+create policy "module_access: admins delete"
+  on public.module_access for delete
+  to authenticated
+  using ((select public.is_admin()));
+
+-- ---------------------------------------------------------------
+-- dashboard_counts() (defined in schema.sql) is the one read RPC:
+-- callable by signed-in users only, never by anon.
+-- ---------------------------------------------------------------
+
+revoke execute on function public.dashboard_counts() from public, anon;
+grant execute on function public.dashboard_counts() to authenticated;
 
 -- ---------------------------------------------------------------
 -- After running this file, promote your own account to admin:

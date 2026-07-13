@@ -89,11 +89,15 @@ test("every table in schema.sql has RLS enabled and at least one policy", () => 
   assert.ok(tables.length > 0, "No tables found in supabase/schema.sql");
   for (const t of tables) {
     assert.match(policies,
-      new RegExp(`alter table public\\.${t} enable row level security`, "i"),
+      new RegExp(`alter table public\\.${t}\\s+enable row level security`, "i"),
       `Table "${t}" has no RLS enable statement in policies.sql. ` +
       "A table without RLS is publicly readable via the anon key.");
-    assert.match(policies,
-      new RegExp(`create policy[\\s\\S]{0,200}?on public\\.${t}`, "i"),
+    // A table's policies are either written out explicitly or created
+    // by the content-table loop, whose values list names each table.
+    const explicit =
+      new RegExp(`create policy[\\s\\S]{0,200}?on public\\.${t}`, "i");
+    const viaLoop = new RegExp(`\\('${t}',`);
+    assert.ok(explicit.test(policies) || viaLoop.test(policies),
       `Table "${t}" has RLS but no policy in policies.sql.`);
   }
 });

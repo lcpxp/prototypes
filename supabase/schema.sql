@@ -258,6 +258,8 @@ create table if not exists public.roadmap_items (
 
 create index if not exists roadmap_items_area_idx
   on public.roadmap_items (area_id, horizon, priority, sort_order);
+create index if not exists roadmap_items_milestone_idx
+  on public.roadmap_items (milestone_id);
 
 drop trigger if exists roadmap_items_updated_at on public.roadmap_items;
 create trigger roadmap_items_updated_at
@@ -270,6 +272,9 @@ create table if not exists public.roadmap_dependencies (
   primary key (item_id, depends_on_id),
   check (item_id <> depends_on_id)
 );
+
+create index if not exists roadmap_dependencies_depends_on_idx
+  on public.roadmap_dependencies (depends_on_id);
 
 -- ---------------------------------------------------------------
 -- Work intake. Three tables that make the ongoing owner-and-Claude
@@ -303,6 +308,11 @@ create table if not exists public.work_documents (
   updated_at timestamptz not null default now()
 );
 
+create index if not exists work_documents_area_idx
+  on public.work_documents (area_id);
+create index if not exists work_documents_supersedes_idx
+  on public.work_documents (supersedes_id);
+
 drop trigger if exists work_documents_updated_at on public.work_documents;
 create trigger work_documents_updated_at
   before update on public.work_documents
@@ -335,6 +345,10 @@ create index if not exists backlog_items_status_idx
   on public.backlog_items (status, priority, sort_order);
 create index if not exists backlog_items_area_idx
   on public.backlog_items (area_id, status);
+create index if not exists backlog_items_roadmap_item_idx
+  on public.backlog_items (roadmap_item_id);
+create index if not exists backlog_items_source_document_idx
+  on public.backlog_items (source_document_id);
 
 -- Closing an item stamps resolved_at automatically so the historic
 -- record needs no manual bookkeeping; reopening clears it.
@@ -379,8 +393,38 @@ create index if not exists work_notes_document_idx
   on public.work_notes (document_id);
 create index if not exists work_notes_area_idx
   on public.work_notes (area_id, kind, status);
+create index if not exists work_notes_backlog_item_idx
+  on public.work_notes (backlog_item_id);
+create index if not exists work_notes_roadmap_item_idx
+  on public.work_notes (roadmap_item_id);
 
 drop trigger if exists work_notes_updated_at on public.work_notes;
 create trigger work_notes_updated_at
   before update on public.work_notes
   for each row execute function public.set_updated_at();
+
+-- ---------------------------------------------------------------
+-- dashboard_counts: every dashboard card count in one round trip
+-- instead of one request per module. SECURITY INVOKER, so RLS
+-- filters each count to what the caller may read. Counts are capped
+-- at 1001 (the dashboard shows "1000+") so a card never triggers a
+-- full scan of a large table. Keys mirror the statTable values in
+-- assets/js/core/registry.js; extend this function when a module
+-- gains a statTable. Grants live in policies.sql.
+-- ---------------------------------------------------------------
+
+create or replace function public.dashboard_counts()
+returns jsonb
+language sql
+stable
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'api_specs',     (select count(*) from (select 1 from public.api_specs     limit 1001) c),
+    'integrations',  (select count(*) from (select 1 from public.integrations  limit 1001) c),
+    'prototypes',    (select count(*) from (select 1 from public.prototypes    limit 1001) c),
+    'roadmap_items', (select count(*) from (select 1 from public.roadmap_items limit 1001) c),
+    'backlog_items', (select count(*) from (select 1 from public.backlog_items limit 1001) c),
+    'profiles',      (select count(*) from (select 1 from public.profiles      limit 1001) c)
+  );
+$$;
