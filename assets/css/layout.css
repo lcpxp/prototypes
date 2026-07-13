@@ -69,10 +69,12 @@
   white-space: nowrap;
 }
 
+/* The nav keeps overflow-x: auto at every width: it is inert when
+   the row fits and quietly scrolls when it does not, so nav content
+   can never force the page to scroll sideways. */
 @media (min-width: 48rem) {
   .nav {
     gap: var(--s-5);
-    overflow-x: visible;
   }
 }
 

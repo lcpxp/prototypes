@@ -64,6 +64,14 @@
   align-items: start;
 }
 
+/* Without this, a wide table or code sample inside an endpoint
+   raises the grid item's automatic minimum size and stretches the
+   track past the viewport; with it, the inner overflow-x: auto
+   wrappers do their job. */
+.ref-layout > * {
+  min-inline-size: 0;
+}
+
 .ref-sidebar {
   background: var(--surface);
   border: 1px solid var(--line);

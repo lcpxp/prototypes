@@ -13,8 +13,8 @@ document instead of walking the tree or reading whole files.
 | README.md | 18 | LPio |
 | assets/css/base.css | 96 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 286 | components.css - Reusable interface components: cards, forms, |
-| assets/css/layout.css | 124 | layout.css - Navigation, page scaffold and grids. |
-| assets/css/pages.css | 200 | pages.css - Page-specific styling: the login screen and the |
+| assets/css/layout.css | 126 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/pages.css | 208 | pages.css - Page-specific styling: the login screen and the |
 | assets/css/tokens.css | 149 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 17 | config.example.js |
@@ -26,22 +26,23 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/reference.js | 240 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
-| dashboard.html | 47 | Dashboard - LPio / LaunchPad IO |
+| dashboard.html | 48 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 100 | Architecture |
 | docs/DESIGN.md | 90 | Design standards |
 | docs/HARNESS.md | 108 | Verification harness and working process |
 | docs/ROADMAP.md | 33 | Roadmap |
 | docs/SECURITY.md | 76 | Security model |
-| docs/SESSIONS.md | 92 | Session log |
+| docs/SESSIONS.md | 139 | Session log |
 | docs/SETUP.md | 43 | Setup and day-to-day use |
-| index.html | 42 | Sign in - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 41 | Prototypes - LPio / LaunchPad IO |
-| modules/reference/index.html | 49 | API reference - LPio / LaunchPad IO |
-| modules/users/index.html | 43 | Users - LPio / LaunchPad IO |
+| index.html | 43 | Sign in - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 42 | Prototypes - LPio / LaunchPad IO |
+| modules/reference/index.html | 50 | API reference - LPio / LaunchPad IO |
+| modules/users/index.html | 44 | Users - LPio / LaunchPad IO |
 | package.json | 12 |  |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
-| silos/index.html | 56 | Project silos - LPio / LaunchPad IO |
-| silos/tooling/index.html | 41 | Tooling silo - LPio / LaunchPad IO |
+| silos/index.html | 57 | Project silos - LPio / LaunchPad IO |
+| silos/tooling/index.html | 42 | Tooling silo - LPio / LaunchPad IO |
+| supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 166 | ------------------------------------------------------------------ |
 | supabase/schema.sql | 152 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 122 | ------------------------------------------------------------------ |
