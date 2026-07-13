@@ -60,6 +60,22 @@ $$;
 revoke execute on function public.has_module_access(text) from public, anon;
 grant execute on function public.has_module_access(text) to authenticated;
 
+-- The caller's own role. SECURITY DEFINER because policies on
+-- profiles cannot subselect profiles - that recurses through the
+-- table's own RLS.
+create or replace function public.own_role()
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select role from public.profiles where id = (select auth.uid());
+$$;
+
+revoke execute on function public.own_role() from public, anon;
+grant execute on function public.own_role() to authenticated;
+
 -- Internal functions must not be callable as API RPCs.
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
 
@@ -155,9 +171,7 @@ create policy "profiles: update own or admin"
   using (id = (select auth.uid()) or (select public.is_admin()))
   with check (
     (select public.is_admin())
-    or (id = (select auth.uid())
-        and role = (select p.role from public.profiles p
-                    where p.id = (select auth.uid())))
+    or (id = (select auth.uid()) and role = (select public.own_role()))
   );
 
 create policy "profiles: admins insert"
