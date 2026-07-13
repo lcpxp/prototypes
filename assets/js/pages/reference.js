@@ -193,8 +193,19 @@
     }
 
     var endpoints = result.data;
-    if ((!endpoints || endpoints.length === 0) && spec.spec) {
-      endpoints = endpointsFromOpenApi(spec.spec);
+    if (!endpoints || endpoints.length === 0) {
+      // Fallback to the spec's raw OpenAPI document. The list query
+      // leaves the heavy jsonb column behind, so fetch it on demand
+      // the first time this spec needs it, then keep it on the row.
+      if (spec.spec === undefined) {
+        var docResult = await App.db
+          .from(App.registry.tables.apiSpecs)
+          .select("spec")
+          .eq("id", spec.id)
+          .single();
+        spec.spec = docResult.error ? null : docResult.data.spec;
+      }
+      if (spec.spec) endpoints = endpointsFromOpenApi(spec.spec);
     }
     render(endpoints);
   }
@@ -207,7 +218,7 @@
 
     var result = await App.db
       .from(App.registry.tables.apiSpecs)
-      .select("id, title, version, status, family, description, spec")
+      .select("id, title, version, status, family, description")
       .order("title", { ascending: true });
 
     if (result.error) {

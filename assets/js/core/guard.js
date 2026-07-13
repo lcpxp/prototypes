@@ -40,10 +40,30 @@
   // Load the signed-in user's role and module grants once. A module
   // is allowed unless an explicit module_access row denies it, and
   // admins are allowed everything - mirroring the database rules.
-  App.accessReady = App.requireAuth.then(async function (session) {
-    App.access = { admin: false, denied: {} };
-    if (!session) return App.access;
+  //
+  // Grants are cached in sessionStorage so page-to-page navigation
+  // renders without waiting on the network; every load revalidates
+  // in the background and re-enforces this page's module if a grant
+  // was revoked meanwhile. This cache is a UX layer only - RLS is
+  // what actually enforces access.
+  var CACHE_KEY = "lpio-access";
 
+  function readCache(userId) {
+    try {
+      var parsed = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+      return parsed && parsed.user === userId ? parsed.access : null;
+    } catch (e) { return null; }
+  }
+
+  function writeCache(userId, access) {
+    try {
+      sessionStorage.setItem(
+        CACHE_KEY, JSON.stringify({ user: userId, access: access }));
+    } catch (e) { /* storage full or blocked: cache is optional */ }
+  }
+
+  async function fetchAccess(session) {
+    var access = { admin: false, denied: {} };
     var results = await Promise.all([
       App.db.from(App.registry.tables.profiles)
         .select("role")
@@ -53,19 +73,36 @@
         .select("module_key, allowed")
         .eq("user_id", session.user.id),
     ]);
-
     if (results[0].data) {
-      App.access.admin =
-        results[0].data.role === App.registry.roles.admin;
+      access.admin = results[0].data.role === App.registry.roles.admin;
     }
     (results[1].data || []).forEach(function (row) {
-      if (!row.allowed) App.access.denied[row.module_key] = true;
+      if (!row.allowed) access.denied[row.module_key] = true;
+    });
+    return access;
+  }
+
+  App.canAccess = function (key) {
+    return !App.access || App.access.admin || !App.access.denied[key];
+  };
+
+  App.accessReady = App.requireAuth.then(function (session) {
+    App.access = { admin: false, denied: {} };
+    if (!session) return App.access;
+
+    var refreshed = fetchAccess(session).then(function (access) {
+      App.access = access;
+      writeCache(session.user.id, access);
+      enforceModule();
+      return access;
     });
 
-    App.canAccess = function (key) {
-      return App.access.admin || !App.access.denied[key];
-    };
-    return App.access;
+    var cached = readCache(session.user.id);
+    if (cached) {
+      App.access = cached;
+      return cached;
+    }
+    return refreshed;
   });
 
   App.onAuthed = function (fn) {
@@ -76,22 +113,22 @@
 
   // Send users without a grant for this page's module back to the
   // dashboard, which explains the denial via the query parameter.
-  var moduleKey = (document.body && document.body.dataset.module) || "";
-  if (moduleKey) {
-    App.accessReady.then(function () {
-      if (App.canAccess && !App.canAccess(moduleKey)) {
-        window.location.replace(
-          App.root + "/dashboard.html?denied=" +
-          encodeURIComponent(moduleKey)
-        );
-      }
-    });
+  function enforceModule() {
+    var moduleKey = (document.body && document.body.dataset.module) || "";
+    if (moduleKey && !App.canAccess(moduleKey)) {
+      window.location.replace(
+        App.root + "/dashboard.html?denied=" +
+        encodeURIComponent(moduleKey)
+      );
+    }
   }
+  App.accessReady.then(enforceModule);
 
   // If the session ends in another tab, drop back to login.
   if (App.db) {
     App.db.auth.onAuthStateChange(function (event) {
       if (event === "SIGNED_OUT") {
+        try { sessionStorage.removeItem(CACHE_KEY); } catch (e) {}
         window.location.replace(App.root + "/index.html");
       }
     });

@@ -193,10 +193,28 @@
       if (event.target === modal) modal.close();
     });
 
-    var areasResult = await App.db
-      .from(App.registry.tables.workAreas)
-      .select("id, title, scope, sort_order")
-      .order("sort_order", { ascending: true });
+    // The three lists are independent, so fetch them in parallel.
+    var results = await Promise.all([
+      App.db
+        .from(App.registry.tables.workAreas)
+        .select("id, title, scope, sort_order")
+        .order("sort_order", { ascending: true }),
+      App.db
+        .from(App.registry.tables.workDocuments)
+        .select("id, title, kind, area_id, summary, status, captured_on, tags")
+        .order("captured_on", { ascending: false }),
+      App.db
+        .from(App.registry.tables.backlogItems)
+        .select("id, area_id, source_document_id, type, title, summary, details, " +
+          "status, priority, external_ref, requested_by, tags, resolution, " +
+          "resolved_at, created_at")
+        .order("priority", { ascending: true })
+        .order("sort_order", { ascending: true }),
+    ]);
+    var areasResult = results[0];
+    var docsResult = results[1];
+    var itemsResult = results[2];
+
     if (areasResult.error) {
       document.getElementById("backlog-list").innerHTML =
         '<p class="notice error">Could not load work areas: ' +
@@ -207,20 +225,9 @@
       areaTitle[area.id] = area.title;
     });
 
-    var docsResult = await App.db
-      .from(App.registry.tables.workDocuments)
-      .select("id, title, kind, area_id, summary, status, captured_on, tags")
-      .order("captured_on", { ascending: false });
     documents = docsResult.error ? [] : docsResult.data || [];
     documents.forEach(function (doc) { docTitle[doc.id] = doc.title; });
 
-    var itemsResult = await App.db
-      .from(App.registry.tables.backlogItems)
-      .select("id, area_id, source_document_id, type, title, summary, details, " +
-        "status, priority, external_ref, requested_by, tags, resolution, " +
-        "resolved_at, created_at")
-      .order("priority", { ascending: true })
-      .order("sort_order", { ascending: true });
     if (itemsResult.error) {
       document.getElementById("backlog-list").innerHTML =
         '<p class="notice error">Could not load backlog items: ' +

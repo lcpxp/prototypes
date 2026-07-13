@@ -60,11 +60,21 @@
   App.onAuthed(async function () {
     var host = document.getElementById("roadmap-content");
 
-    var areasResult = await App.db
-      .from(App.registry.tables.workAreas)
-      .select("id, key, title, description, sort_order")
-      .order("sort_order", { ascending: true })
-      .order("title", { ascending: true });
+    // Areas and items are independent, so fetch them in parallel.
+    var results = await Promise.all([
+      App.db
+        .from(App.registry.tables.workAreas)
+        .select("id, key, title, description, sort_order")
+        .order("sort_order", { ascending: true })
+        .order("title", { ascending: true }),
+      App.db
+        .from(App.registry.tables.roadmapItems)
+        .select("area_id, title, summary, status, horizon, priority, effort, impact, tags, sort_order")
+        .order("priority", { ascending: true })
+        .order("sort_order", { ascending: true }),
+    ]);
+    var areasResult = results[0];
+    var itemsResult = results[1];
 
     if (areasResult.error) {
       host.innerHTML =
@@ -81,12 +91,6 @@
         "will appear here.</p>";
       return;
     }
-
-    var itemsResult = await App.db
-      .from(App.registry.tables.roadmapItems)
-      .select("area_id, title, summary, status, horizon, priority, effort, impact, tags, sort_order")
-      .order("priority", { ascending: true })
-      .order("sort_order", { ascending: true });
 
     if (itemsResult.error) {
       host.innerHTML =

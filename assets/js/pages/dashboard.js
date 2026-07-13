@@ -7,11 +7,19 @@
 (function () {
   "use strict";
 
-  async function countRows(table) {
-    var result = await App.db
-      .from(table)
-      .select("*", { count: "exact", head: true });
-    return result.error ? "-" : result.count;
+  // All card counts arrive in one dashboard_counts() call (see
+  // supabase/schema.sql) instead of one request per module. Counts
+  // are capped server-side at 1001 so they stay cheap at any scale.
+  async function loadCounts(modules) {
+    var result = await App.db.rpc("dashboard_counts");
+    modules.forEach(function (mod) {
+      if (!mod.statTable) return;
+      var el = document.getElementById("stat-" + mod.key);
+      if (!el) return;
+      var count = result.data ? result.data[mod.statTable] : null;
+      if (result.error || count == null) el.textContent = "-";
+      else el.textContent = count > 1000 ? "1000+" : count;
+    });
   }
 
   function cardHtml(mod) {
@@ -36,19 +44,13 @@
     });
   }
 
-  async function renderCards() {
+  function renderCards() {
     var host = document.getElementById("module-cards");
     if (!host) return;
 
     var modules = visibleModules();
     host.innerHTML = modules.map(cardHtml).join("");
-
-    modules
-      .filter(function (mod) { return mod.statTable; })
-      .forEach(async function (mod) {
-        var el = document.getElementById("stat-" + mod.key);
-        if (el) el.textContent = await countRows(mod.statTable);
-      });
+    loadCounts(modules);
   }
 
   async function loadRecent() {
