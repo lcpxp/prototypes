@@ -60,8 +60,8 @@ tests/checks/size.test.js.
   CLAUDE.md-class files is ~200 lines or less, with detail split
   into on-demand docs like this one (progressive disclosure).
 - Exceptions are explicit, listed in the JSON with a note and an
-  exit plan. Current debt: assets/css/main.css (585 lines) is due
-  a split into base/components/pages.
+  exit plan. No source-file debt is currently listed; the former
+  main.css monolith was split into the layered stylesheets.
 
 When a file crosses its soft limit: finish the current task, then
 schedule a split as its own refactor commit before the file is
@@ -96,7 +96,7 @@ Three layers, cheapest first:
 - Secret-shaped strings (JWTs, sb_secret_, live project URLs,
   private keys, GitHub/AWS tokens) fail the suite in any tracked
   file. Findings report file:line only, never the value.
-- assets/js/config.js tracked = failure, and the pre-commit hook
+- assets/js/core/config.js tracked = failure, and the pre-commit hook
   independently blocks it from being staged.
 - Every table in supabase/schema.sql must have RLS enabled and at
   least one policy in supabase/policies.sql in the same commit.

@@ -1,0 +1,285 @@
+/* ------------------------------------------------------------------
+   components.css - Reusable interface components: cards, forms,
+   buttons, notices, tables, badges and toggles. Values come from
+   tokens.css only; nothing here branches on theme or page.
+------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------
+   Cards
+--------------------------------------------------------------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--s-5);
+}
+
+.card h2 {
+  font-size: var(--text-lg);
+  margin-block-end: var(--s-2);
+}
+
+.card .card-meta {
+  color: var(--faint);
+  font-size: var(--text-sm);
+}
+
+a.card {
+  display: block;
+  color: var(--ink);
+}
+
+a.card:hover {
+  text-decoration: none;
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-raised);
+}
+
+.stat {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------
+   Forms and buttons
+--------------------------------------------------------------- */
+
+.field {
+  margin-block-end: var(--s-4);
+}
+
+.field label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  margin-block-end: var(--s-1);
+}
+
+.field input,
+.field select,
+select {
+  inline-size: 100%;
+  padding: var(--s-2) var(--s-3);
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+
+select {
+  inline-size: auto;
+}
+
+.field input:focus,
+.field select:focus,
+select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  border-color: var(--accent);
+}
+
+.button {
+  display: inline-block;
+  padding: var(--s-2) var(--s-4);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.button.secondary {
+  color: var(--ink);
+  background: var(--surface);
+  border-color: var(--line-strong);
+}
+
+.button.secondary:hover {
+  background: var(--paper);
+}
+
+.button.quiet {
+  color: var(--muted);
+  background: transparent;
+  border-color: transparent;
+  padding: var(--s-1) var(--s-2);
+}
+
+.button.quiet:hover {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+/* ---------------------------------------------------------------
+   Toggle switch: a real checkbox, keyboard and screen-reader
+   accessible. Markup:
+     <label class="toggle">
+       <input type="checkbox">
+       <span class="track" aria-hidden="true"></span>
+     </label>
+--------------------------------------------------------------- */
+
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.toggle input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.toggle .track {
+  display: inline-block;
+  inline-size: 2.25rem;
+  block-size: 1.25rem;
+  background: var(--line-strong);
+  border-radius: var(--radius-pill);
+  pointer-events: none;
+}
+
+.toggle .track::after {
+  content: "";
+  display: block;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-block-start: var(--s-0);
+  margin-inline-start: var(--s-0);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+}
+
+.toggle input:checked + .track {
+  background: var(--accent);
+}
+
+.toggle input:checked + .track::after {
+  margin-inline-start: 1.125rem;
+}
+
+.toggle input:focus-visible + .track {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.toggle input:disabled + .track {
+  opacity: 0.5;
+}
+
+.toggle input:disabled {
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------
+   Notices
+--------------------------------------------------------------- */
+
+.notice {
+  padding: var(--s-3) var(--s-4);
+  font-size: var(--text-sm);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.notice.error {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.notice.hidden {
+  display: none;
+}
+
+/* ---------------------------------------------------------------
+   Tables. .table-wrap owns horizontal overflow so narrow screens
+   scroll the table, never the page.
+--------------------------------------------------------------- */
+
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+th {
+  text-align: start;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: var(--s-3) var(--s-4);
+  border-block-end: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+td {
+  padding: var(--s-3) var(--s-4);
+  border-block-end: 1px solid var(--line);
+  vertical-align: top;
+}
+
+tr:last-child td {
+  border-block-end: none;
+}
+
+td.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+/* ---------------------------------------------------------------
+   Badges
+--------------------------------------------------------------- */
+
+.badge {
+  display: inline-block;
+  padding: var(--s-0) var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-slight);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+
+.badge.get    { color: var(--m-get);    background: var(--m-get-bg);    border-color: transparent; }
+.badge.post   { color: var(--m-post);   background: var(--m-post-bg);   border-color: transparent; }
+.badge.put    { color: var(--m-put);    background: var(--m-put-bg);    border-color: transparent; }
+.badge.patch  { color: var(--m-patch);  background: var(--m-patch-bg);  border-color: transparent; }
+.badge.delete { color: var(--m-delete); background: var(--m-delete-bg); border-color: transparent; }
+
+.badge.live       { color: var(--ok);     background: var(--ok-soft);     border-color: transparent; }
+.badge.draft      { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
+.badge.deprecated { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
+.badge.admin      { color: var(--accent); background: var(--accent-soft); border-color: transparent; }

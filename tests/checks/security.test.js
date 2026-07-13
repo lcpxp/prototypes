@@ -22,9 +22,11 @@ const SECRET_PATTERNS = [
 
 test("no gitignored config file is tracked", () => {
   const files = trackedFiles();
-  assert.ok(!files.includes("assets/js/config.js"),
-    "assets/js/config.js is tracked. Run: git rm --cached assets/js/config.js " +
-    "and rotate the Supabase keys immediately (repo is public).");
+  for (const banned of ["assets/js/core/config.js", "assets/js/config.js"]) {
+    assert.ok(!files.includes(banned),
+      `${banned} is tracked. Run: git rm --cached ${banned} ` +
+      "and rotate the Supabase keys immediately (repo is public).");
+  }
 });
 
 test("no credential-shaped strings in any tracked file", () => {

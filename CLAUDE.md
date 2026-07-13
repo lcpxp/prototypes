@@ -20,22 +20,27 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
 
     index.html            Login page (entry point, unguarded)
     dashboard.html        Post-login hub
-    reference.html        API reference viewer
-    users.html            User register
+    modules/              One folder per module: reference/, prototypes/, users/
     silos/                Central project-silo index and silo-specific pages
-    prototypes/           Prototype pages plus gallery index
-    assets/css/           tokens.css (design tokens) and main.css
-    assets/js/            Auth, guard, UI and page modules
-    supabase/             schema.sql, policies.sql, seed.sql
-    docs/                 Architecture, security, sessions, design
+    assets/css/           tokens.css (design tokens) plus layered stylesheets
+    assets/js/core/       Shared runtime: config, supabase, registry, guard, ui, auth
+    assets/js/pages/      One module per page (dashboard, reference, gallery, users)
+    supabase/             schema.sql, policies.sql, seed.sql, migrations/
+    docs/                 Architecture, security, sessions, design, setup, roadmap
+
+    assets/js/core/registry.js is the single source of truth for
+    modules, table names and roles. Navigation, dashboard cards and
+    access keys derive from it; never hard-code those elsewhere.
+    Per-file detail lives in the generated docs/CODEMAP.md.
 
 ## Non-negotiable security rules
 
 1. This repo is public. Never commit keys, tokens, passwords, real
    merchant names, live internal endpoint URLs, or any credential of
    any kind. When in doubt, it goes in Supabase, not in git.
-2. assets/js/config.js is gitignored. Never create, commit or print
-   its contents. Never inline Supabase URLs or keys into any file.
+2. assets/js/core/config.js is gitignored. Never create, commit or
+   print its contents. Never inline Supabase URLs or keys into any
+   file.
 3. The service_role key must never appear anywhere: not in files, not
    in commit messages, not in session logs, not in terminal output.
 4. Before every commit, run git status and confirm no ignored or
@@ -102,21 +107,26 @@ is likely, checkpoint first.
   new dependencies beyond the Supabase CDN client without explicit
   agreement from the repo owner recorded in docs/SESSIONS.md.
 - Every new protected page includes, in order: the Supabase CDN
-  script, config.js, supabase.js, guard.js, ui.js, then its own page
-  module. Pages below the repo root set data-root on body.
+  script, then core/config.js, core/supabase.js, core/registry.js,
+  core/guard.js, core/ui.js, then its own page module from
+  assets/js/pages/. Pages below the repo root set data-root on body.
 - Interface copy is plain, specific and in sentence case. Buttons say
   what they do. Errors say what went wrong and how to fix it.
 - All dynamic content rendered into the DOM goes through App.escape.
 
 ## Adding common things
 
-- New prototype: create the page under prototypes/, follow the script
-  include order above, then insert a registry row into the prototypes
-  table. Do not hand-edit navigation.
+- New prototype: create the page under modules/prototypes/, follow
+  the script include order above, then insert a registry row into the
+  prototypes table. Do not hand-edit navigation.
+- New module: folder under modules/ with an index.html, a page module
+  in assets/js/pages/, and an entry in assets/js/core/registry.js.
+  Navigation and dashboard cards follow from the registry entry.
 - New API spec content: rows in api_specs and api_endpoints via the
   Supabase dashboard or SQL editor. The repo does not change.
 - New table: schema in supabase/schema.sql, policies in
-  supabase/policies.sql, both in the same commit.
+  supabase/policies.sql, both in the same commit, and the change
+  applied to the live project as a migration.
 
 ## Definition of done for any change
 

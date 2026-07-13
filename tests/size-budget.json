@@ -7,12 +7,8 @@
     ".sql":  { "soft": 300, "hard": 500 },
     ".md":   { "soft": 200, "hard": 300 }
   },
-  "generated": ["docs/CODEMAP.md", "llms.txt", "skeleton.patch"],
+  "generated": ["docs/CODEMAP.md", "llms.txt"],
   "exceptions": {
-    "assets/css/main.css": {
-      "hard": 650,
-      "note": "Pre-harness monolith at 585 lines. Refactor task: split into base.css, components.css, pages.css, each under 300 lines, then remove this exception."
-    },
     "docs/SESSIONS.md": {
       "hard": 1000,
       "note": "Rolling log. When it passes 600 lines, move entries older than 30 days to docs/sessions-archive/YYYY-MM.md."

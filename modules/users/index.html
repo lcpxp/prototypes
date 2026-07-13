@@ -5,29 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:,">
-  <title>Tooling silo - LPio / LaunchPad IO</title>
+  <title>Users - LPio / LaunchPad IO</title>
   <link rel="stylesheet" href="../../assets/css/tokens.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/layout.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="../../assets/css/pages.css">
 </head>
-<body data-root="../.." data-module="silos">
+<body data-root="../.." data-module="users">
   <header id="app-nav"></header>
 
   <main class="page">
     <div class="page-head">
-      <span class="eyebrow">Example silo</span>
-      <h1>Tooling silo</h1>
-      <p class="lede">This is a placeholder for a standalone tool or adjacent
-        product work that should remain independently navigable from the main LPio hub.</p>
+      <span class="eyebrow">Access</span>
+      <h1>Users</h1>
+      <p class="lede">Everyone with access to LPio. Accounts are created by
+        an admin in the Supabase dashboard under Authentication, then Users;
+        a profile row appears here automatically. Admins can set each
+        user's role and toggle their access to every module; the same
+        rules are enforced by the database, not just this page.</p>
     </div>
 
-    <div class="card">
-      <h2>How to use this pattern</h2>
-      <p>Create a folder under this silos/ area for each project stream and link
-        it from the silos index. A tool, a portal mock, or a reference bundle can all
-        be hosted as separate, self-contained pages while staying connected to LPio.</p>
+    <div id="users-notice"></div>
+    <div id="user-table">
+      <p class="notice">Loading</p>
     </div>
   </main>
 
@@ -37,5 +38,6 @@
   <script src="../../assets/js/core/registry.js"></script>
   <script src="../../assets/js/core/guard.js"></script>
   <script src="../../assets/js/core/ui.js"></script>
+  <script src="../../assets/js/pages/users.js"></script>
 </body>
 </html>

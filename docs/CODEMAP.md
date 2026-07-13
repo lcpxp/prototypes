@@ -7,67 +7,88 @@ document instead of walking the tree or reading whole files.
 | File | Lines | Purpose |
 |---|---:|---|
 | .githooks/pre-commit | 20 |  |
-| .gitignore | 19 |  |
+| .gitignore | 20 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 148 | CLAUDE.md |
-| README.md | 59 | LPio - LaunchPad IO |
-| assets/css/main.css | 586 | main.css - Layout and components. Values come from tokens.css only. |
-| assets/css/tokens.css | 81 | tokens.css - Design tokens for the onboarding portal prototype hub. |
-| assets/js/auth.js | 54 | auth.js - Login page logic for index.html. |
-| assets/js/config.example.js | 17 | config.example.js |
-| assets/js/dashboard.js | 74 | dashboard.js - Loads counts and recent activity for dashboard.html. |
-| assets/js/gallery.js | 55 | gallery.js - Prototype registry for prototypes/index.html. |
-| assets/js/guard.js | 45 | guard.js - Blocks unauthenticated access to protected pages. |
-| assets/js/reference.js | 240 | reference.js - The reference viewer ("swagger") for reference.html. |
-| assets/js/supabase.js | 40 | supabase.js - Initialises the Supabase client as App.db. |
-| assets/js/ui.js | 93 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
-| assets/js/users.js | 58 | users.js - User list for users.html, read from the profiles table. |
-| dashboard.html | 65 | Dashboard - LPio / LaunchPad IO |
-| docs/ARCHITECTURE.md | 86 | Architecture |
-| docs/DESIGN.md | 62 | Design standards |
+| CLAUDE.md | 158 | CLAUDE.md |
+| README.md | 18 | LPio |
+| assets/css/base.css | 96 | base.css - Reset, typography and global element styles. |
+| assets/css/components.css | 286 | components.css - Reusable interface components: cards, forms, |
+| assets/css/layout.css | 126 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/pages.css | 208 | pages.css - Page-specific styling: the login screen and the |
+| assets/css/tokens.css | 149 | tokens.css - Design tokens for the LPio hub. |
+| assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
+| assets/js/core/config.example.js | 17 | config.example.js |
+| assets/js/core/guard.js | 100 | guard.js - Blocks unauthenticated access to protected pages and |
+| assets/js/core/registry.js | 68 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/supabase.js | 40 | supabase.js - Initialises the Supabase client as App.db. |
+| assets/js/core/ui.js | 102 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/pages/dashboard.js | 116 | dashboard.js - Renders module cards, counts and recent activity |
+| assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
+| assets/js/pages/reference.js | 240 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
+| dashboard.html | 48 | Dashboard - LPio / LaunchPad IO |
+| docs/ARCHITECTURE.md | 100 | Architecture |
+| docs/DESIGN.md | 90 | Design standards |
 | docs/HARNESS.md | 108 | Verification harness and working process |
-| docs/SECURITY.md | 70 | Security model |
-| docs/SESSIONS.md | 92 | Session log |
-| index.html | 39 | Sign in - LPio / LaunchPad IO |
+| docs/ROADMAP.md | 33 | Roadmap |
+| docs/SECURITY.md | 76 | Security model |
+| docs/SESSIONS.md | 139 | Session log |
+| docs/SETUP.md | 43 | Setup and day-to-day use |
+| index.html | 43 | Sign in - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 42 | Prototypes - LPio / LaunchPad IO |
+| modules/reference/index.html | 50 | API reference - LPio / LaunchPad IO |
+| modules/users/index.html | 44 | Users - LPio / LaunchPad IO |
 | package.json | 12 |  |
-| prototypes/index.html | 36 | Prototypes - LPio / LaunchPad IO |
-| reference.html | 45 | Developer material - LPio / LaunchPad IO |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
-| setup-harness.sh | 775 | ================================================================== |
-| silos/index.html | 52 | Project silos - LPio / LaunchPad IO |
-| silos/tooling/index.html | 37 | Tooling silo - LPio / LaunchPad IO |
-| supabase/policies.sql | 121 | ------------------------------------------------------------------ |
-| supabase/schema.sql | 131 | ------------------------------------------------------------------ |
+| silos/index.html | 57 | Project silos - LPio / LaunchPad IO |
+| silos/tooling/index.html | 42 | Tooling silo - LPio / LaunchPad IO |
+| supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
+| supabase/policies.sql | 166 | ------------------------------------------------------------------ |
+| supabase/schema.sql | 152 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 122 | ------------------------------------------------------------------ |
-| tests/checks/security.test.js | 72 | tests/checks/security.test.js - Security gates. |
+| tests/checks/security.test.js | 74 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 33 | tests/checks/size.test.js - File size budgets. |
-| tests/checks/structure.test.js | 72 | tests/checks/structure.test.js - Page structure gates. |
-| tests/checks/style.test.js | 47 | tests/checks/style.test.js - Design-system gates. |
+| tests/checks/structure.test.js | 97 | tests/checks/structure.test.js - Page structure gates. |
+| tests/checks/style.test.js | 60 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
-| tests/size-budget.json | 26 |  |
-| tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Functioning benchmarks for assets/js/ui.js. |
-| users.html | 36 | Users - LPio / LaunchPad IO |
+| tests/size-budget.json | 22 |  |
+| tests/unit/registry.test.js | 55 | tests/unit/registry.test.js - Benchmarks for the module registry, |
+| tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 
 ## JavaScript symbol index
 
 | Symbol | Location |
 |---|---|
-| countRows() | assets/js/dashboard.js:8 |
-| setStat() | assets/js/dashboard.js:15 |
-| loadRecent() | assets/js/dashboard.js:20 |
-| App.onAuthed | assets/js/guard.js:30 |
-| codeblock() | assets/js/reference.js:19 |
-| paramsTable() | assets/js/reference.js:30 |
-| endpointBlock() | assets/js/reference.js:49 |
-| groupByTag() | assets/js/reference.js:73 |
-| render() | assets/js/reference.js:87 |
-| endpointsFromOpenApi() | assets/js/reference.js:136 |
-| loadSpec() | assets/js/reference.js:163 |
-| App.escape | assets/js/ui.js:11 |
-| App.methodBadge | assets/js/ui.js:21 |
-| App.statusBadge | assets/js/ui.js:29 |
-| App.copyText | assets/js/ui.js:34 |
-| renderNav() | assets/js/ui.js:45 |
+| App.canAccess | assets/js/core/guard.js:65 |
+| App.onAuthed | assets/js/core/guard.js:71 |
+| App.moduleHref | assets/js/core/registry.js:64 |
+| App.escape | assets/js/core/ui.js:11 |
+| App.methodBadge | assets/js/core/ui.js:21 |
+| App.statusBadge | assets/js/core/ui.js:29 |
+| App.copyText | assets/js/core/ui.js:34 |
+| isCurrentPage() | assets/js/core/ui.js:47 |
+| renderNav() | assets/js/core/ui.js:53 |
+| countRows() | assets/js/pages/dashboard.js:10 |
+| cardHtml() | assets/js/pages/dashboard.js:17 |
+| visibleModules() | assets/js/pages/dashboard.js:33 |
+| renderCards() | assets/js/pages/dashboard.js:39 |
+| loadRecent() | assets/js/pages/dashboard.js:54 |
+| showDeniedNotice() | assets/js/pages/dashboard.js:99 |
+| codeblock() | assets/js/pages/reference.js:19 |
+| paramsTable() | assets/js/pages/reference.js:30 |
+| endpointBlock() | assets/js/pages/reference.js:49 |
+| groupByTag() | assets/js/pages/reference.js:73 |
+| render() | assets/js/pages/reference.js:87 |
+| endpointsFromOpenApi() | assets/js/pages/reference.js:136 |
+| loadSpec() | assets/js/pages/reference.js:163 |
+| notice() | assets/js/pages/users.js:15 |
+| roleBadge() | assets/js/pages/users.js:24 |
+| roleCell() | assets/js/pages/users.js:30 |
+| toggleCell() | assets/js/pages/users.js:46 |
+| render() | assets/js/pages/users.js:57 |
+| load() | assets/js/pages/users.js:89 |
+| saveToggle() | assets/js/pages/users.js:123 |
+| saveRole() | assets/js/pages/users.js:142 |
 | firstLineMatching() | scripts/gen-codemap.js:22 |
 | purposeOf() | scripts/gen-codemap.js:30 |
 | symbolsOf() | scripts/gen-codemap.js:41 |
@@ -78,6 +99,7 @@ document instead of walking the tree or reading whole files.
 | read() | tests/lib/repo.js:19 |
 | isTextFile() | tests/lib/repo.js:23 |
 | lineOf() | tests/lib/repo.js:28 |
+| loadApp() | tests/unit/registry.test.js:12 |
 | loadApp() | tests/unit/ui.test.js:13 |
 
 ## Conventions for agents

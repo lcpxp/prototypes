@@ -26,14 +26,15 @@ substance lives behind Supabase Row Level Security.
 2. Every other page includes guard.js, which checks for a session
    before anything renders and bounces unauthenticated visitors back
    to index.html.
-3. dashboard.html is the hub: counts, recent spec activity, and routes
-   into the reference viewer, prototype gallery, project silos and user
-   register.
-4. silos/index.html is the central entry to project-specific workstreams.
-   Each silo can be its own folder or page and can be linked from here.
-5. reference.html renders the selected spec from the database.
-6. prototypes/index.html renders the prototype registry as cards that
-   link to prototype pages stored in the same directory.
+3. dashboard.html is the hub: module cards, counts and recent spec
+   activity, all rendered from the module registry.
+4. Each module lives in its own folder under modules/ with an
+   index.html: modules/reference/ (the spec viewer),
+   modules/prototypes/ (the gallery plus the prototype pages
+   themselves) and modules/users/ (the user and access register).
+5. silos/index.html is the central entry to project-specific
+   workstreams. Each silo can be its own folder or page and can be
+   linked from here.
 
 ## JavaScript module order
 
@@ -41,21 +42,33 @@ Each protected page loads scripts in a fixed order, each attaching to
 a shared window.App namespace:
 
     supabase CDN client   provides window.supabase
-    config.js             gitignored; defines window.APP_CONFIG
-    supabase.js           creates App.db, or renders a setup notice
-    guard.js              App.requireAuth promise, App.onAuthed(fn)
-    ui.js                 nav rendering, App.escape, badges, copy
-    <page module>         waits on App.onAuthed before fetching
+    core/config.js        gitignored; defines window.APP_CONFIG
+    core/supabase.js      creates App.db, or renders a setup notice
+    core/registry.js      App.registry: modules, tables, roles
+    core/guard.js         App.requireAuth promise, App.onAuthed(fn)
+    core/ui.js            nav rendering, App.escape, badges, copy
+    pages/<module>.js     waits on App.onAuthed before fetching
+
+The registry is the single source of truth for what the hub contains.
+Navigation and dashboard cards are generated from it, so adding a
+module is one registry entry plus its folder, never edits to per-page
+markup.
 
 Page modules never fetch before authentication resolves, and never
 insert unescaped strings into the DOM.
 
 ## Data model
 
-Four tables, defined in supabase/schema.sql:
+Five tables, defined in supabase/schema.sql:
 
 - profiles: one row per user, created by trigger on signup, carrying
   email, display name and role (admin or member).
+- module_access: per-user, per-module grants keyed by the module
+  keys in assets/js/core/registry.js. Absence of a row means
+  allowed; admins always have access. Read policies on the content
+  tables consult these grants via has_module_access(), and guard.js
+  mirrors them in the UI (nav filtering plus a dashboard redirect
+  for denied modules).
 - api_specs: one row per spec, with title, version, status and an
   optional full OpenAPI 3 document in a JSONB column.
 - api_endpoints: one row per endpoint (method, path, tag, summary,
@@ -79,7 +92,8 @@ rendering behaviour changes.
 ## Hosting
 
 Any static host works: GitHub Pages, Netlify, Vercel, or opening the
-files locally. The only per-environment artefact is assets/js/config.js,
-which is created by hand from config.example.js and never committed.
+files locally. The only per-environment artefact is
+assets/js/core/config.js, created by hand from config.example.js and
+never committed.
 For hosted deployments, add the deployed URL to the Supabase auth
 redirect allow-list (Authentication, then URL configuration).

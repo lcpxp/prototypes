@@ -108,14 +108,14 @@ values
 (
   'API reference viewer',
   'The reference viewer itself, registered here as the first working prototype.',
-  'reference.html',
+  'modules/reference/index.html',
   'live',
   array['reference', 'core']
 ),
 (
   'Merchant onboarding flow (placeholder)',
-  'Reserved slot for the first onboarding UI mock. Create the page under prototypes/ and update this row.',
-  'prototypes/index.html',
+  'Reserved slot for the first onboarding UI mock. Create the page under modules/prototypes/ and update this row.',
+  'modules/prototypes/index.html',
   'draft',
   array['onboarding', 'mock']
 );

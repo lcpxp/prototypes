@@ -17,7 +17,7 @@ const quiet = process.argv.includes("--quiet");
 
 const files = execFileSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" })
   .split("\n").filter(Boolean)
-  .filter((f) => !["docs/CODEMAP.md", "llms.txt", "skeleton.patch"].includes(f));
+  .filter((f) => !["docs/CODEMAP.md", "llms.txt"].includes(f));
 
 function firstLineMatching(content, re) {
   for (const line of content.split("\n")) {

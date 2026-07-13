@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// gallery.js - Prototype registry for prototypes/index.html.
+// gallery.js - Prototype registry for modules/prototypes/.
 // Prototypes are registered as rows in the prototypes table, so the
 // gallery and dashboard update without navigation code changes.
 // ------------------------------------------------------------------
@@ -11,7 +11,7 @@
     var host = document.getElementById("prototype-list");
 
     var result = await App.db
-      .from("prototypes")
+      .from(App.registry.tables.prototypes)
       .select("title, description, path, status, tags")
       .order("title", { ascending: true });
 
@@ -25,8 +25,8 @@
     if (!result.data || result.data.length === 0) {
       host.innerHTML =
         '<p class="notice">No prototypes registered. Add a page under ' +
-        "prototypes/ and insert a matching row into the prototypes table " +
-        "so it appears here.</p>";
+        "modules/prototypes/ and insert a matching row into the " +
+        "prototypes table so it appears here.</p>";
       return;
     }
 

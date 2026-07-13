@@ -28,10 +28,11 @@ test("protected pages include scripts in the required order", () => {
     const srcs = scriptSrcs(read(page));
     const required = [
       /@supabase\/supabase-js/,
-      new RegExp(`^${prefix}assets/js/config\\.js$`),
-      new RegExp(`^${prefix}assets/js/supabase\\.js$`),
-      new RegExp(`^${prefix}assets/js/guard\\.js$`),
-      new RegExp(`^${prefix}assets/js/ui\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/config\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/supabase\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/registry\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/guard\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/ui\\.js$`),
     ];
     let cursor = -1;
     for (const re of required) {
@@ -55,12 +56,36 @@ test("pages below the repo root set data-root on <body>", () => {
   }
 });
 
+test("module pages declare a data-module key known to the registry", () => {
+  const registry = read("assets/js/core/registry.js");
+  const knownKeys = [...registry.matchAll(/key: "([a-z0-9-]+)"/g)].map((m) => m[1]);
+  for (const page of protectedPages().filter((p) => p.includes("/"))) {
+    const m = read(page).match(/<body[^>]*\sdata-module="([^"]*)"/);
+    assert.ok(m,
+      `${page}: module page must set data-module on <body> so guard.js can enforce access.`);
+    assert.ok(knownKeys.includes(m[1]),
+      `${page}: data-module "${m[1]}" is not a key in assets/js/core/registry.js (${knownKeys.join(", ")}).`);
+  }
+});
+
 test("login page uses auth.js and never loads guard.js", () => {
   const srcs = scriptSrcs(read(LOGIN_PAGE));
-  assert.ok(srcs.some((s) => s.endsWith("assets/js/auth.js")),
-    "index.html must load assets/js/auth.js");
+  assert.ok(srcs.some((s) => s.endsWith("assets/js/core/auth.js")),
+    "index.html must load assets/js/core/auth.js");
   assert.ok(!srcs.some((s) => s.endsWith("guard.js")),
     "index.html must not load guard.js (it would redirect the login page).");
+});
+
+test("every page loads the layered stylesheets in order", () => {
+  const LAYERS = ["tokens", "base", "layout", "components", "pages"];
+  for (const page of htmlPages()) {
+    const prefix = page.includes("/")
+      ? "../".repeat(page.split("/").length - 1) : "";
+    const hrefs = [...read(page).matchAll(/<link rel="stylesheet" href="([^"]+)"/g)]
+      .map((m) => m[1]);
+    assert.deepEqual(hrefs, LAYERS.map((n) => `${prefix}assets/css/${n}.css`),
+      `${page}: stylesheets must be exactly tokens, base, layout, components, pages (see docs/DESIGN.md).`);
+  }
 });
 
 test("every page is marked noindex", () => {

@@ -24,9 +24,9 @@ that redirects people to sign in, and nothing more.
 
 - The service_role key, under any circumstances. It bypasses RLS
   entirely. It belongs in the Supabase dashboard and nowhere else.
-- assets/js/config.js (gitignored). Even though the anon key is not
-  secret, keeping config out of git keeps environments clean and keeps
-  the habit unambiguous.
+- assets/js/core/config.js (gitignored). Even though the anon key is
+  not secret, keeping config out of git keeps environments clean and
+  keeps the habit unambiguous.
 - Real merchant names, live internal endpoint URLs, credentials,
   personal data, or realistic payloads containing any of these. All of
   that belongs in database rows, which RLS protects.
@@ -61,9 +61,15 @@ and caches persist.
 
 - Content is only as private as the weakest RLS policy. Review
   policies.sql whenever the schema changes.
-- Members can read everything members can read; there is no
-  per-document access control in this skeleton. If that is ever
-  needed, it becomes new RLS policy work, not front-end work.
+- Access is controlled per module, not per document: the
+  module_access table and has_module_access() gate reads of specs,
+  endpoints, prototypes and the user list, with admins always
+  allowed. A module toggle on the users page changes what the
+  database will return, not just what the UI shows. If per-document
+  control is ever needed, it is again RLS policy work first.
+- The page guard (guard.js) redirects users without a grant, but the
+  page files themselves are public; only the data behind them is
+  protected.
 - The repo being public means its structure, table names and rendering
   logic are visible. That is accepted by design; nothing in structure
   alone should be sensitive.
