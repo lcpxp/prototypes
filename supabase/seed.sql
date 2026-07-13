@@ -11,12 +11,13 @@
 
 -- Sample spec ------------------------------------------------------
 
-insert into public.api_specs (id, title, version, status, description)
+insert into public.api_specs (id, title, version, status, family, description)
 values (
   '11111111-1111-1111-1111-111111111111',
   'Merchant Onboarding API (sample)',
   '0.1.0',
   'draft',
+  'launchpad',
   'Worked sample demonstrating the reference viewer. Replace with real specs in the database.'
 );
 

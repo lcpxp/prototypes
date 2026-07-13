@@ -55,6 +55,35 @@
       prototypes: "prototypes",
       moduleAccess: "module_access",
     },
+    // Spec families group api_specs rows into distinct reference
+    // "sites" inside the reference module. Order here is display
+    // order. Keys mirror the api_specs.family check constraint.
+    specFamilies: [
+      {
+        key: "launchpad",
+        label: "Launchpad API",
+        description:
+          "Inbound application flows, plus Unity-initiated actions " +
+          "such as repurchase journeys for existing merchants.",
+      },
+      {
+        key: "unity",
+        label: "Unity Merchant Portal API",
+        description:
+          "Endpoints used when integrating Launchpad with the Unity " +
+          "merchant portal.",
+      },
+      {
+        key: "integration",
+        label: "Integration APIs",
+        description: "Third-party and outbound integration surfaces.",
+      },
+      {
+        key: "other",
+        label: "Other",
+        description: "Uncategorised reference material.",
+      },
+    ],
     roles: {
       admin: "admin",
       member: "member",

@@ -7,6 +7,7 @@ document instead of walking the tree or reading whole files.
 | File | Lines | Purpose |
 |---|---:|---|
 | .githooks/pre-commit | 20 |  |
+| .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 20 |  |
 | .gitmessage | 12 |  |
 | CLAUDE.md | 169 | CLAUDE.md |
@@ -14,17 +15,18 @@ document instead of walking the tree or reading whole files.
 | assets/css/base.css | 96 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 286 | components.css - Reusable interface components: cards, forms, |
 | assets/css/layout.css | 126 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/login.css | 159 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 168 | pages.css - The reference viewer ("swagger") page. Everything |
 | assets/css/tokens.css | 149 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 100 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 68 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 97 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/ui.js | 102 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/dashboard.js | 116 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
-| assets/js/pages/reference.js | 240 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/reference.js | 269 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
 | dashboard.html | 47 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 107 | Architecture |
@@ -32,27 +34,28 @@ document instead of walking the tree or reading whole files.
 | docs/HARNESS.md | 108 | Verification harness and working process |
 | docs/ROADMAP.md | 33 | Roadmap |
 | docs/SECURITY.md | 79 | Security model |
-| docs/SESSIONS.md | 139 | Session log |
+| docs/SESSIONS.md | 172 | Session log |
 | docs/SETUP.md | 53 | Setup and day-to-day use |
 | index.html | 66 | Sign in - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 41 | Prototypes - LPio / LaunchPad IO |
-| modules/reference/index.html | 49 | API reference - LPio / LaunchPad IO |
+| modules/reference/index.html | 51 | API reference - LPio / LaunchPad IO |
 | modules/users/index.html | 43 | Users - LPio / LaunchPad IO |
 | package.json | 12 |  |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
 | silos/index.html | 56 | Project silos - LPio / LaunchPad IO |
 | silos/tooling/index.html | 41 | Tooling silo - LPio / LaunchPad IO |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
+| supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
 | supabase/policies.sql | 166 | ------------------------------------------------------------------ |
-| supabase/schema.sql | 152 | ------------------------------------------------------------------ |
-| supabase/seed.sql | 122 | ------------------------------------------------------------------ |
+| supabase/schema.sql | 156 | ------------------------------------------------------------------ |
+| supabase/seed.sql | 123 | ------------------------------------------------------------------ |
 | tests/checks/security.test.js | 109 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 33 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 102 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 60 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/size-budget.json | 22 |  |
-| tests/unit/registry.test.js | 55 | tests/unit/registry.test.js - Benchmarks for the module registry, |
+| tests/unit/registry.test.js | 70 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 
 ## JavaScript symbol index
@@ -61,7 +64,7 @@ document instead of walking the tree or reading whole files.
 |---|---|
 | App.canAccess | assets/js/core/guard.js:65 |
 | App.onAuthed | assets/js/core/guard.js:71 |
-| App.moduleHref | assets/js/core/registry.js:64 |
+| App.moduleHref | assets/js/core/registry.js:93 |
 | App.escape | assets/js/core/ui.js:11 |
 | App.methodBadge | assets/js/core/ui.js:21 |
 | App.statusBadge | assets/js/core/ui.js:29 |
@@ -80,7 +83,8 @@ document instead of walking the tree or reading whole files.
 | groupByTag() | assets/js/pages/reference.js:73 |
 | render() | assets/js/pages/reference.js:87 |
 | endpointsFromOpenApi() | assets/js/pages/reference.js:136 |
-| loadSpec() | assets/js/pages/reference.js:163 |
+| familyOf() | assets/js/pages/reference.js:163 |
+| loadSpec() | assets/js/pages/reference.js:170 |
 | notice() | assets/js/pages/users.js:15 |
 | roleBadge() | assets/js/pages/users.js:24 |
 | roleCell() | assets/js/pages/users.js:30 |

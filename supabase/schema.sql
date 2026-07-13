@@ -77,7 +77,9 @@ create trigger module_access_updated_at
 -- ---------------------------------------------------------------
 -- api_specs: one row per API specification. The spec column can
 -- hold a full OpenAPI 3 document as JSONB; the viewer falls back to
--- it when no api_endpoints rows exist for the spec.
+-- it when no api_endpoints rows exist for the spec. family groups
+-- specs into distinct reference sites (keys mirror
+-- App.registry.specFamilies in assets/js/core/registry.js).
 -- ---------------------------------------------------------------
 
 create table if not exists public.api_specs (
@@ -85,6 +87,8 @@ create table if not exists public.api_specs (
   title text not null,
   version text not null default '0.1.0',
   status text not null default 'draft' check (status in ('draft', 'live', 'deprecated')),
+  family text not null default 'other'
+    check (family in ('launchpad', 'unity', 'integration', 'other')),
   description text,
   spec jsonb,
   created_at timestamptz not null default now(),

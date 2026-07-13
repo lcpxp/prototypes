@@ -44,6 +44,21 @@ test("stat modules name their table and label", () => {
   }
 });
 
+test("spec families are unique, labelled and include the fallback", () => {
+  const App = loadApp();
+  const families = App.registry.specFamilies;
+  assert.ok(Array.isArray(families) && families.length > 0,
+    "registry must define specFamilies for the reference module");
+  const keys = families.map((f) => f.key);
+  assert.equal(new Set(keys).size, keys.length, "duplicate family keys");
+  for (const f of families) {
+    assert.match(f.key, /^[a-z][a-z0-9-]*$/);
+    assert.ok(f.label, `${f.key}: family without a label`);
+  }
+  assert.ok(keys.includes("other"),
+    "specFamilies must keep the 'other' fallback used for unset rows");
+});
+
 test("App.moduleHref prefixes the page root", () => {
   const App = loadApp();
   const mod = App.registry.modules[0];

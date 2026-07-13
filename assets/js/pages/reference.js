@@ -160,12 +160,21 @@
     return endpoints;
   }
 
+  function familyOf(spec) {
+    var key = spec.family || "other";
+    return (App.registry.specFamilies || []).find(function (f) {
+      return f.key === key;
+    });
+  }
+
   async function loadSpec(specId, specs) {
     var spec = specs.find(function (s) { return s.id === specId; });
     if (!spec) return;
 
+    var family = familyOf(spec);
     meta.innerHTML =
       App.statusBadge(spec.status) +
+      (family ? ' <span class="badge">' + App.escape(family.label) + "</span>" : "") +
       ' <span class="card-meta">' +
       App.escape(spec.description || "") + "</span>";
 
@@ -198,7 +207,7 @@
 
     var result = await App.db
       .from(App.registry.tables.apiSpecs)
-      .select("id, title, version, status, description, spec")
+      .select("id, title, version, status, family, description, spec")
       .order("title", { ascending: true });
 
     if (result.error) {
@@ -217,11 +226,31 @@
       return;
     }
 
+    // One optgroup per spec family, in registry order, so the picker
+    // reads as distinct reference sites (Launchpad, Unity, ...).
+    var families = App.registry.specFamilies || [];
+    var byFamily = {};
     specs.forEach(function (spec) {
-      var option = document.createElement("option");
-      option.value = spec.id;
-      option.textContent = spec.title + " (" + spec.version + ")";
-      picker.appendChild(option);
+      var key = spec.family || "other";
+      if (!byFamily[key]) byFamily[key] = [];
+      byFamily[key].push(spec);
+    });
+    var familyKeys = families.map(function (f) { return f.key; });
+    Object.keys(byFamily).forEach(function (key) {
+      if (familyKeys.indexOf(key) === -1) familyKeys.push(key);
+    });
+    familyKeys.forEach(function (key) {
+      if (!byFamily[key]) return;
+      var group = document.createElement("optgroup");
+      var family = families.find(function (f) { return f.key === key; });
+      group.label = family ? family.label : key;
+      byFamily[key].forEach(function (spec) {
+        var option = document.createElement("option");
+        option.value = spec.id;
+        option.textContent = spec.title + " (" + spec.version + ")";
+        group.appendChild(option);
+      });
+      picker.appendChild(group);
     });
 
     var requested = new URLSearchParams(window.location.search).get("spec");
