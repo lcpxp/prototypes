@@ -96,7 +96,7 @@ Three layers, cheapest first:
 - Secret-shaped strings (JWTs, sb_secret_, live project URLs,
   private keys, GitHub/AWS tokens) fail the suite in any tracked
   file. Findings report file:line only, never the value.
-- assets/js/config.js tracked = failure, and the pre-commit hook
+- assets/js/core/config.js tracked = failure, and the pre-commit hook
   independently blocks it from being staged.
 - Every table in supabase/schema.sql must have RLS enabled and at
   least one policy in supabase/policies.sql in the same commit.

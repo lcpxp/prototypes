@@ -24,9 +24,9 @@
         '<div class="login-shell"><div class="login-card">' +
         '<div class="wordmark">Setup required</div>' +
         '<p class="lede">No Supabase configuration was found. Copy ' +
-        "<code>assets/js/config.example.js</code> to " +
-        "<code>assets/js/config.js</code> and add your project URL and " +
-        "anon key. See README.md, step 3.</p>" +
+        "<code>assets/js/core/config.example.js</code> to " +
+        "<code>assets/js/core/config.js</code> and add your project URL " +
+        "and anon key. See docs/SETUP.md.</p>" +
         "</div></div>";
     });
     return;

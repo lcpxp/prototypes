@@ -5,8 +5,8 @@
 # 3. Regenerates the codemap so navigation aids never go stale.
 set -euo pipefail
 
-if git diff --cached --name-only --diff-filter=AMC | grep -qx "assets/js/config.js"; then
-  echo "BLOCKED: assets/js/config.js is staged. It must never be committed."
+if git diff --cached --name-only --diff-filter=AMC | grep -qxE "assets/js(/core)?/config.js"; then
+  echo "BLOCKED: the local config.js is staged. It must never be committed."
   exit 1
 fi
 

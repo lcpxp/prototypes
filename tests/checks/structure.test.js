@@ -28,10 +28,11 @@ test("protected pages include scripts in the required order", () => {
     const srcs = scriptSrcs(read(page));
     const required = [
       /@supabase\/supabase-js/,
-      new RegExp(`^${prefix}assets/js/config\\.js$`),
-      new RegExp(`^${prefix}assets/js/supabase\\.js$`),
-      new RegExp(`^${prefix}assets/js/guard\\.js$`),
-      new RegExp(`^${prefix}assets/js/ui\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/config\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/supabase\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/registry\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/guard\\.js$`),
+      new RegExp(`^${prefix}assets/js/core/ui\\.js$`),
     ];
     let cursor = -1;
     for (const re of required) {
@@ -57,8 +58,8 @@ test("pages below the repo root set data-root on <body>", () => {
 
 test("login page uses auth.js and never loads guard.js", () => {
   const srcs = scriptSrcs(read(LOGIN_PAGE));
-  assert.ok(srcs.some((s) => s.endsWith("assets/js/auth.js")),
-    "index.html must load assets/js/auth.js");
+  assert.ok(srcs.some((s) => s.endsWith("assets/js/core/auth.js")),
+    "index.html must load assets/js/core/auth.js");
   assert.ok(!srcs.some((s) => s.endsWith("guard.js")),
     "index.html must not load guard.js (it would redirect the login page).");
 });

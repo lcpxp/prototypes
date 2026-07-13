@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// users.js - User list for users.html, read from the profiles table.
+// users.js - User list for modules/users/, read from the profiles table.
 // Accounts are created in the Supabase dashboard; this page is a
 // read-only register of who has access and at what level.
 // ------------------------------------------------------------------
@@ -11,7 +11,7 @@
     var host = document.getElementById("user-table");
 
     var result = await App.db
-      .from("profiles")
+      .from(App.registry.tables.profiles)
       .select("email, display_name, role, created_at")
       .order("created_at", { ascending: true });
 
@@ -43,7 +43,7 @@
         "<td>" + App.escape(profile.display_name || "") + "</td>" +
         '<td class="mono">' + App.escape(profile.email || "") + "</td>" +
         "<td>" +
-        (profile.role === "admin"
+        (profile.role === App.registry.roles.admin
           ? '<span class="badge admin">admin</span>'
           : '<span class="badge">member</span>') +
         "</td>" +

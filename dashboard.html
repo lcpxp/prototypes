@@ -20,32 +20,8 @@
         discoverable from this hub.</p>
     </div>
 
-    <div class="card-grid" style="margin-bottom: var(--s-6)">
-      <a class="card" href="silos/">
-        <span class="eyebrow">Project silos</span>
-        <p class="stat" id="stat-silos">-</p>
-        <p class="card-meta">Independent workstreams and mini-projects</p>
-      </a>
-      <a class="card" href="reference.html">
-        <span class="eyebrow">API reference</span>
-        <p class="stat" id="stat-specs">-</p>
-        <p class="card-meta">Specs published</p>
-      </a>
-      <a class="card" href="reference.html">
-        <span class="eyebrow">Endpoints</span>
-        <p class="stat" id="stat-endpoints">-</p>
-        <p class="card-meta">Documented endpoints</p>
-      </a>
-      <a class="card" href="prototypes/index.html">
-        <span class="eyebrow">Prototypes</span>
-        <p class="stat" id="stat-prototypes">-</p>
-        <p class="card-meta">Registered prototypes</p>
-      </a>
-      <a class="card" href="users.html">
-        <span class="eyebrow">Access</span>
-        <p class="stat" id="stat-users">-</p>
-        <p class="card-meta">Portal users</p>
-      </a>
+    <div class="card-grid" id="module-cards" style="margin-bottom: var(--s-6)">
+      <p class="notice">Loading</p>
     </div>
 
     <span class="eyebrow">Recently updated specs</span>
@@ -55,10 +31,11 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/supabase.js"></script>
-  <script src="assets/js/guard.js"></script>
-  <script src="assets/js/ui.js"></script>
-  <script src="assets/js/dashboard.js"></script>
+  <script src="assets/js/core/config.js"></script>
+  <script src="assets/js/core/supabase.js"></script>
+  <script src="assets/js/core/registry.js"></script>
+  <script src="assets/js/core/guard.js"></script>
+  <script src="assets/js/core/ui.js"></script>
+  <script src="assets/js/pages/dashboard.js"></script>
 </body>
 </html>

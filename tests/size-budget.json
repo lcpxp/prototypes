@@ -7,7 +7,7 @@
     ".sql":  { "soft": 300, "hard": 500 },
     ".md":   { "soft": 200, "hard": 300 }
   },
-  "generated": ["docs/CODEMAP.md", "llms.txt", "skeleton.patch"],
+  "generated": ["docs/CODEMAP.md", "llms.txt"],
   "exceptions": {
     "assets/css/main.css": {
       "hard": 650,

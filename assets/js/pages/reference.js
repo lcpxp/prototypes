@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// reference.js - The reference viewer ("swagger") for reference.html.
+// reference.js - The reference viewer ("swagger") for modules/reference/.
 //
 // Reads from two Supabase tables:
 //   api_specs      one row per spec (title, version, status, spec jsonb)
@@ -170,7 +170,7 @@
       App.escape(spec.description || "") + "</span>";
 
     var result = await App.db
-      .from("api_endpoints")
+      .from(App.registry.tables.apiEndpoints)
       .select("*")
       .eq("spec_id", specId)
       .order("tag", { ascending: true })
@@ -197,7 +197,7 @@
     meta = document.getElementById("spec-meta");
 
     var result = await App.db
-      .from("api_specs")
+      .from(App.registry.tables.apiSpecs)
       .select("id, title, version, status, description, spec")
       .order("title", { ascending: true });
 

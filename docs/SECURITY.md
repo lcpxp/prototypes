@@ -24,9 +24,9 @@ that redirects people to sign in, and nothing more.
 
 - The service_role key, under any circumstances. It bypasses RLS
   entirely. It belongs in the Supabase dashboard and nowhere else.
-- assets/js/config.js (gitignored). Even though the anon key is not
-  secret, keeping config out of git keeps environments clean and keeps
-  the habit unambiguous.
+- assets/js/core/config.js (gitignored). Even though the anon key is
+  not secret, keeping config out of git keeps environments clean and
+  keeps the habit unambiguous.
 - Real merchant names, live internal endpoint URLs, credentials,
   personal data, or realistic payloads containing any of these. All of
   that belongs in database rows, which RLS protects.

@@ -42,20 +42,26 @@
     });
   };
 
+  // True when href resolves to the page currently open, treating a
+  // directory and its index.html as the same page.
+  function isCurrentPage(href) {
+    var norm = function (p) { return p.replace(/index\.html$/, ""); };
+    var target = new URL(href, window.location.href).pathname;
+    return norm(target) === norm(window.location.pathname);
+  }
+
   function renderNav() {
     var host = document.getElementById("app-nav");
     if (!host) return;
 
     var root = App.root || ".";
-    var links = [
-      { href: root + "/dashboard.html", label: "Dashboard" },
-      { href: root + "/silos/", label: "Project silos" },
-      { href: root + "/reference.html", label: "Developer material" },
-      { href: root + "/prototypes/index.html", label: "Prototypes" },
-      { href: root + "/users.html", label: "Users" },
-    ];
-
-    var current = window.location.pathname.split("/").slice(-2).join("/");
+    var links = [{ href: root + "/dashboard.html", label: "Dashboard" }];
+    App.registry.modules.forEach(function (mod) {
+      // App.canAccess is defined by guard.js once the signed-in
+      // user's module grants have loaded; before that, show all.
+      if (App.canAccess && !App.canAccess(mod.key)) return;
+      links.push({ href: App.moduleHref(mod), label: mod.title });
+    });
 
     var html = '<nav class="nav">';
     html +=
@@ -63,11 +69,9 @@
       'LPio <span style="color: var(--accent)">/</span> LaunchPad IO</a>';
     html += '<div class="nav-links">';
     links.forEach(function (link) {
-      var target = link.href.split("/").slice(-2).join("/");
-      var isCurrent = current === target;
       html +=
         '<a href="' + link.href + '"' +
-        (isCurrent ? ' aria-current="page"' : "") + ">" +
+        (isCurrentPage(link.href) ? ' aria-current="page"' : "") + ">" +
         App.escape(link.label) + "</a>";
     });
     html += "</div>";

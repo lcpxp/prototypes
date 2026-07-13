@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/ui.test.js - Functioning benchmarks for assets/js/ui.js.
+// tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js.
 // Pins the exact behaviour of the shared UI helpers, especially
 // App.escape, which every dynamic render depends on for XSS safety.
 // Loads the browser IIFE in a Node vm with a minimal window shim.
@@ -22,7 +22,7 @@ function loadApp() {
   };
   sandbox.window = sandbox;
   vm.createContext(sandbox);
-  vm.runInContext(read("assets/js/ui.js"), sandbox, { filename: "ui.js" });
+  vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
   return sandbox.App;
 }
 
