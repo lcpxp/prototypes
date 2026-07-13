@@ -134,12 +134,13 @@ values
 -- Generic placeholders proving the roadmap view end to end. Real
 -- areas and items belong in the database, not in this file.
 
-insert into public.roadmap_areas (id, key, title, description, sort_order)
+insert into public.work_areas (id, key, title, description, scope, sort_order)
 values (
   '22222222-2222-2222-2222-222222222222',
   'sample-area',
   'Sample area',
   'Worked example of a development area. Replace with real areas in the database.',
+  'product',
   10
 );
 
@@ -169,6 +170,43 @@ values
   null,
   array['sample'],
   20
+);
+
+-- Sample work intake ------------------------------------------------
+-- One document, one backlog item and one note proving the intake
+-- chain end to end (see docs/WORKFLOW.md).
+
+insert into public.work_documents (id, title, kind, area_id, content, summary, tags)
+values (
+  '33333333-3333-3333-3333-333333333333',
+  'Sprint summary (sample)',
+  'sprint',
+  '22222222-2222-2222-2222-222222222222',
+  'Raw pasted material would be stored here verbatim.',
+  'Worked example of an ingested document: raw content plus this distilled summary.',
+  array['sample']
+);
+
+insert into public.backlog_items
+  (area_id, source_document_id, type, title, summary, status, priority, tags)
+values (
+  '22222222-2222-2222-2222-222222222222',
+  '33333333-3333-3333-3333-333333333333',
+  'feature',
+  'Sample backlog item',
+  'A feature captured from the sample sprint summary.',
+  'open',
+  10,
+  array['sample']
+);
+
+insert into public.work_notes (kind, body, area_id, document_id, tags)
+values (
+  'decision',
+  'Worked example of a distilled note linked to its source document.',
+  '22222222-2222-2222-2222-222222222222',
+  '33333333-3333-3333-3333-333333333333',
+  array['sample']
 );
 
 -- Sample prototype registry entries --------------------------------

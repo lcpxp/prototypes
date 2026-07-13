@@ -158,24 +158,29 @@ create policy "prototypes: admins write"
   with check (public.is_admin());
 
 -- ---------------------------------------------------------------
--- roadmap tables: one pattern for all four, keyed to the roadmap
--- module grant for reads, admin-only writes.
+-- work_areas: the shared area taxonomy. Readable behind either the
+-- roadmap or the backlog grant, since both modules group by it.
 -- ---------------------------------------------------------------
 
-alter table public.roadmap_areas enable row level security;
+alter table public.work_areas enable row level security;
 
-drop policy if exists "roadmap_areas: members read" on public.roadmap_areas;
-create policy "roadmap_areas: members read"
-  on public.roadmap_areas for select
+drop policy if exists "work_areas: members read" on public.work_areas;
+create policy "work_areas: members read"
+  on public.work_areas for select
   to authenticated
-  using (public.has_module_access('roadmap'));
+  using (public.has_module_access('roadmap') or public.has_module_access('backlog'));
 
-drop policy if exists "roadmap_areas: admins write" on public.roadmap_areas;
-create policy "roadmap_areas: admins write"
-  on public.roadmap_areas for all
+drop policy if exists "work_areas: admins write" on public.work_areas;
+create policy "work_areas: admins write"
+  on public.work_areas for all
   to authenticated
   using (public.is_admin())
   with check (public.is_admin());
+
+-- ---------------------------------------------------------------
+-- roadmap tables: one pattern for all, keyed to the roadmap module
+-- grant for reads, admin-only writes.
+-- ---------------------------------------------------------------
 
 alter table public.roadmap_milestones enable row level security;
 
@@ -218,6 +223,56 @@ create policy "roadmap_dependencies: members read"
 drop policy if exists "roadmap_dependencies: admins write" on public.roadmap_dependencies;
 create policy "roadmap_dependencies: admins write"
   on public.roadmap_dependencies for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+-- ---------------------------------------------------------------
+-- work intake tables: one pattern for all three, keyed to the
+-- backlog module grant for reads, admin-only writes.
+-- ---------------------------------------------------------------
+
+alter table public.work_documents enable row level security;
+
+drop policy if exists "work_documents: members read" on public.work_documents;
+create policy "work_documents: members read"
+  on public.work_documents for select
+  to authenticated
+  using (public.has_module_access('backlog'));
+
+drop policy if exists "work_documents: admins write" on public.work_documents;
+create policy "work_documents: admins write"
+  on public.work_documents for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+alter table public.backlog_items enable row level security;
+
+drop policy if exists "backlog_items: members read" on public.backlog_items;
+create policy "backlog_items: members read"
+  on public.backlog_items for select
+  to authenticated
+  using (public.has_module_access('backlog'));
+
+drop policy if exists "backlog_items: admins write" on public.backlog_items;
+create policy "backlog_items: admins write"
+  on public.backlog_items for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+alter table public.work_notes enable row level security;
+
+drop policy if exists "work_notes: members read" on public.work_notes;
+create policy "work_notes: members read"
+  on public.work_notes for select
+  to authenticated
+  using (public.has_module_access('backlog'));
+
+drop policy if exists "work_notes: admins write" on public.work_notes;
+create policy "work_notes: admins write"
+  on public.work_notes for all
   to authenticated
   using (public.is_admin())
   with check (public.is_admin());

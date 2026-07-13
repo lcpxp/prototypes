@@ -37,6 +37,50 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-13 - Backlog module, shared work areas, intake framework
+Branch: claude/portal-structure-planning-r8rrkq, merged to main
+Completed:
+- Earlier skeleton work (spec families, integrations, roadmap)
+  merged to main as a fast-forward.
+- roadmap_areas renamed to work_areas with a scope column
+  (product/portal): the single shared area taxonomy. Eleven real
+  product feature areas inserted in the live database (QA
+  automation excluded by owner instruction); the six portal areas
+  kept with scope portal.
+- Backlog module: backlog_items table (types consideration,
+  feature, functionality, bug, improvement, task; statuses open,
+  planned, in_progress, blocked, done, dropped; resolved_at stamped
+  by trigger so closed items form the historic record), rendered by
+  modules/backlog/ with area/type/status filters and detail modals
+  (assets/js/pages/backlog.js).
+- Intake framework: work_documents (raw supplied material kept
+  verbatim plus distilled summary, supersede chains) and work_notes
+  (decision/fact/risk/question/action records linked to areas,
+  documents, backlog and roadmap items). Protocol documented in
+  docs/WORKFLOW.md and pointed to from CLAUDE.md; the backlog page
+  lists documents with summary modals.
+- Migration 20260713130000_work_areas_and_backlog.sql applied
+  live. roadmap.js now reads work_areas and skips empty areas.
+In progress:
+- None. Soft size budgets now exceeded on components.css (354/300),
+  schema.sql (387/300) and policies.sql (305/300): before extending
+  any of them again, split modal/overlay styles into their own
+  sheet and split the SQL files by domain (core, reference,
+  catalogues, work) keeping the same run order.
+Next steps:
+1. Confirm the Pages deploys for both merges are green.
+2. Owner: review the eleven product area titles in work_areas
+   (ampersands were normalised to "and"; edit freely in the table).
+3. Owner supplies the current Notion backlog in chat; ingest it per
+   docs/WORKFLOW.md (one work_documents row, backlog_items per
+   entry) and close the starter item recorded against portal-core.
+4. Owner supplies the standalone roadmap app; fold it into
+   modules/roadmap/ over the existing tables.
+Open decisions:
+- Whether roadmap swimlane views should default to product areas,
+  portal areas, or both (work_areas.scope makes any of these a
+  filter).
+
 ## 2026-07-13 - Portal skeleton: spec families, integrations, roadmap
 Branch: claude/portal-structure-planning-r8rrkq (session-designated;
 merge to main when reviewed)

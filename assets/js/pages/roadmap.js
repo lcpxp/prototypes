@@ -45,14 +45,14 @@
     return html;
   }
 
+  // Areas without items are skipped: the shared work_areas taxonomy
+  // is wider than what is currently on the roadmap.
   function areaHtml(area, items) {
     return (
       "<section>" +
       "<h2>" + App.escape(area.title) + "</h2>" +
       (area.description ? '<p class="card-meta">' + App.escape(area.description) + "</p>" : "") +
-      (items.length
-        ? horizonHtml(items)
-        : '<p class="notice">No items in this area yet.</p>') +
+      horizonHtml(items) +
       "</section>"
     );
   }
@@ -61,7 +61,7 @@
     var host = document.getElementById("roadmap-content");
 
     var areasResult = await App.db
-      .from(App.registry.tables.roadmapAreas)
+      .from(App.registry.tables.workAreas)
       .select("id, key, title, description, sort_order")
       .order("sort_order", { ascending: true })
       .order("title", { ascending: true });
@@ -96,12 +96,14 @@
     }
 
     var items = itemsResult.data || [];
-    host.innerHTML = areas
+    var sections = areas
       .map(function (area) {
-        return areaHtml(area, items.filter(function (i) {
-          return i.area_id === area.id;
-        }));
+        var own = items.filter(function (i) { return i.area_id === area.id; });
+        return own.length ? areaHtml(area, own) : "";
       })
       .join("");
+    host.innerHTML = sections ||
+      '<p class="notice">No roadmap items yet. Insert rows into the ' +
+      "roadmap_items table in Supabase and they will appear here.</p>";
   });
 })();

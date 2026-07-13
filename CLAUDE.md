@@ -133,6 +133,12 @@ is likely, checkpoint first.
   Navigation and dashboard cards follow from the registry entry.
 - New API spec content: rows in api_specs and api_endpoints via the
   Supabase dashboard or SQL editor. The repo does not change.
+- Work material supplied in chat (PRDs, backlog lists, DevOps
+  pastes, sprint summaries) or decisions from working discussion:
+  follow docs/WORKFLOW.md. Raw material and a digest go to
+  work_documents, distilled records to work_notes, actionable
+  entries to backlog_items. Database inserts only; the repo does
+  not change.
 - New table: schema in supabase/schema.sql, policies in
   supabase/policies.sql, both in the same commit, and the change
   applied to the live project as a migration.

@@ -32,8 +32,9 @@ substance lives behind Supabase Row Level Security.
    index.html: modules/reference/ (the spec viewer),
    modules/integrations/ (the integration overview and detail
    modals), modules/prototypes/ (the gallery plus the prototype
-   pages themselves), modules/roadmap/ (the roadmap view) and
-   modules/users/ (the user and access register).
+   pages themselves), modules/roadmap/ (the roadmap view),
+   modules/backlog/ (rolling work items and ingested source
+   material) and modules/users/ (the user and access register).
 5. silos/index.html is the central entry to project-specific
    workstreams. Each silo can be its own folder or page and can be
    linked from here.
@@ -104,21 +105,33 @@ Catalogues:
 - prototypes: registry rows (title, description, path, status, tags)
   that drive the gallery and dashboard.
 
-Roadmap:
+Work management (see docs/WORKFLOW.md for the working protocol):
 
-- roadmap_areas: development areas (swimlanes), each with a stable
-  key, title and sort order.
-- roadmap_items: the work itself, linked to an area and optionally a
+- work_areas: the single shared taxonomy of development areas, with
+  scope separating product feature areas from the portal's own.
+  Roadmap items, backlog items, documents and notes all reference
+  it, so swimlanes and groupings can never disagree.
+- roadmap_items: roadmap work, linked to an area and optionally a
   milestone, with status, horizon (now/next/later/someday),
   priority, effort, impact, tags and optional dates so non-dated
   roadmaps stay first-class.
 - roadmap_milestones: named target points, optionally dated.
 - roadmap_dependencies: item-to-item ordering for waterfall and
   dependency views.
+- backlog_items: the rolling work list (considerations, features,
+  functionality, bugs, improvements, tasks). Never deleted; closed
+  with a resolution, resolved_at stamped by trigger, so the open
+  view and the historic record are the same table.
+- work_documents: material supplied during working sessions (PRDs,
+  roadmaps, backlog lists, DevOps pastes, sprint summaries), kept
+  verbatim with a distilled summary and supersede chains.
+- work_notes: atomic distilled records (decisions, facts, risks,
+  questions, actions) linked to whatever they concern.
 
-Every roadmap rendering (list, timeline, swimlanes, waterfall,
-exported snapshots) reads these same rows, so reprioritising or
-rescheduling is always a data change, never a code change.
+Every roadmap and backlog rendering (list, timeline, swimlanes,
+waterfall, exported snapshots) reads these same rows, so
+reprioritising or rescheduling is always a data change, never a
+code change.
 
 ## Updating content
 

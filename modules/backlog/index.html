@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:,">
+  <title>Backlog - LPio / LaunchPad IO</title>
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/layout.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="../../assets/css/pages.css">
+</head>
+<body data-root="../.." data-module="backlog">
+  <header id="app-nav"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="eyebrow">Backlog</span>
+      <h1>Work items</h1>
+      <p class="lede">The rolling list of considerations, features,
+        functionality, bugs and improvements across every work area.
+        Nothing is deleted: closed items keep their resolution, so the
+        list is also the historic record. Items, their source documents
+        and distilled notes live in Supabase (see docs/WORKFLOW.md).</p>
+    </div>
+
+    <div class="spec-picker">
+      <label class="eyebrow" for="filter-area">Area</label>
+      <select id="filter-area"><option value="">All areas</option></select>
+      <label class="eyebrow" for="filter-type">Type</label>
+      <select id="filter-type"><option value="">All types</option></select>
+      <label class="eyebrow" for="filter-status">Status</label>
+      <select id="filter-status">
+        <option value="open-group">Open items</option>
+        <option value="">Everything</option>
+      </select>
+    </div>
+
+    <section id="backlog-list">
+      <p class="notice">Loading</p>
+    </section>
+
+    <div class="page-head" style="margin-block-start: var(--section-gap)">
+      <span class="eyebrow">Intake</span>
+      <h2>Source material</h2>
+      <p class="lede">Documents supplied and ingested during working
+        sessions: PRDs, roadmaps, backlog lists, DevOps extracts and
+        sprint summaries, each kept verbatim with a distilled summary.</p>
+    </div>
+
+    <section id="document-list">
+      <p class="notice">Loading</p>
+    </section>
+  </main>
+
+  <dialog class="modal" id="backlog-modal">
+    <div class="modal-head">
+      <h2 id="backlog-modal-title"></h2>
+      <button class="button quiet" id="backlog-modal-close" type="button">Close</button>
+    </div>
+    <div id="backlog-modal-body"></div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../assets/js/core/supabase.js"></script>
+  <script src="../../assets/js/core/registry.js"></script>
+  <script src="../../assets/js/core/guard.js"></script>
+  <script src="../../assets/js/core/ui.js"></script>
+  <script src="../../assets/js/pages/backlog.js"></script>
+</body>
+</html>
