@@ -37,6 +37,39 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-13 - Public config, sign-in redesign, Pages auto-deploy
+Branch: main (trunk-based from here on)
+Completed:
+- Removed the setup-required screen. It fired on every deploy because
+  config.js is gitignored and never ships to Pages. The public URL and
+  anon key are now baked into assets/js/core/supabase.js; config.js is
+  an optional local override. The credential gate decodes any committed
+  JWT's role and only allows the anon key, so service_role stays
+  blocked. Dropped the config.js script include from all pages.
+- Redesigned the sign-in page: mobile-first flat split screen (accent
+  brand panel + form), correct in light and dark. Login styles live in
+  a new assets/css/login.css; the stylesheet-order gate now allows one
+  page-specific sheet after the five core layers.
+- Added .github/workflows/deploy.yml: push to main runs the suite on
+  Node 22, then publishes to GitHub Pages (configure-pages enablement
+  auto-enables Pages on first run). Definition of done now includes a
+  green Pages deploy.
+- Switched guidance to trunk-based in CLAUDE.md (commit straight to
+  main, branches only when risky); refreshed SETUP/SECURITY/
+  ARCHITECTURE/DESIGN.
+- Committed in two commits and pushed to main (171f753, 91d5aae).
+In progress:
+- None.
+Next steps:
+1. Confirm the first Pages deploy is green and review the live URL
+   (repo Settings > Pages, or the deploy workflow run's environment
+   URL). If Pages was blocked, one-time: Settings > Pages > Source =
+   GitHub Actions, then re-run the workflow.
+2. Optional: rotate the anon key if desired (it is public-safe, but
+   the old key predates this session); update supabase.js if rotated.
+Open decisions:
+- Which wave-2 module to build first from docs/ROADMAP.md.
+
 ## 2026-07-13 - Wave 1: modules restructure, CSS system, access control
 Branch: claude/lcpxp-setup-structure-19n2mo
 Completed:
