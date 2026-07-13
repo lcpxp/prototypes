@@ -48,6 +48,14 @@
         statLabel: "Registered prototypes",
       },
       {
+        key: "roadmap",
+        title: "Roadmap",
+        path: "modules/roadmap/",
+        description: "Development areas, priorities and milestones",
+        statTable: "roadmap_items",
+        statLabel: "Roadmap items",
+      },
+      {
         key: "users",
         title: "Users",
         path: "modules/users/",
@@ -62,6 +70,10 @@
       apiEndpoints: "api_endpoints",
       prototypes: "prototypes",
       integrations: "integrations",
+      roadmapAreas: "roadmap_areas",
+      roadmapItems: "roadmap_items",
+      roadmapMilestones: "roadmap_milestones",
+      roadmapDependencies: "roadmap_dependencies",
       moduleAccess: "module_access",
     },
     // Spec families group api_specs rows into distinct reference

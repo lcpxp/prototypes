@@ -13,7 +13,7 @@ document instead of walking the tree or reading whole files.
 | CLAUDE.md | 169 | CLAUDE.md |
 | README.md | 18 | LPio |
 | assets/css/base.css | 96 | base.css - Reset, typography and global element styles. |
-| assets/css/components.css | 346 | components.css - Reusable interface components: cards, forms, |
+| assets/css/components.css | 351 | components.css - Reusable interface components: cards, forms, |
 | assets/css/layout.css | 126 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 159 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 168 | pages.css - The reference viewer ("swagger") page. Everything |
@@ -21,13 +21,14 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 100 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 106 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 118 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/ui.js | 102 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/dashboard.js | 116 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 115 | integrations.js - Integration overview for modules/integrations/. |
 | assets/js/pages/reference.js | 269 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/roadmap.js | 108 | roadmap.js - Roadmap view for modules/roadmap/. |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
 | dashboard.html | 47 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 107 | Architecture |
@@ -41,6 +42,7 @@ document instead of walking the tree or reading whole files.
 | modules/integrations/index.html | 50 | Integrations - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 41 | Prototypes - LPio / LaunchPad IO |
 | modules/reference/index.html | 51 | API reference - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 43 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 43 | Users - LPio / LaunchPad IO |
 | package.json | 12 |  |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
@@ -49,9 +51,10 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
 | supabase/migrations/20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected |
-| supabase/policies.sql | 185 | ------------------------------------------------------------------ |
-| supabase/schema.sql | 186 | ------------------------------------------------------------------ |
-| supabase/seed.sql | 151 | ------------------------------------------------------------------ |
+| supabase/migrations/20260713120000_roadmap.sql | 135 | Roadmap skeleton. Four tables designed so every future roadmap |
+| supabase/policies.sql | 250 | ------------------------------------------------------------------ |
+| supabase/schema.sql | 265 | ------------------------------------------------------------------ |
+| supabase/seed.sql | 192 | ------------------------------------------------------------------ |
 | tests/checks/security.test.js | 109 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 33 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 102 | tests/checks/structure.test.js - Page structure gates. |
@@ -67,7 +70,7 @@ document instead of walking the tree or reading whole files.
 |---|---|
 | App.canAccess | assets/js/core/guard.js:65 |
 | App.onAuthed | assets/js/core/guard.js:71 |
-| App.moduleHref | assets/js/core/registry.js:102 |
+| App.moduleHref | assets/js/core/registry.js:114 |
 | App.escape | assets/js/core/ui.js:11 |
 | App.methodBadge | assets/js/core/ui.js:21 |
 | App.statusBadge | assets/js/core/ui.js:29 |
@@ -92,6 +95,9 @@ document instead of walking the tree or reading whole files.
 | endpointsFromOpenApi() | assets/js/pages/reference.js:136 |
 | familyOf() | assets/js/pages/reference.js:163 |
 | loadSpec() | assets/js/pages/reference.js:170 |
+| itemHtml() | assets/js/pages/roadmap.js:20 |
+| horizonHtml() | assets/js/pages/roadmap.js:36 |
+| areaHtml() | assets/js/pages/roadmap.js:48 |
 | notice() | assets/js/pages/users.js:15 |
 | roleBadge() | assets/js/pages/users.js:24 |
 | roleCell() | assets/js/pages/users.js:30 |

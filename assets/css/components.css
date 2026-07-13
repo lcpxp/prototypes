@@ -286,6 +286,11 @@ td.mono {
 .badge.deprecated { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
 .badge.admin      { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
 
+/* Roadmap item statuses (roadmap_items.status) */
+.badge.committed   { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
+.badge.in_progress { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
+.badge.done        { color: var(--ok);     background: var(--ok-soft);     border-color: transparent; }
+
 /* ---------------------------------------------------------------
    Modal: a native <dialog>. Open with showModal() so focus is
    trapped and Escape closes; clicking the backdrop also closes.

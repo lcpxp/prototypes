@@ -130,6 +130,47 @@ values
   20
 );
 
+-- Sample roadmap ----------------------------------------------------
+-- Generic placeholders proving the roadmap view end to end. Real
+-- areas and items belong in the database, not in this file.
+
+insert into public.roadmap_areas (id, key, title, description, sort_order)
+values (
+  '22222222-2222-2222-2222-222222222222',
+  'sample-area',
+  'Sample area',
+  'Worked example of a development area. Replace with real areas in the database.',
+  10
+);
+
+insert into public.roadmap_items
+  (area_id, title, summary, status, horizon, priority, effort, impact, tags, sort_order)
+values
+(
+  '22222222-2222-2222-2222-222222222222',
+  'Sample committed item',
+  'An item scheduled for the current cycle.',
+  'in_progress',
+  'now',
+  10,
+  'medium',
+  'high',
+  array['sample'],
+  10
+),
+(
+  '22222222-2222-2222-2222-222222222222',
+  'Sample future item',
+  'An undated idea waiting to be prioritised.',
+  'idea',
+  'later',
+  100,
+  null,
+  null,
+  array['sample'],
+  20
+);
+
 -- Sample prototype registry entries --------------------------------
 
 insert into public.prototypes (title, description, path, status, tags)

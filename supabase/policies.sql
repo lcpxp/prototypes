@@ -158,6 +158,71 @@ create policy "prototypes: admins write"
   with check (public.is_admin());
 
 -- ---------------------------------------------------------------
+-- roadmap tables: one pattern for all four, keyed to the roadmap
+-- module grant for reads, admin-only writes.
+-- ---------------------------------------------------------------
+
+alter table public.roadmap_areas enable row level security;
+
+drop policy if exists "roadmap_areas: members read" on public.roadmap_areas;
+create policy "roadmap_areas: members read"
+  on public.roadmap_areas for select
+  to authenticated
+  using (public.has_module_access('roadmap'));
+
+drop policy if exists "roadmap_areas: admins write" on public.roadmap_areas;
+create policy "roadmap_areas: admins write"
+  on public.roadmap_areas for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+alter table public.roadmap_milestones enable row level security;
+
+drop policy if exists "roadmap_milestones: members read" on public.roadmap_milestones;
+create policy "roadmap_milestones: members read"
+  on public.roadmap_milestones for select
+  to authenticated
+  using (public.has_module_access('roadmap'));
+
+drop policy if exists "roadmap_milestones: admins write" on public.roadmap_milestones;
+create policy "roadmap_milestones: admins write"
+  on public.roadmap_milestones for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+alter table public.roadmap_items enable row level security;
+
+drop policy if exists "roadmap_items: members read" on public.roadmap_items;
+create policy "roadmap_items: members read"
+  on public.roadmap_items for select
+  to authenticated
+  using (public.has_module_access('roadmap'));
+
+drop policy if exists "roadmap_items: admins write" on public.roadmap_items;
+create policy "roadmap_items: admins write"
+  on public.roadmap_items for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+alter table public.roadmap_dependencies enable row level security;
+
+drop policy if exists "roadmap_dependencies: members read" on public.roadmap_dependencies;
+create policy "roadmap_dependencies: members read"
+  on public.roadmap_dependencies for select
+  to authenticated
+  using (public.has_module_access('roadmap'));
+
+drop policy if exists "roadmap_dependencies: admins write" on public.roadmap_dependencies;
+create policy "roadmap_dependencies: admins write"
+  on public.roadmap_dependencies for all
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+-- ---------------------------------------------------------------
 -- module_access
 -- ---------------------------------------------------------------
 
