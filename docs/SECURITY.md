@@ -66,8 +66,8 @@ and caches persist.
   policies.sql whenever the schema changes.
 - Access is controlled per module, not per document: the
   module_access table and has_module_access() gate reads of specs,
-  endpoints, prototypes and the user list, with admins always
-  allowed. A module toggle on the users page changes what the
+  endpoints, integrations, prototypes, roadmap rows and the user
+  list, with admins always allowed. A module toggle on the users page changes what the
   database will return, not just what the UI shows. If per-document
   control is ever needed, it is again RLS policy work first.
 - The page guard (guard.js) redirects users without a grant, but the

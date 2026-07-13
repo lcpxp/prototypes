@@ -3,6 +3,11 @@
 Future direction for the hub, owned by the repo owner. Items move
 from here into docs/SESSIONS.md next steps when work starts.
 
+Live roadmap content now belongs in the roadmap_areas and
+roadmap_items tables in Supabase, rendered by modules/roadmap/.
+This file remains the coarse, repo-level statement of direction;
+granular, prioritised items go in the database.
+
 ## Primary focus
 
 - Prototype development with Claude Code, from small pieces of

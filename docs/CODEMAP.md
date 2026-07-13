@@ -31,16 +31,16 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap.js | 108 | roadmap.js - Roadmap view for modules/roadmap/. |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
 | dashboard.html | 47 | Dashboard - LPio / LaunchPad IO |
-| docs/ARCHITECTURE.md | 107 | Architecture |
+| docs/ARCHITECTURE.md | 141 | Architecture |
 | docs/DESIGN.md | 95 | Design standards |
 | docs/HARNESS.md | 108 | Verification harness and working process |
-| docs/ROADMAP.md | 33 | Roadmap |
+| docs/ROADMAP.md | 38 | Roadmap |
 | docs/SECURITY.md | 79 | Security model |
-| docs/SESSIONS.md | 172 | Session log |
+| docs/SESSIONS.md | 222 | Session log |
 | docs/SETUP.md | 53 | Setup and day-to-day use |
 | index.html | 66 | Sign in - LPio / LaunchPad IO |
 | modules/integrations/index.html | 50 | Integrations - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 41 | Prototypes - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 42 | Prototypes - LPio / LaunchPad IO |
 | modules/reference/index.html | 51 | API reference - LPio / LaunchPad IO |
 | modules/roadmap/index.html | 43 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 43 | Users - LPio / LaunchPad IO |

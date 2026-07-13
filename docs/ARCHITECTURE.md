@@ -30,8 +30,10 @@ substance lives behind Supabase Row Level Security.
    activity, all rendered from the module registry.
 4. Each module lives in its own folder under modules/ with an
    index.html: modules/reference/ (the spec viewer),
-   modules/prototypes/ (the gallery plus the prototype pages
-   themselves) and modules/users/ (the user and access register).
+   modules/integrations/ (the integration overview and detail
+   modals), modules/prototypes/ (the gallery plus the prototype
+   pages themselves), modules/roadmap/ (the roadmap view) and
+   modules/users/ (the user and access register).
 5. silos/index.html is the central entry to project-specific
    workstreams. Each silo can be its own folder or page and can be
    linked from here.
@@ -63,7 +65,9 @@ insert unescaped strings into the DOM.
 
 ## Data model
 
-Five tables, defined in supabase/schema.sql:
+Defined in supabase/schema.sql, in four groups:
+
+Identity and access:
 
 - profiles: one row per user, created by trigger on signup, carrying
   email, display name and role (admin or member).
@@ -73,18 +77,48 @@ Five tables, defined in supabase/schema.sql:
   tables consult these grants via has_module_access(), and guard.js
   mirrors them in the UI (nav filtering plus a dashboard redirect
   for denied modules).
-- api_specs: one row per spec, with title, version, status and an
-  optional full OpenAPI 3 document in a JSONB column.
+
+Reference:
+
+- api_specs: one row per spec, with title, version, status, family
+  and an optional full OpenAPI 3 document in a JSONB column. family
+  (launchpad, unity, integration, other) groups specs into distinct
+  reference sites: the Launchpad API (inbound flows plus
+  Unity-initiated actions) and the Unity Merchant Portal API are the
+  two primary families, mirrored in App.registry.specFamilies.
 - api_endpoints: one row per endpoint (method, path, tag, summary,
   description, params, request and response examples, sort order),
   linked to a spec. This is the primary editing surface.
-- prototypes: registry rows (title, description, path, status, tags)
-  that drive the gallery and dashboard.
 
 The reference viewer prefers api_endpoints rows and falls back to
 parsing the spec JSONB when a spec has no endpoint rows, so a whole
 OpenAPI document can be pasted in as a starting point and broken out
 into rows later.
+
+Catalogues:
+
+- integrations: one row per third-party service connected to
+  Launchpad, driving the overview table and detail modals. The
+  detail JSONB column holds flat label/value pairs rendered
+  verbatim, so recording a new fact is a database edit.
+- prototypes: registry rows (title, description, path, status, tags)
+  that drive the gallery and dashboard.
+
+Roadmap:
+
+- roadmap_areas: development areas (swimlanes), each with a stable
+  key, title and sort order.
+- roadmap_items: the work itself, linked to an area and optionally a
+  milestone, with status, horizon (now/next/later/someday),
+  priority, effort, impact, tags and optional dates so non-dated
+  roadmaps stay first-class.
+- roadmap_milestones: named target points, optionally dated.
+- roadmap_dependencies: item-to-item ordering for waterfall and
+  dependency views.
+
+Every roadmap rendering (list, timeline, swimlanes, waterfall,
+exported snapshots) reads these same rows, so reprioritising or
+rescheduling is always a data change, never a code change.
 
 ## Updating content
 

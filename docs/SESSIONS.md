@@ -37,6 +37,56 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-13 - Portal skeleton: spec families, integrations, roadmap
+Branch: claude/portal-structure-planning-r8rrkq (session-designated;
+merge to main when reviewed)
+Completed:
+- Reference split into distinct sites: api_specs gains a family
+  column (launchpad, unity, integration, other), mirrored in
+  App.registry.specFamilies; the picker groups specs per family
+  (assets/js/pages/reference.js). Live rows created for the two spec
+  shells: "Launchpad API" and "Unity Merchant Portal API".
+  Migration: supabase/migrations/20260713100000_api_spec_families.sql
+  (applied live).
+- Integrations module: integrations table (RLS behind the
+  'integrations' grant), modules/integrations/ overview table with
+  native-dialog detail modals (assets/js/pages/integrations.js),
+  shared modal + .kv components and --scrim token. Twelve real
+  integrations inserted in the live database only; generic samples
+  in seed.sql. Migration: 20260713110000_integrations.sql (applied
+  live).
+- Roadmap skeleton: roadmap_areas, roadmap_items,
+  roadmap_milestones, roadmap_dependencies with RLS behind the
+  'roadmap' grant; modules/roadmap/ renders areas by horizon
+  (assets/js/pages/roadmap.js). Six real areas and five starter
+  items in the live database. Migration: 20260713120000_roadmap.sql
+  (applied live).
+- Docs: ARCHITECTURE.md data model regrouped, SECURITY.md residual
+  risks updated, ROADMAP.md points granular items at the database.
+  Suite green throughout (24 checks).
+In progress:
+- None. components.css is over the soft size limit (351/300):
+  schedule splitting modal/overlay styles into their own sheet
+  before extending components.css again.
+Next steps:
+1. Review this branch and merge it to main (deploy workflow will
+   publish; confirm the Pages deploy is green).
+2. When the repo owner provides the standalone roadmap web app,
+   fold it into modules/roadmap/ on top of the existing four
+   roadmap tables (extend schema only if a needed concept is
+   missing, as a migration).
+3. Fill the two live spec shells with endpoint rows (Launchpad
+   inbound flows first, then Unity Merchant Portal endpoints, then
+   Unity-initiated repurchase flows as tagged sections).
+4. Fill in detail JSONB (auth, data exchanged, environments, owner)
+   per integration row, especially EIT which is a placeholder.
+Open decisions:
+- Statuses and purposes of the twelve live integration rows were
+  set as best-guess placeholders (all 'live'); the repo owner
+  should correct them in the database.
+- Whether integration API surfaces should later become api_specs
+  rows under the 'integration' family, linked from the modals.
+
 ## 2026-07-13 - Public config, sign-in redesign, Pages auto-deploy
 Branch: main (trunk-based from here on)
 Completed:
