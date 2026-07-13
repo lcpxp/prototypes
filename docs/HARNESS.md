@@ -60,8 +60,8 @@ tests/checks/size.test.js.
   CLAUDE.md-class files is ~200 lines or less, with detail split
   into on-demand docs like this one (progressive disclosure).
 - Exceptions are explicit, listed in the JSON with a note and an
-  exit plan. Current debt: assets/css/main.css (585 lines) is due
-  a split into base/components/pages.
+  exit plan. No source-file debt is currently listed; the former
+  main.css monolith was split into the layered stylesheets.
 
 When a file crosses its soft limit: finish the current task, then
 schedule a split as its own refactor commit before the file is

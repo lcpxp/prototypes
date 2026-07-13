@@ -31,6 +31,19 @@ test("no hex colour literals outside tokens.css", () => {
   assert.deepEqual(offences, [], "Hard-coded colours found:\n" + offences.join("\n"));
 });
 
+test("stylesheets are mobile-first: no max-width media queries", () => {
+  const offences = [];
+  for (const file of trackedFiles().filter((f) => f.endsWith(".css"))) {
+    const content = read(file);
+    const re = /@media[^{]*max-width/g;
+    let m;
+    while ((m = re.exec(content)) !== null) {
+      offences.push(`${file}:${lineOf(content, m.index)} - style for small screens first, enhance with min-width (docs/DESIGN.md)`);
+    }
+  }
+  assert.deepEqual(offences, [], "Desktop-first media queries found:\n" + offences.join("\n"));
+});
+
 test("no emojis in any tracked file", () => {
   const offences = [];
   for (const file of trackedFiles()) {

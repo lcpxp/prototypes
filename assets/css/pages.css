@@ -1,0 +1,199 @@
+/* ------------------------------------------------------------------
+   pages.css - Page-specific styling: the login screen and the
+   reference viewer. Everything reusable belongs in components.css.
+   Mobile-first: single column by default, the sidebar layout
+   arrives at the 48rem breakpoint.
+------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------
+   Login
+--------------------------------------------------------------- */
+
+.login-shell {
+  min-block-size: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gutter);
+}
+
+.login-card {
+  inline-size: 100%;
+  max-inline-size: var(--login-max);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-raised);
+  padding: var(--section-gap);
+}
+
+.login-card .wordmark {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.login-card .wordmark span {
+  color: var(--accent);
+}
+
+.login-card .lede {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin-block: var(--s-2) var(--s-5);
+}
+
+/* ---------------------------------------------------------------
+   Reference viewer (the swagger)
+--------------------------------------------------------------- */
+
+.spec-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-block-end: var(--s-5);
+}
+
+.ref-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-5);
+  align-items: start;
+}
+
+.ref-sidebar {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s-4);
+}
+
+.ref-sidebar .group {
+  margin-block-end: var(--s-4);
+}
+
+.ref-sidebar .group:last-child {
+  margin-block-end: 0;
+}
+
+.ref-sidebar ul {
+  list-style: none;
+  margin-block: var(--s-2) 0;
+  padding: 0;
+}
+
+.ref-sidebar li a {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-2);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+}
+
+.ref-sidebar li a:hover {
+  background: var(--paper);
+  text-decoration: none;
+}
+
+.endpoint {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-block-end: var(--s-4);
+  scroll-margin-block-start: calc(var(--nav-height) + var(--s-4));
+}
+
+.endpoint > summary {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  cursor: pointer;
+  list-style: none;
+}
+
+.endpoint > summary::-webkit-details-marker {
+  display: none;
+}
+
+.endpoint > summary:hover {
+  background: var(--paper);
+}
+
+.endpoint .path {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  overflow-wrap: anywhere;
+}
+
+/* Hidden on narrow screens; returns beside the path at 48rem */
+.endpoint .summary-text {
+  display: none;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin-inline-start: auto;
+  text-align: end;
+}
+
+.endpoint-body {
+  border-block-start: 1px solid var(--line);
+  padding: var(--s-4);
+}
+
+.endpoint-body h3 {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-block: var(--s-4) var(--s-2);
+}
+
+.endpoint-body h3:first-child {
+  margin-block-start: 0;
+}
+
+.codeblock {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.codeblock pre {
+  margin: 0;
+  padding: var(--s-3) var(--s-4);
+  overflow-x: auto;
+}
+
+.codeblock .copy {
+  position: absolute;
+  inset-block-start: var(--s-2);
+  inset-inline-end: var(--s-2);
+}
+
+@media (min-width: 48rem) {
+  .ref-layout {
+    grid-template-columns: var(--sidebar-width) 1fr;
+  }
+
+  .ref-sidebar {
+    position: sticky;
+    inset-block-start: calc(var(--nav-height) + var(--s-4));
+    max-block-size: calc(100vh - var(--nav-height) - var(--s-6));
+    overflow-y: auto;
+  }
+
+  .endpoint .summary-text {
+    display: block;
+  }
+}

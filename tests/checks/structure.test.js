@@ -64,6 +64,18 @@ test("login page uses auth.js and never loads guard.js", () => {
     "index.html must not load guard.js (it would redirect the login page).");
 });
 
+test("every page loads the layered stylesheets in order", () => {
+  const LAYERS = ["tokens", "base", "layout", "components", "pages"];
+  for (const page of htmlPages()) {
+    const prefix = page.includes("/")
+      ? "../".repeat(page.split("/").length - 1) : "";
+    const hrefs = [...read(page).matchAll(/<link rel="stylesheet" href="([^"]+)"/g)]
+      .map((m) => m[1]);
+    assert.deepEqual(hrefs, LAYERS.map((n) => `${prefix}assets/css/${n}.css`),
+      `${page}: stylesheets must be exactly tokens, base, layout, components, pages (see docs/DESIGN.md).`);
+  }
+});
+
 test("every page is marked noindex", () => {
   for (const page of htmlPages()) {
     assert.match(read(page), /name="robots"[^>]*content="noindex"/,

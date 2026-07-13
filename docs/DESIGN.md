@@ -11,12 +11,38 @@ and one signature device that marks the system as its own: uppercase,
 letter-spaced monospace eyebrows labelling every section, echoing the
 method badges and paths of the API reference at the heart of the tool.
 
+## Stylesheet architecture
+
+Five files, loaded in this order on every page, each with one job:
+
+    tokens.css      values only: colour (light and dark), type, space
+    base.css        reset, typography, global element styles
+    layout.css      navigation, page scaffold, grids
+    components.css  cards, forms, buttons, tables, badges, toggles
+    pages.css       login and reference-viewer specifics
+
+Rules that keep it coherent:
+
+- Mobile-first, always. Base styles serve the smallest screen;
+  enhancements arrive only via min-width queries at the breakpoint
+  scale documented in tokens.css (36 / 48 / 64rem). max-width
+  queries are not used.
+- Logical properties (margin-block, padding-inline, inset-inline)
+  rather than physical ones, throughout.
+- Dark scheme is a token concern only: prefers-color-scheme swaps
+  values inside tokens.css and no other file may mention theme.
+- Anything horizontal that can overflow (tables, code, the nav row)
+  scrolls inside its own container; the page never scrolls sideways.
+- Reusable styling goes in components.css. A page file may only
+  contain what genuinely cannot be reused.
+
 ## Tokens are law
 
 Every colour, size, weight and space comes from assets/css/tokens.css.
 No hex values, pixel sizes or font stacks anywhere else. If a design
 need is not expressible in current tokens, add a token first, then use
-it.
+it. Display type sizes are fluid (clamp) in tokens.css; never add
+per-page font-size overrides to fake responsiveness.
 
 Palette: near-monochrome cool greys on an off-white paper, one petrol
 accent (--accent) for actions and active states. HTTP method badges use
@@ -46,7 +72,9 @@ borders. Radius 6px, shadows barely-there.
   labels on every input, aria-current on active nav, reduced-motion
   respected, contrast at WCAG AA or better.
 - Responsive floor: usable at 360px wide; the reference sidebar stacks
-  above content on narrow screens.
+  above content on narrow screens. Both colour schemes (light and
+  dark) must stay at WCAG AA; new colours get both values in
+  tokens.css in the same change.
 
 ## Writing in the interface
 

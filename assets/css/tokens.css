@@ -1,11 +1,27 @@
 /* ------------------------------------------------------------------
-   tokens.css - Design tokens for the onboarding portal prototype hub.
+   tokens.css - Design tokens for the LPio hub.
    Every colour, size and type decision used anywhere in the UI must
-   come from this file. Do not hard-code values in main.css or pages.
-   See docs/DESIGN.md for the rules governing these tokens.
+   come from this file. Do not hard-code values in other stylesheets
+   or pages. See docs/DESIGN.md for the rules governing these tokens.
+
+   Stylesheet layers, loaded in this order on every page:
+     tokens.css      this file: values only, light and dark
+     base.css        reset, typography, global element styles
+     layout.css      navigation, page scaffold, grids
+     components.css  cards, forms, buttons, tables, badges, toggles
+     pages.css       login and reference-viewer specifics
+
+   Breakpoint scale. Media queries cannot read custom properties, so
+   these values are fixed by convention; use them verbatim and only
+   as min-width (all layout is mobile-first):
+     36rem  sm  larger phones
+     48rem  md  two-column layouts switch on here
+     64rem  lg  wide desktop
 ------------------------------------------------------------------- */
 
 :root {
+  color-scheme: light dark;
+
   /* Colour: cool, near-monochrome surface set with one petrol accent */
   --ink: #171a20;            /* primary text */
   --muted: #5c6572;          /* secondary text, labels */
@@ -18,6 +34,7 @@
   --accent: #0e6c64;         /* primary action, active states */
   --accent-strong: #0a524c;  /* hover / pressed */
   --accent-soft: #e2efed;    /* tinted backgrounds for accent */
+  --on-accent: #ffffff;      /* text on accent backgrounds */
 
   --danger: #b0272e;
   --danger-soft: #f7e6e7;
@@ -48,16 +65,19 @@
   --text-sm: 0.8125rem; /* 13px - table data, code */
   --text-md: 0.9375rem; /* 15px - body */
   --text-lg: 1.125rem;  /* 18px - card titles */
-  --text-xl: 1.5rem;    /* 24px - page titles */
-  --text-2xl: 2rem;     /* 32px - login wordmark */
+  /* Display sizes scale fluidly between small and wide screens */
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);   /* page titles */
+  --text-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);    /* stats, wordmark */
 
   --weight-normal: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
 
-  --tracking-wide: 0.08em; /* uppercase mono eyebrows */
+  --tracking-wide: 0.08em;  /* uppercase mono eyebrows */
+  --tracking-slight: 0.03em; /* badges */
 
   /* Space: 4px base scale */
+  --s-0: 0.125rem;
   --s-1: 0.25rem;
   --s-2: 0.5rem;
   --s-3: 0.75rem;
@@ -67,9 +87,14 @@
   --s-7: 3rem;
   --s-8: 4rem;
 
+  /* Fluid space for page gutters and section rhythm */
+  --gutter: clamp(var(--s-4), 3vw, var(--s-5));
+  --section-gap: clamp(var(--s-5), 4vw, var(--s-6));
+
   /* Shape and depth */
   --radius: 6px;
   --radius-sm: 4px;
+  --radius-pill: 999px;
   --shadow: 0 1px 2px rgba(23, 26, 32, 0.06);
   --shadow-raised: 0 4px 16px rgba(23, 26, 32, 0.08);
 
@@ -77,4 +102,47 @@
   --nav-height: 3.25rem;
   --content-max: 72rem;
   --sidebar-width: 17rem;
+  --card-min: 16rem;      /* minimum card width in card grids */
+  --login-max: 24rem;     /* login card width cap */
+  --lede-max: 44rem;      /* measure cap for page ledes */
+}
+
+/* Dark scheme: same relationships, inverted surfaces. Components
+   never branch on theme; only these values change. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e8eaee;
+    --muted: #a2abb8;
+    --faint: #79818e;
+    --paper: #14161a;
+    --surface: #1d2026;
+    --line: #2a2e36;
+    --line-strong: #3d434e;
+
+    --accent: #4db3a7;
+    --accent-strong: #6cc5ba;
+    --accent-soft: #123230;
+    --on-accent: #0e1a19;
+
+    --danger: #e2727a;
+    --danger-soft: #391f22;
+    --warn: #d3a648;
+    --warn-soft: #332a16;
+    --ok: #6cbb92;
+    --ok-soft: #182b20;
+
+    --m-get: #4db3a7;
+    --m-get-bg: #123230;
+    --m-post: #7fabe6;
+    --m-post-bg: #182740;
+    --m-put: #d3a648;
+    --m-put-bg: #332a16;
+    --m-patch: #ab97e0;
+    --m-patch-bg: #261f3d;
+    --m-delete: #e2727a;
+    --m-delete-bg: #391f22;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-raised: 0 4px 16px rgba(0, 0, 0, 0.45);
+  }
 }

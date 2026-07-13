@@ -1,0 +1,123 @@
+/* ------------------------------------------------------------------
+   layout.css - Navigation, page scaffold and grids.
+   Mobile-first: base rules serve the smallest screens; wider
+   layouts arrive via min-width queries at the tokens.css breakpoint
+   scale (36 / 48 / 64rem).
+------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------
+   Top navigation. On narrow screens the link row scrolls
+   horizontally rather than wrapping or collapsing.
+--------------------------------------------------------------- */
+
+.nav {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  block-size: var(--nav-height);
+  padding-inline: var(--gutter);
+  background: var(--surface);
+  border-block-end: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.nav-brand {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.nav-brand:hover {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--s-4);
+  margin-inline-end: auto;
+}
+
+.nav-links a {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  padding-block: var(--s-1);
+  border-block-end: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.nav-links a:hover {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav-links a[aria-current="page"] {
+  color: var(--ink);
+  border-block-end-color: var(--accent);
+}
+
+.nav-user {
+  font-size: var(--text-sm);
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+@media (min-width: 48rem) {
+  .nav {
+    gap: var(--s-5);
+    overflow-x: visible;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Page scaffold
+--------------------------------------------------------------- */
+
+.page {
+  max-inline-size: var(--content-max);
+  margin-inline: auto;
+  padding-block: var(--section-gap) var(--s-8);
+  padding-inline: var(--gutter);
+}
+
+.page-head {
+  margin-block-end: var(--section-gap);
+}
+
+.page-head h1 {
+  font-size: var(--text-xl);
+  margin-block-start: var(--s-1);
+}
+
+.page-head .lede {
+  color: var(--muted);
+  max-inline-size: var(--lede-max);
+  margin-block-start: var(--s-2);
+}
+
+/* ---------------------------------------------------------------
+   Card grid. auto-fill keeps it fluid at every width; the min()
+   stops a single column overflowing when the container is narrower
+   than one card. The grid is a container so cards can adapt to the
+   space they actually get, not the viewport.
+--------------------------------------------------------------- */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min)), 1fr));
+  gap: var(--s-4);
+  container-type: inline-size;
+}
+
+@container (max-width: 30rem) {
+  .card {
+    padding: var(--s-4);
+  }
+}
