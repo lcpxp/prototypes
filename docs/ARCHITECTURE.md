@@ -133,6 +133,32 @@ waterfall, exported snapshots) reads these same rows, so
 reprioritising or rescheduling is always a data change, never a
 code change.
 
+## Performance
+
+The portal is built to stay fast as the Supabase content grows.
+These rules hold for all new work; tests/checks/perf.test.js
+enforces the mechanical ones.
+
+- RLS policies wrap auth.uid() and the helper functions in scalar
+  subselects - (select auth.uid()) - so Postgres evaluates them once
+  per query instead of once per row. No "for all" policies: admin
+  writes are separate insert/update/delete policies so a select only
+  evaluates one permissive policy.
+- Every foreign key that policies or pages filter on has a covering
+  index (supabase/schema.sql).
+- The dashboard reads all card counts through one dashboard_counts()
+  RPC, capped at 1001 rows per table, so counting never scans a
+  large table and never fans out into per-module requests.
+- guard.js caches the user's role and module grants in
+  sessionStorage; navigation renders immediately and the grants
+  revalidate in the background.
+- Pages fetch only the columns they render, leave heavy jsonb
+  columns (api_specs.spec, work_documents.content) to on-demand
+  queries, and issue independent queries in parallel.
+- Every page pins the supabase-js CDN script to an exact version
+  (immutable caching) and preconnects to the CDN and Supabase
+  origins before the first request needs them.
+
 ## Updating content
 
 Day-to-day updates to reference material are database edits made in

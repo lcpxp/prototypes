@@ -37,6 +37,49 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-13 - Performance pass: RLS, indexes, load-path caching
+Branch: claude/supabase-performance-optimization-fkvf67
+Completed:
+- Database (applied live as migrations 20260713140000 and
+  20260713150000, mirrored in supabase/schema.sql and policies.sql):
+  auth.uid() and helper calls in every policy wrapped in scalar
+  subselects (initplan, once per query); admin "for all" policies
+  split into insert/update/delete so selects evaluate one policy;
+  covering indexes for all eight advisor-flagged foreign keys;
+  dashboard_counts() RPC returns every card count in one request,
+  capped at 1001. Supabase performance advisor now reports zero
+  WARNs (only "unused index" INFOs on the new, still-empty indexes).
+- Bug fix found by probing: the profiles update policy subselected
+  profiles inside its own with check and recursed; role now read via
+  SECURITY DEFINER own_role(). Members can update their own
+  display_name, cannot change role; verified by SQL probes.
+- Front end: guard.js caches grants in sessionStorage with
+  background revalidation; dashboard.js uses the counts RPC and
+  renders "1000+" at the cap; reference.js defers the heavy
+  api_specs.spec jsonb to an on-demand fetch; backlog.js and
+  roadmap.js fetch lists in parallel; all ten pages pin
+  supabase-js@2.110.3 and preconnect to the CDN and Supabase
+  origins. policies.sql restructured around a content-table loop.
+- Gates: tests/checks/perf.test.js (pinned CDN version, preconnects,
+  initplan wrapping, no "for all"); security gate updated to
+  recognise loop-generated policies. Suite green (28).
+- Verified: SQL probes live (anon reads nothing, denied member reads
+  zero rows, member writes filtered, self-promotion rejected);
+  headless Chromium run against a mocked Supabase API (sandbox
+  blocks external origins): login, dashboard counts via one RPC,
+  grant cache, lazy spec fetch, denial bounce, no console errors.
+In progress:
+- None.
+Next steps:
+1. Merge this branch to main once reviewed.
+2. Enable leaked password protection in Supabase Auth settings
+   (outstanding from 2026-07-13 wave 1).
+3. Rotate the anon key (outstanding since 2026-07-09).
+4. schema.sql (~430 lines) is over the 300 soft budget: plan a split
+   into per-domain files before the next table lands.
+Open decisions:
+- None new; wave-2 module choice still open.
+
 ## 2026-07-13 - Backlog module, shared work areas, intake framework
 Branch: claude/portal-structure-planning-r8rrkq, merged to main
 Completed:
