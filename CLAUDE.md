@@ -59,6 +59,11 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
   session-log updates.
 - Commit small and atomic, message in the imperative: "Add endpoint
   params table", not "Added" or "misc changes".
+- Merge small and often: open a PR and merge to main after each
+  completed, tested unit of work rather than accumulating a long-lived
+  branch. A "unit" is a phase of a larger task (see docs/SESSIONS.md
+  checkpoints), not the whole task; each one should leave main green.
+  Rebase onto the latest main before merging if main has moved.
 - Never force-push main. Never rewrite published history.
 - Never use git add -f. If git refuses to add a file, that is the
   .gitignore doing its job.

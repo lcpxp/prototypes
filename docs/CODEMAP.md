@@ -9,7 +9,7 @@ document instead of walking the tree or reading whole files.
 | .githooks/pre-commit | 20 |  |
 | .gitignore | 20 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 158 | CLAUDE.md |
+| CLAUDE.md | 163 | CLAUDE.md |
 | README.md | 18 | LPio |
 | assets/css/base.css | 96 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 286 | components.css - Reusable interface components: cards, forms, |
