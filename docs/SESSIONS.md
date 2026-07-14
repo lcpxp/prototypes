@@ -37,6 +37,53 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-14 - Reference viewer: full swagger-style detail from Supabase
+Branch: main (continuing the performance-pass session)
+Completed:
+- Schema (migration 20260714000000_api_reference_detail, applied
+  live and mirrored in supabase/schema.sql): api_specs gains servers
+  (environments), auth (flat label/value scheme description) and
+  contact; api_endpoints gains request_headers, responses (per-status
+  catalogue with examples), auth_required, deprecated and notes.
+  Every field optional; sparse rows render cleanly. Same tables, so
+  existing RLS policies cover the new columns; security advisor
+  shows nothing new.
+- All reference content stays in Supabase; the repo holds only
+  rendering. The seeded Merchant Onboarding sample (seed.sql and the
+  live sample spec, now 6 endpoints including one deprecated) is the
+  worked template with every field populated with generic
+  example.com values - the pattern to follow when real material
+  arrives. Real material lands as UPDATE/INSERT against the two
+  empty placeholder specs (Launchpad API, Unity Merchant Portal
+  API) already in the live database.
+- Viewer rebuilt: pure HTML builders extracted to
+  assets/js/pages/reference-render.js (App.refRender, DOM-free and
+  unit-tested); reference.js keeps data loading and wiring. New UX:
+  spec overview panel (environments, auth, contact), endpoint search
+  filter, expand/collapse all, deprecated and public badges,
+  request-headers table, response catalogue with status-family
+  colour badges. CSS additions in pages.css use tokens only.
+- Tests: tests/unit/reference-render.test.js (escaping, badges,
+  response catalogue and fallback, overview, filter predicate,
+  OpenAPI deprecated flag). Suite green (35).
+- Verified in headless Chromium against a mocked Supabase API:
+  overview renders, badges correct, filter narrows/restores,
+  expand/collapse works, no console errors.
+In progress:
+- None.
+Next steps:
+1. When comprehensive real API material arrives in chat: file the
+   raw material per docs/WORKFLOW.md, then load it as api_specs
+   updates and api_endpoints rows against the placeholder specs;
+   extend the schema by migration only if a genuinely new kind of
+   fact appears.
+2. Enable leaked password protection; rotate the anon key
+   (both outstanding, need dashboard access).
+3. schema.sql (~446 lines) still over the 300 soft budget: split
+   into per-domain files before the next table lands.
+Open decisions:
+- None new.
+
 ## 2026-07-13 - Performance pass: RLS, indexes, load-path caching
 Branch: claude/supabase-performance-optimization-fkvf67
 Completed:

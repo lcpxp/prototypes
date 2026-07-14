@@ -34,6 +34,16 @@
       <span id="spec-meta"></span>
     </div>
 
+    <div id="spec-overview"></div>
+
+    <div class="ref-toolbar">
+      <input id="ref-search" type="search"
+        placeholder="Filter endpoints by path, summary or tag"
+        aria-label="Filter endpoints">
+      <button id="ref-expand" class="button quiet" type="button">Expand all</button>
+      <button id="ref-collapse" class="button quiet" type="button">Collapse all</button>
+    </div>
+
     <div class="ref-layout">
       <aside class="ref-sidebar" id="ref-sidebar" aria-label="Endpoint index"></aside>
       <section id="ref-content">
@@ -47,6 +57,7 @@
   <script src="../../assets/js/core/registry.js"></script>
   <script src="../../assets/js/core/guard.js"></script>
   <script src="../../assets/js/core/ui.js"></script>
+  <script src="../../assets/js/pages/reference-render.js"></script>
   <script src="../../assets/js/pages/reference.js"></script>
 </body>
 </html>

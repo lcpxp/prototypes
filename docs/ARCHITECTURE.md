@@ -81,20 +81,28 @@ Identity and access:
 
 Reference:
 
-- api_specs: one row per spec, with title, version, status, family
-  and an optional full OpenAPI 3 document in a JSONB column. family
-  (launchpad, unity, integration, other) groups specs into distinct
-  reference sites: the Launchpad API (inbound flows plus
-  Unity-initiated actions) and the Unity Merchant Portal API are the
-  two primary families, mirrored in App.registry.specFamilies.
+- api_specs: one row per spec, with title, version, status, family,
+  an optional full OpenAPI 3 document in a JSONB column, plus
+  spec-level material: servers (environments and base URLs), auth
+  (the scheme as flat label/value pairs, rendered verbatim) and
+  contact. family (launchpad, unity, integration, other) groups
+  specs into distinct reference sites mirrored in
+  App.registry.specFamilies.
 - api_endpoints: one row per endpoint (method, path, tag, summary,
-  description, params, request and response examples, sort order),
-  linked to a spec. This is the primary editing surface.
+  description, params, request headers, request example, a response
+  catalogue with per-status examples, auth_required and deprecated
+  flags, notes, sort order), linked to a spec. This is the primary
+  editing surface.
 
 The reference viewer prefers api_endpoints rows and falls back to
 parsing the spec JSONB when a spec has no endpoint rows, so a whole
 OpenAPI document can be pasted in as a starting point and broken out
-into rows later.
+into rows later. Every column beyond method and path is optional:
+sparse rows render cleanly, so material can be imported minimally
+and enriched in place. Base URLs, auth details and endpoint payloads
+are data in Supabase, never content in this public repo; the seeded
+Merchant Onboarding sample (supabase/seed.sql) is the worked
+template showing every field populated with generic values.
 
 Catalogues:
 

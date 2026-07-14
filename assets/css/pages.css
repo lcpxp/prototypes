@@ -70,6 +70,11 @@
   text-decoration: none;
 }
 
+/* Long paths wrap; the method badge must not. */
+.ref-sidebar li a .badge {
+  flex-shrink: 0;
+}
+
 .endpoint {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -129,6 +134,37 @@
 .endpoint-body h3:first-child {
   margin-block-start: 0;
 }
+
+.ref-toolbar {
+  display: flex;
+  gap: var(--s-2);
+  align-items: center;
+  margin-block: var(--s-4);
+}
+
+.ref-toolbar input[type="search"] {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.spec-overview {
+  margin-block-start: var(--s-4);
+}
+
+.response {
+  margin-block-end: var(--s-3);
+}
+
+.response > p {
+  margin-block-end: var(--s-2);
+}
+
+/* HTTP status families reuse the semantic colour tokens. */
+.badge.status-2     { color: var(--ok);     background: var(--ok-soft);     border-color: transparent; }
+.badge.status-3     { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
+.badge.status-4     { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
+.badge.status-5     { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
+.badge.public       { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
 
 .codeblock {
   position: relative;
