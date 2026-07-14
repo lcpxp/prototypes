@@ -37,6 +37,74 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-14 - Unity reference loaded; viewer standard extended (tags, topics, lazy detail)
+Branch: claude/unity-api-standard-f7gm11
+Completed:
+- The comprehensive Unity Acquiring API reference material (209 KB
+  reverse-engineered HTML, v2.0 FINAL) arrived and was ingested per
+  docs/WORKFLOW.md. Everything lives in Supabase, nothing in git:
+  api_specs row 13ed823c updated (title Unity Acquiring API, v2.0,
+  live, environments, full B2C auth detail); 24 api_tags (area
+  descriptions in runbook order); 6 api_topics (overview,
+  conventions, 14-step provisioning runbook, data model, 32-enum
+  accepted-values catalogue, gap register); 151 api_endpoints
+  (143 REST + 8 GraphQL) with params, request/response examples,
+  per-status catalogues and environment/step/verification badges.
+  work_documents row 44444444-...0001 records provenance, inventory
+  and redactions; 3 work_notes and 7 gap backlog_items filed.
+- Redaction at ingestion: four samples in the source contained real
+  merchant/staff names despite its all-dummy claim; all replaced
+  with consistent fictional values before loading (detailed in the
+  work_documents row). The database now scans clean.
+- Schema extended once, generically, so future material needs no new
+  code (migration 20260714100000_api_reference_structure, applied
+  live + mirrored): api_tags (per-spec tag catalogue: description,
+  order), api_topics (narrative sections as typed jsonb blocks: p,
+  note, code, table, kv, values; unknown kinds skipped),
+  api_endpoints.badges jsonb ([{label,tone}]), method check now
+  allows 'query' for name-addressed read ops (GraphQL/RPC). RLS
+  policies added in policies.sql; security advisor shows nothing
+  new.
+- schema.sql split into supabase/schema/ per-domain files (00_core,
+  10_reference, 20_portal, 30_work, 90_dashboard), clearing the
+  size-budget debt; security/perf gates now scan the directory;
+  all doc references updated.
+- Viewer extended: reference-topics.js renders topic blocks;
+  reference-render.js gains badges, tag-catalogue ordering with
+  descriptions, endpointBody split and generated curl examples;
+  reference.js loads lean endpoint lists (id/method/path/tag/
+  summary/badges) and hydrates heavy columns per endpoint on first
+  expand, or in one batch for expand-all - large specs render fast
+  and cheap. CSS tone badges and value-set styles in pages.css,
+  tokens only.
+- Tests 41 green, including new benchmarks for topics, badges,
+  curl, catalogue ordering and lean placeholders. Verified in
+  headless Chromium against a mocked Supabase API: 15/15 checks
+  (topics, ordering, badges, lazy hydration, single bulk fetch on
+  expand-all, filter, no console errors).
+- seed.sql worked template extended: sample api_tags, an api_topics
+  row exercising every block kind, and a query-style endpoint (all
+  example.com values); mirrored into the live sample spec.
+In progress:
+- None.
+Next steps:
+1. Merge claude/unity-api-standard-f7gm11 to main once reviewed (it
+   carries this session plus the two prior reference commits), then
+   confirm the Pages deploy is green.
+2. Review the reference viewer against the live Unity spec while
+   signed in; spot-check a few areas against the source HTML.
+3. Work the 7 gap backlog_items (capture outstanding writes in Dev).
+4. Enable leaked password protection; rotate the anon key (both
+   outstanding, need dashboard access).
+5. seed.sql (372/300 soft) - plan a split into per-domain seeds
+   before it grows again.
+Open decisions:
+- work_documents content for this source holds provenance +
+  inventory instead of the verbatim 209 KB HTML (the payload itself
+  is fully loaded into the api_* tables; rationale recorded on the
+  row). Confirm the owner is happy with that reading of the
+  verbatim rule for presentation-shell sources.
+
 ## 2026-07-14 - Reference viewer: full swagger-style detail from Supabase
 Branch: main (continuing the performance-pass session)
 Completed:
