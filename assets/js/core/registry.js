@@ -76,6 +76,8 @@
       profiles: "profiles",
       apiSpecs: "api_specs",
       apiEndpoints: "api_endpoints",
+      apiTags: "api_tags",
+      apiTopics: "api_topics",
       prototypes: "prototypes",
       integrations: "integrations",
       workAreas: "work_areas",

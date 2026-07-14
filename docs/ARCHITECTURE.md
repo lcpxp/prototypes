@@ -66,7 +66,7 @@ insert unescaped strings into the DOM.
 
 ## Data model
 
-Defined in supabase/schema.sql, in four groups:
+Defined in supabase/schema/ (one file per domain, run in lexical order), in four groups:
 
 Identity and access:
 
@@ -90,16 +90,28 @@ Reference:
   App.registry.specFamilies.
 - api_endpoints: one row per endpoint (method, path, tag, summary,
   description, params, request headers, request example, a response
-  catalogue with per-status examples, auth_required and deprecated
-  flags, notes, sort order), linked to a spec. This is the primary
-  editing surface.
+  catalogue with per-status examples, typed summary-row badges,
+  auth_required and deprecated flags, notes, sort order), linked to
+  a spec. method 'query' documents name-addressed read operations
+  (GraphQL, RPC). This is the primary editing surface.
+- api_tags: per-spec tag catalogue giving each endpoint group a
+  description and an explicit position, so areas can mirror a
+  runbook instead of alphabetical order. Uncatalogued tags still
+  render, first-seen, without a blurb.
+- api_topics: ordered narrative sections per spec (overview,
+  conventions, runbooks, accepted values, gap registers) as typed
+  jsonb blocks the viewer renders generically; unknown block kinds
+  are skipped so content can lead the code.
 
 The reference viewer prefers api_endpoints rows and falls back to
 parsing the spec JSONB when a spec has no endpoint rows, so a whole
 OpenAPI document can be pasted in as a starting point and broken out
 into rows later. Every column beyond method and path is optional:
 sparse rows render cleanly, so material can be imported minimally
-and enriched in place. Base URLs, auth details and endpoint payloads
+and enriched in place. Endpoints load in two phases - a lean list
+renders the whole page, then heavy columns hydrate per endpoint on
+first expand (or one batch for expand-all) - so large specs stay
+fast. Base URLs, auth details and endpoint payloads
 are data in Supabase, never content in this public repo; the seeded
 Merchant Onboarding sample (supabase/seed.sql) is the worked
 template showing every field populated with generic values.
@@ -153,7 +165,7 @@ enforces the mechanical ones.
   writes are separate insert/update/delete policies so a select only
   evaluates one permissive policy.
 - Every foreign key that policies or pages filter on has a covering
-  index (supabase/schema.sql).
+  index (supabase/schema/).
 - The dashboard reads all card counts through one dashboard_counts()
   RPC, capped at 1001 rows per table, so counting never scans a
   large table and never fans out into per-module requests.

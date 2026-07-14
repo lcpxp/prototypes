@@ -165,6 +165,48 @@
 .badge.status-4     { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
 .badge.status-5     { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
 .badge.public       { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
+.badge.query        { color: var(--m-patch); background: var(--m-patch-bg); border-color: transparent; }
+
+/* Generic badge tones for api_endpoints.badges and topic notes. */
+.badge.tone-neutral { color: var(--muted);   background: var(--paper);       border-color: transparent; }
+.badge.tone-info    { color: var(--accent);   background: var(--accent-soft); border-color: transparent; }
+.badge.tone-ok      { color: var(--ok);       background: var(--ok-soft);     border-color: transparent; }
+.badge.tone-warn    { color: var(--warn);     background: var(--warn-soft);   border-color: transparent; }
+.badge.tone-danger  { color: var(--danger);   background: var(--danger-soft); border-color: transparent; }
+
+.notice.tone-info   { border-color: var(--accent); }
+.notice.tone-ok     { border-color: var(--ok); }
+.notice.tone-warn   { border-color: var(--warn); }
+.notice.tone-danger { border-color: var(--danger); }
+
+.tag-description {
+  color: var(--muted);
+  max-inline-size: 72ch;
+  margin-block-end: var(--s-3);
+}
+
+/* A named set of accepted values inside a topic. */
+.value-set {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--s-2) var(--s-3);
+  margin-block-end: var(--s-2);
+}
+
+.value-set h4 {
+  margin: 0 0 var(--s-1);
+}
+
+.value-set .value-chips code {
+  display: inline-block;
+  margin: 0 var(--s-1) var(--s-1) 0;
+}
+
+.value-set .value-source {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
 
 .codeblock {
   position: relative;

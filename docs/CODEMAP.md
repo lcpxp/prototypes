@@ -16,35 +16,37 @@ document instead of walking the tree or reading whole files.
 | assets/css/components.css | 354 | components.css - Reusable interface components: cards, forms, |
 | assets/css/layout.css | 126 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 159 | login.css - Sign-in page only. Loaded after the core layers on |
-| assets/css/pages.css | 204 | pages.css - The reference viewer ("swagger") page. Everything |
+| assets/css/pages.css | 246 | pages.css - The reference viewer ("swagger") page. Everything |
 | assets/css/tokens.css | 151 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 137 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 129 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 131 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/ui.js | 102 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/backlog.js | 244 | backlog.js - Rolling work items for modules/backlog/. |
-| assets/js/pages/dashboard.js | 118 | dashboard.js - Renders module cards, counts and recent activity |
+| assets/js/pages/dashboard.js | 119 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 115 | integrations.js - Integration overview for modules/integrations/. |
-| assets/js/pages/reference.js | 208 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
+| assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
+| assets/js/pages/reference.js | 296 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap.js | 114 | roadmap.js - Roadmap view for modules/roadmap/. |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
 | dashboard.html | 49 | Dashboard - LPio / LaunchPad IO |
-| docs/ARCHITECTURE.md | 188 | Architecture |
+| docs/ARCHITECTURE.md | 200 | Architecture |
 | docs/DESIGN.md | 95 | Design standards |
 | docs/HARNESS.md | 108 | Verification harness and working process |
 | docs/ROADMAP.md | 38 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SESSIONS.md | 356 | Session log |
-| docs/SETUP.md | 53 | Setup and day-to-day use |
-| docs/WORKFLOW.md | 94 | Work intake and backlog workflow |
+| docs/SETUP.md | 54 | Setup and day-to-day use |
+| docs/WORKFLOW.md | 95 | Work intake and backlog workflow |
 | index.html | 68 | Sign in - LPio / LaunchPad IO |
 | modules/backlog/index.html | 76 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 52 | Integrations - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 44 | Prototypes - LPio / LaunchPad IO |
-| modules/reference/index.html | 64 | API reference - LPio / LaunchPad IO |
+| modules/reference/index.html | 65 | API reference - LPio / LaunchPad IO |
 | modules/roadmap/index.html | 45 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 45 | Users - LPio / LaunchPad IO |
 | package.json | 12 |  |
@@ -58,16 +60,23 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260713130000_work_areas_and_backlog.sql | 187 | Work areas, backlog and intake framework (see docs/WORKFLOW.md). |
 | supabase/migrations/20260713140000_performance_rls_and_indexes.sql | 197 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713150000_profiles_update_recursion_fix.sql | 28 | The profiles update policy compared role against a subselect on |
-| supabase/policies.sql | 234 | ------------------------------------------------------------------ |
-| supabase/schema.sql | 446 | ------------------------------------------------------------------ |
-| supabase/seed.sql | 298 | ------------------------------------------------------------------ |
-| tests/checks/perf.test.js | 75 | tests/checks/perf.test.js - Performance gates. |
-| tests/checks/security.test.js | 113 | tests/checks/security.test.js - Security gates. |
+| supabase/migrations/20260714000000_api_reference_detail.sql | 34 | Reference detail columns so comprehensive API material lives |
+| supabase/migrations/20260714100000_api_reference_structure.sql | 119 | Generic reference structure so any comprehensive API guide fits |
+| supabase/policies.sql | 239 | ------------------------------------------------------------------ |
+| supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
+| supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
+| supabase/schema/20_portal.sql | 57 | ------------------------------------------------------------------ |
+| supabase/schema/30_work.sql | 224 | ------------------------------------------------------------------ |
+| supabase/schema/90_dashboard.sql | 31 | ------------------------------------------------------------------ |
+| supabase/seed.sql | 373 | ------------------------------------------------------------------ |
+| tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
+| tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 33 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 102 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 60 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/size-budget.json | 22 |  |
+| tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 70 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 
@@ -81,7 +90,7 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:85 |
 | App.onAuthed | assets/js/core/guard.js:108 |
 | enforceModule() | assets/js/core/guard.js:116 |
-| App.moduleHref | assets/js/core/registry.js:125 |
+| App.moduleHref | assets/js/core/registry.js:127 |
 | App.escape | assets/js/core/ui.js:11 |
 | App.methodBadge | assets/js/core/ui.js:21 |
 | App.statusBadge | assets/js/core/ui.js:29 |
@@ -97,21 +106,43 @@ document instead of walking the tree or reading whole files.
 | renderItems() | assets/js/pages/backlog.js:89 |
 | renderDocuments() | assets/js/pages/backlog.js:124 |
 | fillFilters() | assets/js/pages/backlog.js:158 |
-| loadCounts() | assets/js/pages/dashboard.js:13 |
-| cardHtml() | assets/js/pages/dashboard.js:25 |
-| visibleModules() | assets/js/pages/dashboard.js:41 |
-| renderCards() | assets/js/pages/dashboard.js:47 |
-| loadRecent() | assets/js/pages/dashboard.js:56 |
-| showDeniedNotice() | assets/js/pages/dashboard.js:101 |
+| loadCounts() | assets/js/pages/dashboard.js:14 |
+| cardHtml() | assets/js/pages/dashboard.js:26 |
+| visibleModules() | assets/js/pages/dashboard.js:42 |
+| renderCards() | assets/js/pages/dashboard.js:48 |
+| loadRecent() | assets/js/pages/dashboard.js:57 |
+| showDeniedNotice() | assets/js/pages/dashboard.js:102 |
 | safeUrl() | assets/js/pages/integrations.js:15 |
 | modalHtml() | assets/js/pages/integrations.js:19 |
 | openModal() | assets/js/pages/integrations.js:47 |
 | tableHtml() | assets/js/pages/integrations.js:53 |
-| render() | assets/js/pages/reference.js:22 |
-| applyFilter() | assets/js/pages/reference.js:70 |
-| setAllOpen() | assets/js/pages/reference.js:77 |
-| loadSpec() | assets/js/pages/reference.js:83 |
-| fillPicker() | assets/js/pages/reference.js:130 |
+| codeblock() | assets/js/pages/reference-render.js:18 |
+| specOverview() | assets/js/pages/reference-render.js:32 |
+| paramsTable() | assets/js/pages/reference-render.js:69 |
+| headersTable() | assets/js/pages/reference-render.js:88 |
+| statusClass() | assets/js/pages/reference-render.js:106 |
+| responsesBlock() | assets/js/pages/reference-render.js:114 |
+| badgeList() | assets/js/pages/reference-render.js:134 |
+| curlExample() | assets/js/pages/reference-render.js:149 |
+| endpointBody() | assets/js/pages/reference-render.js:170 |
+| endpointBlock() | assets/js/pages/reference-render.js:185 |
+| groupByTag() | assets/js/pages/reference-render.js:204 |
+| matches() | assets/js/pages/reference-render.js:234 |
+| endpointsFromOpenApi() | assets/js/pages/reference-render.js:244 |
+| toneClass() | assets/js/pages/reference-topics.js:21 |
+| tableBlock() | assets/js/pages/reference-topics.js:25 |
+| kvBlock() | assets/js/pages/reference-topics.js:45 |
+| valuesBlock() | assets/js/pages/reference-topics.js:55 |
+| blockHtml() | assets/js/pages/reference-topics.js:69 |
+| topicBlock() | assets/js/pages/reference-topics.js:93 |
+| context() | assets/js/pages/reference.js:32 |
+| render() | assets/js/pages/reference.js:36 |
+| hydrate() | assets/js/pages/reference.js:90 |
+| applyFilter() | assets/js/pages/reference.js:116 |
+| setAllOpen() | assets/js/pages/reference.js:123 |
+| loadSpec() | assets/js/pages/reference.js:130 |
+| fillPicker() | assets/js/pages/reference.js:191 |
+| wireContent() | assets/js/pages/reference.js:220 |
 | itemHtml() | assets/js/pages/roadmap.js:20 |
 | horizonHtml() | assets/js/pages/roadmap.js:36 |
 | areaHtml() | assets/js/pages/roadmap.js:50 |
@@ -136,6 +167,7 @@ document instead of walking the tree or reading whole files.
 | read() | tests/lib/repo.js:19 |
 | isTextFile() | tests/lib/repo.js:23 |
 | lineOf() | tests/lib/repo.js:28 |
+| loadApp() | tests/unit/reference-render.test.js:13 |
 | loadApp() | tests/unit/registry.test.js:12 |
 | loadApp() | tests/unit/ui.test.js:13 |
 

@@ -1,6 +1,6 @@
 -- ------------------------------------------------------------------
--- seed.sql - OPTIONAL sample data. Run AFTER schema.sql and
--- policies.sql, from the Supabase SQL editor (which runs with full
+-- seed.sql - OPTIONAL sample data. Run AFTER the supabase/schema/
+-- files and policies.sql, from the Supabase SQL editor (which runs with full
 -- privileges, so RLS does not block the inserts).
 --
 -- Everything below is deliberately generic sample content used to
@@ -168,6 +168,81 @@ values
   true, true,
   'Do not build new integrations against this endpoint.',
   20
+);
+
+-- Sample tag catalogue ---------------------------------------------
+-- Optional per-spec ordering and descriptions for endpoint groups.
+-- Tags without a row still render, first-seen, without a blurb.
+
+insert into public.api_tags (spec_id, name, description, sort_order)
+values
+(
+  '11111111-1111-1111-1111-111111111111',
+  'Merchants',
+  'Create and manage merchant applications. Start here: every other resource hangs off an application.',
+  10
+),
+(
+  '11111111-1111-1111-1111-111111111111',
+  'Documents',
+  'Verification documents attached to an application''s outstanding requirements.',
+  20
+),
+(
+  '11111111-1111-1111-1111-111111111111',
+  'Status',
+  'Lightweight progress polling for returning merchants and integrators.',
+  30
+);
+
+-- Sample topics ----------------------------------------------------
+-- Narrative sections rendered above the endpoint groups. Each block
+-- kind the viewer understands appears at least once, so this doubles
+-- as the worked template for loading real guide material.
+
+insert into public.api_topics (spec_id, title, intro, blocks, sort_order)
+values
+(
+  '11111111-1111-1111-1111-111111111111',
+  'Conventions',
+  'Everything below applies to every endpoint in this spec.',
+  '[
+    {"kind": "p", "text": "Requests and responses are JSON. Identifiers are opaque strings; do not parse them."},
+    {"kind": "kv", "items": [
+      {"label": "Versioning", "value": "Path-based (/v1). Breaking changes ship as a new path."},
+      {"label": "Idempotency", "value": "Creates accept an Idempotency-Key header and replay the original result."}
+    ]},
+    {"kind": "code", "json": {"error": "invalid_request", "field": "country"}},
+    {"kind": "table", "columns": ["Error", "Status", "Meaning"], "rows": [
+      ["invalid_request", "400", "A field is missing or malformed."],
+      ["unsupported_country", "422", "The business cannot be onboarded."]
+    ]},
+    {"kind": "values", "name": "Application status", "field": "status", "values": ["pending", "in_review", "approved", "rejected"], "source": "Status endpoint responses"},
+    {"kind": "note", "tone": "warn", "text": "Poll the status endpoint at most once per minute; state changes also arrive on the webhook."}
+  ]'::jsonb,
+  10
+);
+
+-- Sample query-style operation -------------------------------------
+-- method ''query'' documents read-only operations addressed by name
+-- (GraphQL operations, RPC-style calls): the operation name goes in
+-- path, the query text and variables in request_example.
+
+insert into public.api_endpoints
+  (spec_id, method, path, tag, summary, description,
+   request_example, response_example, badges, sort_order)
+values
+(
+  '11111111-1111-1111-1111-111111111111',
+  'query',
+  'GetMerchants',
+  'Status',
+  'List merchant applications (query API)',
+  'Read-only list query on the search endpoint. Cursor-paginated.',
+  '{"operationName": "GetMerchants", "variables": {"first": 20}, "query": "query GetMerchants($first: Int) { merchants(first: $first) { nodes { id status } } }"}'::jsonb,
+  '{"data": {"merchants": {"nodes": [{"id": "mch_123", "status": "pending"}]}}}'::jsonb,
+  '[{"label": "read-only", "tone": "info"}]'::jsonb,
+  30
 );
 
 -- Sample integrations ----------------------------------------------

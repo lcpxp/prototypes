@@ -130,17 +130,46 @@
     return html;
   }
 
-  function endpointBlock(ep) {
-    var html = '<details class="endpoint" id="ep-' + App.escape(ep.id) + '">';
-    html +=
-      "<summary>" +
-      App.methodBadge(ep.method) +
-      '<span class="path">' + App.escape(ep.path) + "</span>" +
-      (ep.deprecated ? App.statusBadge("deprecated") : "") +
-      (ep.auth_required === false ? '<span class="badge public">public</span>' : "") +
-      '<span class="summary-text">' + App.escape(ep.summary || "") + "</span>" +
-      "</summary>";
-    html += '<div class="endpoint-body">';
+  // Small typed flags on the summary row: [{"label","tone"}].
+  function badgeList(badges) {
+    var html = "";
+    (badges || []).forEach(function (b) {
+      if (!b || !b.label) return;
+      var tone = ["neutral", "info", "ok", "warn", "danger"]
+        .indexOf(b.tone) === -1 ? "neutral" : b.tone;
+      html += '<span class="badge tone-' + tone + '">' +
+        App.escape(b.label) + "</span>";
+    });
+    return html;
+  }
+
+  // Ready-to-run curl for the endpoint, built from the first
+  // environment. Query-style operations (GraphQL) have no usable
+  // path, so they render no curl.
+  function curlExample(ep, servers) {
+    var base = servers && servers[0] && servers[0].base_url;
+    if (!base || ep.method === "query") return "";
+    var lines = ["curl -X " + String(ep.method).toUpperCase() + " \\",
+      "  '" + base + ep.path + "' \\"];
+    if (ep.auth_required !== false) {
+      lines.push("  -H 'Authorization: Bearer <token>' \\");
+    }
+    if (ep.request_example) {
+      lines.push("  -H 'Content-Type: application/json' \\");
+      lines.push("  -d '" + JSON.stringify(ep.request_example) + "'");
+    } else {
+      var last = lines.pop();
+      lines.push(last.replace(/ \\$/, ""));
+    }
+    return "<h3>Try it (curl)</h3>" + codeblock(lines.join("\n"));
+  }
+
+  // The collapsible detail of an endpoint. Exported separately so
+  // the page can inject it after lazily fetching the heavy columns;
+  // a lean row (marked _lean by the loader) renders a placeholder.
+  function endpointBody(ep, context) {
+    if (ep._lean) return '<p class="notice">Loading detail</p>';
+    var html = "";
     if (ep.description) html += "<p>" + App.escape(ep.description) + "</p>";
     if (ep.notes) html += "<h3>Notes</h3><p>" + App.escape(ep.notes) + "</p>";
     html += headersTable(ep.request_headers);
@@ -149,13 +178,36 @@
       html += "<h3>Request example</h3>" + codeblock(ep.request_example);
     }
     html += responsesBlock(ep.responses, ep.response_example);
+    html += curlExample(ep, context && context.servers);
+    return html;
+  }
+
+  function endpointBlock(ep, context) {
+    var html = '<details class="endpoint" id="ep-' + App.escape(ep.id) + '">';
+    html +=
+      "<summary>" +
+      App.methodBadge(ep.method) +
+      '<span class="path">' + App.escape(ep.path) + "</span>" +
+      (ep.deprecated ? App.statusBadge("deprecated") : "") +
+      (ep.auth_required === false ? '<span class="badge public">public</span>' : "") +
+      badgeList(ep.badges) +
+      '<span class="summary-text">' + App.escape(ep.summary || "") + "</span>" +
+      "</summary>";
+    html += '<div class="endpoint-body">' + endpointBody(ep, context);
     html += "</div></details>";
     return html;
   }
 
-  function groupByTag(endpoints) {
+  // Group endpoints by tag. An optional api_tags catalogue supplies
+  // per-tag descriptions and an explicit order (so areas can mirror
+  // a runbook); uncatalogued tags keep first-seen order after it.
+  function groupByTag(endpoints, catalogue) {
     var groups = {};
     var order = [];
+    var descriptions = {};
+    (catalogue || []).forEach(function (tag) {
+      if (tag.description) descriptions[tag.name] = tag.description;
+    });
     endpoints.forEach(function (ep) {
       var tag = ep.tag || "General";
       if (!groups[tag]) {
@@ -164,7 +216,18 @@
       }
       groups[tag].push(ep);
     });
-    return { groups: groups, order: order };
+    if (catalogue && catalogue.length > 0) {
+      var ranks = {};
+      catalogue.forEach(function (tag, i) { ranks[tag.name] = i; });
+      var seen = {};
+      order.forEach(function (tag, i) { seen[tag] = i; });
+      order.sort(function (a, b) {
+        var ra = ranks[a] !== undefined ? ranks[a] : 1000 + seen[a];
+        var rb = ranks[b] !== undefined ? ranks[b] : 1000 + seen[b];
+        return ra - rb;
+      });
+    }
+    return { groups: groups, order: order, descriptions: descriptions };
   }
 
   // Search predicate for the filter box.
@@ -212,6 +275,9 @@
     paramsTable: paramsTable,
     headersTable: headersTable,
     responsesBlock: responsesBlock,
+    badgeList: badgeList,
+    curlExample: curlExample,
+    endpointBody: endpointBody,
     endpointBlock: endpointBlock,
     groupByTag: groupByTag,
     matches: matches,

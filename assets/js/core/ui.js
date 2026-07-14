@@ -21,7 +21,7 @@
   App.methodBadge = function (method) {
     var m = String(method || "").toUpperCase();
     var cls = m.toLowerCase();
-    var known = ["get", "post", "put", "patch", "delete"];
+    var known = ["get", "post", "put", "patch", "delete", "query"];
     if (known.indexOf(cls) === -1) cls = "";
     return '<span class="badge ' + cls + '">' + App.escape(m) + "</span>";
   };
