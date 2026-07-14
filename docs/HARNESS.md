@@ -98,7 +98,7 @@ Three layers, cheapest first:
   file. Findings report file:line only, never the value.
 - assets/js/core/config.js tracked = failure, and the pre-commit hook
   independently blocks it from being staged.
-- Every table in supabase/schema.sql must have RLS enabled and at
+- Every table in supabase/schema/ must have RLS enabled and at
   least one policy in supabase/policies.sql in the same commit.
 - seed.sql emails must be example.com/org/net.
 

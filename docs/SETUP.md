@@ -30,8 +30,9 @@ Never commit it.
 ## Standing up your own Supabase backend
 
 1. Create a Supabase project at supabase.com (free tier is fine).
-2. In the SQL editor, run in order: supabase/schema.sql,
-   supabase/policies.sql, then optionally supabase/seed.sql. Apply
+2. In the SQL editor, run the files in supabase/schema/ in lexical
+   order, then supabase/policies.sql, then optionally
+   supabase/seed.sql. Apply
    later changes from supabase/migrations/ in filename order.
 3. Put the new project's URL and anon key into supabase.js (or a local
    config.js for testing before you commit).

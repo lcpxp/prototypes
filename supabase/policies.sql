@@ -1,5 +1,6 @@
 -- ------------------------------------------------------------------
--- policies.sql - Row Level Security. Run AFTER schema.sql.
+-- policies.sql - Row Level Security. Run AFTER the files in
+-- supabase/schema/ (lexical order).
 --
 -- This file is the security boundary of the whole portal. The anon
 -- key in the browser is only safe because these policies exist:
@@ -87,6 +88,8 @@ revoke execute on function public.handle_new_user() from public, anon, authentic
 
 alter table public.api_specs            enable row level security;
 alter table public.api_endpoints        enable row level security;
+alter table public.api_tags             enable row level security;
+alter table public.api_topics           enable row level security;
 alter table public.integrations         enable row level security;
 alter table public.prototypes           enable row level security;
 alter table public.work_areas           enable row level security;
@@ -105,6 +108,8 @@ begin
     select * from (values
       ('api_specs',            '(select public.has_module_access(''reference''))'),
       ('api_endpoints',        '(select public.has_module_access(''reference''))'),
+      ('api_tags',             '(select public.has_module_access(''reference''))'),
+      ('api_topics',           '(select public.has_module_access(''reference''))'),
       ('integrations',         '(select public.has_module_access(''integrations''))'),
       ('prototypes',           '(select public.has_module_access(''prototypes''))'),
       -- work_areas is shared: readable behind either the roadmap or
@@ -218,7 +223,7 @@ create policy "module_access: admins delete"
   using ((select public.is_admin()));
 
 -- ---------------------------------------------------------------
--- dashboard_counts() (defined in schema.sql) is the one read RPC:
+-- dashboard_counts() (defined in schema/90_dashboard.sql) is the one read RPC:
 -- callable by signed-in users only, never by anon.
 -- ---------------------------------------------------------------
 

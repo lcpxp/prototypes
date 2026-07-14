@@ -81,12 +81,15 @@ test("no credential-shaped strings in any tracked file", () => {
     "Credential-shaped content found (values not printed):\n" + offences.join("\n"));
 });
 
-test("every table in schema.sql has RLS enabled and at least one policy", () => {
-  const schema = read("supabase/schema.sql");
+test("every table in the schema has RLS enabled and at least one policy", () => {
+  const schemaFiles = trackedFiles()
+    .filter((f) => f.startsWith("supabase/schema/") && f.endsWith(".sql"));
+  assert.ok(schemaFiles.length > 0, "No schema files under supabase/schema/");
+  const schema = schemaFiles.map(read).join("\n");
   const policies = read("supabase/policies.sql");
   const tables = [...schema.matchAll(/create table if not exists public\.(\w+)/gi)]
     .map((m) => m[1]);
-  assert.ok(tables.length > 0, "No tables found in supabase/schema.sql");
+  assert.ok(tables.length > 0, "No tables found in supabase/schema/");
   for (const t of tables) {
     assert.match(policies,
       new RegExp(`alter table public\\.${t}\\s+enable row level security`, "i"),

@@ -25,7 +25,7 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
     assets/css/           tokens.css (design tokens) plus layered stylesheets
     assets/js/core/       Shared runtime: config, supabase, registry, guard, ui, auth
     assets/js/pages/      One module per page (dashboard, reference, gallery, users)
-    supabase/             schema.sql, policies.sql, seed.sql, migrations/
+    supabase/             schema/ (per-domain), policies.sql, seed.sql, migrations/
     docs/                 Architecture, security, sessions, design, setup, roadmap
 
     assets/js/core/registry.js is the single source of truth for
@@ -139,9 +139,9 @@ is likely, checkpoint first.
   work_documents, distilled records to work_notes, actionable
   entries to backlog_items. Database inserts only; the repo does
   not change.
-- New table: schema in supabase/schema.sql, policies in
-  supabase/policies.sql, both in the same commit, and the change
-  applied to the live project as a migration.
+- New table: schema in the right supabase/schema/ domain file,
+  policies in supabase/policies.sql, both in the same commit, and
+  the change applied to the live project as a migration.
 
 ## Definition of done for any change
 

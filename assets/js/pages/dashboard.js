@@ -8,7 +8,8 @@
   "use strict";
 
   // All card counts arrive in one dashboard_counts() call (see
-  // supabase/schema.sql) instead of one request per module. Counts
+  // supabase/schema/90_dashboard.sql) instead of one request per
+  // module. Counts
   // are capped server-side at 1001 so they stay cheap at any scale.
   async function loadCounts(modules) {
     var result = await App.db.rpc("dashboard_counts");

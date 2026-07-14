@@ -8,7 +8,8 @@ later, and none of it requires code changes.
 
 ## The four tables
 
-All in supabase/schema.sql, all RLS-gated, all admin-write only.
+All in supabase/schema/30_work.sql, all RLS-gated, all admin-write
+only.
 
 - work_areas: the single shared taxonomy of development areas.
   scope = 'product' for the feature areas worked with development
@@ -84,7 +85,7 @@ nothing moves; only statuses and priorities change.
 
 - Everything above is data in Supabase. The repo changes only when
   the rendering or the schema itself must change; schema changes go
-  through supabase/schema.sql, policies.sql and a migration in the
+  through supabase/schema/, policies.sql and a migration in the
   same commit (CLAUDE.md rules apply).
 - The repo is public: real material never enters git, including
   seed.sql, commit messages and docs. Session log entries reference

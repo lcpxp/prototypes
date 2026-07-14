@@ -67,7 +67,9 @@ test("RLS policies never use \"for all\"", () => {
   // A "for all" policy overlaps the select policy, so every read
   // evaluates two permissive policies. Split writes into insert/
   // update/delete. See the advisor lint multiple_permissive_policies.
-  for (const file of ["supabase/policies.sql", "supabase/schema.sql"]) {
+  const schemaFiles = trackedFiles()
+    .filter((f) => f.startsWith("supabase/schema/") && f.endsWith(".sql"));
+  for (const file of ["supabase/policies.sql", ...schemaFiles]) {
     assert.ok(!/for all\b/i.test(sqlWithoutComments(file)),
       `${file}: replace "for all" policies with separate insert/update/delete.`);
   }
