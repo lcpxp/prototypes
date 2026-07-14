@@ -91,6 +91,14 @@ create table if not exists public.api_specs (
     check (family in ('launchpad', 'unity', 'integration', 'other')),
   description text,
   spec jsonb,
+  -- Environments: [{"name","base_url","note"}]. Live URLs belong
+  -- here in the database, never in the repo.
+  servers jsonb not null default '[]'::jsonb,
+  -- Auth scheme as a flat label/value object (type, header, format,
+  -- how to obtain credentials); rendered verbatim by the viewer so
+  -- new facts need no code change.
+  auth jsonb not null default '{}'::jsonb,
+  contact text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -119,6 +127,13 @@ create table if not exists public.api_endpoints (
   params jsonb not null default '[]'::jsonb,
   request_example jsonb,
   response_example jsonb,
+  -- Request headers: [{"name","required","description","example"}]
+  request_headers jsonb not null default '[]'::jsonb,
+  -- Response catalogue: [{"status","description","example"}]
+  responses jsonb not null default '[]'::jsonb,
+  auth_required boolean not null default true,
+  deprecated boolean not null default false,
+  notes text,
   sort_order integer not null default 100,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

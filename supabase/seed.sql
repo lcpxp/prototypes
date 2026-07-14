@@ -11,20 +11,34 @@
 
 -- Sample spec ------------------------------------------------------
 
-insert into public.api_specs (id, title, version, status, family, description)
+insert into public.api_specs
+  (id, title, version, status, family, description, servers, auth, contact)
 values (
   '11111111-1111-1111-1111-111111111111',
   'Merchant Onboarding API (sample)',
   '0.1.0',
   'draft',
   'launchpad',
-  'Worked sample demonstrating the reference viewer. Replace with real specs in the database.'
+  'Worked sample demonstrating the reference viewer. Replace with real specs in the database.',
+  '[
+    {"name": "Sandbox", "base_url": "https://sandbox.api.example.com/v1", "note": "Test credentials and synthetic data only."},
+    {"name": "Production", "base_url": "https://api.example.com/v1", "note": "Live traffic. Keys issued per integrator."}
+  ]'::jsonb,
+  '{
+    "Type": "API key (bearer)",
+    "Header": "Authorization: Bearer <api_key>",
+    "Scope": "One key per environment; sandbox and production keys are not interchangeable.",
+    "How to obtain": "Request keys from the platform team. Keys are rotated quarterly."
+  }'::jsonb,
+  'Platform team (sample contact, replace with the owning team)'
 );
 
 -- Sample endpoints -------------------------------------------------
 
 insert into public.api_endpoints
-  (spec_id, method, path, tag, summary, description, params, request_example, response_example, sort_order)
+  (spec_id, method, path, tag, summary, description, params,
+   request_example, response_example, request_headers, responses,
+   auth_required, deprecated, notes, sort_order)
 values
 (
   '11111111-1111-1111-1111-111111111111',
@@ -40,6 +54,15 @@ values
   ]'::jsonb,
   '{"legal_name": "Example Trading Ltd", "country": "GB", "contact_email": "ops@example.com"}'::jsonb,
   '{"id": "mch_123", "status": "pending", "created_at": "2026-01-01T00:00:00Z"}'::jsonb,
+  '[{"name": "Idempotency-Key", "required": false, "description": "Repeat a create safely; the same key returns the original result.", "example": "idem_9f2c1"}]'::jsonb,
+  '[
+    {"status": 201, "description": "Application created and pending review.", "example": {"id": "mch_123", "status": "pending", "created_at": "2026-01-01T00:00:00Z"}},
+    {"status": 400, "description": "A required field is missing or malformed.", "example": {"error": "invalid_request", "field": "country"}},
+    {"status": 401, "description": "Missing or invalid API key."},
+    {"status": 422, "description": "The business cannot be onboarded, for example an unsupported country.", "example": {"error": "unsupported_country"}}
+  ]'::jsonb,
+  true, false,
+  'Creates are idempotent when an Idempotency-Key header is sent. Retry safely on timeouts.',
   10
 ),
 (
@@ -54,6 +77,13 @@ values
   ]'::jsonb,
   null,
   '{"id": "mch_123", "status": "in_review", "requirements": ["proof_of_address"]}'::jsonb,
+  '[]'::jsonb,
+  '[
+    {"status": 200, "description": "The current application state.", "example": {"id": "mch_123", "status": "in_review", "requirements": ["proof_of_address"]}},
+    {"status": 401, "description": "Missing or invalid API key."},
+    {"status": 404, "description": "No application with that identifier."}
+  ]'::jsonb,
+  true, false, null,
   20
 ),
 (
@@ -69,6 +99,14 @@ values
   ]'::jsonb,
   '{"contact_email": "finance@example.com"}'::jsonb,
   '{"id": "mch_123", "status": "in_review"}'::jsonb,
+  '[]'::jsonb,
+  '[
+    {"status": 200, "description": "Updated application.", "example": {"id": "mch_123", "status": "in_review"}},
+    {"status": 404, "description": "No application with that identifier."},
+    {"status": 409, "description": "The application is already approved and can no longer be edited."}
+  ]'::jsonb,
+  true, false,
+  'Only pending and in_review applications accept updates.',
   30
 ),
 (
@@ -85,6 +123,13 @@ values
   ]'::jsonb,
   '{"type": "proof_of_address", "file_token": "tok_abc"}'::jsonb,
   '{"id": "doc_456", "status": "received"}'::jsonb,
+  '[{"name": "Idempotency-Key", "required": false, "description": "Repeat an upload safely.", "example": "idem_77ab0"}]'::jsonb,
+  '[
+    {"status": 201, "description": "Document received and queued for review.", "example": {"id": "doc_456", "status": "received"}},
+    {"status": 404, "description": "No application with that identifier."},
+    {"status": 413, "description": "Referenced file exceeds the size limit."}
+  ]'::jsonb,
+  true, false, null,
   10
 ),
 (
@@ -99,7 +144,30 @@ values
   ]'::jsonb,
   null,
   '{"status": "approved", "approved_at": "2026-01-02T00:00:00Z"}'::jsonb,
+  '[]'::jsonb,
+  '[
+    {"status": 200, "description": "Current progress.", "example": {"status": "approved", "approved_at": "2026-01-02T00:00:00Z"}},
+    {"status": 404, "description": "No application with that identifier."}
+  ]'::jsonb,
+  true, false,
+  'Poll at most once per minute; state changes also arrive on the status webhook.',
   10
+),
+(
+  '11111111-1111-1111-1111-111111111111',
+  'get',
+  '/v1/merchants/{merchant_id}/state',
+  'Status',
+  'Poll onboarding state (deprecated)',
+  'Superseded by /v1/merchants/{merchant_id}/status, which adds timestamps. Existing integrations keep working until removal.',
+  '[{"name": "merchant_id", "in": "path", "type": "string", "required": true, "description": "Application identifier."}]'::jsonb,
+  null,
+  null,
+  '[]'::jsonb,
+  '[{"status": 200, "description": "Bare state string.", "example": {"state": "approved"}}]'::jsonb,
+  true, true,
+  'Do not build new integrations against this endpoint.',
+  20
 );
 
 -- Sample integrations ----------------------------------------------
