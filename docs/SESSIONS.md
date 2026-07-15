@@ -37,6 +37,66 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-15 - LaunchPad reference loaded; inbound-API direction filed (data only, no code)
+Branch: claude/unity-api-standard-f7gm11 (restarted from main; the
+prior Unity branch was already merged, so this is fresh follow-up
+work on the same branch name per CLAUDE.md's merged-branch rule)
+Completed:
+- The LaunchPad Partner Portal API Reference v1.1 (HAR-derived
+  Swagger-style HTML) was folded into the existing reference standard
+  with zero code changes - the viewer is fully data-driven, so a new
+  reference is a data load, not a build. Everything lives in Supabase,
+  nothing in git. Kept strictly separate from the Unity reference:
+  distinct spec, distinct family, distinct picker group, no content
+  overlap.
+- Loaded as api_specs row 9080b0a1 (family 'launchpad'): 15 api_tags
+  (catalogue with descriptions + order), 7 api_topics (overview,
+  conventions, auth, onboarding runbook, data model, accepted values,
+  gap register), 106 api_endpoints with params (path ULIDs +
+  query-string params), request/response examples, per-status
+  response catalogues and step/environment/unverified badges. No
+  GraphQL here, so method 'query' is unused (0 rows).
+- Sanitisation was the bulk of the effort: the HAR captures leaked
+  real merchant, partner and staff identifiers in several fields and
+  formats (company names/numbers, addresses, phones, a live acquirer
+  BID and tax ref, contact names, and - found late - list/screening
+  endpoints echoing the live portal roster and a live screening-vendor
+  payload). All replaced with consistent fictional personas; the two
+  highest-leak enumeration/screening samples were trimmed to synthetic
+  representative shapes. Because some leaks surfaced after early
+  batches loaded, all LaunchPad endpoints were deleted and reloaded
+  clean. Final SQL regex sweep over the loaded rows: 0 real tokens.
+- Strategic context on inbound onboarding APIs (leads, static
+  submissions, acquirer-specific hard-coded routes, merchant-
+  contributor links) filed per docs/WORKFLOW.md: work_documents row
+  55555555-...0001 (reference provenance + sanitisation, area
+  reference-launchpad) and 66666666-...0001 (verbatim inbound-API
+  direction, kind discussion, area integrations-launchpad-api); 4
+  work_notes (1 fact, 2 decision, 1 question) and 8 backlog_items
+  (4 feature, 2 consideration, 2 task) linked to the source docs.
+- Verified: 106 endpoints, 15/15 tags catalogued (0 uncatalogued),
+  0 PII hits, 0 query-method rows. Filing rows all present.
+In progress:
+- None.
+Next steps:
+1. Review the LaunchPad reference in the signed-in viewer; confirm it
+   reads as a distinct reference site from Unity and spot-check a few
+   tags against the source.
+2. Work the LaunchPad inbound-API backlog (leads API, static
+   submission API, acquirer routes) when that stream is picked up;
+   resolve the open question note on how much dynamic questioning a
+   static route may bypass before building.
+3. Delete the dead bulk-load edge function from the Supabase dashboard
+   (inert 410 stub, no secrets, but unused) - captured as a task
+   backlog item.
+4. Carry forward the still-open items from the Unity checkpoint below
+   (leaked-password protection, anon-key rotation, seed.sql split).
+Open decisions:
+- Same verbatim-rule reading as the Unity source: the reference
+  provenance doc holds provenance + sanitisation notes rather than the
+  raw HTML shell, since the payload itself is fully loaded into the
+  api_* tables. The inbound-API direction doc is stored verbatim.
+
 ## 2026-07-14 - Unity reference loaded; viewer standard extended (tags, topics, lazy detail)
 Branch: claude/unity-api-standard-f7gm11
 Completed:
