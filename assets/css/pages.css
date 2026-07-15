@@ -35,7 +35,8 @@
 .ref-sidebar {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-rest);
   padding: var(--s-4);
 }
 
@@ -63,10 +64,11 @@
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   overflow-wrap: anywhere;
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
 .ref-sidebar li a:hover {
-  background: var(--paper);
+  background: var(--alt-surface);
   text-decoration: none;
 }
 
@@ -78,9 +80,15 @@
 .endpoint {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   margin-block-end: var(--s-4);
   scroll-margin-block-start: calc(var(--nav-height) + var(--s-4));
+  box-shadow: var(--shadow-rest);
+  transition: box-shadow var(--dur-base) var(--ease);
+}
+
+.endpoint[open] {
+  box-shadow: var(--shadow-raised);
 }
 
 .endpoint > summary {
@@ -90,6 +98,8 @@
   padding: var(--s-3) var(--s-4);
   cursor: pointer;
   list-style: none;
+  border-radius: var(--radius-lg);
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
 .endpoint > summary::-webkit-details-marker {
@@ -97,7 +107,7 @@
 }
 
 .endpoint > summary:hover {
-  background: var(--paper);
+  background: var(--alt-surface);
 }
 
 .endpoint .path {
@@ -165,7 +175,7 @@
 .badge.status-4     { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
 .badge.status-5     { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
 .badge.public       { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
-.badge.query        { color: var(--m-patch); background: var(--m-patch-bg); border-color: transparent; }
+.badge.query        { color: var(--m-query); background: var(--m-query-bg); border-color: transparent; }
 
 /* Generic badge tones for api_endpoints.badges and topic notes. */
 .badge.tone-neutral { color: var(--muted);   background: var(--paper);       border-color: transparent; }
