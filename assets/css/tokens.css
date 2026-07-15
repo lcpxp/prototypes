@@ -4,12 +4,16 @@
    come from this file. Do not hard-code values in other stylesheets
    or pages. See docs/DESIGN.md for the rules governing these tokens.
 
+   Palette is derived from the PXP brand (blue, black, lime, plum)
+   reworked for a dense developer tool: see docs/DESIGN.md for the
+   rationale and where each colour is allowed to appear.
+
    Stylesheet layers, loaded in this order on every page:
      tokens.css      this file: values only, light and dark
      base.css        reset, typography, global element styles
      layout.css      navigation, page scaffold, grids
      components.css  cards, forms, buttons, tables, badges, toggles
-     pages.css       login and reference-viewer specifics
+     pages.css       reference-viewer specifics
 
    Breakpoint scale. Media queries cannot read custom properties, so
    these values are fixed by convention; use them verbatim and only
@@ -22,18 +26,21 @@
 :root {
   color-scheme: light dark;
 
-  /* Colour: cool, near-monochrome surface set with one petrol accent */
-  --ink: #171a20;            /* primary text */
-  --muted: #5c6572;          /* secondary text, labels */
-  --faint: #8b93a1;          /* tertiary text, placeholders */
-  --paper: #f6f7f9;          /* page background */
+  /* Colour: crisp cool greys on off-white paper, PXP Blue as the
+     one commanding accent. */
+  --ink: #111827;            /* primary text */
+  --muted: #374151;          /* secondary text, labels */
+  --faint: #687280;          /* tertiary text, placeholders */
+  --paper: #f9fafb;          /* page background */
   --surface: #ffffff;        /* cards, panels, nav */
-  --line: #e2e5ea;           /* borders, dividers */
-  --line-strong: #c9ced6;    /* emphasised borders, inputs */
+  --alt-surface: #f3f4f6;    /* table headers, subtle recessed fills */
+  --line: #e5e7eb;           /* borders, dividers */
+  --line-strong: #d1d5d8;    /* emphasised borders, inputs */
 
-  --accent: #0e6c64;         /* primary action, active states */
-  --accent-strong: #0a524c;  /* hover / pressed */
-  --accent-soft: #e2efed;    /* tinted backgrounds for accent */
+  --accent: #292cf5;         /* PXP Blue: primary action, active states */
+  --accent-hover: #2426af;
+  --accent-pressed: #25288a;
+  --accent-soft: #eaeafe;    /* tinted backgrounds for accent */
   --on-accent: #ffffff;      /* text on accent backgrounds */
 
   --danger: #b0272e;
@@ -42,6 +49,32 @@
   --warn-soft: #f6efdd;
   --ok: #1d6f42;
   --ok-soft: #e3f0e9;
+
+  /* PXP Black chrome and Lime accent. Both are fixed brand materials
+     used identically in light and dark mode (the top nav is always
+     near-black; lime is deployed only where something is live or
+     active) - intentionally scheme-invariant, so these are declared
+     once here and never overridden in the dark block below. */
+  --chrome-bg: #09090c;
+  --chrome-ink: #ffffff;
+  --chrome-muted: #b6b9c9;
+  --chrome-line: #232329;
+  --lime: #caff0a;
+  --lime-ink: #09090c;       /* text on a lime fill: large/bold only */
+
+  /* Login brand panel gradient: PXP's Black -> Blue -> Plum recipe.
+     One hero surface only (docs/DESIGN.md). White text clears AA
+     over every stop. */
+  --gradient-brand: linear-gradient(160deg, #09090c 0%, #292cf5 55%, #540b90 100%);
+  --plum: #540b90;
+
+  /* Cyan and violet: system colours with a job (badge taxonomy, data
+     categories). Derived darker than the raw brand swatches so they
+     clear AA as text; the raw swatches are decorative-only. */
+  --cyan: #02738d;
+  --cyan-soft: #e5f9fe;
+  --violet: #883cd9;
+  --violet-soft: #f7f0ff;
 
   /* Roadmap board category lanes. Each key mirrors a
      roadmap_categories.key; the accent draws the bar and pill, the
@@ -54,17 +87,20 @@
   --rm-ops: #8f6400;      --rm-ops-soft: #f6efdd;
   --rm-auto: #b0272e;     --rm-auto-soft: #f7e6e7;
 
-  /* HTTP method badge colours (convention-led, muted tints) */
-  --m-get: #0e6c64;
-  --m-get-bg: #e2efed;
+  /* HTTP method badge colours (convention-led, muted tints; a
+     coloured marker dot beside the label is added in components.css) */
+  --m-get: #0b7d70;
+  --m-get-bg: #d8f1ec;
   --m-post: #1f5fa8;
   --m-post-bg: #e5edf7;
   --m-put: #8f6400;
   --m-put-bg: #f6efdd;
-  --m-patch: #64509b;
-  --m-patch-bg: #ece8f5;
+  --m-patch: #883cd9;
+  --m-patch-bg: #f7f0ff;
   --m-delete: #b0272e;
   --m-delete-bg: #f7e6e7;
+  --m-query: #02738d;
+  --m-query-bg: #e5f9fe;
 
   /* Type */
   --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -79,10 +115,12 @@
   /* Display sizes scale fluidly between small and wide screens */
   --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);   /* page titles */
   --text-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);    /* stats, wordmark */
+  --text-3xl: clamp(1.75rem, 1.1rem + 2.4vw, 2.4rem);   /* login headline */
 
   --weight-normal: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
+  --weight-bold: 700;
 
   --tracking-wide: 0.08em;  /* uppercase mono eyebrows */
   --tracking-slight: 0.03em; /* badges */
@@ -102,13 +140,25 @@
   --gutter: clamp(var(--s-4), 3vw, var(--s-5));
   --section-gap: clamp(var(--s-5), 4vw, var(--s-6));
 
-  /* Shape and depth */
-  --radius: 6px;
-  --radius-sm: 4px;
+  /* Shape */
+  --radius-sm: 6px;   /* inputs, badges, small controls */
+  --radius: 8px;      /* buttons, table wrap, endpoint groups */
+  --radius-lg: 14px;  /* cards, modal, elevated panels */
   --radius-pill: 999px;
-  --shadow: 0 1px 2px rgba(23, 26, 32, 0.06);
-  --shadow-raised: 0 4px 16px rgba(23, 26, 32, 0.08);
-  --scrim: rgba(23, 26, 32, 0.45);  /* modal backdrop */
+
+  /* Elevation: a deliberate rest / raised / overlay scale so surfaces
+     that layer read as layered, not flat. */
+  --shadow-rest: 0 1px 2px rgba(17, 24, 39, 0.05), 0 1px 1px rgba(17, 24, 39, 0.04);
+  --shadow-raised: 0 8px 24px rgba(17, 24, 39, 0.10), 0 2px 6px rgba(17, 24, 39, 0.06);
+  --shadow-overlay: 0 20px 60px rgba(17, 24, 39, 0.22), 0 6px 16px rgba(17, 24, 39, 0.10);
+  --scrim: rgba(17, 24, 39, 0.5);  /* modal backdrop */
+
+  /* Motion: restrained, engineered transitions on interactive
+     elements only - colour, border, background and shadow, never
+     layout. prefers-reduced-motion is respected in base.css. */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
 
   /* Layout */
   --nav-height: 3.25rem;
@@ -120,7 +170,9 @@
 }
 
 /* Dark scheme: same relationships, inverted surfaces. Components
-   never branch on theme; only these values change. */
+   never branch on theme; only these values change. Chrome, lime,
+   the login gradient and motion timings are brand-fixed and stay
+   identical (declared once in :root above, not repeated here). */
 @media (prefers-color-scheme: dark) {
   :root {
     --ink: #e8eaee;
@@ -128,13 +180,15 @@
     --faint: #79818e;
     --paper: #14161a;
     --surface: #1d2026;
+    --alt-surface: #22262e;
     --line: #2a2e36;
     --line-strong: #3d434e;
 
-    --accent: #4db3a7;
-    --accent-strong: #6cc5ba;
-    --accent-soft: #123230;
-    --on-accent: #0e1a19;
+    --accent: #8a8cff;
+    --accent-hover: #a5b0ff;
+    --accent-pressed: #6c6fff;
+    --accent-soft: #1e2050;
+    --on-accent: #0b0b2e;
 
     --danger: #e2727a;
     --danger-soft: #391f22;
@@ -142,6 +196,11 @@
     --warn-soft: #332a16;
     --ok: #6cbb92;
     --ok-soft: #182b20;
+
+    --cyan: #4fd8ee;
+    --cyan-soft: #0f2a31;
+    --violet: #c79bff;
+    --violet-soft: #2b1f45;
 
     --rm-unity: #7fabe6;    --rm-unity-soft: #182740;
     --rm-api: #ab97e0;      --rm-api-soft: #261f3d;
@@ -156,13 +215,16 @@
     --m-post-bg: #182740;
     --m-put: #d3a648;
     --m-put-bg: #332a16;
-    --m-patch: #ab97e0;
-    --m-patch-bg: #261f3d;
+    --m-patch: #c79bff;
+    --m-patch-bg: #2b1f45;
     --m-delete: #e2727a;
     --m-delete-bg: #391f22;
+    --m-query: #4fd8ee;
+    --m-query-bg: #0f2a31;
 
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-    --shadow-raised: 0 4px 16px rgba(0, 0, 0, 0.45);
-    --scrim: rgba(0, 0, 0, 0.6);
+    --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
+    --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --shadow-overlay: 0 20px 60px rgba(0, 0, 0, 0.6), 0 6px 16px rgba(0, 0, 0, 0.35);
+    --scrim: rgba(0, 0, 0, 0.65);
   }
 }
