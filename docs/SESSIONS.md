@@ -104,40 +104,42 @@ Completed:
   and 360px in both colour schemes (screenshots reviewed, not
   committed - scratchpad only); no console errors beyond the expected
   sandboxed CDN fetch failure.
+- Follow-up verification pass (same session, after the initial
+  five commits): built a mock Supabase client (createClient shim +
+  fixture data injected via Playwright addInitScript) so the real
+  guarded pages render without a live session, and screenshotted all
+  eight (dashboard, reference viewer, prototypes gallery, silos
+  index, roadmap board, backlog, integrations, users) at 1280px and
+  360px in both colour schemes, plus the integrations and backlog
+  modals. Every page: no console/page errors, no document-level
+  horizontal overflow at 360px (wide tables and the reference
+  environments table scroll inside their own wraps as intended),
+  stacked sections and full-width cards sit correctly, dark-mode
+  table headers and badges read at contrast. Found and fixed one
+  real issue: the global accent focus ring measured ~2.6:1 on the
+  PXP Black nav (below the 3:1 UI floor), so nav focus-visible is now
+  scoped to white and the sign-out pressed state settles on the
+  chrome line (commit "Fix keyboard focus contrast on the dark nav").
+  roadmap.css renders coherently with the new tokens untouched.
 In progress:
-- None. Only index.html (login) was screenshotted directly; the
-  other real pages (dashboard, reference, gallery, silos, roadmap,
-  backlog, integrations, users) were verified via a hand-built
-  preview harness exercising the same shared classes (nav, card,
-  table, badge, endpoint, form) rather than the live guarded pages,
-  since guard.js redirects without a real Supabase session in this
-  sandbox. They inherit the same token cascade with no page-specific
-  colour code, so risk is low, but a signed-in pass over each real
-  page is still worth doing.
+- None. This branch is verified and ready to merge to main.
 Next steps:
-1. Review every real page signed in (dashboard, reference viewer,
-   gallery, silos index, roadmap board, backlog, integrations,
-   users) in both colour schemes and at 360px, per the verification
-   checklist in the task brief - the preview harness covered the
-   shared components but not each page's specific layout quirks
-   (e.g. roadmap.css's proportional bars, which were left unchanged
-   since they don't reference any renamed token).
-2. components.css is now 408 lines (over the 300 soft budget, under
+1. components.css is now 408 lines (over the 300 soft budget, under
    the 500 hard). Plan a split - modal/dialog styles are the obvious
    extraction - before extending it again.
+2. Optional polish pass on roadmap.css: its board tiles sit flat
+   (border + accent edge, no elevation) - deliberately kept for the
+   print-oriented board, but could be brought onto --shadow-rest for
+   consistency if desired.
 3. Carry forward still-open items from prior checkpoints: enable
    leaked-password protection; rotate the anon key; delete the dead
    bulk-load edge function; seed.sql split (over the 300 soft
    budget).
 Open decisions:
-- Signature choice (PXP-black nav + lime marker) was made unilaterally
-  per the brief's explicit design authority grant; flag for the repo
-  owner to confirm it's the right call over the live-status-dot or
-  method-badge alternatives before this merges.
-- roadmap.css was left untouched beyond inheriting the new token
-  values (it references no renamed tokens) - worth a dedicated pass
-  later to bring its card/tile treatment up to the same elevation
-  standard as the rest of the portal.
+- Signature choice (PXP-black nav + lime marker) was made per the
+  brief's explicit design-authority grant. Merged with owner
+  authorisation; still worth a look against the live-status-dot or
+  method-badge alternatives if the owner wants to revisit.
 
 ## 2026-07-15 - Roadmap board ported from the standalone app into the portal
 Branch: claude/roadmap-feature-integration-p4aneq (task-designated)
