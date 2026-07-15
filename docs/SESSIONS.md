@@ -37,6 +37,50 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-15 - Platform knowledge: default assumption is shipped, not unverified
+Branch: main
+Completed:
+- Owner decision: docs/PLATFORM.md documents what Launchpad does
+  today, so the working assumption for a comprehensive current-
+  capabilities overview is that everything it describes is shipped;
+  later review realigns specific rows if reality has moved on, rather
+  than every load starting unverified until inspected line by line.
+- Applied live (Supabase, zlmkofbkobmhnslfnqsf): all 13
+  product_capabilities rows from the 2026-07-15 Launchpad overview
+  load updated to maturity = 'live', verified = true (two rows,
+  automation-integrations and fulfilment, moved up from 'partial').
+  The automation-integrations row's "confirm which integrations are
+  live vs planned" caveat note was replaced with a note recording the
+  owner's decision, since that question is now resolved. Confirmed by
+  query: all 13 rows read maturity 'live', verified true.
+- docs/PLATFORM.md: rewrote the ingestion-protocol step and the
+  "Maturity and verified" section to state the new default (load as
+  live/verified unless the source itself flags planned/exploratory,
+  or the owner has a specific reason to doubt a row) and to frame
+  verified as an explicit owner decision rather than a per-row
+  inspection gate.
+- supabase/schema/40_platform.sql: aligned the column comment with
+  the same policy - the verified column's default stays false (a safe
+  fallback for a bare, context-free insert), but ingesting a "what we
+  do today" overview should set maturity 'live' and verified true
+  explicitly at load time.
+- Verified: npm test 52/52 green (no code changes, docs and live data
+  only).
+In progress:
+- None.
+Next steps:
+1. None outstanding on the platform-knowledge domain; it now reads as
+   the owner intends (documented capabilities shown as shipped).
+2. Carry forward still-open items: enable leaked-password protection;
+   rotate the anon key; delete the dead bulk-load edge function;
+   components.css (426/300), docs/ARCHITECTURE.md (229/200) and
+   seed.sql (426/300) remain over their soft budgets (all under
+   hard) - plan splits before extending any of them again.
+Open decisions:
+- None new beyond the two carried in the 2026-07-15 Part A entry
+  below (the block-renderer duplication and the maturity-badge token
+  reuse).
+
 ## 2026-07-15 - Platform product-knowledge domain, Part B loaded live; merged to main
 Branch: main (merged from claude/platform-knowledge-domain-k76sab,
 fast-forward, then the branch was deleted)

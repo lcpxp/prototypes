@@ -41,8 +41,13 @@ the session:
    one.
 3. Creates or updates product_capabilities rows linked to the source
    document via source_document_id. Each row gets a kind (overview,
-   value, capability, glance), a maturity, and verified = false until
-   the owner confirms it against the real build state.
+   value, capability, glance). Default assumption: a comprehensive
+   "what the platform does today" overview describes shipped
+   capability, not aspiration, so rows load as maturity 'live' and
+   verified = true unless the source itself flags something as
+   planned or exploratory. Mark a row down (lower maturity,
+   verified = false) only when there is a specific reason to doubt
+   the claim; later review can realign it in either direction.
 4. When a new overview replaces an earlier one, sets supersedes_id on
    the new work_documents row and status 'superseded' on the old one,
    same as any other document kind.
@@ -71,13 +76,19 @@ maturity is the axis the roadmap gets contextualised against:
 - planned - not yet built; on the roadmap.
 - exploratory - an idea, not yet committed.
 
-verified guards against trusting a marketing overview as shipped
-fact. Content loaded from an overview arrives with verified = false
-and a best-guess maturity transcribed from the source's framing.
-Nothing in the platform module should be read as confirmed until the
-owner has gone through the rows, corrected maturity where the source
-overstated it, and set verified = true. Until then, treat the module
-as "what the source claims", not "what is definitely built".
+This catalogue exists to document what the platform does today, so
+the default reading of a comprehensive current-capabilities overview
+is that everything it describes is shipped: rows load as maturity
+'live' and verified = true. verified marks that the owner has
+knowingly accepted the row at that maturity (recorded as a decision
+in docs/SESSIONS.md), not a demand for painstaking per-row
+inspection before anything can render. The practical guard is
+narrower: mark a row down (lower maturity, verified = false) only
+when there is a concrete reason to doubt it - the source itself
+flags something as planned or exploratory, or the owner knows it has
+slipped since. This is a living catalogue: realign a row in either
+direction as reality changes, rather than treating any load as a
+one-time, unrevisited attestation.
 
 ## Boundaries
 

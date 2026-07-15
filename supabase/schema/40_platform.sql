@@ -22,10 +22,12 @@
 -- aspirational; it is what the roadmap gets contextualised against:
 --   live | partial | planned | exploratory
 --
--- verified is false until the owner confirms the maturity against the
--- real build state. Content loaded from an overview comes in
--- unverified because a marketing overview describes intent, not a
--- guaranteed shipped state.
+-- verified defaults to false as a safe fallback for a bare insert
+-- with no other context. Ingesting a comprehensive "what the
+-- platform does today" overview should set maturity to 'live' and
+-- verified to true explicitly, since documenting current capability
+-- is the point of this table; mark a row down only when there is a
+-- specific reason to doubt it. See docs/PLATFORM.md.
 --
 -- blocks reuses the api_topics typed-block vocabulary (p, note, kv,
 -- table, code, values); unknown kinds are skipped by the renderer, so
