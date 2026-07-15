@@ -11,9 +11,11 @@
 .card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-rest);
   padding: var(--s-5);
+  transition: border-color var(--dur-base) var(--ease),
+    box-shadow var(--dur-base) var(--ease);
 }
 
 .card h2 {
@@ -69,10 +71,18 @@ select {
   background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
+  transition: border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
 }
 
 select {
   inline-size: auto;
+}
+
+.field input:hover,
+.field select:hover,
+select:hover {
+  border-color: var(--faint);
 }
 
 .field input:focus,
@@ -94,11 +104,21 @@ select:focus {
   border: 1px solid var(--accent);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
 }
 
 .button:hover {
-  background: var(--accent-strong);
-  border-color: var(--accent-strong);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.button:active {
+  background: var(--accent-pressed);
+  border-color: var(--accent-pressed);
+  transform: translateY(1px);
 }
 
 .button.secondary {
@@ -109,6 +129,12 @@ select:focus {
 
 .button.secondary:hover {
   background: var(--paper);
+  border-color: var(--faint);
+}
+
+.button.secondary:active {
+  background: var(--alt-surface);
+  transform: translateY(1px);
 }
 
 .button.quiet {
@@ -121,6 +147,10 @@ select:focus {
 .button.quiet:hover {
   color: var(--ink);
   background: var(--paper);
+}
+
+.button.quiet:active {
+  background: var(--alt-surface);
 }
 
 /* ---------------------------------------------------------------
@@ -153,6 +183,7 @@ select:focus {
   background: var(--line-strong);
   border-radius: var(--radius-pill);
   pointer-events: none;
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
 .toggle .track::after {
@@ -164,6 +195,7 @@ select:focus {
   margin-inline-start: var(--s-0);
   background: var(--surface);
   border-radius: var(--radius-pill);
+  transition: margin-inline-start var(--dur-fast) var(--ease);
 }
 
 .toggle input:checked + .track {
@@ -236,6 +268,7 @@ th {
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--muted);
+  background: var(--alt-surface);
   padding: var(--s-3) var(--s-4);
   border-block-end: 1px solid var(--line);
   white-space: nowrap;
@@ -251,17 +284,29 @@ tr:last-child td {
   border-block-end: none;
 }
 
+tbody tr {
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+tbody tr:hover {
+  background: var(--alt-surface);
+}
+
 td.mono {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
 }
 
 /* ---------------------------------------------------------------
-   Badges
+   Badges. A small marker dot carries the method/status colour
+   ahead of the mono label - it reads at a glance in a dense table
+   or endpoint list without needing to parse the abbreviation first.
 --------------------------------------------------------------- */
 
 .badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
   padding: var(--s-0) var(--s-2);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -269,8 +314,17 @@ td.mono {
   letter-spacing: var(--tracking-slight);
   border-radius: var(--radius-sm);
   color: var(--muted);
-  background: var(--paper);
+  background: var(--alt-surface);
   border: 1px solid var(--line);
+}
+
+.badge::before {
+  content: "";
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+  flex-shrink: 0;
 }
 
 .badge.get    { color: var(--m-get);    background: var(--m-get-bg);    border-color: transparent; }
@@ -278,6 +332,7 @@ td.mono {
 .badge.put    { color: var(--m-put);    background: var(--m-put-bg);    border-color: transparent; }
 .badge.patch  { color: var(--m-patch);  background: var(--m-patch-bg);  border-color: transparent; }
 .badge.delete { color: var(--m-delete); background: var(--m-delete-bg); border-color: transparent; }
+.badge.query  { color: var(--m-query);  background: var(--m-query-bg);  border-color: transparent; }
 
 .badge.live       { color: var(--ok);     background: var(--ok-soft);     border-color: transparent; }
 .badge.draft      { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
@@ -313,8 +368,8 @@ dialog.modal {
   color: var(--ink);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-raised);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-overlay);
 }
 
 dialog.modal::backdrop {
