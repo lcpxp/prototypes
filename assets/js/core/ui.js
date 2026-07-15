@@ -66,7 +66,7 @@
     var html = '<nav class="nav">';
     html +=
       '<a class="nav-brand" href="' + root + '/dashboard.html">' +
-      'LPio <span style="color: var(--accent)">/</span> LaunchPad IO</a>';
+      'LPio <span style="color: var(--lime)">/</span> LaunchPad IO</a>';
     html += '<div class="nav-links">';
     links.forEach(function (link) {
       html +=

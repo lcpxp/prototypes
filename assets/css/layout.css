@@ -6,8 +6,10 @@
 ------------------------------------------------------------------- */
 
 /* ---------------------------------------------------------------
-   Top navigation. On narrow screens the link row scrolls
-   horizontally rather than wrapping or collapsing.
+   Top navigation. PXP Black chrome, fixed regardless of colour
+   scheme (see tokens.css) - this is the portal's signature surface.
+   On narrow screens the link row scrolls horizontally rather than
+   wrapping or collapsing.
 --------------------------------------------------------------- */
 
 .nav {
@@ -19,8 +21,9 @@
   gap: var(--s-3);
   block-size: var(--nav-height);
   padding-inline: var(--gutter);
-  background: var(--surface);
-  border-block-end: 1px solid var(--line);
+  background: var(--chrome-bg);
+  border-block-end: 1px solid var(--chrome-line);
+  box-shadow: var(--shadow-raised);
   overflow-x: auto;
 }
 
@@ -30,12 +33,12 @@
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--chrome-ink);
   white-space: nowrap;
 }
 
 .nav-brand:hover {
-  color: var(--ink);
+  color: var(--chrome-ink);
   text-decoration: none;
 }
 
@@ -46,27 +49,41 @@
 }
 
 .nav-links a {
+  position: relative;
   font-size: var(--text-sm);
-  color: var(--muted);
+  color: var(--chrome-muted);
   padding-block: var(--s-1);
   border-block-end: 2px solid transparent;
   white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease);
 }
 
 .nav-links a:hover {
-  color: var(--ink);
+  color: var(--chrome-ink);
   text-decoration: none;
 }
 
+/* The active-page marker: a precise lime underline, the portal's
+   one recurring signature accent - it appears in exactly this spot,
+   nowhere else in the nav. */
 .nav-links a[aria-current="page"] {
-  color: var(--ink);
-  border-block-end-color: var(--accent);
+  color: var(--chrome-ink);
+  border-block-end-color: var(--lime);
 }
 
 .nav-user {
   font-size: var(--text-sm);
-  color: var(--faint);
+  color: var(--chrome-muted);
   white-space: nowrap;
+}
+
+.nav .button.quiet {
+  color: var(--chrome-muted);
+}
+
+.nav .button.quiet:hover {
+  color: var(--chrome-ink);
+  background: var(--chrome-line);
 }
 
 /* The nav keeps overflow-x: auto at every width: it is inert when
