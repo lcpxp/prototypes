@@ -37,6 +37,70 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-15 - Platform product-knowledge domain, Part B loaded live; merged to main
+Branch: main (merged from claude/platform-knowledge-domain-k76sab,
+fast-forward, then the branch was deleted)
+Completed:
+- Per explicit owner instruction, this session also ran Part B
+  directly against the live Supabase project (zlmkofbkobmhnslfnqsf,
+  confirmed via the Supabase connector before writing) rather than
+  leaving it for the owner to paste into the SQL editor:
+  - Applied the Part A migration live (product_capabilities table,
+    indexes, trigger; work_documents.kind + 'platform'; RLS; the
+    dashboard_counts() replacement) - matches supabase/migrations/
+    20260715120000_platform_product_knowledge.sql exactly.
+  - Inserted the 8 real capability-area work_areas rows (scope
+    'product', keys dynamic-flows/product-config/automation-
+    integrations/form-intelligence/contracting/fulfilment/
+    application-builder/architecture). No key collisions with the 11
+    pre-existing product-scope areas; work_areas now holds 19 product-
+    scope rows total, confirmed by query before and after.
+  - Inserted the verbatim Launchpad overview as one work_documents row
+    (kind 'platform', 13,007 characters, id da1abf4d...).
+  - Inserted 13 product_capabilities rows (1 overview, 1 value, 8
+    capability - one per area - and 3 glance), each linked to the
+    source document, verified = false throughout as specified.
+  - Verified live: row counts (13 capability rows, 19 product areas,
+    1 platform document, 0 verified, 5 area-less rows - all match
+    expectations), and get_advisors (security) shows no new findings
+    - only the pre-existing, already-tracked items (three SECURITY
+    DEFINER RPCs callable by authenticated, which is intentional
+    design; leaked-password protection still disabled, carried
+    forward from every prior checkpoint).
+- Merged claude/platform-knowledge-domain-k76sab into main as a clean
+  fast-forward (no conflicts), pushed origin/main, deleted the local
+  branch (remote delete was blocked by the session's git permissions;
+  harmless since main is a strict fast-forward of it - no unmerged
+  history is stranded there). Confirmed via the GitHub Actions API
+  that both "Deploy to GitHub Pages" and "pages build and deployment"
+  completed successfully for the merge commit (41dc580).
+In progress:
+- None on the technical side.
+Next steps:
+1. The one step this session did not do, and should not do on its
+   own: go through the 13 product_capabilities rows and correct
+   maturity/set verified = true against the real build state (per
+   docs/PLATFORM.md). That confirmation requires the owner's actual
+   knowledge of what is genuinely shipped versus what the marketing
+   overview claims - fabricating it would misrepresent a human
+   attestation that has not happened. Everything loaded is currently
+   an unverified transcription of the source overview's framing.
+2. Sign in and open the Platform module to read the loaded content
+   against the source; spot-check the "partial" maturity calls
+   (automation-integrations, fulfilment) in particular, since the
+   overview's own note blocks flag those as needing confirmation.
+3. Confirm the roadmap and backlog area filters now list all 19
+   product areas (the 8 new ones alongside the 11 already there) -
+   expected and intended, per the handoff.
+4. Carry forward still-open items: enable leaked-password protection;
+   rotate the anon key; delete the dead bulk-load edge function;
+   components.css (426/300), docs/ARCHITECTURE.md (229/200) and
+   seed.sql (426/300) remain over their soft budgets (all under
+   hard) - plan splits before extending any of them again.
+Open decisions:
+- None new beyond the two carried in the prior entry below (the
+  block-renderer duplication and the maturity-badge token reuse).
+
 ## 2026-07-15 - Platform product-knowledge domain (Part A: repo only)
 Branch: claude/platform-knowledge-domain-k76sab (task-designated)
 Completed:
