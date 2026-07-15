@@ -77,6 +77,21 @@
   white-space: nowrap;
 }
 
+/* Dark-mode switch. The switch visual is the shared .toggle; this
+   just seats it and its label in the chrome. */
+.nav-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav-theme-text {
+  font-size: var(--text-sm);
+  color: var(--chrome-muted);
+}
+
 .nav .button.quiet {
   color: var(--chrome-muted);
 }
@@ -90,8 +105,13 @@
 /* The global focus ring (var(--accent)) is only ~2.6:1 against the
    near-black chrome, below the 3:1 UI floor. On the nav it becomes
    white, which clears it comfortably; the width and offset are
-   inherited from the base rule. */
+   inherited from the base rule. The toggle draws its ring on the
+   track, so it needs the same override. */
 .nav :focus-visible {
+  outline-color: var(--chrome-ink);
+}
+
+.nav .toggle input:focus-visible + .track {
   outline-color: var(--chrome-ink);
 }
 

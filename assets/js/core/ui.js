@@ -76,6 +76,15 @@
     });
     html += "</div>";
     html += '<span class="nav-user" id="nav-user"></span>';
+    // Dark-mode switch: a real checkbox, on when the dark theme is
+    // active. The wrapping label names it for assistive tech.
+    var dark = App.theme && App.theme.isDark();
+    html +=
+      '<label class="nav-theme">' +
+      '<span class="nav-theme-text">Dark mode</span>' +
+      '<span class="toggle"><input type="checkbox" id="theme-toggle"' +
+      (dark ? " checked" : "") + ">" +
+      '<span class="track" aria-hidden="true"></span></span></label>';
     html += '<button class="button quiet" id="nav-signout" type="button">Sign out</button>';
     html += "</nav>";
     host.innerHTML = html;
@@ -83,6 +92,18 @@
     document.getElementById("nav-signout").addEventListener("click", function () {
       if (App.db) App.db.auth.signOut();
     });
+
+    var themeToggle = document.getElementById("theme-toggle");
+    if (themeToggle && App.theme) {
+      themeToggle.addEventListener("change", function () {
+        App.theme.set(themeToggle.checked ? "dark" : "light");
+      });
+      // Keep the switch in step if the theme changes elsewhere (e.g.
+      // the OS flips while no explicit choice has been made).
+      App.onThemeChange = function (theme) {
+        themeToggle.checked = theme === "dark";
+      };
+    }
 
     if (App.onAuthed) {
       App.onAuthed(function (session) {

@@ -44,8 +44,13 @@ Rules that keep it coherent:
   queries are not used.
 - Logical properties (margin-block, padding-inline, inset-inline)
   rather than physical ones, throughout.
-- Dark scheme is a token concern only: prefers-color-scheme swaps
-  values inside tokens.css and no other file may mention theme.
+- Dark scheme is a token concern only: the dark palette lives in the
+  single :root[data-theme="dark"] block in tokens.css and no other
+  stylesheet may mention theme. The active theme is chosen by the user
+  via the nav switch and resolved in assets/js/core/theme.js, which
+  sets data-theme on <html> before first paint - defaulting to, and
+  tracking, the OS preference until an explicit choice is made. Every
+  token that changes between schemes still gets both values here.
 - Anything horizontal that can overflow (tables, code, the nav row)
   scrolls inside its own container; the page never scrolls sideways.
 - Reusable styling goes in components.css. A page file may only

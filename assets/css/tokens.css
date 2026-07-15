@@ -172,59 +172,70 @@
 /* Dark scheme: same relationships, inverted surfaces. Components
    never branch on theme; only these values change. Chrome, lime,
    the login gradient and motion timings are brand-fixed and stay
-   identical (declared once in :root above, not repeated here). */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ink: #e8eaee;
-    --muted: #a2abb8;
-    --faint: #79818e;
-    --paper: #14161a;
-    --surface: #1d2026;
-    --alt-surface: #22262e;
-    --line: #2a2e36;
-    --line-strong: #3d434e;
+   identical (declared once in :root above, not repeated here).
 
-    --accent: #8a8cff;
-    --accent-hover: #a5b0ff;
-    --accent-pressed: #6c6fff;
-    --accent-soft: #1e2050;
-    --on-accent: #0b0b2e;
+   Theme resolution: assets/js/core/theme.js sets data-theme on
+   <html> before first paint - to the stored choice, or the OS
+   preference when the user has made none - so the single dark block
+   below is the one source of dark values (no media-query copy to
+   keep in sync). color-scheme follows the attribute so native
+   controls, scrollbars and form widgets match the active theme. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
 
-    --danger: #e2727a;
-    --danger-soft: #391f22;
-    --warn: #d3a648;
-    --warn-soft: #332a16;
-    --ok: #6cbb92;
-    --ok-soft: #182b20;
+:root[data-theme="dark"] {
+  color-scheme: dark;
 
-    --cyan: #4fd8ee;
-    --cyan-soft: #0f2a31;
-    --violet: #c79bff;
-    --violet-soft: #2b1f45;
+  --ink: #e8eaee;
+  --muted: #a2abb8;
+  --faint: #79818e;
+  --paper: #14161a;
+  --surface: #1d2026;
+  --alt-surface: #22262e;
+  --line: #2a2e36;
+  --line-strong: #3d434e;
 
-    --rm-unity: #7fabe6;    --rm-unity-soft: #182740;
-    --rm-api: #ab97e0;      --rm-api-soft: #261f3d;
-    --rm-self: #4db3a7;     --rm-self-soft: #123230;
-    --rm-insights: #5bb6cf; --rm-insights-soft: #102b33;
-    --rm-ops: #d3a648;      --rm-ops-soft: #332a16;
-    --rm-auto: #e2727a;     --rm-auto-soft: #391f22;
+  --accent: #8a8cff;
+  --accent-hover: #a5b0ff;
+  --accent-pressed: #6c6fff;
+  --accent-soft: #1e2050;
+  --on-accent: #0b0b2e;
 
-    --m-get: #4db3a7;
-    --m-get-bg: #123230;
-    --m-post: #7fabe6;
-    --m-post-bg: #182740;
-    --m-put: #d3a648;
-    --m-put-bg: #332a16;
-    --m-patch: #c79bff;
-    --m-patch-bg: #2b1f45;
-    --m-delete: #e2727a;
-    --m-delete-bg: #391f22;
-    --m-query: #4fd8ee;
-    --m-query-bg: #0f2a31;
+  --danger: #e2727a;
+  --danger-soft: #391f22;
+  --warn: #d3a648;
+  --warn-soft: #332a16;
+  --ok: #6cbb92;
+  --ok-soft: #182b20;
 
-    --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
-    --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
-    --shadow-overlay: 0 20px 60px rgba(0, 0, 0, 0.6), 0 6px 16px rgba(0, 0, 0, 0.35);
-    --scrim: rgba(0, 0, 0, 0.65);
-  }
+  --cyan: #4fd8ee;
+  --cyan-soft: #0f2a31;
+  --violet: #c79bff;
+  --violet-soft: #2b1f45;
+
+  --rm-unity: #7fabe6;    --rm-unity-soft: #182740;
+  --rm-api: #ab97e0;      --rm-api-soft: #261f3d;
+  --rm-self: #4db3a7;     --rm-self-soft: #123230;
+  --rm-insights: #5bb6cf; --rm-insights-soft: #102b33;
+  --rm-ops: #d3a648;      --rm-ops-soft: #332a16;
+  --rm-auto: #e2727a;     --rm-auto-soft: #391f22;
+
+  --m-get: #4db3a7;
+  --m-get-bg: #123230;
+  --m-post: #7fabe6;
+  --m-post-bg: #182740;
+  --m-put: #d3a648;
+  --m-put-bg: #332a16;
+  --m-patch: #c79bff;
+  --m-patch-bg: #2b1f45;
+  --m-delete: #e2727a;
+  --m-delete-bg: #391f22;
+  --m-query: #4fd8ee;
+  --m-query-bg: #0f2a31;
+
+  --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
+  --shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-overlay: 0 20px 60px rgba(0, 0, 0, 0.6), 0 6px 16px rgba(0, 0, 0, 0.35);
+  --scrim: rgba(0, 0, 0, 0.65);
 }
