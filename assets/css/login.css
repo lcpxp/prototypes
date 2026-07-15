@@ -42,6 +42,7 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--ink);
+  transition: color var(--dur-fast) var(--ease);
 }
 
 .login-wordmark:hover {
@@ -97,28 +98,31 @@
     justify-content: space-between;
     gap: var(--s-8);
     padding: var(--s-8) var(--s-7);
-    background: var(--accent);
-    color: var(--on-accent);
+    background: var(--gradient-brand);
+    color: var(--chrome-ink);
   }
 
   .login-brand .login-wordmark,
   .login-brand .login-wordmark:hover {
-    color: var(--on-accent);
+    color: var(--chrome-ink);
   }
 
+  /* The one lime touch on this surface: the wordmark's separator,
+     legible against every stop of the brand gradient. */
   .login-brand .login-wordmark span {
-    color: var(--on-accent);
-    opacity: 0.65;
+    color: var(--lime);
   }
 
   .login-headline {
-    font-size: clamp(1.75rem, 1.1rem + 2.4vw, 2.4rem);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
     line-height: 1.12;
+    letter-spacing: -0.015em;
     max-inline-size: 16ch;
   }
 
   .login-blurb {
-    color: var(--on-accent);
+    color: var(--chrome-ink);
     opacity: 0.85;
     max-inline-size: 42ch;
     margin-block: var(--s-4) 0;
@@ -139,7 +143,7 @@
 
   .login-points .eyebrow {
     display: block;
-    color: var(--on-accent);
+    color: var(--chrome-ink);
     opacity: 0.65;
     margin-block-end: var(--s-1);
   }
