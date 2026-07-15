@@ -75,10 +75,41 @@
         App.escape(link.label) + "</a>";
     });
     html += "</div>";
+    html += '<div class="nav-controls">';
+    html +=
+      '<label class="toggle" title="Toggle dark mode">' +
+      '<input type="checkbox" id="theme-toggle" aria-label="Toggle dark mode">' +
+      '<span class="track" aria-hidden="true"></span>' +
+      '</label>';
     html += '<span class="nav-user" id="nav-user"></span>';
     html += '<button class="button quiet" id="nav-signout" type="button">Sign out</button>';
+    html += "</div>";
     html += "</nav>";
     host.innerHTML = html;
+
+    var themeToggle = document.getElementById("theme-toggle");
+    var currentTheme = localStorage.getItem("theme") || "auto";
+
+    if (currentTheme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      themeToggle.checked = true;
+    } else if (currentTheme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+      themeToggle.checked = false;
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      themeToggle.checked = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    themeToggle.addEventListener("change", function () {
+      if (this.checked) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+        localStorage.setItem("theme", "light");
+      }
+    });
 
     document.getElementById("nav-signout").addEventListener("click", function () {
       if (App.db) App.db.auth.signOut();
