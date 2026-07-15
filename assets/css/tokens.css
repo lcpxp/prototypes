@@ -43,6 +43,17 @@
   --ok: #1d6f42;
   --ok-soft: #e3f0e9;
 
+  /* Roadmap board category lanes. Each key mirrors a
+     roadmap_categories.key; the accent draws the bar and pill, the
+     soft tint fills them. Categories without a token here fall back
+     to the neutral --muted / --paper pair in components. */
+  --rm-unity: #1f5fa8;    --rm-unity-soft: #e5edf7;
+  --rm-api: #64509b;      --rm-api-soft: #ece8f5;
+  --rm-self: #0b7d70;     --rm-self-soft: #d8f1ec;
+  --rm-insights: #0b7793; --rm-insights-soft: #d7eef6;
+  --rm-ops: #8f6400;      --rm-ops-soft: #f6efdd;
+  --rm-auto: #b0272e;     --rm-auto-soft: #f7e6e7;
+
   /* HTTP method badge colours (convention-led, muted tints) */
   --m-get: #0e6c64;
   --m-get-bg: #e2efed;
@@ -131,6 +142,13 @@
     --warn-soft: #332a16;
     --ok: #6cbb92;
     --ok-soft: #182b20;
+
+    --rm-unity: #7fabe6;    --rm-unity-soft: #182740;
+    --rm-api: #ab97e0;      --rm-api-soft: #261f3d;
+    --rm-self: #4db3a7;     --rm-self-soft: #123230;
+    --rm-insights: #5bb6cf; --rm-insights-soft: #102b33;
+    --rm-ops: #d3a648;      --rm-ops-soft: #332a16;
+    --rm-auto: #e2727a;     --rm-auto-soft: #391f22;
 
     --m-get: #4db3a7;
     --m-get-bg: #123230;

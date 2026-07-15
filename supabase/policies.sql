@@ -93,6 +93,7 @@ alter table public.api_topics           enable row level security;
 alter table public.integrations         enable row level security;
 alter table public.prototypes           enable row level security;
 alter table public.work_areas           enable row level security;
+alter table public.roadmap_categories   enable row level security;
 alter table public.roadmap_milestones   enable row level security;
 alter table public.roadmap_items        enable row level security;
 alter table public.roadmap_dependencies enable row level security;
@@ -115,6 +116,7 @@ begin
       -- work_areas is shared: readable behind either the roadmap or
       -- the backlog grant, since both modules group by it.
       ('work_areas',           '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('roadmap_categories',   '(select public.has_module_access(''roadmap''))'),
       ('roadmap_milestones',   '(select public.has_module_access(''roadmap''))'),
       ('roadmap_items',        '(select public.has_module_access(''roadmap''))'),
       ('roadmap_dependencies', '(select public.has_module_access(''roadmap''))'),

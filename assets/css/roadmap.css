@@ -1,0 +1,273 @@
+/* ------------------------------------------------------------------
+   roadmap.css - The roadmap board (modules/roadmap/). A page sheet,
+   loaded after the five core sheets. Everything reusable stays in
+   components.css; this holds only what the board alone needs.
+   Mobile-first: the three zones stack by default and become columns
+   at the 64rem breakpoint. All colour comes from tokens.css.
+------------------------------------------------------------------- */
+
+/* Toolbar: scope control and print action */
+.rm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  align-items: center;
+  margin-block-end: var(--s-5);
+}
+
+.rm-scope {
+  display: inline-flex;
+  gap: var(--s-1);
+  padding: var(--s-0);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.rm-scope button {
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: var(--s-1) var(--s-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.rm-scope button[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Legend: category lanes plus the two zone markers */
+.rm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
+  align-items: center;
+  padding-block: var(--s-3);
+  border-block-start: 1px solid var(--line);
+  margin-block-end: var(--s-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.rm-lg {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.rm-dot {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: var(--radius-sm);
+  background: var(--rm-a, var(--muted));
+}
+
+.rm-dot--done { background: var(--ok); }
+.rm-dot--horizon { background: var(--faint); }
+
+/* Board: single column, then three columns on wide screens */
+.rm-board {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--section-gap);
+  align-items: start;
+}
+
+.rm-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* Delivered and horizon tiles */
+.rm-tile {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: var(--s-3) var(--s-4);
+}
+
+.rm-tile--delivered { border-inline-start-color: var(--ok); }
+.rm-tile--horizon { border-inline-start-color: var(--faint); }
+
+.rm-tile-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-block-end: var(--s-1);
+}
+
+.rm-tile--delivered .rm-tile-eyebrow { color: var(--ok); }
+
+.rm-tile h3 { font-size: var(--text-md); margin: 0; }
+.rm-tile p:not(.rm-tile-eyebrow) {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin-block: var(--s-1) 0;
+}
+
+/* Active track */
+.rm-phase {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--faint);
+  padding-block-end: var(--s-1);
+  border-block-end: 1px solid var(--line);
+  margin-block-end: var(--s-2);
+}
+
+.rm-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-2);
+  padding-block: var(--s-3);
+  border-block-end: 1px solid var(--line);
+}
+
+.rm-row-label { display: flex; gap: var(--s-2); align-items: baseline; }
+
+.rm-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--line-strong);
+}
+
+.rm-tagrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  align-items: center;
+  margin-block-end: var(--s-1);
+}
+
+.rm-pill {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-slight);
+  text-transform: uppercase;
+  padding: var(--s-0) var(--s-2);
+  border-radius: var(--radius-pill);
+  color: var(--rm-a, var(--muted));
+  background: var(--rm-s, var(--paper));
+}
+
+.rm-state {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-slight);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rm-state--current { color: var(--accent); }
+.rm-state--bridge { color: var(--danger); }
+
+.rm-title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  margin: 0;
+}
+
+.rm-desc {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin-block: var(--s-0) 0;
+}
+
+/* The proportional field and its bar. Hidden on narrow screens where
+   the ordered list already carries the sequence. */
+.rm-field { display: none; }
+
+.rm-bar {
+  position: absolute;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  block-size: 1.1rem;
+  border-radius: var(--radius-sm);
+  background: var(--rm-s, var(--paper));
+  box-shadow: inset 3px 0 0 var(--rm-a, var(--muted));
+}
+
+.rm-bar--current {
+  box-shadow: inset 3px 0 0 var(--rm-a, var(--accent)),
+    0 0 0 1.5px var(--rm-a, var(--accent));
+}
+
+.rm-bar--ongoing {
+  background: linear-gradient(90deg,
+    var(--rm-s, var(--paper)) 0%, var(--rm-s, var(--paper)) 55%, transparent 100%);
+}
+
+.rm-bar--wind {
+  background: linear-gradient(90deg, var(--rm-s, var(--paper)) 40%, transparent 100%);
+}
+
+.rm-bar--bridge {
+  background: linear-gradient(90deg, var(--rm-s, var(--paper)) 50%, transparent 100%);
+}
+
+.rm-foot {
+  font-size: var(--text-xs);
+  color: var(--faint);
+  margin-block-start: var(--s-3);
+}
+
+.rm-empty {
+  font-size: var(--text-sm);
+  color: var(--faint);
+}
+
+/* Category lanes: each sets the accent and soft tint the bar, pill
+   and dot read. Keys mirror roadmap_categories.key; a category with
+   no rule here inherits the neutral fallback in the rules above. */
+.rm-cat-unity    { --rm-a: var(--rm-unity);    --rm-s: var(--rm-unity-soft); }
+.rm-cat-api      { --rm-a: var(--rm-api);      --rm-s: var(--rm-api-soft); }
+.rm-cat-self     { --rm-a: var(--rm-self);     --rm-s: var(--rm-self-soft); }
+.rm-cat-insights { --rm-a: var(--rm-insights); --rm-s: var(--rm-insights-soft); }
+.rm-cat-ops      { --rm-a: var(--rm-ops);      --rm-s: var(--rm-ops-soft); }
+.rm-cat-auto     { --rm-a: var(--rm-auto);     --rm-s: var(--rm-auto-soft); }
+
+@media (min-width: 64rem) {
+  .rm-board { grid-template-columns: 15rem 1fr 15rem; }
+
+  .rm-row {
+    grid-template-columns: 22rem 1fr;
+    align-items: center;
+    gap: var(--s-4);
+  }
+
+  .rm-field {
+    display: block;
+    position: relative;
+    align-self: stretch;
+    min-block-size: 2.4rem;
+    border-radius: var(--radius-sm);
+    background: repeating-linear-gradient(90deg,
+      transparent 0, transparent calc(25% - 1px),
+      var(--line) calc(25% - 1px), var(--line) 25%);
+  }
+}
+
+@media print {
+  #app-nav, .rm-toolbar { display: none; }
+  .rm-board { grid-template-columns: 15rem 1fr 15rem; }
+  .rm-row { break-inside: avoid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rm-bar { transition: none; }
+}

@@ -13,20 +13,30 @@
   <link rel="stylesheet" href="../../assets/css/layout.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="../../assets/css/pages.css">
+  <link rel="stylesheet" href="../../assets/css/roadmap.css">
 </head>
 <body data-root="../.." data-module="roadmap">
   <header id="app-nav"></header>
 
   <main class="page">
     <div class="page-head">
-      <span class="eyebrow">Roadmap</span>
-      <h1>Development roadmap</h1>
-      <p class="lede">Development areas, their items and priorities, held
-        in the roadmap tables in Supabase. Reordering, repointing and
-        rescheduling are database edits; this page and every future view
-        (timeline graphic, swimlanes, waterfall, exported snapshots)
-        render from the same rows. The full roadmap workspace will fold
-        in here.</p>
+      <span class="eyebrow">Merchant and partner onboarding</span>
+      <h1>Where we are focused next</h1>
+      <p class="lede">The major work items in roughly the order and priority we
+        intend to work through them: what is delivered, where we are focused
+        now, and what is on the horizon. Held in the roadmap tables in
+        Supabase, so reprioritising, marking work delivered and adding items
+        are database edits, made here with an AI assistant that has Supabase
+        access (see docs/ROADMAP.md). This page renders live table state.</p>
+    </div>
+
+    <div class="rm-toolbar">
+      <div class="rm-scope" id="roadmap-scope" role="group" aria-label="Roadmap scope">
+        <button type="button" data-scope="product" aria-pressed="true">Product</button>
+        <button type="button" data-scope="portal" aria-pressed="false">Portal</button>
+        <button type="button" data-scope="all" aria-pressed="false">All</button>
+      </div>
+      <button class="button quiet" type="button" id="roadmap-print">Print or save as PDF</button>
     </div>
 
     <section id="roadmap-content">

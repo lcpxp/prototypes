@@ -131,10 +131,21 @@ Work management (see docs/WORKFLOW.md for the working protocol):
   scope separating product feature areas from the portal's own.
   Roadmap items, backlog items, documents and notes all reference
   it, so swimlanes and groupings can never disagree.
+- roadmap_categories: the themed colour lanes for the roadmap board
+  (Unity, API, Self-Service, Insights, Operational, Auto-Approval).
+  key, label, description and order live here; colour per key lives
+  in tokens.css, so lanes are data an admin or an AI assistant can
+  edit while colour stays in the design system.
 - roadmap_items: roadmap work, linked to an area and optionally a
-  milestone, with status, horizon (now/next/later/someday),
+  milestone and a category, with status, horizon
+  (now/next/later/someday), a presentation state
+  (sequenced/current/ongoing/wind/bridge) for the active track,
   priority, effort, impact, tags and optional dates so non-dated
-  roadmaps stay first-class.
+  roadmaps stay first-class. The board (modules/roadmap/) derives its
+  three zones from these fields - Delivered is status 'done', Horizon
+  is horizon 'someday', In focus is the rest by priority - so moving
+  an item between zones is a field edit. See docs/ROADMAP.md for the
+  AI-assistant working protocol.
 - roadmap_milestones: named target points, optionally dated.
 - roadmap_dependencies: item-to-item ordering for waterfall and
   dependency views.

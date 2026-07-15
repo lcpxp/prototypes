@@ -287,15 +287,33 @@ values (
   10
 );
 
+-- One themed category lane, referenced by the sample items below.
+-- Colour for its key lives in assets/css/tokens.css; unknown keys
+-- fall back to a neutral tint (see docs/ROADMAP.md).
+insert into public.roadmap_categories (id, key, label, description, sort_order)
+values (
+  '44444444-4444-4444-4444-444444444444',
+  'sample',
+  'Sample lane',
+  'Worked example of a roadmap category. Replace with real lanes in the database.',
+  10
+);
+
+-- The board derives its three zones from these fields: status 'done'
+-- is Delivered, horizon 'someday' is Horizon, everything else is In
+-- focus. presentation shapes how an active item reads on the track.
 insert into public.roadmap_items
-  (area_id, title, summary, status, horizon, priority, effort, impact, tags, sort_order)
+  (area_id, category_id, title, summary, status, horizon, presentation,
+   priority, effort, impact, tags, sort_order)
 values
 (
   '22222222-2222-2222-2222-222222222222',
+  '44444444-4444-4444-4444-444444444444',
   'Sample committed item',
-  'An item scheduled for the current cycle.',
+  'An item scheduled for the current cycle, shown as the current focus.',
   'in_progress',
   'now',
+  'current',
   10,
   'medium',
   'high',
@@ -304,15 +322,31 @@ values
 ),
 (
   '22222222-2222-2222-2222-222222222222',
+  null,
+  'Sample delivered item',
+  'A completed item, shown in the Delivered zone.',
+  'done',
+  'now',
+  'sequenced',
+  20,
+  'medium',
+  'high',
+  array['sample'],
+  20
+),
+(
+  '22222222-2222-2222-2222-222222222222',
+  null,
   'Sample future item',
-  'An undated idea waiting to be prioritised.',
+  'An undated idea waiting to be prioritised, shown on the Horizon.',
   'idea',
-  'later',
+  'someday',
+  'sequenced',
   100,
   null,
   null,
   array['sample'],
-  20
+  30
 );
 
 -- Sample work intake ------------------------------------------------

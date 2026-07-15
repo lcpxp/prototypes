@@ -37,6 +37,59 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-15 - Roadmap board ported from the standalone app into the portal
+Branch: claude/roadmap-feature-integration-p4aneq (task-designated)
+Completed:
+- Folded the standalone roadmap app into modules/roadmap/ over the
+  existing roadmap tables. The visual is reproduced as a read-only,
+  print-ready three-zone board; all content and the editing surface
+  live in Supabase, per the repo's data-in-Supabase model. Editing is
+  through an AI assistant with Supabase access (or the dashboard), not
+  the page - writes are admin-only under RLS. Dropped the app's
+  localStorage and the Sortable CDN dependency.
+- Schema (migration 20260715000000_roadmap_board_categories_
+  presentation, applied live and mirrored in supabase/schema/
+  30_work.sql + policies.sql): new roadmap_categories lookup table
+  (colour-lane taxonomy: key/label/description/order; RLS behind the
+  roadmap grant, admin write); roadmap_items gains category_id and
+  presentation (sequenced/current/ongoing/wind/bridge). Board zones
+  are derived, not stored - status 'done', horizon 'someday', else by
+  priority - so moving zones is a field edit. Advisor shows nothing
+  new.
+- Real roadmap content loaded into the live database only, never the
+  repo (categories and roadmap_items rows mapped to product
+  work_areas; counts confirmed by query). Pre-existing portal-tooling
+  items stay under scope 'portal'; the board's Product/Portal/All
+  control filters on work_areas.scope, defaulting to Product.
+- Front end: assets/js/pages/roadmap.js rebuilt with pure builders on
+  App.roadmapView (DOM-free, unit-tested); new page sheet
+  assets/css/roadmap.css; category colour tokens (light + dark) in
+  tokens.css; roadmap_categories added to registry.js. seed.sql
+  sample extended to exercise the new columns and all three zones with
+  generic values only.
+- Signposting for AI: docs/ROADMAP.md rewritten with the board data
+  model, the zone-derivation rule, and a retrieval + editing protocol
+  a cold claude.ai chat with Supabase access can follow in one read.
+  ARCHITECTURE.md data model updated.
+- Verified: npm test 47 green (6 new roadmap-render benchmarks: zone
+  derivation, cascade, scope filter, escaping, empty state). Ran the
+  live payload through the actual builder in Node across all three
+  scopes; zone counts, lane classes and escaping all correct.
+In progress:
+- None.
+Next steps:
+1. Review the board in the signed-in viewer (Product scope by
+   default); confirm the Print or save as PDF snapshot reads well.
+2. Open a claude.ai chat with Supabase access and rework priorities
+   with the owner, following docs/ROADMAP.md; record decisions as
+   work_notes.
+3. Carry forward still-open items: enable leaked-password protection;
+   rotate the anon key; delete the dead bulk-load edge function;
+   seed.sql split (over the 300 soft budget).
+Open decisions:
+- Whether the single operational lane should later split into finer
+  lanes; it currently mirrors the source app's category set.
+
 ## 2026-07-15 - LaunchPad reference loaded; inbound-API direction filed (data only, no code)
 Branch: claude/unity-api-standard-f7gm11 (restarted from main; the
 prior Unity branch was already merged, so this is fresh follow-up
