@@ -134,9 +134,10 @@ create index if not exists roadmap_dependencies_depends_on_idx
 -- Work intake. Three tables that make the ongoing owner-and-Claude
 -- working conversation durable (see docs/WORKFLOW.md):
 --   work_documents  raw supplied material (PRDs, roadmaps, backlog
---                   lists, DevOps pastes, sprint summaries) kept
---                   verbatim, plus a distilled summary; supersede
---                   chains preserve the historic record
+--                   lists, DevOps pastes, sprint summaries, platform
+--                   product-knowledge overviews) kept verbatim, plus
+--                   a distilled summary; supersede chains preserve
+--                   the historic record
 --   backlog_items   the rolling work list: considerations,
 --                   features, functionality, bugs and improvements,
 --                   never deleted - closed with a resolution
@@ -149,7 +150,7 @@ create table if not exists public.work_documents (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   kind text not null default 'other'
-    check (kind in ('prd', 'roadmap', 'backlog', 'devops', 'sprint', 'meeting', 'discussion', 'other')),
+    check (kind in ('prd', 'roadmap', 'backlog', 'devops', 'sprint', 'meeting', 'discussion', 'platform', 'other')),
   area_id uuid references public.work_areas (id) on delete set null,
   content text,
   summary text,

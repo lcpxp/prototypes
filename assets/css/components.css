@@ -349,6 +349,23 @@ td.mono {
 .badge.blocked     { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
 .badge.active      { color: var(--ok);     background: var(--ok-soft);     border-color: transparent; }
 
+/* Platform capability maturity (live/planned reuse the status badge
+   colours above; partial and exploratory get their own). */
+.badge.partial     { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
+.badge.exploratory { color: var(--violet); background: var(--violet-soft); border-color: transparent; }
+
+/* Platform capability cards: a chip row above the title, stacked
+   full-width rather than the small-tile card grid. */
+.cap-card {
+  margin-block-end: var(--s-4);
+}
+
+.cap-chips {
+  display: flex;
+  gap: var(--s-2);
+  margin-block-end: var(--s-2);
+}
+
 /* ---------------------------------------------------------------
    Modal: a native <dialog>. Open with showModal() so focus is
    trapped and Escape closes; clicking the backdrop also closes.

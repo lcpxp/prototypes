@@ -37,6 +37,113 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-15 - Platform product-knowledge domain (Part A: repo only)
+Branch: claude/platform-knowledge-domain-k76sab (task-designated)
+Completed:
+- New domain: supabase/schema/40_platform.sql adds product_capabilities
+  (the durable, queryable "what Launchpad does today" catalogue).
+  Hangs off the shared work_areas taxonomy (area_id, scope 'product')
+  so capability sections, roadmap swimlanes and backlog groups agree;
+  source_document_id links to its verbatim work_documents row; kind
+  (overview/value/capability/glance), maturity
+  (live/partial/planned/exploratory) and verified drive rendering and
+  the today-vs-planned discipline; blocks reuses the api_topics typed
+  vocabulary (p/note/kv/table/code/values) so new facts never need a
+  code change.
+- work_documents.kind gains 'platform' (supabase/schema/30_work.sql)
+  for the verbatim source overview.
+- RLS: product_capabilities enabled and added to the content-table
+  loop in supabase/policies.sql, gated on has_module_access('platform'),
+  same read/admin-write pattern as every other content table.
+- dashboard_counts() (supabase/schema/90_dashboard.sql) gains the
+  product_capabilities count.
+- Migration supabase/migrations/20260715120000_platform_product_
+  knowledge.sql applies all of the above idempotently to a live
+  project; carries no content data.
+- Registry: new 'platform' module entry (assets/js/core/registry.js),
+  positioned after reference/integrations and before roadmap, plus
+  the productCapabilities table mapping. Navigation and the dashboard
+  card follow from this with no other edits.
+- Module: modules/platform/index.html (script/style order and
+  data-root/data-module matched to every other protected page) and
+  assets/js/pages/platform.js - a single file in the roadmap.js style
+  (App.platformView: DOM-free pure builders, plus DOM wiring at the
+  bottom). Renders an overview/value lead, one section per product
+  work_area with its capability rows (maturity badge, unverified
+  marker, sorted by sort_order), then an at-a-glance section; empty
+  areas are skipped. The typed block renderer (p/note/kv/table/code/
+  values) is a local copy of reference-topics.js's blockHtml rather
+  than a cross-module dependency - noted below as a future refactor
+  option, not done this session to avoid touching already-shipped,
+  tested reference code for a same-day new module.
+- CSS: two new badge classes in components.css (.badge.partial reuses
+  --accent, .badge.exploratory reuses --violet; .badge.live and
+  .badge.planned already existed for roadmap/integration statuses)
+  plus small .cap-card/.cap-chips layout rules. The unverified marker
+  reuses the existing .badge.tone-warn class. No new tokens were
+  needed - the maturity chip reuses App.statusBadge exactly as
+  roadmap/backlog statuses already do, so no token duplicated an
+  existing semantic colour.
+- docs/PLATFORM.md (new, 92 lines): the ingest/retrieval protocol,
+  mirroring docs/WORKFLOW.md. docs/ARCHITECTURE.md data model and
+  page-flow sections updated. CLAUDE.md gains one bullet under
+  "Adding common things" pointing at it.
+- tests/unit/platform-render.test.js: block-kind rendering and
+  escaping, capability card maturity/unverified rendering, area
+  grouping and sort, full-page lead/section/glance/empty-state
+  assembly.
+- seed.sql: one generic 'sample-capability' row (kind capability,
+  unverified, one block) linked to the existing sample work area,
+  proving the renderer end to end with no real content.
+- Verified: npm test 52/52 green (5 new benchmarks); npm run map
+  regenerated docs/CODEMAP.md (llms.txt unchanged). Headless Chromium
+  against a mocked Supabase client (script-level stub, sandbox has no
+  network): unauthenticated /modules/platform/ redirects to login;
+  authenticated render shows the overview, value proposition, the
+  Dynamic flows section with its capability and table block, the
+  glance section, live/partial maturity badges and the unverified
+  marker, and correctly skips an area with no capability rows; zero
+  console/page errors. Separately confirmed dashboard.html's nav and
+  card pick up the new module (title, stat label, count) with zero
+  console errors.
+In progress:
+- None. Part A (this session's repo scope) is complete and green.
+Next steps:
+1. Part B (the real Launchpad overview and eight capability-area
+   rows) is written for the owner to run directly in the Supabase SQL
+   editor - it was not committed or executed by this session, per
+   CLAUDE.md's real-content-never-in-git rule and the handoff's
+   explicit instruction that Part B is owner-run. Nothing has been
+   loaded yet: product_capabilities holds only the generic seed.sql
+   sample row until the owner runs it.
+2. After Part B loads: open the Platform module signed in, confirm
+   the overview/value lead, all eight capability sections and the
+   glance headlines render, then go through each row correcting
+   maturity and setting verified = true per docs/PLATFORM.md.
+3. Confirm the roadmap and backlog now offer the eight product areas
+   in their area filters/swimlanes (expected consequence of reusing
+   work_areas, called out in the handoff as intended).
+4. Carry forward still-open items: enable leaked-password protection;
+   rotate the anon key; delete the dead bulk-load edge function;
+   components.css (426/300) and docs/ARCHITECTURE.md (229/200) are
+   now over their soft budgets (both still well under hard) - plan
+   splits before extending either again; seed.sql (426/300, also
+   already over) likewise.
+Open decisions:
+- Whether to later factor the typed block renderer (blockHtml and its
+  table/kv/values/code helpers) out of reference-topics.js and
+  platform.js into one shared module now that two page modules need
+  it identically - flagged as a future refactor rather than done this
+  session, per the handoff's explicit fallback ("otherwise keep a
+  local copy and note the duplication").
+- Maturity chip colours: reused the existing status-badge machinery
+  and semantic tokens (--accent, --violet) instead of adding dedicated
+  --maturity-* tokens as the handoff's example suggested, since live/
+  planned already had badge rules and duplicating tokens for colours
+  that already exist would cut against "tokens are law" meaning one
+  source of truth per colour. Worth a look if the owner wants a
+  visually distinct maturity palette later.
+
 ## 2026-07-15 - PXP design elevation session
 Branch: claude/lpio-design-elevation-nmc8oz (task-designated)
 Completed:

@@ -100,6 +100,7 @@ alter table public.roadmap_dependencies enable row level security;
 alter table public.work_documents       enable row level security;
 alter table public.backlog_items        enable row level security;
 alter table public.work_notes           enable row level security;
+alter table public.product_capabilities enable row level security;
 
 do $$
 declare
@@ -122,7 +123,8 @@ begin
       ('roadmap_dependencies', '(select public.has_module_access(''roadmap''))'),
       ('work_documents',       '(select public.has_module_access(''backlog''))'),
       ('backlog_items',        '(select public.has_module_access(''backlog''))'),
-      ('work_notes',           '(select public.has_module_access(''backlog''))')
+      ('work_notes',           '(select public.has_module_access(''backlog''))'),
+      ('product_capabilities', '(select public.has_module_access(''platform''))')
     ) as v(tbl, read_expr)
   loop
     execute format('drop policy if exists "%s: members read" on public.%I',

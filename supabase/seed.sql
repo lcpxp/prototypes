@@ -386,6 +386,25 @@ values (
   array['sample']
 );
 
+-- Sample platform knowledge ----------------------------------------
+-- One generic capability row proving the platform module renders end
+-- to end. Real platform knowledge (overviews, capability detail)
+-- belongs in the database only - see docs/PLATFORM.md.
+
+insert into public.product_capabilities
+  (area_id, key, title, summary, kind, maturity, verified, blocks, sort_order)
+values (
+  '22222222-2222-2222-2222-222222222222',
+  'sample-capability',
+  'Sample capability',
+  'Worked example of a documented capability. Replace with real platform knowledge in the database.',
+  'capability',
+  'planned',
+  false,
+  '[{"kind": "p", "text": "Detail blocks reuse the same typed vocabulary as api_topics: p, note, kv, table, code, values."}]'::jsonb,
+  10
+);
+
 -- Sample prototype registry entries --------------------------------
 
 insert into public.prototypes (title, description, path, status, tags)

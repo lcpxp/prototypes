@@ -32,9 +32,10 @@ substance lives behind Supabase Row Level Security.
    index.html: modules/reference/ (the spec viewer),
    modules/integrations/ (the integration overview and detail
    modals), modules/prototypes/ (the gallery plus the prototype
-   pages themselves), modules/roadmap/ (the roadmap view),
-   modules/backlog/ (rolling work items and ingested source
-   material) and modules/users/ (the user and access register).
+   pages themselves), modules/platform/ (what Launchpad is and does
+   today), modules/roadmap/ (the roadmap view), modules/backlog/
+   (rolling work items and ingested source material) and
+   modules/users/ (the user and access register).
 5. silos/index.html is the central entry to project-specific
    workstreams. Each silo can be its own folder or page and can be
    linked from here.
@@ -154,10 +155,27 @@ Work management (see docs/WORKFLOW.md for the working protocol):
   with a resolution, resolved_at stamped by trigger, so the open
   view and the historic record are the same table.
 - work_documents: material supplied during working sessions (PRDs,
-  roadmaps, backlog lists, DevOps pastes, sprint summaries), kept
+  roadmaps, backlog lists, DevOps pastes, sprint summaries, and now
+  platform product-knowledge overviews - kind 'platform'), kept
   verbatim with a distilled summary and supersede chains.
 - work_notes: atomic distilled records (decisions, facts, risks,
   questions, actions) linked to whatever they concern.
+
+Platform knowledge (supabase/schema/40_platform.sql; see
+docs/PLATFORM.md for the working protocol):
+
+- product_capabilities: the durable, queryable description of what
+  Launchpad is and does today, distinct from work intake (things to
+  do) and reference (the API surface). Hangs off work_areas (scope
+  'product') so capability sections, roadmap swimlanes and backlog
+  groups agree; source_document_id links back to the verbatim
+  work_documents row. kind classifies each row (overview, value,
+  capability, glance); maturity (live, partial, planned,
+  exploratory) is the today-vs-planned axis the roadmap is read
+  against; verified stays false until the owner confirms a row
+  against the real build state. blocks reuses the api_topics typed
+  block vocabulary, so new facts about a capability are a data edit,
+  never a code change.
 
 Every roadmap and backlog rendering (list, timeline, swimlanes,
 waterfall, exported snapshots) reads these same rows, so

@@ -48,6 +48,14 @@
         statLabel: "Registered prototypes",
       },
       {
+        key: "platform",
+        title: "Platform",
+        path: "modules/platform/",
+        description: "What Launchpad is and the capabilities in place today",
+        statTable: "product_capabilities",
+        statLabel: "Capabilities documented",
+      },
+      {
         key: "roadmap",
         title: "Roadmap",
         path: "modules/roadmap/",
@@ -88,6 +96,7 @@
       workDocuments: "work_documents",
       backlogItems: "backlog_items",
       workNotes: "work_notes",
+      productCapabilities: "product_capabilities",
       moduleAccess: "module_access",
     },
     // Spec families group api_specs rows into distinct reference

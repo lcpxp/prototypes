@@ -139,6 +139,11 @@ is likely, checkpoint first.
   work_documents, distilled records to work_notes, actionable
   entries to backlog_items. Database inserts only; the repo does
   not change.
+- Platform knowledge supplied in chat (product overviews, capability
+  descriptions, "what it does today" material): follow
+  docs/PLATFORM.md. Verbatim source to work_documents (kind
+  'platform'), distilled rows to product_capabilities linked to
+  work_areas. Database inserts only; the repo does not change.
 - New table: schema in the right supabase/schema/ domain file,
   policies in supabase/policies.sql, both in the same commit, and
   the change applied to the live project as a migration.

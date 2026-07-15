@@ -25,6 +25,7 @@ as $$
     'prototypes',    (select count(*) from (select 1 from public.prototypes    limit 1001) c),
     'roadmap_items', (select count(*) from (select 1 from public.roadmap_items limit 1001) c),
     'backlog_items', (select count(*) from (select 1 from public.backlog_items limit 1001) c),
+    'product_capabilities', (select count(*) from (select 1 from public.product_capabilities limit 1001) c),
     'profiles',      (select count(*) from (select 1 from public.profiles      limit 1001) c)
   );
 $$;
