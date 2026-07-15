@@ -37,6 +37,108 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-15 - PXP design elevation session
+Branch: claude/lpio-design-elevation-nmc8oz (task-designated)
+Completed:
+- Full visual re-skin per an explicit design-authority brief (not a
+  brand-compliance reskin): PXP Blue (`#292cf5`) as the one commanding
+  accent, PXP Black (`#09090c`) as a fixed chrome material (the top
+  nav is now near-black in both colour schemes, not just dark mode),
+  and Lime (`#caff0a`) used surgically in exactly three spots - the
+  nav active-page underline, the nav wordmark separator, and the
+  login brand panel's wordmark separator - never as body text, a
+  fill, or paired with white. Signature choice: PXP-black nav chrome
+  with the lime active marker (the alternative candidates, a
+  live-status dot system and a reimagined method-badge system, were
+  considered and rejected/partly folded in - see below).
+- assets/css/tokens.css rebuilt (light + dark, both schemes verified
+  by hand-computed WCAG contrast, not just eyeballed): renamed
+  --accent-strong to --accent-hover and added --accent-pressed; new
+  --alt-surface (table headers), --chrome-bg/-ink/-muted/-line
+  (scheme-invariant PXP Black chrome), --lime/--lime-ink (scheme-
+  invariant), --gradient-brand + --plum (login only), --cyan/-violet
+  text-safe derivations, a --m-query method colour (was silently
+  reusing --m-patch), a three-step elevation scale (--shadow-rest/
+  -raised/-overlay, replacing the old flat --shadow/--shadow-raised
+  pair), a radius scale (--radius-sm 6 / --radius 8 / --radius-lg 14),
+  motion tokens (--ease, --dur-fast 150ms, --dur-base 200ms) and
+  --text-3xl (tokenising the login headline's clamp(), which had been
+  a hard-coded per-page override).
+- docs/DESIGN.md amended in the same commit as tokens.css: motion
+  rule changed from "none beyond native browser behaviour" to
+  restrained engineered transitions (colour/border/background/shadow
+  only, 150-200ms, reduced-motion respected); palette, shadow and
+  gradient-carve-out prose rewritten to match; Character section
+  documents both signature devices (mono eyebrow, protected; PXP
+  black nav + lime marker, new).
+- components.css: cards/endpoints/modal moved onto the elevation +
+  radius scale with a hover lift; buttons gained hover/pressed/focus
+  states with real transitions; tables gained an --alt-surface header
+  and a hover row; badges gained a currentColor marker dot before the
+  mono label (get/post/put/patch/delete/query, all re-derived to the
+  appendix's AA-safe values) - this is the "reimagined method badge"
+  idea folded in as a CSS-only execution upgrade, not the chosen
+  signature. base.css: heading tracking/line-height tightened.
+- layout.css: nav rebuilt on --chrome-bg/-ink/-muted with the lime
+  aria-current underline; assets/js/core/ui.js line 69 changed the
+  nav-brand separator's inline style from var(--accent) to
+  var(--lime) - a values-only edit (no logic change) required because
+  PXP Blue on near-black chrome measures ~2.6:1, well under the 3:1
+  UI floor, while lime measures 16.87:1.
+- login.css: desktop brand panel now uses --gradient-brand (PXP's
+  Black -> Blue -> Plum recipe) with --chrome-ink text (deliberately
+  not --on-accent, which flips to dark navy in dark mode and would
+  have gone invisible on the scheme-invariant gradient) and the lime
+  wordmark separator; headline moved onto --text-3xl + --weight-bold.
+- pages.css: reference sidebar and endpoint cards onto the elevation
+  scale; .badge.query given its own --m-query/-bg instead of reusing
+  --m-patch's colour.
+- Verified: npm test 47/47 green throughout (committed in 5 stages,
+  each independently green per the suggested commit plan). Hand-
+  computed WCAG contrast for every new pairing that touches the new
+  chrome surface (chrome-muted/chrome-bg 10.2:1, chrome-ink/chrome-bg
+  19.89:1, lime/chrome-bg 16.87:1, the accent-on-chrome failure above)
+  since the appendix only pre-verified pairings against white/paper/
+  #1d2026, not against #09090c. Rendered dashboard-equivalent markup
+  and the real index.html (login) through headless Chromium at 1280px
+  and 360px in both colour schemes (screenshots reviewed, not
+  committed - scratchpad only); no console errors beyond the expected
+  sandboxed CDN fetch failure.
+In progress:
+- None. Only index.html (login) was screenshotted directly; the
+  other real pages (dashboard, reference, gallery, silos, roadmap,
+  backlog, integrations, users) were verified via a hand-built
+  preview harness exercising the same shared classes (nav, card,
+  table, badge, endpoint, form) rather than the live guarded pages,
+  since guard.js redirects without a real Supabase session in this
+  sandbox. They inherit the same token cascade with no page-specific
+  colour code, so risk is low, but a signed-in pass over each real
+  page is still worth doing.
+Next steps:
+1. Review every real page signed in (dashboard, reference viewer,
+   gallery, silos index, roadmap board, backlog, integrations,
+   users) in both colour schemes and at 360px, per the verification
+   checklist in the task brief - the preview harness covered the
+   shared components but not each page's specific layout quirks
+   (e.g. roadmap.css's proportional bars, which were left unchanged
+   since they don't reference any renamed token).
+2. components.css is now 408 lines (over the 300 soft budget, under
+   the 500 hard). Plan a split - modal/dialog styles are the obvious
+   extraction - before extending it again.
+3. Carry forward still-open items from prior checkpoints: enable
+   leaked-password protection; rotate the anon key; delete the dead
+   bulk-load edge function; seed.sql split (over the 300 soft
+   budget).
+Open decisions:
+- Signature choice (PXP-black nav + lime marker) was made unilaterally
+  per the brief's explicit design authority grant; flag for the repo
+  owner to confirm it's the right call over the live-status-dot or
+  method-badge alternatives before this merges.
+- roadmap.css was left untouched beyond inheriting the new token
+  values (it references no renamed tokens) - worth a dedicated pass
+  later to bring its card/tile treatment up to the same elevation
+  standard as the rest of the portal.
+
 ## 2026-07-15 - Roadmap board ported from the standalone app into the portal
 Branch: claude/roadmap-feature-integration-p4aneq (task-designated)
 Completed:
