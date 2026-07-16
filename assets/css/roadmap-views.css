@@ -132,10 +132,10 @@
 .rmv-tl-head,
 .rmv-tl-row {
   display: grid;
-  grid-template-columns: 11rem repeat(3, minmax(6rem, 1fr));
+  grid-template-columns: 11rem repeat(4, minmax(6rem, 1fr));
   gap: var(--s-2);
   align-items: center;
-  min-inline-size: 32rem;
+  min-inline-size: 44rem;
 }
 
 .rmv-tl-head {
@@ -175,6 +175,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Delivered bars read as settled history: quieter fill, done accent. */
+.rmv-tl-bar--done {
+  background: var(--surface);
+  border-inline-start-color: var(--ok);
+  color: var(--muted);
 }
 
 /* Backlog / Parked meta and the parked reasoning. */

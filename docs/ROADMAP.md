@@ -30,26 +30,36 @@ content in Supabase rather than in this public repo.
 
 ## The roadmap home and its views
 
-modules/roadmap/ renders one home read at four altitudes via a level
-switcher, all over the same rows. Nothing is stored per view; each cell
-derives from an item's own fields, so moving an item is a plain field
-edit. The process, taxonomy and audience rules live in
-docs/ROADMAP-PROCESS.md.
+modules/roadmap/ renders one home over the same rows via two independent
+controls: a **level** (audience/content) and a **layout** (how it is
+drawn). Nothing is stored per view; each cell derives from an item's own
+fields, so moving or extending an item is a plain field edit. The
+process, taxonomy and audience rules live in docs/ROADMAP-PROCESS.md.
 
-- **Executive** - the curated C-suite one-pager: the Delivered buckets
-  (`status='done'`), the themes that have in-focus `audience='exec'`
-  items, and standalone bets (items with no theme). It prints.
-- **Team** - the full picture, in one of two layouts: **Cascade** (stage
-  bands Delivered -> Now -> Next -> Later, each theme a weighted block)
-  or **Timeline** (priority-ranked bars across Now/Next/Later, so
-  concurrent work overlaps visibly).
-- **Backlog** - the open, product-scope backlog grouped by theme.
-- **Parked** - de-scoped backlog items with the `resolution` reasoning.
+Levels:
 
-The selected level (and Team layout) persists in the URL hash
-(`#team/timeline`) and localStorage, so a shared link opens the same
-view. The roadmap renders product scope only; portal work
-(`work_areas.scope='portal'`) stays in the backlog module.
+- **Executive** - the curated set: Delivered work plus `audience='exec'`
+  items and standalone bets. Prints as the C-suite one-pager.
+- **Team** - the full picture (every product item).
+- **Backlog** - the open, product-scope feeder.
+- **Parked** - de-scoped items with the `resolution` reasoning.
+
+Layouts:
+
+- **Timeline** (default) - a continuous **Delivered | Now | Next | Later**
+  axis. Each item's bar spans from `horizon` (its start band) through
+  `end_horizon` (the band it runs through), so a long activity visibly
+  spills across columns. Rows order by start band, then span length
+  (longer runs sink lower), then priority - current work floats to the
+  top. Backlog and parked items carry their own `horizon`/`end_horizon`,
+  so the whole list from idea to delivered sits on one axis.
+- **Cascade** - the same work as stacked stage bands; an item that spans
+  Now -> Next appears under both the Now and the Next band.
+
+Level and layout persist in the URL hash (`#team/cascade`) and
+localStorage, so a shared link opens the same view. The roadmap renders
+product scope only; portal work (`work_areas.scope='portal'`) stays in
+the backlog module.
 
 Download PDF (or Ctrl+P) prints the Executive view as a condensed A4
 landscape one-pager: theme descriptions drop, tiles tighten, theme
@@ -73,9 +83,10 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   renders in a neutral tint until one is added. Items with no theme
   render as standalone cards.
 - roadmap_items: the work. Beyond the columns above, category_id points
-  at a theme, horizon places the item in a stage band, audience
-  ('exec'/'team') sets the altitude it surfaces at, and presentation
-  supplies the Now card's state label:
+  at a theme, horizon is the START band and end_horizon the band it runs
+  THROUGH (null = start band only), audience ('exec'/'team') sets the
+  altitude it surfaces at, and presentation supplies the Now card's
+  state label:
   - sequenced: a plain item (no state label).
   - current: the single current-focus item.
   - ongoing: runs continuously.
@@ -130,6 +141,8 @@ overhaul it without touching the repo. A cold session should:
    - Add an item: insert with area_id (a work_areas row), an optional
      category_id (theme), status, horizon, presentation, audience and
      priority.
+   - Make an activity span columns: set end_horizon (e.g. horizon 'now',
+     end_horizon 'next' shows it running from Now through Next).
    - Show/hide from the C-suite: set audience 'exec' or 'team'.
    - Add a theme: insert into roadmap_categories; add matching
      --rm-<key> tokens and a .rm-cat-<key> rule for a bespoke colour,

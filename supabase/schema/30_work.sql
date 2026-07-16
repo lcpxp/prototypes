@@ -110,6 +110,12 @@ create table if not exists public.roadmap_items (
     check (status in ('idea', 'planned', 'committed', 'in_progress', 'done', 'parked')),
   horizon text not null default 'later'
     check (horizon in ('now', 'next', 'later', 'someday')),
+  -- The band the item runs THROUGH, so a long activity spans columns
+  -- (Now -> Next, Now -> Later) on the timeline and shows in each band
+  -- it covers on the cascade. Null means it sits in its start horizon
+  -- only.
+  end_horizon text
+    check (end_horizon in ('now', 'next', 'later', 'someday')),
   -- How the item reads on the board's active track. 'sequenced' is a
   -- plain upcoming item; 'current' is the focus item; 'ongoing' runs
   -- continuously; 'wind' is wrapping up; 'bridge' points to the next
@@ -211,6 +217,13 @@ create table if not exists public.backlog_items (
   details text,
   status text not null default 'open'
     check (status in ('open', 'planned', 'in_progress', 'blocked', 'done', 'dropped')),
+  -- Backlog and parked items join the roadmap timeline: horizon is the
+  -- start band (default 'someday' - unscheduled candidate work), and
+  -- end_horizon the band it runs through (null = start band only).
+  horizon text not null default 'someday'
+    check (horizon in ('now', 'next', 'later', 'someday')),
+  end_horizon text
+    check (end_horizon in ('now', 'next', 'later', 'someday')),
   priority integer not null default 100,
   external_ref text,
   requested_by text,

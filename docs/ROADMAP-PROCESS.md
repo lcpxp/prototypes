@@ -28,19 +28,29 @@ entry until it firms up. Add a theme by inserting a `roadmap_categories`
 row and a matching `--rm-<key>` token pair + `.rm-cat-<key>` rule
 (otherwise it renders in a neutral tint).
 
-## The four altitudes
+## Levels and layouts
 
-One dataset, read at the altitude the audience needs, via the level
-switcher:
+One dataset, two independent controls. The **level** chooses the
+audience/content; the **layout** chooses how it is drawn.
 
-- **Executive** - the curated C-suite one-pager: the 7 Delivered
-  buckets, the themes that have in-focus work, and standalone bets. It
-  prints as the A4 one-pager (Download PDF / Ctrl+P).
-- **Team** - the full picture, as a **Cascade** (stage bands Delivered
-  -> Now -> Next -> Later, each theme a weighted block) or a **Timeline**
-  (priority-ranked bars showing overlap).
-- **Backlog** - the open, product-scope feeder grouped by theme.
-- **Parked** - de-scoped items with the reasoning kept.
+Levels: **Executive** (curated - Delivered plus `audience='exec'` items
+and standalone bets; prints as the C-suite one-pager), **Team** (every
+product item), **Backlog** (open feeder), **Parked** (de-scoped, reasoning
+kept).
+
+Layouts:
+
+- **Timeline** (default) - a continuous Delivered | Now | Next | Later
+  axis where each bar spans from its start band (`horizon`) through the
+  band it runs across (`end_horizon`), so long activities visibly spill
+  onward. Rows order by start band, then span length, then priority.
+- **Cascade** - the same work as stacked stage bands; a spanning item
+  appears under each band it covers.
+
+An activity that is "current and next" is `horizon='now'`,
+`end_horizon='next'`. Backlog and parked items carry `horizon`/
+`end_horizon` too, so the whole list from idea to delivered lives on the
+one timeline and can be re-ordered there.
 
 ## Audience: what the C-suite sees
 

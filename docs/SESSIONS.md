@@ -37,6 +37,36 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-16 - Roadmap: continuous spanning timeline, layout x level
+Branch: claude/roadmap-refinement-mvc4jx
+Completed:
+- Made the Timeline a continuous Delivered|Now|Next|Later axis where a
+  bar spans horizon (start band) through end_horizon (band it runs
+  through), so long activities spill across columns. Rows order by start
+  band, then span length, then priority. Timeline is now the default
+  layout and both Timeline and Cascade are available on all four levels
+  (Executive/Team/Backlog/Parked). Cascade repeats a spanning item under
+  each band it covers. Files: assets/js/pages/roadmap-views.js (rewritten,
+  App.roadmapView.timeline(data,level)/cascade(data,level)), roadmap.js
+  (layout applies to every level), roadmap-views.css (4-column axis,
+  done-bar style), modules/roadmap/index.html (layout toggle always shown).
+- Schema: roadmap_items.end_horizon; backlog_items.horizon+end_horizon so
+  backlog/parked share the timeline. Migration
+  20260716120000_roadmap_spans_and_backlog_horizons.sql, mirrored in
+  schema/30_work.sql, applied live.
+- Data (Supabase): set the current-and-next items to span Now->Next
+  (portal overhaul, admin tools, and three others) and moved the insights
+  item to Next. Real names stay in Supabase only.
+- Tests rewritten for the new API (58 pass incl span/ordering/spanning
+  cascade); docs (ROADMAP.md, ROADMAP-PROCESS.md) updated; codemap
+  regenerated. Verified visually (light+dark, no console errors).
+Next steps:
+1. Optional: deep-dive Product Resources & Documentation approach.
+2. Optional: capture Commercial & Growth notes before it earns a theme.
+Open decisions:
+- Whether the Executive cascade one-pager should list all themes or only
+  populated ones (current: populated only).
+
 ## 2026-07-16 - Roadmap refinement: two-level taxonomy, four altitudes
 Branch: claude/roadmap-refinement-mvc4jx
 Completed:
