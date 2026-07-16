@@ -28,10 +28,12 @@
   ];
   var LEVEL_STORE = "roadmap-level";
   var LAYOUT_STORE = "roadmap-layout";
+  var DELIVERED_STORE = "roadmap-delivered";
 
   var data = { categories: [], areas: [], items: [], backlog: [] };
   var current = "exec";
   var layout = "timeline";
+  var showDelivered = true;
 
   function find(list, key) { return list.filter(function (x) { return x.key === key; })[0]; }
 
@@ -48,10 +50,23 @@
   }
   function hashFor() { return current + "/" + layout; }
 
+  // Delivered visibility is a view-only preference (localStorage), not
+  // part of the shareable hash.
+  function readDelivered() {
+    try { return window.localStorage.getItem(DELIVERED_STORE) !== "hidden"; }
+    catch (e) { return true; }
+  }
+
   function render(host) {
+    var opts = { showDelivered: showDelivered };
     host.innerHTML = layout === "cascade"
-      ? App.roadmapView.cascade(data, current)
-      : App.roadmapView.timeline(data, current);
+      ? App.roadmapView.cascade(data, current, opts)
+      : App.roadmapView.timeline(data, current, opts);
+  }
+
+  function renderDelivered(btn) {
+    btn.setAttribute("aria-pressed", String(showDelivered));
+    btn.textContent = showDelivered ? "Hide delivered" : "Show delivered";
   }
 
   function tabs(list, activeKey, cls) {
@@ -88,6 +103,19 @@
     var nav = document.getElementById("roadmap-switch");
     var layoutNav = document.getElementById("roadmap-layout");
     readState();
+    showDelivered = readDelivered();
+
+    var delBtn = document.getElementById("roadmap-delivered");
+    if (delBtn) {
+      renderDelivered(delBtn);
+      delBtn.addEventListener("click", function () {
+        showDelivered = !showDelivered;
+        try { window.localStorage.setItem(DELIVERED_STORE, showDelivered ? "shown" : "hidden"); }
+        catch (e) { /* ignore */ }
+        renderDelivered(delBtn);
+        render(host);
+      });
+    }
 
     var dlBtn = document.getElementById("roadmap-download");
     if (dlBtn) dlBtn.addEventListener("click", function () { window.print(); });

@@ -97,25 +97,32 @@
       (a._row.priority - b._row.priority) || (a._row.sort_order - b._row.sort_order);
   }
 
-  function timelineHtml(rows, ctx, useAreaTheme, emptyMsg) {
-    if (!rows.length) return emptyMsg;
-    var placed = rows.map(function (r) {
+  function timelineHtml(rows, ctx, useAreaTheme, emptyMsg, showDelivered) {
+    // Delivered work can be hidden; when it is, the Delivered column
+    // drops off the axis and the remaining columns shift left.
+    var visible = showDelivered ? rows
+      : rows.filter(function (r) { return r.status !== "done"; });
+    if (!visible.length) return emptyMsg;
+    var first = showDelivered ? 0 : 1;
+    var placed = visible.map(function (r) {
       var catId = useAreaTheme ? ctx.themeOfArea[r.area_id] : r.category_id;
       return { _row: r, _s: colStart(r), _e: colEnd(r), _cat: catId ? ctx.catById[catId] : null };
     }).sort(timelineOrder);
     var head = '<div class="rmv-tl-head"><span class="rmv-tl-label"></span>' +
-      BANDS.map(function (b) { return '<span class="rmv-tl-col">' + b.label + "</span>"; })
+      BANDS.slice(first).map(function (b) { return '<span class="rmv-tl-col">' + b.label + "</span>"; })
         .join("") + "</div>";
     var body = placed.map(function (p) {
       var done = p._row.status === "done";
-      // Grid column 1 is the label gutter, so data columns are offset by 2.
+      // Grid column 1 is the label gutter; data columns follow, shifted
+      // by the first visible band.
       var bar = '<span class="rmv-tl-bar' + (done ? " rmv-tl-bar--done" : "") + catClass(p._cat) +
-        '" style="grid-column:' + (p._s + 2) + " / " + (p._e + 3) + '">' +
+        '" style="grid-column:' + (p._s - first + 2) + " / " + (p._e - first + 3) + '">' +
         App.escape(p._row.title) + "</span>";
       return '<div class="rmv-tl-row"><span class="rmv-tl-label">' +
         App.escape(p._cat ? p._cat.label : "General") + "</span>" + bar + "</div>";
     }).join("");
-    return '<div class="rmv-tl">' + head + body + "</div>" + freshnessHtml(rows);
+    return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") + '">' +
+      head + body + "</div>" + freshnessHtml(rows);
   }
 
   // The rows and theme source for each level.
@@ -133,7 +140,8 @@
     return { rows: items, useAreaTheme: false };
   }
 
-  function timeline(data, level) {
+  function timeline(data, level, opts) {
+    var show = !opts || opts.showDelivered !== false;
     var ctx = context(data);
     var r = levelRows(data, level, ctx);
     var empty = level === "backlog"
@@ -141,7 +149,7 @@
       : level === "parked"
       ? '<p class="notice">Nothing parked. De-scoped items land here with the reasoning kept.</p>'
       : emptyNotice();
-    return timelineHtml(r.rows, ctx, r.useAreaTheme, empty);
+    return timelineHtml(r.rows, ctx, r.useAreaTheme, empty, show);
   }
 
   // --- Cascade: stacked stage bands, spanning items repeat ---------
@@ -178,12 +186,13 @@
       App.escape(label) + "</h2>";
   }
 
-  function teamCascadeHtml(data) {
+  function teamCascadeHtml(data, showDelivered) {
     var ctx = context(data);
     var items = productItems(data.items || [], ctx.scopeByArea);
     if (!items.length) return emptyNotice();
     var html = "";
     BANDS.forEach(function (band, idx) {
+      if (!showDelivered && idx === 0) return; // Delivered band hidden.
       var inBand = items.filter(function (i) { return colStart(i) <= idx && colEnd(i) >= idx; });
       if (!inBand.length) return;
       html += '<section class="rmv-band">' + bandHead(band.label, band.key) +
@@ -207,7 +216,7 @@
     return '<ul class="rmv-cards rmv-delivered">' + cards + "</ul>";
   }
 
-  function execCascadeHtml(data) {
+  function execCascadeHtml(data, showDelivered) {
     var ctx = context(data);
     var items = productItems(data.items || [], ctx.scopeByArea);
     if (!items.length) return emptyNotice();
@@ -216,7 +225,8 @@
     var standalone = execLive.filter(function (i) { return !i.category_id; });
     var byCat = groupBy(execLive.filter(function (i) { return i.category_id; }),
       function (i) { return i.category_id; });
-    var html = bandHead("Delivered", "delivered") + deliveredBuckets(delivered, ctx.catById);
+    var html = showDelivered
+      ? bandHead("Delivered", "delivered") + deliveredBuckets(delivered, ctx.catById) : "";
     html += bandHead("In focus", "now") + themeBlocks(ctx.catSorted, byCat);
     if (standalone.length) {
       html += bandHead("Standalone", "later") +
@@ -271,11 +281,12 @@
     return backlogGrouped(parked, ctx, function (i) { return backlogCard(i, true); });
   }
 
-  function cascade(data, level) {
-    if (level === "exec") return execCascadeHtml(data);
+  function cascade(data, level, opts) {
+    var show = !opts || opts.showDelivered !== false;
+    if (level === "exec") return execCascadeHtml(data, show);
     if (level === "backlog") return backlogCascadeHtml(data);
     if (level === "parked") return parkedCascadeHtml(data);
-    return teamCascadeHtml(data);
+    return teamCascadeHtml(data, show);
   }
 
   App.roadmapView = {

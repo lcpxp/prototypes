@@ -56,6 +56,10 @@ Layouts:
 - **Cascade** - the same work as stacked stage bands; an item that spans
   Now -> Next appears under both the Now and the Next band.
 
+A **Hide delivered** toggle drops delivered work (and the Delivered
+column/band) from any view. It is a view-only preference kept in
+localStorage; it changes nothing in the database.
+
 Level and layout persist in the URL hash (`#team/cascade`) and
 localStorage, so a shared link opens the same view. The roadmap renders
 product scope only; portal work (`work_areas.scope='portal'`) stays in

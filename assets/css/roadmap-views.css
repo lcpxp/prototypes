@@ -138,6 +138,13 @@
   min-inline-size: 44rem;
 }
 
+/* Delivered hidden: the axis drops to Now | Next | Later. */
+.rmv-tl--nodelivered .rmv-tl-head,
+.rmv-tl--nodelivered .rmv-tl-row {
+  grid-template-columns: 11rem repeat(3, minmax(6rem, 1fr));
+  min-inline-size: 36rem;
+}
+
 .rmv-tl-head {
   position: sticky;
   inset-block-start: 0;

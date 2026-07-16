@@ -145,6 +145,23 @@ test("cascade (backlog) groups open items; parked shows the reasoning", () => {
   assert.match(parked, /Not needed/);
 });
 
+test("showDelivered=false hides delivered work across timeline and cascade", () => {
+  const V = loadView();
+  const data = sampleData();
+  const tl = V.timeline(data, "team", { showDelivered: false });
+  assert.doesNotMatch(tl, /Core onboarding/, "delivered item is hidden on the timeline");
+  assert.match(tl, /rmv-tl--nodelivered/, "the Delivered column drops off");
+  assert.doesNotMatch(tl, /Delivered<\/span>/, "no Delivered column header");
+  assert.match(tl, /Unity integration/, "live work still shows");
+  // Cascade drops the Delivered band; exec drops the delivered buckets.
+  const cas = V.cascade(data, "team", { showDelivered: false });
+  assert.doesNotMatch(cas, /rmv-band-head--delivered/);
+  assert.match(cas, /rmv-band-head--now/);
+  assert.doesNotMatch(V.cascade(data, "exec", { showDelivered: false }), /rmv-bucket/);
+  // Default keeps delivered visible.
+  assert.match(V.timeline(data, "team"), /Core onboarding/);
+});
+
 test("empty states name their table", () => {
   const V = loadView();
   const empty = { categories: [], areas: [], items: [], backlog: [] };
