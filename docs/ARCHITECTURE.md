@@ -129,31 +129,29 @@ Catalogues:
 Work management (see docs/WORKFLOW.md for the working protocol):
 
 - work_areas: the single shared taxonomy of development areas, with
-  scope separating product feature areas from the portal's own.
-  Roadmap items, backlog items, documents and notes all reference
-  it, so swimlanes and groupings can never disagree.
-- roadmap_categories: the themed colour lanes for the roadmap board
-  (Unity, API, Self-Service, Insights, Operational, Auto-Approval).
+  scope separating product feature areas from the portal's own. Work
+  items, documents and notes all reference it, so swimlanes and
+  groupings can never disagree.
+- roadmap_categories: the themed colour lanes for the roadmap board.
   key, label, description and order live here; colour per key lives
   in tokens.css, so lanes are data an admin or an AI assistant can
   edit while colour stays in the design system.
-- roadmap_items: roadmap work, linked to an area and optionally a
-  milestone and a category, with status, horizon
-  (now/next/later/someday), a presentation state
-  (sequenced/current/ongoing/wind/bridge) for the active track,
-  priority, effort, impact, tags and optional dates so non-dated
-  roadmaps stay first-class. The board (modules/roadmap/) derives its
-  three zones from these fields - Delivered is status 'done', Horizon
-  is horizon 'someday', In focus is the rest by priority - so moving
-  an item between zones is a field edit. See docs/ROADMAP.md for the
+- work_items: roadmap and backlog work in ONE table - considerations,
+  features, functionality, bugs, improvements and tasks alike - linked
+  to an area and optionally a category, milestone and source document,
+  with status, horizon (now/next/later/someday), end_horizon, a
+  presentation state (sequenced/current/ongoing/wind/bridge), priority,
+  effort, impact, tags and optional dates. Every view derives from these
+  fields: Delivered is status 'done'; Parked is horizon 'someday' or
+  status 'dropped'; Active is the rest, banded by horizon. The Executive
+  view rolls Active work up by theme (always complete), Team shows it
+  item by item, Backlog shows everything. Never deleted; closing an item
+  (done/dropped) stamps resolved_at by trigger, so the live view and the
+  historic record are the same table. See docs/ROADMAP.md for the
   AI-assistant working protocol.
 - roadmap_milestones: named target points, optionally dated.
-- roadmap_dependencies: item-to-item ordering for waterfall and
+- work_item_dependencies: item-to-item ordering for waterfall and
   dependency views.
-- backlog_items: the rolling work list (considerations, features,
-  functionality, bugs, improvements, tasks). Never deleted; closed
-  with a resolution, resolved_at stamped by trigger, so the open
-  view and the historic record are the same table.
 - work_documents: material supplied during working sessions (PRDs,
   roadmaps, backlog lists, DevOps pastes, sprint summaries, and now
   platform product-knowledge overviews - kind 'platform'), kept

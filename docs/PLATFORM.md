@@ -60,9 +60,9 @@ To brief a session on current platform capability:
 
 1. Query product_capabilities for the area in question - summaries
    first, blocks only when the detail is actually needed.
-2. Cross-reference open backlog_items and roadmap_items for the same
-   area_id to see today-vs-planned in one view: product_capabilities
-   is what exists, roadmap_items and backlog_items are what's next.
+2. Cross-reference work_items for the same area_id to see
+   today-vs-planned in one view: product_capabilities is what exists,
+   work_items (active and parked) are what's next.
 3. Fetch the linked work_documents row (via source_document_id) only
    when the distilled summary is not enough - the content column is
    the deep archive, not the first read.

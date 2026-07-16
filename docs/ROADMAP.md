@@ -30,29 +30,31 @@ content in Supabase rather than in this public repo.
 
 ## The roadmap home and its views
 
-modules/roadmap/ renders one home over the same rows via two independent
-controls: a **level** (audience/content) and a **layout** (how it is
-drawn). Nothing is stored per view; each cell derives from an item's own
-fields, so moving or extending an item is a plain field edit. The
-process, taxonomy and audience rules live in docs/ROADMAP-PROCESS.md.
+modules/roadmap/ renders one home over the same `work_items` rows via
+two independent controls: a **level** (altitude/content) and a **layout**
+(how it is drawn). Nothing is stored per view; each cell derives from an
+item's own fields, so moving or extending an item is a plain field edit.
+The process and taxonomy rules live in docs/ROADMAP-PROCESS.md.
 
 Levels:
 
-- **Executive** - the curated set: Delivered work plus `audience='exec'`
-  items and standalone bets. Prints as the C-suite one-pager.
-- **Team** - the full picture (every product item).
-- **Backlog** - the open, product-scope feeder.
-- **Parked** - de-scoped items with the `resolution` reasoning.
+- **Executive** - a theme rollup of active work: one lane per theme, no
+  item titles. Every theme with active work appears automatically, so it
+  is always complete and cannot drift. Prints as the C-suite one-pager.
+- **Team** - the same active work item by item (every product item on
+  the now/next/later horizons, plus delivered when shown).
+- **Backlog** - the full list: active, parked (far-future) and
+  delivered, with the Parked column shown.
 
 Layouts:
 
-- **Timeline** (default) - a continuous **Delivered | Now | Next | Later**
-  axis. Each item's bar spans from `horizon` (its start band) through
-  `end_horizon` (the band it runs through), so a long activity visibly
-  spills across columns. Rows order by start band, then span length
-  (longer runs sink lower), then priority - current work floats to the
-  top. Backlog and parked items carry their own `horizon`/`end_horizon`,
-  so the whole list from idea to delivered sits on one axis.
+- **Timeline** (default) - a continuous **Delivered | Now | Next | Later |
+  Parked** axis. Each item's bar spans from `horizon` (its start band)
+  through `end_horizon` (the band it runs through), so a long activity
+  visibly spills across columns. Rows order by start band, then span
+  length (longer runs sink lower), then priority - current work floats to
+  the top. Team and Executive show up to Later; Backlog adds the Parked
+  column, so the whole list from idea to delivered sits on one axis.
 - **Cascade** - the same work as stacked stage bands; an item that spans
   Now -> Next appears under both the Now and the Next band.
 
@@ -86,19 +88,21 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   (.rm-cat-<key> plus --rm-<key> tokens); a new theme with no token
   renders in a neutral tint until one is added. Items with no theme
   render as standalone cards.
-- roadmap_items: the work. Beyond the columns above, category_id points
-  at a theme, horizon is the START band and end_horizon the band it runs
-  THROUGH (null = start band only), audience ('exec'/'team') sets the
-  altitude it surfaces at, and presentation supplies the Now card's
-  state label:
+- work_items: roadmap and backlog work in one table - every view is a
+  projection of these rows. status 'done' is Delivered; horizon 'someday'
+  or status 'dropped' is Parked (far-future); the rest is Active, banded
+  by horizon. category_id points at a theme (or the item inherits its
+  area's theme), horizon is the START band and end_horizon the band it
+  runs THROUGH (null = start band only), and presentation supplies the
+  Now card's state label:
   - sequenced: a plain item (no state label).
   - current: the single current-focus item.
   - ongoing: runs continuously.
   - wind: wrapping up.
   - bridge: points to the next horizon.
-  The state label shows on Now cards only; Next, Later and delivered
-  items ignore presentation.
-- roadmap_milestones, roadmap_dependencies: named targets and
+  The state label shows on Now cards only; Next, Later, Parked and
+  delivered items ignore presentation.
+- roadmap_milestones, work_item_dependencies: named targets and
   item-to-item ordering, for future timeline and waterfall views.
 
 ## Working the board: Now-Next-Later discipline
@@ -123,31 +127,32 @@ overhaul it without touching the repo. A cold session should:
 
 1. Read the current roadmap in one query, in theme + priority order:
 
-       select rc.label as theme, ri.audience, ri.status, ri.horizon,
-              ri.presentation, ri.priority, ri.title, ri.summary
-       from roadmap_items ri
-       join work_areas wa on wa.id = ri.area_id
-       left join roadmap_categories rc on rc.id = ri.category_id
+       select rc.label as theme, wi.status, wi.horizon, wi.end_horizon,
+              wi.presentation, wi.priority, wi.title, wi.summary
+       from work_items wi
+       join work_areas wa on wa.id = wi.area_id
+       left join roadmap_categories rc on rc.id = wi.category_id
        where wa.scope = 'product'
-       order by rc.sort_order nulls last, ri.priority, ri.sort_order;
+       order by rc.sort_order nulls last, wi.priority, wi.sort_order;
 
-   Then read work_notes (status 'active') and open backlog_items for
-   the areas in play, per docs/WORKFLOW.md, before proposing changes.
+   Then read work_notes (status 'active') for the areas in play, per
+   docs/WORKFLOW.md, before proposing changes.
 
 2. Make changes as ordinary updates. Common edits:
-   - Reprioritise: update roadmap_items set priority = ... . Leave
-     gaps (10, 20, 30) so items can be slotted between.
+   - Reprioritise: update work_items set priority = ... . Leave gaps
+     (10, 20, 30) so items can be slotted between.
    - Mark delivered: set status = 'done'. It moves to the Delivered
      zone on the next page load.
-   - Send to the horizon: set horizon = 'someday'.
+   - Schedule onto the roadmap: set horizon = 'now'/'next'/'later' (it
+     leaves the Parked bucket and appears in Team and Executive).
+   - Park (far-future): set horizon = 'someday', or status = 'dropped'
+     with a resolution sentence.
    - Change the focus item: set presentation = 'current' on the new
      one and 'ongoing'/'sequenced' on the old.
    - Add an item: insert with area_id (a work_areas row), an optional
-     category_id (theme), status, horizon, presentation, audience and
-     priority.
+     category_id (theme), status, horizon, presentation and priority.
    - Make an activity span columns: set end_horizon (e.g. horizon 'now',
      end_horizon 'next' shows it running from Now through Next).
-   - Show/hide from the C-suite: set audience 'exec' or 'team'.
    - Add a theme: insert into roadmap_categories; add matching
      --rm-<key> tokens and a .rm-cat-<key> rule for a bespoke colour,
      otherwise it renders neutral.

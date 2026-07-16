@@ -137,7 +137,7 @@ is likely, checkpoint first.
   pastes, sprint summaries) or decisions from working discussion:
   follow docs/WORKFLOW.md. Raw material and a digest go to
   work_documents, distilled records to work_notes, actionable
-  entries to backlog_items. Database inserts only; the repo does
+  entries to work_items. Database inserts only; the repo does
   not change.
 - Platform knowledge supplied in chat (product overviews, capability
   descriptions, "what it does today" material): follow

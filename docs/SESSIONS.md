@@ -37,6 +37,44 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-16 - Unify roadmap + backlog into one work_items table; align views
+Branch: claude/roadmap-views-alignment-ait350
+Completed:
+- Root cause of Executive "3 of 4": the two Executive layouts filtered
+  differently (Timeline dropped delivered audience='team' items). Fixed
+  structurally, not patched.
+- Collapsed roadmap_items + backlog_items into ONE table, work_items, so
+  every view is a projection of the same rows. Retired the audience flag.
+  Migration 20260716140000_unify_work_items.sql (preserves UUIDs, maps
+  statuses, repoints work_notes -> work_item_id, roadmap_dependencies ->
+  work_item_dependencies, drops old tables, updates dashboard_counts +
+  RLS) applied live: 50 rows (7 delivered, 12 active, 31 parked), old
+  tables gone, advisors clean. Mirrored in schema/30_work.sql,
+  policies.sql, seed.sql, schema/90_dashboard.sql.
+- Views now derive from an item's own fields (done=Delivered; someday or
+  dropped=Parked; rest=Active by horizon). Levels are Executive (theme
+  rollup of active work, always complete - no drift), Team (active items),
+  Backlog (everything incl. a Parked column). Axis extended to
+  Delivered|Now|Next|Later|Parked via --tl-cols. Parked folded into
+  Backlog; the separate Parked level is gone. Files:
+  assets/js/pages/roadmap-views.js (rewritten), roadmap.js (levels + single
+  work_items fetch), roadmap-views.css (variable columns, parked styling),
+  modules/roadmap/index.html (lede).
+- Backlog module (assets/js/pages/backlog.js, modules/backlog/index.html)
+  now lists ALL work_items as the master table, ordered by band then
+  priority, with a Band filter - the same set the roadmap draws as a gantt.
+- registry.js: workItems/workItemDependencies tables; roadmap card is now
+  descriptive, backlog card counts work_items. Tests rewritten
+  (tests/unit/roadmap-views.test.js) incl. the delivered-item regression;
+  full suite green (61 pass). Docs updated (ROADMAP, ROADMAP-PROCESS,
+  ARCHITECTURE, WORKFLOW, PLATFORM, CLAUDE); codemap regenerated.
+Next steps:
+1. Optional: enrich the Executive lane label (currently theme + item count).
+2. Optional: surface work_item_dependencies as an explicit dependency view.
+Open decisions:
+- None outstanding; the four view-model questions were resolved with the
+  owner (exec=themes, backlog=all, parked=far-future in backlog, one table).
+
 ## 2026-07-16 - Roadmap: continuous spanning timeline, layout x level
 Branch: claude/roadmap-refinement-mvc4jx
 Completed:
