@@ -17,7 +17,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/layout.css | 183 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 256 | pages.css - The reference viewer ("swagger") page. Everything |
-| assets/css/roadmap.css | 274 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
+| assets/css/roadmap.css | 268 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
 | assets/css/tokens.css | 293 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
@@ -34,16 +34,16 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 296 | reference.js - The reference viewer ("swagger") for modules/reference/. |
-| assets/js/pages/roadmap.js | 224 | roadmap.js - The roadmap board for modules/roadmap/. |
+| assets/js/pages/roadmap.js | 233 | roadmap.js - The roadmap board for modules/roadmap/. |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
 | dashboard.html | 58 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 229 | Architecture |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 108 | Verification harness and working process |
-| docs/PLATFORM.md | 93 | Platform product-knowledge protocol |
-| docs/ROADMAP.md | 104 | Roadmap |
+| docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
+| docs/ROADMAP.md | 141 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
-| docs/SESSIONS.md | 641 | Session log |
+| docs/SESSIONS.md | 856 | Session log |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/WORKFLOW.md | 95 | Work intake and backlog workflow |
 | index.html | 77 | Sign in - LPio / LaunchPad IO |
@@ -52,7 +52,7 @@ document instead of walking the tree or reading whole files.
 | modules/platform/index.html | 87 | Platform - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 85 | Prototypes - LPio / LaunchPad IO |
 | modules/reference/index.html | 106 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 104 | Roadmap - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 100 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 86 | Users - LPio / LaunchPad IO |
 | package.json | 12 |  |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
@@ -74,20 +74,20 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 57 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 260 | ------------------------------------------------------------------ |
-| supabase/schema/40_platform.sql | 63 | ------------------------------------------------------------------ |
+| supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 32 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 426 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 33 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 102 | tests/checks/structure.test.js - Page structure gates. |
-| tests/checks/style.test.js | 60 | tests/checks/style.test.js - Design-system gates. |
+| tests/checks/style.test.js | 68 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/size-budget.json | 22 |  |
 | tests/unit/platform-render.test.js | 127 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 70 | tests/unit/registry.test.js - Benchmarks for the module registry, |
-| tests/unit/roadmap-render.test.js | 112 | tests/unit/roadmap-render.test.js - Benchmarks for the roadmap |
+| tests/unit/roadmap-render.test.js | 136 | tests/unit/roadmap-render.test.js - Benchmarks for the roadmap |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 
 ## JavaScript symbol index
@@ -170,16 +170,16 @@ document instead of walking the tree or reading whole files.
 | loadSpec() | assets/js/pages/reference.js:130 |
 | fillPicker() | assets/js/pages/reference.js:191 |
 | wireContent() | assets/js/pages/reference.js:220 |
-| zoneOf() | assets/js/pages/roadmap.js:33 |
-| cascade() | assets/js/pages/roadmap.js:41 |
-| catClass() | assets/js/pages/roadmap.js:54 |
-| scopeItems() | assets/js/pages/roadmap.js:59 |
-| byOrder() | assets/js/pages/roadmap.js:64 |
-| tileHtml() | assets/js/pages/roadmap.js:68 |
-| rowHtml() | assets/js/pages/roadmap.js:79 |
-| legendHtml() | assets/js/pages/roadmap.js:105 |
-| boardHtml() | assets/js/pages/roadmap.js:119 |
-| draw() | assets/js/pages/roadmap.js:178 |
+| columnOf() | assets/js/pages/roadmap.js:45 |
+| productItems() | assets/js/pages/roadmap.js:52 |
+| byOrder() | assets/js/pages/roadmap.js:56 |
+| cardHtml() | assets/js/pages/roadmap.js:61 |
+| laneRowHtml() | assets/js/pages/roadmap.js:76 |
+| deliveredStrip() | assets/js/pages/roadmap.js:94 |
+| freshnessHtml() | assets/js/pages/roadmap.js:108 |
+| legendHtml() | assets/js/pages/roadmap.js:118 |
+| boardHtml() | assets/js/pages/roadmap.js:131 |
+| draw() | assets/js/pages/roadmap.js:189 |
 | notice() | assets/js/pages/users.js:15 |
 | roleBadge() | assets/js/pages/users.js:24 |
 | roleCell() | assets/js/pages/users.js:30 |

@@ -44,6 +44,14 @@ test("stylesheets are mobile-first: no max-width media queries", () => {
   assert.deepEqual(offences, [], "Desktop-first media queries found:\n" + offences.join("\n"));
 });
 
+test("roadmap.css uses solid fills, no gradients", () => {
+  // Gradients encoded meaning in an effect that prints badly and fails
+  // in forced-colors mode; the redesigned board uses solid fills only.
+  const content = read("assets/css/roadmap.css");
+  assert.doesNotMatch(content, /-gradient\(/,
+    "roadmap.css must not reintroduce gradient fills (docs/ROADMAP.md)");
+});
+
 test("no emojis in any tracked file", () => {
   const offences = [];
   for (const file of trackedFiles()) {
