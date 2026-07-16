@@ -37,6 +37,41 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-16 - Roadmap redesign: lane x horizon grid, product-only
+Branch: claude/practical-johnson-e17bva
+Completed:
+- Redesigned the roadmap board from the pseudo-timeline "three zone"
+  layout to a birds-eye lane x horizon grid. Rows = roadmap_categories
+  lanes, columns = Now/Next/Later (later absorbs someday). Density
+  decays left to right (Now: summary + state label; Next: clamped
+  one-line summary; Later: title-only chips). Delivered collapses into
+  a native <details> disclosure. Files: assets/js/pages/roadmap.js
+  (232 lines), assets/css/roadmap.css (267), modules/roadmap/index.html.
+- Removed the Product/Portal/All scope toggle; the board hard-filters
+  to product scope (productItems). Removed cascade()/zoneOf()/bars and
+  every gradient fill (solid fills + 1px borders + text labels survive
+  grayscale, mono print and forced-colors).
+- Added freshness line (max updated_at) and a Download PDF action
+  (@page A4 landscape + window.print(), Safari hint). Board widened to
+  96rem on this page only.
+- Tests green (55/55): replaced zoneOf/cascade/scopeItems benchmarks
+  with columnOf/productItems/semantics/freshnessHtml in
+  tests/unit/roadmap-render.test.js; added a CSS gradient guard to
+  tests/checks/style.test.js. docs/ROADMAP.md rewritten, codemap
+  regenerated. Committed and pushed (17d7bc6).
+- Supabase data pass (project zlmkofbkobmhnslfnqsf): deleted the 5
+  portal-scoped roadmap_items; recorded the decision + the removed
+  rows as a work_notes 'decision' row (7f7f0ada). 0 portal / 19
+  product items remain on the roadmap.
+Next steps:
+1. Manual acceptance (Part 4 of the plan): grayscale test, landscape
+   export in Chrome/Firefox/Safari, 200% zoom reflow, headings pass,
+   long-title torture, mobile export - once the branch is deployed.
+2. If approved, open a PR / merge the branch to main (owner's call).
+Open decisions:
+- None. Portal work stays tracked in backlog_items / work_notes; the
+  work_areas.scope column is retained for backlog and platform modules.
+
 ## 2026-07-15 - Platform knowledge: default assumption is shipped, not unverified
 Branch: main
 Completed:
