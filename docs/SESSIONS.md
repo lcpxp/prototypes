@@ -37,6 +37,44 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-16 - Roadmap refinement: two-level taxonomy, four altitudes
+Branch: claude/roadmap-refinement-mvc4jx
+Completed:
+- Reworked the roadmap from a single lane x horizon board into one home
+  read at four altitudes via a level switcher: Executive (C-suite
+  one-pager), Team (Cascade or Timeline layout), Backlog, Parked.
+  Pure builders in assets/js/pages/roadmap-views.js (App.roadmapView),
+  shell in assets/js/pages/roadmap.js, styles in
+  assets/css/roadmap-views.css, page modules/roadmap/index.html.
+- Schema: added roadmap_items.audience (exec/team) and
+  work_areas.category_id (theme -> area). Migration
+  supabase/migrations/20260716000000_roadmap_audience_and_area_theme.sql,
+  mirrored in schema/30_work.sql, applied live. seed.sql updated.
+- Data (Supabase, live): replaced the 6 messy lanes with 13 themes,
+  re-pointed all 19 items off the ops overflow, set audience, expanded
+  Delivered 4 -> 7 buckets (European onboarding marked delivered, a
+  product-offering enablement item added), US Market standalone. The
+  real third-party names for these live only in Supabase, never in git.
+  Created looser-work backlog (Legal, Product
+  resources, referral setup, commissioning, auto-cancel) and 7 parked
+  de-scoped rows with rationale; recorded the restructure as a
+  work_documents discussion + work_notes decisions + role-list note.
+- Tokens: 13 theme colour pairs (light + dark) in tokens.css; .rm-cat-*
+  rules updated. Docs: new docs/ROADMAP-PROCESS.md, docs/ROADMAP.md
+  rewritten for the new home. Tests green (61/61); codemap regenerated.
+In progress:
+- None; the milestone is complete and committed (commit "Add
+  multi-altitude roadmap home") plus the Timeline + docs follow-up.
+Next steps:
+1. Optional: deep-dive Product Resources & Documentation approach.
+2. Optional: capture Commercial & Growth notes before it earns a theme.
+3. Consider wiring roadmap_dependencies for an explicit dependency cascade.
+Open decisions:
+- Whether the Executive view should list all 13 themes (portfolio) or
+  only themes with exec items (current behaviour, cleaner one-pager).
+- Whether Legal / Product Resources / Commercial & Growth graduate from
+  backlog to full themes.
+
 ## 2026-07-16 - Roadmap redesign: lane x horizon grid, product-only
 Branch: claude/practical-johnson-e17bva
 Completed:

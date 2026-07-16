@@ -80,12 +80,19 @@
      roadmap_categories.key; the accent draws the bar and pill, the
      soft tint fills them. Categories without a token here fall back
      to the neutral --muted / --paper pair in components. */
-  --rm-unity: #1f5fa8;    --rm-unity-soft: #e5edf7;
-  --rm-api: #64509b;      --rm-api-soft: #ece8f5;
-  --rm-self: #0b7d70;     --rm-self-soft: #d8f1ec;
-  --rm-insights: #0b7793; --rm-insights-soft: #d7eef6;
-  --rm-ops: #8f6400;      --rm-ops-soft: #f6efdd;
-  --rm-auto: #b0272e;     --rm-auto-soft: #f7e6e7;
+  --rm-core: #0b7d70;         --rm-core-soft: #d8f1ec;
+  --rm-unity: #1f5fa8;        --rm-unity-soft: #e5edf7;
+  --rm-overhaul: #7a4fb5;     --rm-overhaul-soft: #efe8f8;
+  --rm-integrations: #027a99; --rm-integrations-soft: #e0f4fb;
+  --rm-pipeline: #3f7a2e;     --rm-pipeline-soft: #e6f1e0;
+  --rm-partners: #b23a86;     --rm-partners-soft: #f8e7f1;
+  --rm-acquiring: #b5561f;    --rm-acquiring-soft: #faeadd;
+  --rm-apis: #64509b;         --rm-apis-soft: #ece8f5;
+  --rm-insights: #0b7793;     --rm-insights-soft: #d7eef6;
+  --rm-automation: #b0272e;   --rm-automation-soft: #f7e6e7;
+  --rm-sales: #9a3c66;        --rm-sales-soft: #f7e8ee;
+  --rm-admin: #8f6400;        --rm-admin-soft: #f6efdd;
+  --rm-products: #6f7a1f;     --rm-products-soft: #f0f2df;
 
   /* HTTP method badge colours (convention-led, muted tints; a
      coloured marker dot beside the label is added in components.css) */
@@ -203,12 +210,19 @@
   --violet: #c79bff;
   --violet-soft: #2b1f45;
 
-  --rm-unity: #7fabe6;    --rm-unity-soft: #182740;
-  --rm-api: #ab97e0;      --rm-api-soft: #261f3d;
-  --rm-self: #4db3a7;     --rm-self-soft: #123230;
-  --rm-insights: #5bb6cf; --rm-insights-soft: #102b33;
-  --rm-ops: #d3a648;      --rm-ops-soft: #332a16;
-  --rm-auto: #e2727a;     --rm-auto-soft: #391f22;
+  --rm-core: #4db3a7;         --rm-core-soft: #123230;
+  --rm-unity: #7fabe6;        --rm-unity-soft: #182740;
+  --rm-overhaul: #b79ae0;     --rm-overhaul-soft: #241a3a;
+  --rm-integrations: #58c7e0; --rm-integrations-soft: #0f2a31;
+  --rm-pipeline: #7cc06a;     --rm-pipeline-soft: #16240f;
+  --rm-partners: #e58bc0;     --rm-partners-soft: #331026;
+  --rm-acquiring: #e8a06a;    --rm-acquiring-soft: #331d0f;
+  --rm-apis: #ab97e0;         --rm-apis-soft: #261f3d;
+  --rm-insights: #5bb6cf;     --rm-insights-soft: #102b33;
+  --rm-automation: #e2727a;   --rm-automation-soft: #391f22;
+  --rm-sales: #e389ab;        --rm-sales-soft: #33121f;
+  --rm-admin: #d3a648;        --rm-admin-soft: #332a16;
+  --rm-products: #c3ce6f;     --rm-products-soft: #242812;
 
   --m-get: #4db3a7;
   --m-get-bg: #123230;

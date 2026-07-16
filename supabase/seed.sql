@@ -302,9 +302,12 @@ values (
 -- The board derives its three zones from these fields: status 'done'
 -- is Delivered, horizon 'someday' is Horizon, everything else is In
 -- focus. presentation shapes how an active item reads on the track.
+-- audience places an item on the altitude axis: 'exec' also surfaces
+-- in the curated C-suite Executive view, 'team' shows in the full
+-- developer view only.
 insert into public.roadmap_items
   (area_id, category_id, title, summary, status, horizon, presentation,
-   priority, effort, impact, tags, sort_order)
+   audience, priority, effort, impact, tags, sort_order)
 values
 (
   '22222222-2222-2222-2222-222222222222',
@@ -314,6 +317,7 @@ values
   'in_progress',
   'now',
   'current',
+  'exec',
   10,
   'medium',
   'high',
@@ -328,6 +332,7 @@ values
   'done',
   'now',
   'sequenced',
+  'exec',
   20,
   'medium',
   'high',
@@ -342,6 +347,7 @@ values
   'idea',
   'someday',
   'sequenced',
+  'team',
   100,
   null,
   null,

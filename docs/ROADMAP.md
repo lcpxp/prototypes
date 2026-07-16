@@ -28,51 +28,54 @@ in the database (no code change, no deploy).
 All of it remotely hosted and securely accessible from anywhere, with
 content in Supabase rather than in this public repo.
 
-## The roadmap board and its data
+## The roadmap home and its views
 
-modules/roadmap/ renders a lane x horizon grid from the roadmap
-tables. The grid is not stored; every cell derives from an item's own
-fields, so moving an item is a plain field edit:
+modules/roadmap/ renders one home read at four altitudes via a level
+switcher, all over the same rows. Nothing is stored per view; each cell
+derives from an item's own fields, so moving an item is a plain field
+edit. The process, taxonomy and audience rules live in
+docs/ROADMAP-PROCESS.md.
 
-- Rows are the roadmap_categories lanes (one per theme).
-- Columns are the horizon: Now, Next and Later, where Later absorbs
-  both horizon 'later' and horizon 'someday'.
-- Density decays left to right: Now cards carry a summary and a state
-  label, Next cards a clamped one-line summary, Later items are
-  title-only chips.
-- Delivered (roadmap_items.status = 'done') leaves the grid and
-  collapses into a "Delivered - N" disclosure below it; it prints
-  expanded. History earns a count, not board real estate.
-- Empty lane x column cells render blank; the whitespace is itself
-  information (nothing planned there).
+- **Executive** - the curated C-suite one-pager: the Delivered buckets
+  (`status='done'`), the themes that have in-focus `audience='exec'`
+  items, and standalone bets (items with no theme). It prints.
+- **Team** - the full picture, in one of two layouts: **Cascade** (stage
+  bands Delivered -> Now -> Next -> Later, each theme a weighted block)
+  or **Timeline** (priority-ranked bars across Now/Next/Later, so
+  concurrent work overlaps visibly).
+- **Backlog** - the open, product-scope backlog grouped by theme.
+- **Parked** - de-scoped backlog items with the `resolution` reasoning.
 
-The board renders product scope only. Portal work (the hub's own
-development, work_areas.scope = 'portal') is tracked in the backlog and
-does not appear on the roadmap. There is no scope toggle; the page
-hard-filters to product.
+The selected level (and Team layout) persists in the URL hash
+(`#team/timeline`) and localStorage, so a shared link opens the same
+view. The roadmap renders product scope only; portal work
+(`work_areas.scope='portal'`) stays in the backlog module.
 
-Download PDF (or Ctrl+P) prints a condensed A4 landscape one-pager:
-summaries drop, cards become one-line entries, lane colour and the
-legend survive. Chrome, Edge and Firefox preselect landscape; Safari
-ignores the size hint, so a print-only line reminds the reader to pick
-landscape by hand. A "Data as of <date>" line (max updated_at across
-items) dates every export.
+Download PDF (or Ctrl+P) prints the Executive view as a condensed A4
+landscape one-pager: theme descriptions drop, tiles tighten, theme
+colour survives. A "Data as of <date>" line (max updated_at) dates every
+export. Chrome, Edge and Firefox preselect landscape; Safari ignores the
+size hint, so a print-only line reminds the reader to pick it by hand.
 
 Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
 
 - work_areas: the shared taxonomy. scope 'product' is the LaunchPad
-  product roadmap; scope 'portal' is the hub's own development. The
-  roadmap reads product only; the scope column still serves the
-  backlog and platform modules.
-- roadmap_categories: the themed colour lanes (Unity, API,
-  Self-Service, Insights, Operational, Auto-Approval). key, label,
-  description, sort_order. Colour per key lives in tokens.css
-  (.rm-cat-<key> plus --rm-<key> tokens); a new category with no
-  token renders in a neutral tint until one is added. Items with no
-  category collapse into a final "General" lane.
-- roadmap_items: the work. Beyond the columns above, category_id
-  points at a lane, horizon places the item in a column, and
-  presentation supplies the Now card's state label:
+  product roadmap; scope 'portal' is the hub's own development.
+  category_id nests an area under a theme (the two-level taxonomy). The
+  roadmap reads product only; the scope column still serves the backlog
+  and platform modules.
+- roadmap_categories: the 13 themes (Core LaunchPad, Unity, Overhaul,
+  Integrations, Screening/Contracting/Fulfilment, Partners & PFAC,
+  Acquiring, APIs, Insights & Reporting, Automation & Approvals,
+  Sales & Commercial, Admin & Operations, Products & Pricing). key,
+  label, description, sort_order. Colour per key lives in tokens.css
+  (.rm-cat-<key> plus --rm-<key> tokens); a new theme with no token
+  renders in a neutral tint until one is added. Items with no theme
+  render as standalone cards.
+- roadmap_items: the work. Beyond the columns above, category_id points
+  at a theme, horizon places the item in a stage band, audience
+  ('exec'/'team') sets the altitude it surfaces at, and presentation
+  supplies the Now card's state label:
   - sequenced: a plain item (no state label).
   - current: the single current-focus item.
   - ongoing: runs continuously.
@@ -103,14 +106,15 @@ The point of holding the roadmap in Supabase is that any Claude chat
 with Supabase access (project ref zlmkofbkobmhnslfnqsf) can read and
 overhaul it without touching the repo. A cold session should:
 
-1. Read the current roadmap in one query, in board order:
+1. Read the current roadmap in one query, in theme + priority order:
 
-       select wa.scope, rc.key as lane, ri.presentation,
-              ri.status, ri.horizon, ri.priority, ri.title, ri.summary
+       select rc.label as theme, ri.audience, ri.status, ri.horizon,
+              ri.presentation, ri.priority, ri.title, ri.summary
        from roadmap_items ri
        join work_areas wa on wa.id = ri.area_id
        left join roadmap_categories rc on rc.id = ri.category_id
-       order by wa.scope, ri.priority, ri.sort_order;
+       where wa.scope = 'product'
+       order by rc.sort_order nulls last, ri.priority, ri.sort_order;
 
    Then read work_notes (status 'active') and open backlog_items for
    the areas in play, per docs/WORKFLOW.md, before proposing changes.
@@ -124,8 +128,10 @@ overhaul it without touching the repo. A cold session should:
    - Change the focus item: set presentation = 'current' on the new
      one and 'ongoing'/'sequenced' on the old.
    - Add an item: insert with area_id (a work_areas row), an optional
-     category_id, status, horizon, presentation and priority.
-   - Add a lane: insert into roadmap_categories; add matching
+     category_id (theme), status, horizon, presentation, audience and
+     priority.
+   - Show/hide from the C-suite: set audience 'exec' or 'team'.
+   - Add a theme: insert into roadmap_categories; add matching
      --rm-<key> tokens and a .rm-cat-<key> rule for a bespoke colour,
      otherwise it renders neutral.
 

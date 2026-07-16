@@ -17,6 +17,12 @@ create table if not exists public.work_areas (
   title text not null,
   description text,
   scope text not null default 'product' check (scope in ('product', 'portal')),
+  -- The theme this area sits under, making the two-level taxonomy
+  -- (theme -> area) explicit. Nullable: an unthemed area is valid and
+  -- renders under a General group. A roadmap item's own category_id
+  -- stays the authoritative placement for the board. The foreign key
+  -- is added below, once roadmap_categories exists.
+  category_id uuid,
   sort_order integer not null default 100,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -64,6 +70,19 @@ create trigger roadmap_categories_updated_at
   before update on public.roadmap_categories
   for each row execute function public.set_updated_at();
 
+-- work_areas.category_id points at a theme; the constraint is declared
+-- here (not inline above) because roadmap_categories is defined after
+-- work_areas, so a fresh top-to-bottom run would forward-reference it.
+alter table public.work_areas
+  drop constraint if exists work_areas_category_id_fkey;
+alter table public.work_areas
+  add constraint work_areas_category_id_fkey
+  foreign key (category_id) references public.roadmap_categories (id)
+  on delete set null;
+
+create index if not exists work_areas_category_idx
+  on public.work_areas (category_id);
+
 create table if not exists public.roadmap_milestones (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -97,6 +116,11 @@ create table if not exists public.roadmap_items (
   -- horizon. Delivered and horizon tiles ignore it.
   presentation text not null default 'sequenced'
     check (presentation in ('sequenced', 'current', 'ongoing', 'wind', 'bridge')),
+  -- Which altitude the item surfaces at. 'team' (default) shows in the
+  -- full developer view; 'exec' also surfaces in the curated C-suite
+  -- Executive view. One dataset, filtered - never a second copy.
+  audience text not null default 'team'
+    check (audience in ('exec', 'team')),
   priority integer not null default 100,
   effort text check (effort in ('small', 'medium', 'large')),
   impact text check (impact in ('low', 'medium', 'high')),
@@ -114,6 +138,8 @@ create index if not exists roadmap_items_milestone_idx
   on public.roadmap_items (milestone_id);
 create index if not exists roadmap_items_category_idx
   on public.roadmap_items (category_id);
+create index if not exists roadmap_items_audience_idx
+  on public.roadmap_items (audience, priority, sort_order);
 
 drop trigger if exists roadmap_items_updated_at on public.roadmap_items;
 create trigger roadmap_items_updated_at

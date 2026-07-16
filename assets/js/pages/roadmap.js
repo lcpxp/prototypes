@@ -1,22 +1,16 @@
 // ------------------------------------------------------------------
-// roadmap.js - The roadmap board for modules/roadmap/.
-// A read-only, print-ready render of the LaunchPad product roadmap
-// tables in Supabase, laid out as a lane x horizon grid:
-//   Rows    = roadmap_categories (themed colour lanes)
-//   Columns = horizon: Now | Next | Later (later merges 'someday')
-//   Delivered items (status 'done') collapse into a disclosure below.
-// Density decays left to right: Now cards carry a summary and state
-// label, Next cards a clamped one-line summary, Later items are
-// title-only chips. The roadmap renders product scope only; portal
-// work is tracked in the backlog, not here.
-//
-// Editing the roadmap (reprioritising, marking delivered, adding
-// items or categories, moving between horizons) is a database change,
-// made in the Supabase dashboard or by an AI assistant with Supabase
-// access - see docs/ROADMAP.md. This page always renders live state.
-//
-// The pure HTML builders hang off App.roadmapView so they can be
-// unit-tested without a DOM (tests/unit/roadmap-render.test.js).
+// roadmap.js - The roadmap home for modules/roadmap/. A read-only,
+// print-ready render of the LaunchPad roadmap tables in Supabase, with
+// a level switcher over one dataset:
+//   Executive  the curated C-suite one-pager (default; prints)
+//   Team       the full picture, in a Cascade or Timeline layout
+//   Backlog    the open feeder, grouped by theme
+//   Parked     de-scoped items with the reasoning kept
+// The pure HTML builders live in roadmap-views.js (App.roadmapView) so
+// they unit-test without a DOM. This file is the shell: fetch, switch,
+// route, print. Editing the roadmap is a database change (see
+// docs/ROADMAP.md and docs/ROADMAP-PROCESS.md); the page renders live
+// table state.
 // ------------------------------------------------------------------
 
 (function () {
@@ -24,196 +18,147 @@
 
   window.App = window.App || {};
 
-  var PRESENTATION = {
-    current: "Current focus",
-    ongoing: "Ongoing",
-    wind: "Wrapping up",
-    bridge: "Next horizon",
-    sequenced: "",
-  };
-
-  // The three live horizon columns. 'later' absorbs both 'later' and
-  // 'someday' so the old side zone folds into the grid.
-  var COLUMNS = [
-    { key: "now", label: "Now", horizons: ["now"] },
-    { key: "next", label: "Next", horizons: ["next"] },
-    { key: "later", label: "Later", horizons: ["later", "someday"] },
+  var LEVELS = [
+    { key: "exec", label: "Executive", build: "execHtml" },
+    { key: "team", label: "Team", build: null },
+    { key: "backlog", label: "Backlog", build: "backlogHtml" },
+    { key: "parked", label: "Parked", build: "parkedHtml" },
   ];
+  // Team's two layouts. Cascade is the default reading; Timeline ranks
+  // by priority and shows overlap.
+  var LAYOUTS = [
+    { key: "cascade", label: "Cascade", build: "cascadeHtml" },
+    { key: "timeline", label: "Timeline", build: "timelineHtml" },
+  ];
+  var LEVEL_STORE = "roadmap-level";
+  var LAYOUT_STORE = "roadmap-layout";
 
-  // Which grid column an item sits in, derived from its own fields so
-  // moving an item is a plain data edit (see docs/ROADMAP.md).
-  function columnOf(item) {
-    if (item.status === "done") return "delivered";
-    if (item.horizon === "next") return "next";
-    if (item.horizon === "now") return "now";
-    return "later";
+  var data = { categories: [], areas: [], items: [], backlog: [] };
+  var current = "exec";
+  var layout = "cascade";
+
+  function find(list, key) {
+    return list.filter(function (x) { return x.key === key; })[0];
   }
 
-  function productItems(items, scopeByArea) {
-    return items.filter(function (i) { return scopeByArea[i.area_id] === "product"; });
+  // The hash is level, plus /layout for Team: "#team/timeline".
+  function readState() {
+    var parts = (window.location.hash || "").replace(/^#/, "").split("/");
+    current = find(LEVELS, parts[0]) ? parts[0] : storedLevel();
+    layout = find(LAYOUTS, parts[1]) ? parts[1] : storedLayout();
   }
 
-  function byOrder(a, b) {
-    return (a.priority - b.priority) || (a.sort_order - b.sort_order);
+  function storedLevel() {
+    var v = null;
+    try { v = window.localStorage.getItem(LEVEL_STORE); } catch (e) { v = null; }
+    return find(LEVELS, v) ? v : "exec";
   }
 
-  // One item, rendered at the density its column calls for.
-  function cardHtml(item, col) {
-    if (col === "later") {
-      return '<li class="rm-chip">' + App.escape(item.title) + "</li>";
-    }
-    var label = col === "now" ? (PRESENTATION[item.presentation] || "") : "";
-    return (
-      '<li class="rm-card rm-card--' + col + '">' +
-      (label ? '<p class="rm-state rm-state--' + App.escape(item.presentation) +
-        '">' + App.escape(label) + "</p>" : "") +
-      "<h3>" + App.escape(item.title) + "</h3>" +
-      (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") +
-      "</li>"
-    );
+  function storedLayout() {
+    var v = null;
+    try { v = window.localStorage.getItem(LAYOUT_STORE); } catch (e) { v = null; }
+    return find(LAYOUTS, v) ? v : "cascade";
   }
 
-  function laneRowHtml(cat, itemsByCol) {
-    var cc = cat ? " rm-cat-" + App.escape(cat.key) : "";
-    var laneName = cat ? cat.label : "General";
-    var cells = COLUMNS.map(function (c) {
-      var list = itemsByCol[c.key] || [];
-      if (!list.length) {
-        return '<div class="rm-cell"><span class="rm-cell-empty" aria-hidden="true"></span></div>';
-      }
-      // A real list: screen readers announce item counts; the aria-label
-      // carries lane + column so grid position is never the only cue.
-      return '<ul class="rm-cell rm-cell--' + c.key + '" aria-label="' +
-        App.escape(laneName + " - " + c.label) + '">' +
-        list.map(function (i) { return cardHtml(i, c.key); }).join("") + "</ul>";
+  function hashFor() {
+    return current === "team" ? current + "/" + layout : current;
+  }
+
+  function builderName() {
+    return current === "team" ? find(LAYOUTS, layout).build : find(LEVELS, current).build;
+  }
+
+  function render(host) {
+    host.innerHTML = App.roadmapView[builderName()](data);
+  }
+
+  function tabs(list, activeKey, cls) {
+    return list.map(function (x) {
+      var on = x.key === activeKey;
+      return '<button class="' + cls + '" type="button" role="tab" data-key="' +
+        x.key + '" aria-selected="' + on + '"' + (on ? ' aria-current="true"' : "") +
+        ">" + App.escape(x.label) + "</button>";
     }).join("");
-    return '<div class="rm-lane' + cc + '">' +
-      '<h2 class="rm-lane-label">' + App.escape(laneName) + "</h2>" + cells + "</div>";
   }
 
-  function deliveredStrip(delivered) {
-    if (!delivered.length) return "";
-    // Native disclosure: accessible with zero JS, find-in-page still
-    // works in Chromium, and collapsing history keeps the board
-    // birds-eye. Keep the native marker - screen readers use it to
-    // announce the open/closed state.
-    return '<details class="rm-delivered">' +
-      '<summary>Delivered - ' + delivered.length + "</summary>" +
-      '<ul class="rm-delivered-list" aria-label="Delivered items">' +
-      delivered.map(function (i) {
-        return '<li class="rm-chip rm-chip--done">' + App.escape(i.title) + "</li>";
-      }).join("") + "</ul></details>";
-  }
-
-  function freshnessHtml(items) {
-    var latest = "";
-    items.forEach(function (i) {
-      if (i.updated_at && i.updated_at > latest) latest = i.updated_at;
+  function renderControls(nav, layoutNav, host) {
+    nav.innerHTML = tabs(LEVELS, current, "rmv-switch-btn");
+    nav.querySelectorAll("button[data-key]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        setLevel(button.getAttribute("data-key"), nav, layoutNav, host);
+      });
     });
-    if (!latest) return "";
-    return '<p class="rm-updated">Data as of ' +
-      App.escape(latest.slice(0, 10)) + "</p>";
+    layoutNav.hidden = current !== "team";
+    layoutNav.innerHTML = current === "team"
+      ? tabs(LAYOUTS, layout, "rmv-switch-btn") : "";
+    layoutNav.querySelectorAll("button[data-key]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        setLayout(button.getAttribute("data-key"), nav, layoutNav, host);
+      });
+    });
   }
 
-  function legendHtml(categories) {
-    if (!categories.length) return "";
-    var lanes = categories.map(function (c) {
-      return '<span class="rm-lg"><span class="rm-dot rm-cat-' + App.escape(c.key) +
-        '"></span>' + App.escape(c.label) + "</span>";
-    }).join("");
-    return '<div class="rm-legend">' + lanes +
-      '<span class="rm-lg"><span class="rm-dot rm-dot--done"></span>Delivered</span>' +
-      "</div>";
-  }
-
-  // The whole board as a string. data = {categories, areas, items}.
-  // The roadmap is product-only; portal-scoped items are filtered out.
-  function boardHtml(data) {
-    var catById = {};
-    (data.categories || []).forEach(function (c) { catById[c.id] = c; });
-    var scopeByArea = {};
-    (data.areas || []).forEach(function (a) { scopeByArea[a.id] = a.scope; });
-
-    var items = productItems(data.items || [], scopeByArea);
-    if (!items.length) {
-      return '<p class="notice">No roadmap items yet. Items are rows in the ' +
-        "roadmap_items table in Supabase (see docs/ROADMAP.md).</p>";
+  function apply(nav, layoutNav, host) {
+    if (window.location.hash.replace(/^#/, "") !== hashFor()) {
+      window.location.hash = hashFor();
     }
-
-    var delivered = items.filter(function (i) { return columnOf(i) === "delivered"; })
-      .sort(byOrder);
-    var live = items.filter(function (i) { return columnOf(i) !== "delivered"; });
-
-    // Group: category -> column -> ordered items.
-    var lanes = (data.categories || []).slice()
-      .sort(function (a, b) { return a.sort_order - b.sort_order; });
-    var grouped = {};
-    live.forEach(function (i) {
-      var lane = i.category_id && catById[i.category_id] ? i.category_id : "none";
-      (grouped[lane] = grouped[lane] || {})[columnOf(i)] =
-        (grouped[lane][columnOf(i)] || []).concat(i);
-    });
-    Object.keys(grouped).forEach(function (k) {
-      Object.keys(grouped[k]).forEach(function (c) { grouped[k][c].sort(byOrder); });
-    });
-
-    var head = '<div class="rm-lane rm-lane--head">' +
-      '<div class="rm-lane-label" aria-hidden="true"></div>' +
-      COLUMNS.map(function (c) {
-        return '<div class="rm-col-head">' + c.label + "</div>";
-      }).join("") + "</div>";
-
-    var rows = lanes.filter(function (c) { return grouped[c.id]; })
-      .map(function (c) { return laneRowHtml(c, grouped[c.id]); });
-    if (grouped.none) rows.push(laneRowHtml(null, grouped.none));
-
-    return '<div class="rm-grid">' + head + rows.join("") + "</div>" +
-      deliveredStrip(delivered) + legendHtml(data.categories || []) +
-      freshnessHtml(items);
+    renderControls(nav, layoutNav, host);
+    render(host);
   }
 
-  App.roadmapView = {
-    columnOf: columnOf,
-    productItems: productItems,
-    freshnessHtml: freshnessHtml,
-    boardHtml: boardHtml,
-    presentationLabel: function (p) { return PRESENTATION[p] || ""; },
-  };
+  function setLevel(key, nav, layoutNav, host) {
+    if (!find(LEVELS, key) || key === current) return;
+    current = key;
+    try { window.localStorage.setItem(LEVEL_STORE, key); } catch (e) { /* ignore */ }
+    apply(nav, layoutNav, host);
+  }
 
-  // --- DOM wiring ---------------------------------------------------
+  function setLayout(key, nav, layoutNav, host) {
+    if (!find(LAYOUTS, key) || key === layout) return;
+    layout = key;
+    try { window.localStorage.setItem(LAYOUT_STORE, key); } catch (e) { /* ignore */ }
+    apply(nav, layoutNav, host);
+  }
 
   App.onAuthed(async function () {
     var host = document.getElementById("roadmap-content");
-    var data = { categories: [], areas: [], items: [] };
-
-    function draw() {
-      host.innerHTML = boardHtml(data);
-    }
+    var nav = document.getElementById("roadmap-switch");
+    var layoutNav = document.getElementById("roadmap-layout");
+    readState();
 
     var dlBtn = document.getElementById("roadmap-download");
     if (dlBtn) dlBtn.addEventListener("click", function () { window.print(); });
 
-    // The one legitimate print-event use: a closed <details> renders no
-    // content on paper, so expand Delivered before any print (button or
-    // Ctrl+P). Opening is idempotent, so the event's known quirks
-    // (multiple fires, early fires) are harmless here; never re-close.
+    // A closed <details> renders no content on paper; expand any before
+    // printing. Opening is idempotent, so beforeprint's known quirks are
+    // harmless; never re-close.
     window.addEventListener("beforeprint", function () {
-      document.querySelectorAll("details.rm-delivered").forEach(function (d) {
-        d.open = true;
-      });
+      document.querySelectorAll("details").forEach(function (d) { d.open = true; });
     });
 
-    // The three lists are independent, so fetch them in parallel.
+    // Back/forward or an edited hash re-syncs level and layout.
+    window.addEventListener("hashchange", function () {
+      var before = hashFor();
+      readState();
+      if (hashFor() !== before) { renderControls(nav, layoutNav, host); render(host); }
+    });
+
+    // The four lists are independent, so fetch them in parallel.
     var results = await Promise.all([
       App.db.from(App.registry.tables.roadmapCategories)
         .select("id, key, label, description, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workAreas)
-        .select("id, key, title, scope, sort_order")
+        .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.roadmapItems)
         .select("id, area_id, category_id, title, summary, status, horizon, " +
-          "presentation, priority, sort_order, updated_at")
+          "presentation, audience, priority, effort, impact, sort_order, updated_at, tags")
+        .order("priority", { ascending: true })
+        .order("sort_order", { ascending: true }),
+      App.db.from(App.registry.tables.backlogItems)
+        .select("id, area_id, type, title, summary, status, priority, " +
+          "resolution, sort_order, tags")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
     ]);
@@ -227,6 +172,9 @@
     data.categories = results[0].error ? [] : results[0].data || [];
     data.areas = results[1].error ? [] : results[1].data || [];
     data.items = itemsResult.data || [];
-    draw();
+    data.backlog = results[3].error ? [] : results[3].data || [];
+
+    renderControls(nav, layoutNav, host);
+    render(host);
   });
 })();

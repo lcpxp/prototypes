@@ -1,0 +1,213 @@
+/* ------------------------------------------------------------------
+   roadmap-views.css - The roadmap home's level views (Executive,
+   Team cascade, Backlog, Parked) and the level switcher. Loaded after
+   roadmap.css, which still owns the shared card/chip/legend/print
+   primitives and the .rm-cat-* theme accents. Mobile-first; all colour
+   from tokens.css; solid fills only.
+------------------------------------------------------------------- */
+
+/* Level switcher: a segmented control of tabs. */
+.rmv-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  padding: var(--s-1);
+  background: var(--alt-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.rmv-switch-btn {
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: var(--s-1) var(--s-3);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.rmv-switch-btn:hover { color: var(--ink); background: var(--surface); }
+
+.rmv-switch-btn[aria-selected="true"] {
+  color: var(--on-accent);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.rmv-switch-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Band heading: the stage marker each cascade section opens with. */
+.rmv-band { margin-block-end: var(--s-6); }
+
+.rmv-band-head {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-block-end: var(--s-2);
+  border-block-end: 1px solid var(--line);
+  margin-block: var(--s-5) var(--s-4);
+}
+
+.rmv-band-head--delivered { color: var(--ok); }
+.rmv-band-head--now { color: var(--accent); }
+.rmv-band-head--later { color: var(--faint); }
+
+/* Themes tile responsively; a small theme still fills a whole cell, so
+   it reads as substantial as any other. */
+.rmv-themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: var(--s-4);
+  align-items: start;
+}
+
+.rmv-theme {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--rm-a, var(--line-strong));
+  border-radius: var(--radius);
+  padding: var(--s-4);
+}
+
+.rmv-theme > .rm-lane-label { border-inline-start: none; padding-inline-start: 0; }
+
+.rmv-theme-desc {
+  font-size: var(--text-xs);
+  color: var(--faint);
+  margin-block: var(--s-2) var(--s-3);
+}
+
+/* Cards within a theme stack vertically. */
+.rmv-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  list-style: none;
+  margin: var(--s-3) 0 0;
+  padding: 0;
+}
+
+/* Delivered buckets: the Executive view's shipped groups, tiling like
+   themes so the seven read as a portfolio. */
+.rmv-delivered {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: var(--s-3);
+  margin-block-start: var(--s-2);
+}
+
+.rmv-bucket { border-inline-start-width: 3px; }
+
+.rmv-card-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--rm-a, var(--muted));
+  margin: 0 0 var(--s-1);
+}
+
+/* The Team layout sub-toggle reads as a lighter companion control. */
+.rmv-switch--sub { background: transparent; border-color: var(--line); }
+
+/* Team timeline: priority-ranked rows, each a bar in its horizon
+   column(s). Concurrent work stacks visibly in the same column. */
+.rmv-tl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  overflow-x: auto;
+}
+
+.rmv-tl-head,
+.rmv-tl-row {
+  display: grid;
+  grid-template-columns: 11rem repeat(3, minmax(6rem, 1fr));
+  gap: var(--s-2);
+  align-items: center;
+  min-inline-size: 32rem;
+}
+
+.rmv-tl-head {
+  position: sticky;
+  inset-block-start: 0;
+  padding-block-end: var(--s-1);
+  border-block-end: 1px solid var(--line);
+  margin-block-end: var(--s-1);
+  background: var(--paper);
+}
+
+.rmv-tl-col {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--faint);
+  text-align: center;
+}
+
+.rmv-tl-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rmv-tl-bar {
+  background: var(--rm-s, var(--alt-surface));
+  border-inline-start: 3px solid var(--rm-a, var(--line-strong));
+  border-radius: var(--radius-sm);
+  padding: var(--s-1) var(--s-2);
+  font-size: var(--text-xs);
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Backlog / Parked meta and the parked reasoning. */
+.rmv-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  align-items: center;
+  margin-block: var(--s-2) 0;
+}
+
+.rmv-reason {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  border-inline-start: 2px solid var(--line-strong);
+  padding-inline-start: var(--s-2);
+  margin-block: var(--s-2) 0;
+}
+
+/* Print: the Executive view is the C-suite one-pager. The switcher and
+   toolbar are already hidden by roadmap.css; tighten the tiles and drop
+   theme descriptions so it condenses onto the page. */
+@media print {
+  .rmv-band { margin-block-end: 8pt; }
+  .rmv-band-head { font-size: 8pt; margin-block: 6pt 4pt; padding-block-end: 2pt; }
+  .rmv-themes, .rmv-delivered { gap: 6pt; }
+  .rmv-theme { padding: 4pt 6pt; break-inside: avoid; }
+  .rmv-theme-desc { display: none; }
+  .rmv-cards { gap: 3pt; margin-block-start: 4pt; }
+  .rmv-card-eyebrow { font-size: 7pt; }
+  .rmv-theme,
+  .rmv-bucket {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
