@@ -1,9 +1,9 @@
 /* ------------------------------------------------------------------
-   roadmap-views.css - The roadmap home's level views (Executive,
-   Team cascade, Backlog, Parked) and the level switcher. Loaded after
-   roadmap.css, which still owns the shared card/chip/legend/print
-   primitives and the .rm-cat-* theme accents. Mobile-first; all colour
-   from tokens.css; solid fills only.
+   roadmap-views.css - The roadmap home's level views (Executive theme
+   rollup, Team, Backlog) in Timeline and Cascade layouts, plus the
+   level switcher. Loaded after roadmap.css, which still owns the shared
+   card/chip/legend/print primitives and the .rm-cat-* theme accents.
+   Mobile-first; all colour from tokens.css; solid fills only.
 ------------------------------------------------------------------- */
 
 /* Level switcher: a segmented control of tabs. */
@@ -61,6 +61,7 @@
 .rmv-band-head--delivered { color: var(--ok); }
 .rmv-band-head--now { color: var(--accent); }
 .rmv-band-head--later { color: var(--faint); }
+.rmv-band-head--parked { color: var(--faint); }
 
 /* Themes tile responsively; a small theme still fills a whole cell, so
    it reads as substantial as any other. */
@@ -129,20 +130,17 @@
   overflow-x: auto;
 }
 
+/* The visible data-column count (--tl-cols) is set per view on .rmv-tl:
+   Team/Executive show up to Later; Backlog adds the Parked column;
+   hiding Delivered drops one. The grid follows it so every view lines
+   up on one axis. */
 .rmv-tl-head,
 .rmv-tl-row {
   display: grid;
-  grid-template-columns: 11rem repeat(4, minmax(6rem, 1fr));
+  grid-template-columns: 11rem repeat(var(--tl-cols, 4), minmax(6rem, 1fr));
   gap: var(--s-2);
   align-items: center;
-  min-inline-size: 44rem;
-}
-
-/* Delivered hidden: the axis drops to Now | Next | Later. */
-.rmv-tl--nodelivered .rmv-tl-head,
-.rmv-tl--nodelivered .rmv-tl-row {
-  grid-template-columns: 11rem repeat(3, minmax(6rem, 1fr));
-  min-inline-size: 36rem;
+  min-inline-size: calc(11rem + var(--tl-cols, 4) * 8rem);
 }
 
 .rmv-tl-head {
@@ -188,6 +186,13 @@
 .rmv-tl-bar--done {
   background: var(--surface);
   border-inline-start-color: var(--ok);
+  color: var(--muted);
+}
+
+/* Parked bars read as far-future: quiet fill, dashed edge. */
+.rmv-tl-bar--parked {
+  background: var(--alt-surface);
+  border-inline-start-style: dashed;
   color: var(--muted);
 }
 

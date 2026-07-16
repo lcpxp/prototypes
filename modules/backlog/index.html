@@ -62,11 +62,13 @@
     <div class="page-head">
       <span class="eyebrow">Backlog</span>
       <h1>Work items</h1>
-      <p class="lede">The rolling list of considerations, features,
-        functionality, bugs and improvements across every work area.
-        Nothing is deleted: closed items keep their resolution, so the
-        list is also the historic record. Items, their source documents
-        and distilled notes live in Supabase (see docs/WORKFLOW.md).</p>
+      <p class="lede">The full prioritised list of work: active, parked
+        and delivered, across every area. It is the same set the roadmap
+        home draws as a gantt - here it is the flat table, ordered Now
+        through Parked. Nothing is deleted: closed items keep their
+        resolution, so the list is also the historic record. Items,
+        their source documents and distilled notes live in Supabase
+        (see docs/WORKFLOW.md).</p>
     </div>
 
     <div class="spec-picker">
@@ -74,10 +76,12 @@
       <select id="filter-area"><option value="">All areas</option></select>
       <label class="eyebrow" for="filter-type">Type</label>
       <select id="filter-type"><option value="">All types</option></select>
-      <label class="eyebrow" for="filter-status">Status</label>
-      <select id="filter-status">
-        <option value="open-group">Open items</option>
-        <option value="">Everything</option>
+      <label class="eyebrow" for="filter-band">Band</label>
+      <select id="filter-band">
+        <option value="">All bands</option>
+        <option value="active">Active</option>
+        <option value="parked">Parked</option>
+        <option value="delivered">Delivered</option>
       </select>
     </div>
 

@@ -4,18 +4,20 @@
 // Node vm for unit testing (tests/unit/roadmap-views.test.js). The DOM
 // wiring, data fetch and switcher live in roadmap.js.
 //
-// One dataset, two layouts x four levels:
-//   Layout  Timeline (default) - a continuous Delivered|Now|Next|Later
-//           axis where an activity's bar SPANS the columns it runs
-//           across (Now -> Next, Now -> Later), so long-running work
-//           visibly spills onward. Cascade - the same work as stacked
-//           stage bands, an item appearing under each band it covers.
-//   Level   Executive (curated audience='exec'), Team (everything),
-//           Backlog (open feeder), Parked (de-scoped, reasoning kept).
+// One dataset (work_items), three levels x two layouts:
+//   Level   Executive - a theme rollup of active work, always complete.
+//           Team      - active work at item level.
+//           Backlog   - every item (active + parked + delivered).
+//   Layout  Timeline  - a continuous Delivered|Now|Next|Later|Parked
+//           axis where a bar SPANS the columns it runs across.
+//           Cascade   - the same work as stacked bands, an item
+//           repeating under each band it covers.
 //
-// Placement derives from an item's own fields (horizon = start band,
-// end_horizon = the band it runs through), so moving or extending an
-// item is a data edit (see docs/ROADMAP.md, docs/ROADMAP-PROCESS.md).
+// Placement derives from an item's own fields, so a move between views
+// is a data edit (see docs/ROADMAP.md, docs/ROADMAP-PROCESS.md):
+//   Delivered = status 'done'
+//   Parked    = not done AND (horizon 'someday' OR status 'dropped')
+//   Active    = the rest (horizon now/next/later)
 // ------------------------------------------------------------------
 
 (function () {
@@ -28,29 +30,39 @@
     wind: "Wrapping up", bridge: "Next horizon", sequenced: "",
   };
 
-  // The continuous axis: delivered(0) | now(1) | next(2) | later(3).
+  // The continuous axis: delivered(0) | now(1) | next(2) | later(3) |
+  // parked(4). Team and Executive show the active bands (up to Later);
+  // Backlog adds the Parked column.
   var BANDS = [
     { key: "delivered", label: "Delivered" },
     { key: "now", label: "Now" },
     { key: "next", label: "Next" },
     { key: "later", label: "Later" },
+    { key: "parked", label: "Parked" },
   ];
-  var BACKLOG_OPEN = ["open", "planned", "in_progress", "blocked"];
-  var BACKLOG_PARKED = ["dropped", "done"];
+  var ACTIVE_MAX = 3;
+  var PARKED = 4;
 
   function presentationLabel(p) { return PRESENTATION[p] || ""; }
 
-  // Column index for a horizon; someday folds into Later.
+  // Column index for a horizon; someday folds into the Parked band.
   function hzIdx(h) {
-    return h === "now" ? 1 : h === "next" ? 2 : h === "later" ? 3 : 3;
+    return h === "now" ? 1 : h === "next" ? 2 : h === "later" ? 3 : PARKED;
   }
-  // An item's start and end columns. Delivered work sits in column 0.
-  function colStart(i) { return i.status === "done" ? 0 : hzIdx(i.horizon); }
+  // An item's start and end columns, from its own fields.
+  function colStart(i) {
+    if (i.status === "done") return 0;
+    if (i.status === "dropped") return PARKED;
+    return hzIdx(i.horizon);
+  }
   function colEnd(i) {
     if (i.status === "done") return 0;
+    if (i.status === "dropped") return PARKED;
     var s = hzIdx(i.horizon), e = hzIdx(i.end_horizon || i.horizon);
     return e < s ? s : e;
   }
+  function isParked(i) { return colStart(i) === PARKED; }
+  function isActive(i) { var s = colStart(i); return s >= 1 && s <= ACTIVE_MAX; }
 
   function productItems(items, scopeByArea) {
     return items.filter(function (i) { return scopeByArea[i.area_id] === "product"; });
@@ -71,6 +83,9 @@
       scopeByArea: scopeByArea, themeOfArea: themeOfArea };
   }
 
+  // An item's theme: its own category, else the theme of its area.
+  function themeIdOf(i, ctx) { return i.category_id || ctx.themeOfArea[i.area_id] || null; }
+
   function groupBy(items, keyFn) {
     var out = {};
     items.forEach(function (i) { var k = keyFn(i) || "none"; (out[k] = out[k] || []).push(i); });
@@ -84,8 +99,8 @@
     return latest ? '<p class="rm-updated">Data as of ' + App.escape(latest.slice(0, 10)) + "</p>" : "";
   }
   function emptyNotice() {
-    return '<p class="notice">No roadmap items yet. Items are rows in the ' +
-      "roadmap_items table in Supabase (see docs/ROADMAP.md).</p>";
+    return '<p class="notice">No work items yet. Items are rows in the ' +
+      "work_items table in Supabase (see docs/ROADMAP.md).</p>";
   }
 
   // --- Timeline: the continuous, spanning-bar layout ---------------
@@ -94,90 +109,123 @@
   // priority. Current work floats to the top; long tasks spill right.
   function timelineOrder(a, b) {
     return (a._s - b._s) || ((a._e - a._s) - (b._e - b._s)) ||
-      (a._row.priority - b._row.priority) || (a._row.sort_order - b._row.sort_order);
+      (a._pri - b._pri) || (a._so - b._so);
   }
 
-  function timelineHtml(rows, ctx, useAreaTheme, emptyMsg, showDelivered) {
-    // Delivered work can be hidden; when it is, the Delivered column
-    // drops off the axis and the remaining columns shift left.
-    var visible = showDelivered ? rows
-      : rows.filter(function (r) { return r.status !== "done"; });
+  // Shared grid renderer over pre-placed rows. maxBand caps the axis
+  // (ACTIVE_MAX for Team/Executive, PARKED for Backlog); hiding
+  // delivered drops the Delivered column and clamps spans into it.
+  function timelineGrid(placed, maxBand, showDelivered, emptyMsg) {
+    var visible = showDelivered ? placed
+      : placed.filter(function (p) { return p._e >= 1; });
     if (!visible.length) return emptyMsg;
     var first = showDelivered ? 0 : 1;
-    var placed = visible.map(function (r) {
-      var catId = useAreaTheme ? ctx.themeOfArea[r.area_id] : r.category_id;
-      return { _row: r, _s: colStart(r), _e: colEnd(r), _cat: catId ? ctx.catById[catId] : null };
-    }).sort(timelineOrder);
     var head = '<div class="rmv-tl-head"><span class="rmv-tl-label"></span>' +
-      BANDS.slice(first).map(function (b) { return '<span class="rmv-tl-col">' + b.label + "</span>"; })
-        .join("") + "</div>";
-    var body = placed.map(function (p) {
-      var done = p._row.status === "done";
-      // Grid column 1 is the label gutter; data columns follow, shifted
-      // by the first visible band.
-      var bar = '<span class="rmv-tl-bar' + (done ? " rmv-tl-bar--done" : "") + catClass(p._cat) +
-        '" style="grid-column:' + (p._s - first + 2) + " / " + (p._e - first + 3) + '">' +
-        App.escape(p._row.title) + "</span>";
+      BANDS.slice(first, maxBand + 1).map(function (b) {
+        return '<span class="rmv-tl-col">' + b.label + "</span>"; }).join("") + "</div>";
+    var body = visible.slice().sort(timelineOrder).map(function (p) {
+      var s = p._s < first ? first : p._s, e = p._e > maxBand ? maxBand : p._e;
+      var bar = '<span class="rmv-tl-bar' + (p.done ? " rmv-tl-bar--done" : "") +
+        (p._s === PARKED ? " rmv-tl-bar--parked" : "") + catClass(p._cat) +
+        '" style="grid-column:' + (s - first + 2) + " / " + (e - first + 3) + '">' +
+        App.escape(p.label) + "</span>";
       return '<div class="rmv-tl-row"><span class="rmv-tl-label">' +
-        App.escape(p._cat ? p._cat.label : "General") + "</span>" + bar + "</div>";
+        App.escape(p._catLabel) + "</span>" + bar + "</div>";
     }).join("");
-    return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") + '">' +
-      head + body + "</div>" + freshnessHtml(rows);
+    return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") +
+      '" style="--tl-cols:' + (maxBand - first + 1) + '">' + head + body + "</div>";
   }
 
-  // The rows and theme source for each level.
-  function levelRows(data, level, ctx) {
-    if (level === "backlog" || level === "parked") {
-      var group = level === "backlog" ? BACKLOG_OPEN : BACKLOG_PARKED;
-      var rows = productItems((data.backlog || []).filter(function (i) {
-        return group.indexOf(i.status) !== -1; }), ctx.scopeByArea);
-      return { rows: rows, useAreaTheme: true };
-    }
-    var items = productItems(data.items || [], ctx.scopeByArea);
-    if (level === "exec") {
-      items = items.filter(function (i) { return i.audience === "exec"; });
-    }
-    return { rows: items, useAreaTheme: false };
+  // Place one item as a timeline row (bar = title).
+  function placeItem(i, ctx) {
+    var catId = themeIdOf(i, ctx), cat = catId ? ctx.catById[catId] : null;
+    return { _s: colStart(i), _e: colEnd(i), _cat: cat,
+      _catLabel: cat ? cat.label : "General", _pri: i.priority, _so: i.sort_order,
+      label: i.title, done: i.status === "done" };
+  }
+
+  // Roll a theme's items into one lane (bar = item count) for Executive.
+  function themeLane(cat, items) {
+    var s = PARKED, e = 0, pri = Infinity, so = Infinity;
+    items.forEach(function (i) {
+      var cs = colStart(i), ce = colEnd(i);
+      if (cs < s) s = cs;
+      if (ce > e) e = ce;
+      if (i.priority < pri) pri = i.priority;
+      if (i.sort_order < so) so = i.sort_order;
+    });
+    var n = items.length;
+    return { _s: s, _e: e, _cat: cat, _catLabel: cat ? cat.label : "General",
+      _pri: pri, _so: so, done: e === 0,
+      label: n + (n === 1 ? " item" : " items") };
+  }
+
+  // Executive keeps active work (plus delivered when shown), never
+  // parked, rolled up by theme in category order. Always complete.
+  function execLanes(items, ctx, showDelivered) {
+    var live = items.filter(function (i) {
+      if (isParked(i)) return false;
+      if (i.status === "done") return showDelivered;
+      return true;
+    });
+    var byCat = groupBy(live, function (i) { return themeIdOf(i, ctx); });
+    var lanes = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
+      .map(function (c) { return themeLane(c, byCat[c.id]); });
+    if (byCat.none) lanes.push(themeLane(null, byCat.none));
+    return lanes;
+  }
+
+  // Team keeps active work at item level, plus delivered when shown.
+  function teamList(items) {
+    return items.filter(function (i) { return i.status === "done" || isActive(i); });
   }
 
   function timeline(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
     var ctx = context(data);
-    var r = levelRows(data, level, ctx);
-    var empty = level === "backlog"
-      ? '<p class="notice">No open product backlog items. The backlog feeds the roadmap.</p>'
-      : level === "parked"
-      ? '<p class="notice">Nothing parked. De-scoped items land here with the reasoning kept.</p>'
-      : emptyNotice();
-    return timelineHtml(r.rows, ctx, r.useAreaTheme, empty, show);
+    var all = productItems(data.items || [], ctx.scopeByArea);
+    if (!all.length) return emptyNotice();
+    if (level === "exec") {
+      return timelineGrid(execLanes(all, ctx, show), ACTIVE_MAX, show,
+        '<p class="notice">No active roadmap work to summarise. Schedule ' +
+        "work by setting a horizon of now, next or later.</p>") + freshnessHtml(all);
+    }
+    if (level === "backlog") {
+      return timelineGrid(all.map(function (i) { return placeItem(i, ctx); }), PARKED, show,
+        emptyNotice()) + freshnessHtml(all);
+    }
+    return timelineGrid(teamList(all).map(function (i) { return placeItem(i, ctx); }),
+      ACTIVE_MAX, show,
+      '<p class="notice">No active roadmap work. Items wait in the Backlog ' +
+      "until scheduled (set a horizon of now, next or later).</p>") + freshnessHtml(all);
   }
 
   // --- Cascade: stacked stage bands, spanning items repeat ---------
 
   function itemCard(item, cat) {
-    var label = colStart(item) === 1 ? presentationLabel(item.presentation) : "";
-    var bandClass = BANDS[colStart(item)].key;
-    return '<li class="rm-card rm-card--' + bandClass + catClass(cat) + '">' +
+    var band = colStart(item);
+    var label = band === 1 ? presentationLabel(item.presentation) : "";
+    return '<li class="rm-card rm-card--' + BANDS[band].key + catClass(cat) + '">' +
       (label ? '<p class="rm-state rm-state--' + App.escape(item.presentation) + '">' +
         App.escape(label) + "</p>" : "") +
       "<h3>" + App.escape(item.title) + "</h3>" +
       (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") + "</li>";
   }
 
-  function themeBlock(cat, items) {
+  function themeBlock(cat, items, cardFn) {
     var desc = cat && cat.description
       ? '<p class="rmv-theme-desc">' + App.escape(cat.description) + "</p>" : "";
     var cards = items.length ? '<ul class="rmv-cards">' +
-      items.map(function (i) { return itemCard(i, cat); }).join("") + "</ul>" : "";
+      items.map(cardFn).join("") + "</ul>" : "";
     return '<section class="rmv-theme' + catClass(cat) + '">' +
       '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
       desc + cards + "</section>";
   }
 
-  function themeBlocks(catSorted, byCat) {
-    var blocks = catSorted.filter(function (c) { return byCat[c.id]; })
-      .map(function (c) { return themeBlock(c, byCat[c.id].slice().sort(byOrder)); });
-    if (byCat.none) blocks.push(themeBlock(null, byCat.none.slice().sort(byOrder)));
+  function themeBlocks(ctx, byCat, cardFn) {
+    var blocks = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
+      .map(function (c) { return themeBlock(c, byCat[c.id].slice().sort(byOrder), cardFn); });
+    if (byCat.none) blocks.push(themeBlock(null, byCat.none.slice().sort(byOrder), cardFn));
     return '<div class="rmv-themes">' + blocks.join("") + "</div>";
   }
 
@@ -186,111 +234,47 @@
       App.escape(label) + "</h2>";
   }
 
-  function teamCascadeHtml(data, showDelivered) {
-    var ctx = context(data);
-    var items = productItems(data.items || [], ctx.scopeByArea);
-    if (!items.length) return emptyNotice();
+  // Stack items into the bands they span, grouped by theme. Executive
+  // groups whole themes (description card, no items); Team/Backlog show
+  // item cards. maxBand caps the axis.
+  function bandsCascade(list, ctx, maxBand, show, exec) {
     var html = "";
-    BANDS.forEach(function (band, idx) {
-      if (!showDelivered && idx === 0) return; // Delivered band hidden.
-      var inBand = items.filter(function (i) { return colStart(i) <= idx && colEnd(i) >= idx; });
-      if (!inBand.length) return;
-      html += '<section class="rmv-band">' + bandHead(band.label, band.key) +
-        themeBlocks(ctx.catSorted, groupBy(inBand, function (i) { return i.category_id; })) +
-        "</section>";
-    });
-    return html + freshnessHtml(items);
-  }
-
-  // --- Executive cascade: the curated one-pager --------------------
-
-  function deliveredBuckets(delivered, catById) {
-    if (!delivered.length) return "";
-    var cards = delivered.map(function (i) {
-      var cat = i.category_id ? catById[i.category_id] : null;
-      return '<li class="rm-card rmv-bucket' + catClass(cat) + '">' +
-        (cat ? '<p class="rmv-card-eyebrow">' + App.escape(cat.label) + "</p>" : "") +
-        "<h3>" + App.escape(i.title) + "</h3>" +
-        (i.summary ? '<p class="rm-card-sum">' + App.escape(i.summary) + "</p>" : "") + "</li>";
-    }).join("");
-    return '<ul class="rmv-cards rmv-delivered">' + cards + "</ul>";
-  }
-
-  function execCascadeHtml(data, showDelivered) {
-    var ctx = context(data);
-    var items = productItems(data.items || [], ctx.scopeByArea);
-    if (!items.length) return emptyNotice();
-    var delivered = items.filter(function (i) { return i.status === "done"; }).sort(byOrder);
-    var execLive = items.filter(function (i) { return i.audience === "exec" && i.status !== "done"; });
-    var standalone = execLive.filter(function (i) { return !i.category_id; });
-    var byCat = groupBy(execLive.filter(function (i) { return i.category_id; }),
-      function (i) { return i.category_id; });
-    var html = showDelivered
-      ? bandHead("Delivered", "delivered") + deliveredBuckets(delivered, ctx.catById) : "";
-    html += bandHead("In focus", "now") + themeBlocks(ctx.catSorted, byCat);
-    if (standalone.length) {
-      html += bandHead("Standalone", "later") +
-        '<div class="rmv-themes">' + themeBlock(null, standalone.sort(byOrder)) + "</div>";
+    for (var idx = 0; idx <= maxBand; idx++) {
+      if (idx === 0 && !show) continue;
+      var inBand = list.filter(function (i) { return colStart(i) <= idx && colEnd(i) >= idx; });
+      if (!inBand.length) continue;
+      var byCat = groupBy(inBand, function (i) { return themeIdOf(i, ctx); });
+      var body = exec
+        ? '<div class="rmv-themes">' + ctx.catSorted.filter(function (c) { return byCat[c.id]; })
+            .map(function (c) { return themeBlock(c, [], null); })
+            .concat(byCat.none ? [themeBlock(null, [], null)] : []).join("") + "</div>"
+        : themeBlocks(ctx, byCat, function (i) { return itemCard(i, ctx.catById[themeIdOf(i, ctx)] || null); });
+      html += '<section class="rmv-band">' + bandHead(BANDS[idx].label, BANDS[idx].key) +
+        body + "</section>";
     }
-    return html + freshnessHtml(items);
-  }
-
-  // --- Backlog / Parked cascade: grouped by theme ------------------
-
-  function backlogCard(item, withReason) {
-    return '<li class="rm-card"><h3>' + App.escape(item.title) + "</h3>" +
-      (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") +
-      (withReason && item.resolution
-        ? '<p class="rmv-reason">' + App.escape(item.resolution) + "</p>" : "") +
-      '<p class="rmv-meta">' + App.statusBadge(item.status) +
-      ' <span class="badge">' + App.escape(item.type) + "</span></p></li>";
-  }
-
-  function backlogGrouped(list, ctx, cardFn) {
-    var byCat = groupBy(list, function (i) { return ctx.themeOfArea[i.area_id]; });
-    var order = ctx.catSorted.map(function (c) { return c.id; }).concat(["none"]);
-    var sections = order.filter(function (k) { return byCat[k]; }).map(function (k) {
-      var cat = k !== "none" ? ctx.catById[k] : null;
-      return '<section class="rmv-theme' + catClass(cat) + '">' +
-        '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
-        '<ul class="rmv-cards">' + byCat[k].slice().sort(byOrder).map(cardFn).join("") +
-        "</ul></section>";
-    }).join("");
-    return '<div class="rmv-themes">' + sections + "</div>";
-  }
-
-  function backlogCascadeHtml(data) {
-    var ctx = context(data);
-    var open = productItems((data.backlog || []).filter(function (i) {
-      return BACKLOG_OPEN.indexOf(i.status) !== -1; }), ctx.scopeByArea);
-    if (!open.length) {
-      return '<p class="notice">No open product backlog items. The backlog ' +
-        "feeds the roadmap; items are rows in the backlog_items table.</p>";
-    }
-    return backlogGrouped(open, ctx, function (i) { return backlogCard(i, false); });
-  }
-
-  function parkedCascadeHtml(data) {
-    var ctx = context(data);
-    var parked = productItems((data.backlog || []).filter(function (i) {
-      return BACKLOG_PARKED.indexOf(i.status) !== -1; }), ctx.scopeByArea);
-    if (!parked.length) {
-      return '<p class="notice">Nothing parked. De-scoped items land here with ' +
-        "the reasoning kept, so a decision is never lost.</p>";
-    }
-    return backlogGrouped(parked, ctx, function (i) { return backlogCard(i, true); });
+    return html;
   }
 
   function cascade(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
-    if (level === "exec") return execCascadeHtml(data, show);
-    if (level === "backlog") return backlogCascadeHtml(data);
-    if (level === "parked") return parkedCascadeHtml(data);
-    return teamCascadeHtml(data, show);
+    var ctx = context(data);
+    var all = productItems(data.items || [], ctx.scopeByArea);
+    if (!all.length) return emptyNotice();
+    if (level === "exec") {
+      var live = all.filter(function (i) {
+        if (isParked(i)) return false;
+        if (i.status === "done") return show;
+        return true;
+      });
+      return bandsCascade(live, ctx, ACTIVE_MAX, show, true) + freshnessHtml(all);
+    }
+    var list = level === "backlog" ? all : teamList(all);
+    var maxBand = level === "backlog" ? PARKED : ACTIVE_MAX;
+    return bandsCascade(list, ctx, maxBand, show, false) + freshnessHtml(all);
   }
 
   App.roadmapView = {
-    colStart: colStart, colEnd: colEnd,
+    colStart: colStart, colEnd: colEnd, isParked: isParked, isActive: isActive,
     productItems: productItems, byOrder: byOrder,
     presentationLabel: presentationLabel, freshnessHtml: freshnessHtml,
     timeline: timeline, cascade: cascade,

@@ -1,14 +1,18 @@
 -- ------------------------------------------------------------------
 -- 30_work.sql - The working-record domain: shared area taxonomy,
--- roadmap, work intake and backlog (see docs/WORKFLOW.md).
+-- roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md).
+--
+-- Roadmap and backlog are ONE table, work_items. Every view - the
+-- Executive theme rollup, the Team roadmap, the Backlog master list -
+-- is a projection of the same rows, so moving work between views is a
+-- single field edit (see docs/ROADMAP.md, docs/ROADMAP-PROCESS.md).
 -- ------------------------------------------------------------------
 
 -- ---------------------------------------------------------------
 -- work_areas: the single shared taxonomy of development areas.
--- Roadmap items, backlog items, documents and notes all reference
--- it, so swimlanes, backlog grouping and intake filing can never
--- disagree. scope separates the product feature areas worked with
--- development teams from the portal's own development areas.
+-- Work items, documents and notes all reference it, so swimlanes,
+-- backlog grouping and intake filing can never disagree. scope
+-- separates product feature areas from the portal's own development.
 -- ---------------------------------------------------------------
 
 create table if not exists public.work_areas (
@@ -19,9 +23,9 @@ create table if not exists public.work_areas (
   scope text not null default 'product' check (scope in ('product', 'portal')),
   -- The theme this area sits under, making the two-level taxonomy
   -- (theme -> area) explicit. Nullable: an unthemed area is valid and
-  -- renders under a General group. A roadmap item's own category_id
-  -- stays the authoritative placement for the board. The foreign key
-  -- is added below, once roadmap_categories exists.
+  -- renders under a General group. A work item's own category_id, when
+  -- set, stays the authoritative placement. The foreign key is added
+  -- below, once roadmap_categories exists.
   category_id uuid,
   sort_order integer not null default 100,
   created_at timestamptz not null default now(),
@@ -34,19 +38,10 @@ create trigger work_areas_updated_at
   for each row execute function public.set_updated_at();
 
 -- ---------------------------------------------------------------
--- Roadmap. Designed so every future roadmap view (timeline
--- graphic, swimlanes, waterfall priority, zoomed detail, exported
--- snapshots) is a rendering of the same rows and all day-to-day
--- adjustment is a database edit:
---   roadmap_categories    themed lanes for the board (colour + legend)
---   roadmap_milestones    named target points, optionally dated
---   roadmap_items         the work itself; dates optional so
---                         non-dated roadmaps stay first-class
---   roadmap_dependencies  item-to-item ordering for waterfall views
--- The roadmap board (modules/roadmap/) derives its three zones from
--- existing fields, so moving an item between zones is a data edit:
---   Delivered = status 'done'; Horizon = horizon 'someday';
---   In focus  = everything else, ordered by priority.
+-- Roadmap taxonomy. Themed lanes and named targets; the work itself
+-- lives in work_items below.
+--   roadmap_categories  themed lanes for the board (colour + legend)
+--   roadmap_milestones  named target points, optionally dated
 -- ---------------------------------------------------------------
 
 -- Themed category lanes for the board. Colour for each key lives in
@@ -98,84 +93,12 @@ create trigger roadmap_milestones_updated_at
   before update on public.roadmap_milestones
   for each row execute function public.set_updated_at();
 
-create table if not exists public.roadmap_items (
-  id uuid primary key default gen_random_uuid(),
-  area_id uuid not null references public.work_areas (id) on delete cascade,
-  milestone_id uuid references public.roadmap_milestones (id) on delete set null,
-  category_id uuid references public.roadmap_categories (id) on delete set null,
-  title text not null,
-  summary text,
-  details text,
-  status text not null default 'idea'
-    check (status in ('idea', 'planned', 'committed', 'in_progress', 'done', 'parked')),
-  horizon text not null default 'later'
-    check (horizon in ('now', 'next', 'later', 'someday')),
-  -- The band the item runs THROUGH, so a long activity spans columns
-  -- (Now -> Next, Now -> Later) on the timeline and shows in each band
-  -- it covers on the cascade. Null means it sits in its start horizon
-  -- only.
-  end_horizon text
-    check (end_horizon in ('now', 'next', 'later', 'someday')),
-  -- How the item reads on the board's active track. 'sequenced' is a
-  -- plain upcoming item; 'current' is the focus item; 'ongoing' runs
-  -- continuously; 'wind' is wrapping up; 'bridge' points to the next
-  -- horizon. Delivered and horizon tiles ignore it.
-  presentation text not null default 'sequenced'
-    check (presentation in ('sequenced', 'current', 'ongoing', 'wind', 'bridge')),
-  -- Which altitude the item surfaces at. 'team' (default) shows in the
-  -- full developer view; 'exec' also surfaces in the curated C-suite
-  -- Executive view. One dataset, filtered - never a second copy.
-  audience text not null default 'team'
-    check (audience in ('exec', 'team')),
-  priority integer not null default 100,
-  effort text check (effort in ('small', 'medium', 'large')),
-  impact text check (impact in ('low', 'medium', 'high')),
-  starts_on date,
-  ends_on date,
-  tags text[] not null default '{}',
-  sort_order integer not null default 100,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index if not exists roadmap_items_area_idx
-  on public.roadmap_items (area_id, horizon, priority, sort_order);
-create index if not exists roadmap_items_milestone_idx
-  on public.roadmap_items (milestone_id);
-create index if not exists roadmap_items_category_idx
-  on public.roadmap_items (category_id);
-create index if not exists roadmap_items_audience_idx
-  on public.roadmap_items (audience, priority, sort_order);
-
-drop trigger if exists roadmap_items_updated_at on public.roadmap_items;
-create trigger roadmap_items_updated_at
-  before update on public.roadmap_items
-  for each row execute function public.set_updated_at();
-
-create table if not exists public.roadmap_dependencies (
-  item_id uuid not null references public.roadmap_items (id) on delete cascade,
-  depends_on_id uuid not null references public.roadmap_items (id) on delete cascade,
-  primary key (item_id, depends_on_id),
-  check (item_id <> depends_on_id)
-);
-
-create index if not exists roadmap_dependencies_depends_on_idx
-  on public.roadmap_dependencies (depends_on_id);
-
 -- ---------------------------------------------------------------
--- Work intake. Three tables that make the ongoing owner-and-Claude
--- working conversation durable (see docs/WORKFLOW.md):
---   work_documents  raw supplied material (PRDs, roadmaps, backlog
---                   lists, DevOps pastes, sprint summaries, platform
---                   product-knowledge overviews) kept verbatim, plus
---                   a distilled summary; supersede chains preserve
---                   the historic record
---   backlog_items   the rolling work list: considerations,
---                   features, functionality, bugs and improvements,
---                   never deleted - closed with a resolution
---   work_notes      atomic distilled records (decisions, facts,
---                   risks, questions, actions) linked to whatever
---                   they concern
+-- work_documents: raw supplied material (PRDs, roadmaps, backlog
+-- lists, DevOps pastes, sprint summaries, platform overviews) kept
+-- verbatim, plus a distilled summary; supersede chains preserve the
+-- historic record. Defined before work_items because an item may cite
+-- its source document.
 -- ---------------------------------------------------------------
 
 create table if not exists public.work_documents (
@@ -205,48 +128,78 @@ create trigger work_documents_updated_at
   before update on public.work_documents
   for each row execute function public.set_updated_at();
 
-create table if not exists public.backlog_items (
+-- ---------------------------------------------------------------
+-- work_items: roadmap and backlog work in one table. Every view is a
+-- projection over these fields, so an item moves between views with a
+-- single edit and never a copy:
+--   Delivered = status 'done'
+--   Parked    = not done AND (horizon 'someday' OR status 'dropped')
+--   Active    = the rest (horizon now/next/later)
+-- The Executive view is a theme rollup of active work (grouped by
+-- category_id, or the area's theme when unset), always complete, so it
+-- cannot drift. horizon is the START band and end_horizon the band the
+-- item runs THROUGH; presentation supplies the Now card's state label.
+-- Dates are optional so non-dated roadmaps stay first-class.
+-- ---------------------------------------------------------------
+
+create table if not exists public.work_items (
   id uuid primary key default gen_random_uuid(),
   area_id uuid references public.work_areas (id) on delete set null,
-  roadmap_item_id uuid references public.roadmap_items (id) on delete set null,
+  category_id uuid references public.roadmap_categories (id) on delete set null,
+  milestone_id uuid references public.roadmap_milestones (id) on delete set null,
   source_document_id uuid references public.work_documents (id) on delete set null,
-  type text not null default 'consideration'
-    check (type in ('consideration', 'feature', 'functionality', 'bug', 'improvement', 'task')),
   title text not null,
   summary text,
   details text,
-  status text not null default 'open'
-    check (status in ('open', 'planned', 'in_progress', 'blocked', 'done', 'dropped')),
-  -- Backlog and parked items join the roadmap timeline: horizon is the
-  -- start band (default 'someday' - unscheduled candidate work), and
-  -- end_horizon the band it runs through (null = start band only).
+  -- Backlog classification; null for roadmap-origin work.
+  type text
+    check (type in ('consideration', 'feature', 'functionality', 'bug', 'improvement', 'task')),
+  status text not null default 'idea'
+    check (status in ('idea', 'planned', 'in_progress', 'blocked', 'done', 'dropped')),
+  -- Start band on the continuous axis. 'someday' is the Parked
+  -- (far-future) band; now/next/later are the active bands.
   horizon text not null default 'someday'
     check (horizon in ('now', 'next', 'later', 'someday')),
+  -- The band the item runs THROUGH, so a long activity spans columns
+  -- (Now -> Next, Now -> Later). Null means it sits in its start band.
   end_horizon text
     check (end_horizon in ('now', 'next', 'later', 'someday')),
+  -- How the item reads on the Now track. 'sequenced' is a plain item;
+  -- 'current' the focus item; 'ongoing' runs continuously; 'wind' is
+  -- wrapping up; 'bridge' points to the next horizon. Now band only.
+  presentation text not null default 'sequenced'
+    check (presentation in ('sequenced', 'current', 'ongoing', 'wind', 'bridge')),
   priority integer not null default 100,
+  effort text check (effort in ('small', 'medium', 'large')),
+  impact text check (impact in ('low', 'medium', 'high')),
+  starts_on date,
+  ends_on date,
   external_ref text,
   requested_by text,
   tags text[] not null default '{}',
   sort_order integer not null default 100,
+  -- Closing note; resolved_at is stamped by the trigger below.
   resolution text,
   resolved_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create index if not exists backlog_items_status_idx
-  on public.backlog_items (status, priority, sort_order);
-create index if not exists backlog_items_area_idx
-  on public.backlog_items (area_id, status);
-create index if not exists backlog_items_roadmap_item_idx
-  on public.backlog_items (roadmap_item_id);
-create index if not exists backlog_items_source_document_idx
-  on public.backlog_items (source_document_id);
+create index if not exists work_items_area_idx
+  on public.work_items (area_id, horizon, priority, sort_order);
+create index if not exists work_items_category_idx
+  on public.work_items (category_id);
+create index if not exists work_items_status_idx
+  on public.work_items (status, priority, sort_order);
+create index if not exists work_items_milestone_idx
+  on public.work_items (milestone_id);
+create index if not exists work_items_source_document_idx
+  on public.work_items (source_document_id);
 
--- Closing an item stamps resolved_at automatically so the historic
--- record needs no manual bookkeeping; reopening clears it.
-create or replace function public.set_backlog_resolution()
+-- Closing an item (status done/dropped) stamps resolved_at so the
+-- historic record needs no manual bookkeeping; reopening clears it.
+-- Also keeps updated_at fresh, so this is work_items' only row trigger.
+create or replace function public.set_work_item_resolution()
 returns trigger
 language plpgsql
 set search_path = public
@@ -262,10 +215,26 @@ begin
 end;
 $$;
 
-drop trigger if exists backlog_items_resolution on public.backlog_items;
-create trigger backlog_items_resolution
-  before update on public.backlog_items
-  for each row execute function public.set_backlog_resolution();
+drop trigger if exists work_items_resolution on public.work_items;
+create trigger work_items_resolution
+  before update on public.work_items
+  for each row execute function public.set_work_item_resolution();
+
+-- Item-to-item ordering for waterfall views (empty until used).
+create table if not exists public.work_item_dependencies (
+  item_id uuid not null references public.work_items (id) on delete cascade,
+  depends_on_id uuid not null references public.work_items (id) on delete cascade,
+  primary key (item_id, depends_on_id),
+  check (item_id <> depends_on_id)
+);
+
+create index if not exists work_item_dependencies_depends_on_idx
+  on public.work_item_dependencies (depends_on_id);
+
+-- ---------------------------------------------------------------
+-- work_notes: atomic distilled records (decisions, facts, risks,
+-- questions, actions) linked to whatever they concern.
+-- ---------------------------------------------------------------
 
 create table if not exists public.work_notes (
   id uuid primary key default gen_random_uuid(),
@@ -274,8 +243,7 @@ create table if not exists public.work_notes (
   body text not null,
   area_id uuid references public.work_areas (id) on delete set null,
   document_id uuid references public.work_documents (id) on delete set null,
-  backlog_item_id uuid references public.backlog_items (id) on delete set null,
-  roadmap_item_id uuid references public.roadmap_items (id) on delete set null,
+  work_item_id uuid references public.work_items (id) on delete set null,
   status text not null default 'active'
     check (status in ('active', 'resolved', 'superseded')),
   tags text[] not null default '{}',
@@ -287,10 +255,8 @@ create index if not exists work_notes_document_idx
   on public.work_notes (document_id);
 create index if not exists work_notes_area_idx
   on public.work_notes (area_id, kind, status);
-create index if not exists work_notes_backlog_item_idx
-  on public.work_notes (backlog_item_id);
-create index if not exists work_notes_roadmap_item_idx
-  on public.work_notes (roadmap_item_id);
+create index if not exists work_notes_work_item_idx
+  on public.work_notes (work_item_id);
 
 drop trigger if exists work_notes_updated_at on public.work_notes;
 create trigger work_notes_updated_at

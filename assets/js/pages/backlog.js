@@ -1,23 +1,41 @@
 // ------------------------------------------------------------------
-// backlog.js - Rolling work items for modules/backlog/.
-// Renders backlog_items filtered by area, type and status, each row
-// opening a modal with full detail, plus the work_documents intake
-// list. Closed items stay queryable, so the backlog doubles as the
-// historic record. The intake conventions live in docs/WORKFLOW.md.
+// backlog.js - The master work list for modules/backlog/.
+// Renders every work_items row as one prioritised table - active,
+// parked and delivered, across every area and scope - filtered by
+// area, type and band, each row opening a modal with full detail, plus
+// the work_documents intake list. The roadmap home draws the same rows
+// as a gantt; this is the flat list. Closed items keep their
+// resolution, so the table doubles as the historic record. Intake
+// conventions live in docs/WORKFLOW.md.
 // ------------------------------------------------------------------
 
 (function () {
   "use strict";
 
   var TYPES = ["consideration", "feature", "functionality", "bug", "improvement", "task"];
-  var STATUSES = ["open", "planned", "in_progress", "blocked", "done", "dropped"];
-  var OPEN_GROUP = ["open", "planned", "in_progress", "blocked"];
+
+  // A row's band derives from its own fields, exactly as the roadmap
+  // views do: done is Delivered; someday or dropped is Parked; the rest
+  // is Active, keyed by horizon. Active bands sort first, history last.
+  var BAND_RANK = { now: 1, next: 2, later: 3, parked: 4, delivered: 5 };
+  var BAND_LABEL = { now: "Now", next: "Next", later: "Later", parked: "Parked", delivered: "Delivered" };
+  var BAND_GROUPS = {
+    active: ["now", "next", "later"],
+    parked: ["parked"],
+    delivered: ["delivered"],
+  };
 
   var items = [];
   var documents = [];
   var areaTitle = {};
   var docTitle = {};
   var modal, modalTitle, modalBody;
+
+  function bandOf(item) {
+    if (item.status === "done") return "delivered";
+    if (item.status === "dropped" || item.horizon === "someday") return "parked";
+    return item.horizon;
+  }
 
   function fmtDate(value) {
     return value ? new Date(value).toLocaleDateString() : "";
@@ -39,9 +57,12 @@
   }
 
   function openItemModal(item) {
+    var band = bandOf(item);
     modalTitle.textContent = item.title;
     modalBody.innerHTML = kvHtml([
-      ["Type", App.escape(item.type)],
+      ["Band", App.escape(BAND_LABEL[band])],
+      ["Horizon", App.escape(item.horizon || "")],
+      ["Type", App.escape(item.type || "")],
       ["Area", App.escape(areaTitle[item.area_id] || "")],
       ["Status", App.statusBadge(item.status)],
       ["Priority", App.escape(String(item.priority))],
@@ -76,35 +97,44 @@
   function filteredItems() {
     var area = document.getElementById("filter-area").value;
     var type = document.getElementById("filter-type").value;
-    var status = document.getElementById("filter-status").value;
+    var band = document.getElementById("filter-band").value;
     return items.filter(function (item) {
       if (area && item.area_id !== area) return false;
       if (type && item.type !== type) return false;
-      if (status === "open-group") return OPEN_GROUP.indexOf(item.status) !== -1;
-      if (status) return item.status === status;
+      if (band && BAND_GROUPS[band].indexOf(bandOf(item)) === -1) return false;
       return true;
+    });
+  }
+
+  // Active first (Now -> Next -> Later), then Parked, then Delivered;
+  // within a band, by priority then sort_order.
+  function ordered(list) {
+    return list.slice().sort(function (a, b) {
+      return (BAND_RANK[bandOf(a)] - BAND_RANK[bandOf(b)]) ||
+        (a.priority - b.priority) || (a.sort_order - b.sort_order);
     });
   }
 
   function renderItems() {
     var host = document.getElementById("backlog-list");
-    var data = filteredItems();
+    var data = ordered(filteredItems());
     if (data.length === 0) {
       host.innerHTML =
         '<p class="notice">No work items match the current filters. ' +
-        "Items are rows in the backlog_items table.</p>";
+        "Items are rows in the work_items table.</p>";
       return;
     }
     var html =
       '<div class="table-wrap"><table><thead><tr>' +
-      "<th>Item</th><th>Type</th><th>Area</th><th>Status</th><th>Priority</th>" +
+      "<th>Item</th><th>Band</th><th>Type</th><th>Area</th><th>Status</th><th>Priority</th>" +
       "</tr></thead><tbody>";
     data.forEach(function (item) {
       html +=
         "<tr>" +
         '<td><button class="button quiet" type="button" data-item="' +
         App.escape(item.id) + '">' + App.escape(item.title) + "</button></td>" +
-        "<td>" + App.escape(item.type) + "</td>" +
+        "<td>" + App.escape(BAND_LABEL[bandOf(item)]) + "</td>" +
+        "<td>" + App.escape(item.type || "") + "</td>" +
         "<td>" + App.escape(areaTitle[item.area_id] || "") + "</td>" +
         "<td>" + App.statusBadge(item.status) + "</td>" +
         '<td class="mono">' + App.escape(String(item.priority)) + "</td>" +
@@ -170,14 +200,7 @@
       option.textContent = type;
       typeSelect.appendChild(option);
     });
-    var statusSelect = document.getElementById("filter-status");
-    STATUSES.forEach(function (status) {
-      var option = document.createElement("option");
-      option.value = status;
-      option.textContent = status;
-      statusSelect.appendChild(option);
-    });
-    ["filter-area", "filter-type", "filter-status"].forEach(function (id) {
+    ["filter-area", "filter-type", "filter-band"].forEach(function (id) {
       document.getElementById(id).addEventListener("change", renderItems);
     });
   }
@@ -204,10 +227,10 @@
         .select("id, title, kind, area_id, summary, status, captured_on, tags")
         .order("captured_on", { ascending: false }),
       App.db
-        .from(App.registry.tables.backlogItems)
+        .from(App.registry.tables.workItems)
         .select("id, area_id, source_document_id, type, title, summary, details, " +
-          "status, priority, external_ref, requested_by, tags, resolution, " +
-          "resolved_at, created_at")
+          "status, horizon, end_horizon, priority, external_ref, requested_by, " +
+          "tags, resolution, resolved_at, created_at, sort_order")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
     ]);
@@ -230,7 +253,7 @@
 
     if (itemsResult.error) {
       document.getElementById("backlog-list").innerHTML =
-        '<p class="notice error">Could not load backlog items: ' +
+        '<p class="notice error">Could not load work items: ' +
         App.escape(itemsResult.error.message) + "</p>";
       return;
     }

@@ -299,25 +299,25 @@ values (
   10
 );
 
--- The board derives its three zones from these fields: status 'done'
--- is Delivered, horizon 'someday' is Horizon, everything else is In
--- focus. presentation shapes how an active item reads on the track.
--- audience places an item on the altitude axis: 'exec' also surfaces
--- in the curated C-suite Executive view, 'team' shows in the full
--- developer view only.
-insert into public.roadmap_items
-  (area_id, category_id, title, summary, status, horizon, presentation,
-   audience, priority, effort, impact, tags, sort_order)
+-- Every view is a projection of these fields. status 'done' is
+-- Delivered; horizon 'someday' (or status 'dropped') is Parked;
+-- everything else is Active, banded by horizon (now/next/later) and
+-- spanning to end_horizon. presentation shapes how an Active item
+-- reads on the Now track. The Executive view rolls Active work up by
+-- theme (category_id, or the area's theme when unset).
+insert into public.work_items
+  (area_id, category_id, title, summary, status, horizon, end_horizon,
+   presentation, priority, effort, impact, tags, sort_order)
 values
 (
   '22222222-2222-2222-2222-222222222222',
   '44444444-4444-4444-4444-444444444444',
-  'Sample committed item',
+  'Sample current item',
   'An item scheduled for the current cycle, shown as the current focus.',
   'in_progress',
   'now',
+  null,
   'current',
-  'exec',
   10,
   'medium',
   'high',
@@ -326,33 +326,48 @@ values
 ),
 (
   '22222222-2222-2222-2222-222222222222',
-  null,
-  'Sample delivered item',
-  'A completed item, shown in the Delivered zone.',
-  'done',
+  '44444444-4444-4444-4444-444444444444',
+  'Sample spanning item',
+  'A longer activity that runs from Now through Next, spanning columns.',
+  'in_progress',
   'now',
-  'sequenced',
-  'exec',
+  'next',
+  'ongoing',
   20,
+  'large',
   'medium',
-  'high',
   array['sample'],
   20
 ),
 (
   '22222222-2222-2222-2222-222222222222',
+  '44444444-4444-4444-4444-444444444444',
+  'Sample delivered item',
+  'A completed item, shown in the Delivered zone.',
+  'done',
+  'now',
   null,
-  'Sample future item',
-  'An undated idea waiting to be prioritised, shown on the Horizon.',
+  'sequenced',
+  30,
+  'medium',
+  'high',
+  array['sample'],
+  30
+),
+(
+  '22222222-2222-2222-2222-222222222222',
+  null,
+  'Sample parked item',
+  'An undated idea on the far horizon, shown in the Parked bucket.',
   'idea',
   'someday',
+  null,
   'sequenced',
-  'team',
   100,
   null,
   null,
   array['sample'],
-  30
+  40
 );
 
 -- Sample work intake ------------------------------------------------
@@ -370,15 +385,19 @@ values (
   array['sample']
 );
 
-insert into public.backlog_items
-  (area_id, source_document_id, type, title, summary, status, priority, tags)
+-- A backlog-origin work item: no theme of its own (it inherits the
+-- area's), horizon 'someday' so it sits in the Parked/feeder bucket
+-- until scheduled, linked to its source document.
+insert into public.work_items
+  (area_id, source_document_id, type, title, summary, status, horizon, priority, tags)
 values (
   '22222222-2222-2222-2222-222222222222',
   '33333333-3333-3333-3333-333333333333',
   'feature',
   'Sample backlog item',
   'A feature captured from the sample sprint summary.',
-  'open',
+  'idea',
+  'someday',
   10,
   array['sample']
 );

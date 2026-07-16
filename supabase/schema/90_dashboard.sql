@@ -23,8 +23,7 @@ as $$
     'api_specs',     (select count(*) from (select 1 from public.api_specs     limit 1001) c),
     'integrations',  (select count(*) from (select 1 from public.integrations  limit 1001) c),
     'prototypes',    (select count(*) from (select 1 from public.prototypes    limit 1001) c),
-    'roadmap_items', (select count(*) from (select 1 from public.roadmap_items limit 1001) c),
-    'backlog_items', (select count(*) from (select 1 from public.backlog_items limit 1001) c),
+    'work_items',    (select count(*) from (select 1 from public.work_items    limit 1001) c),
     'product_capabilities', (select count(*) from (select 1 from public.product_capabilities limit 1001) c),
     'profiles',      (select count(*) from (select 1 from public.profiles      limit 1001) c)
   );

@@ -81,26 +81,25 @@ grant execute on function public.own_role() to authenticated;
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
 
 -- ---------------------------------------------------------------
--- Content tables. All eleven follow one pattern, applied by the
--- loop below: a single read policy gated on the owning module's
--- grant, and admin-only insert/update/delete policies.
+-- Content tables. All follow one pattern, applied by the loop below:
+-- a single read policy gated on the owning module's grant, and
+-- admin-only insert/update/delete policies.
 -- ---------------------------------------------------------------
 
-alter table public.api_specs            enable row level security;
-alter table public.api_endpoints        enable row level security;
-alter table public.api_tags             enable row level security;
-alter table public.api_topics           enable row level security;
-alter table public.integrations         enable row level security;
-alter table public.prototypes           enable row level security;
-alter table public.work_areas           enable row level security;
-alter table public.roadmap_categories   enable row level security;
-alter table public.roadmap_milestones   enable row level security;
-alter table public.roadmap_items        enable row level security;
-alter table public.roadmap_dependencies enable row level security;
-alter table public.work_documents       enable row level security;
-alter table public.backlog_items        enable row level security;
-alter table public.work_notes           enable row level security;
-alter table public.product_capabilities enable row level security;
+alter table public.api_specs               enable row level security;
+alter table public.api_endpoints           enable row level security;
+alter table public.api_tags                enable row level security;
+alter table public.api_topics              enable row level security;
+alter table public.integrations            enable row level security;
+alter table public.prototypes              enable row level security;
+alter table public.work_areas              enable row level security;
+alter table public.roadmap_categories      enable row level security;
+alter table public.roadmap_milestones      enable row level security;
+alter table public.work_documents          enable row level security;
+alter table public.work_items              enable row level security;
+alter table public.work_item_dependencies  enable row level security;
+alter table public.work_notes              enable row level security;
+alter table public.product_capabilities    enable row level security;
 
 do $$
 declare
@@ -114,16 +113,17 @@ begin
       ('api_topics',           '(select public.has_module_access(''reference''))'),
       ('integrations',         '(select public.has_module_access(''integrations''))'),
       ('prototypes',           '(select public.has_module_access(''prototypes''))'),
-      -- work_areas is shared: readable behind either the roadmap or
-      -- the backlog grant, since both modules group by it.
-      ('work_areas',           '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
-      ('roadmap_categories',   '(select public.has_module_access(''roadmap''))'),
-      ('roadmap_milestones',   '(select public.has_module_access(''roadmap''))'),
-      ('roadmap_items',        '(select public.has_module_access(''roadmap''))'),
-      ('roadmap_dependencies', '(select public.has_module_access(''roadmap''))'),
-      ('work_documents',       '(select public.has_module_access(''backlog''))'),
-      ('backlog_items',        '(select public.has_module_access(''backlog''))'),
-      ('work_notes',           '(select public.has_module_access(''backlog''))'),
+      -- work_areas and work_items are shared: readable behind either
+      -- the roadmap or the backlog grant, since both modules read them
+      -- (the roadmap board and the backlog table are two views of the
+      -- same work_items rows).
+      ('work_areas',             '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('roadmap_categories',     '(select public.has_module_access(''roadmap''))'),
+      ('roadmap_milestones',     '(select public.has_module_access(''roadmap''))'),
+      ('work_documents',         '(select public.has_module_access(''backlog''))'),
+      ('work_items',             '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('work_item_dependencies', '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('work_notes',             '(select public.has_module_access(''backlog''))'),
       ('product_capabilities', '(select public.has_module_access(''platform''))')
     ) as v(tbl, read_expr)
   loop

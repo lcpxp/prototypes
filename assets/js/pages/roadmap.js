@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------
 // roadmap.js - The roadmap home for modules/roadmap/. A read-only,
-// print-ready render of the LaunchPad roadmap tables in Supabase.
+// print-ready render of the LaunchPad work_items table in Supabase.
 // Two independent controls over one dataset:
-//   Level   Executive (curated) / Team (all) / Backlog / Parked
+//   Level   Executive (theme rollup) / Team (active) / Backlog (all)
 //   Layout  Timeline (default, the continuous spanning roadmap) /
 //           Cascade (the same work as stacked stage bands)
 // The pure HTML builders live in roadmap-views.js (App.roadmapView) so
@@ -20,7 +20,6 @@
     { key: "exec", label: "Executive" },
     { key: "team", label: "Team" },
     { key: "backlog", label: "Backlog" },
-    { key: "parked", label: "Parked" },
   ];
   var LAYOUTS = [
     { key: "timeline", label: "Timeline" },
@@ -30,7 +29,7 @@
   var LAYOUT_STORE = "roadmap-layout";
   var DELIVERED_STORE = "roadmap-delivered";
 
-  var data = { categories: [], areas: [], items: [], backlog: [] };
+  var data = { categories: [], areas: [], items: [] };
   var current = "exec";
   var layout = "timeline";
   var showDelivered = true;
@@ -132,7 +131,7 @@
       if (hashFor() !== before) { renderControls(nav, layoutNav, host); render(host); }
     });
 
-    // The four lists are independent, so fetch them in parallel.
+    // The three lists are independent, so fetch them in parallel.
     var results = await Promise.all([
       App.db.from(App.registry.tables.roadmapCategories)
         .select("id, key, label, description, sort_order")
@@ -140,14 +139,9 @@
       App.db.from(App.registry.tables.workAreas)
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
-      App.db.from(App.registry.tables.roadmapItems)
+      App.db.from(App.registry.tables.workItems)
         .select("id, area_id, category_id, title, summary, status, horizon, end_horizon, " +
-          "presentation, audience, priority, effort, impact, sort_order, updated_at, tags")
-        .order("priority", { ascending: true })
-        .order("sort_order", { ascending: true }),
-      App.db.from(App.registry.tables.backlogItems)
-        .select("id, area_id, type, title, summary, status, horizon, end_horizon, " +
-          "priority, resolution, sort_order, tags")
+          "presentation, priority, effort, impact, sort_order, updated_at, tags")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
     ]);
@@ -161,7 +155,6 @@
     data.categories = results[0].error ? [] : results[0].data || [];
     data.areas = results[1].error ? [] : results[1].data || [];
     data.items = itemsResult.data || [];
-    data.backlog = results[3].error ? [] : results[3].data || [];
 
     renderControls(nav, layoutNav, host);
     render(host);
