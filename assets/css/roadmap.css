@@ -74,6 +74,12 @@ body[data-module="roadmap"] .page { max-inline-size: min(96rem, 100%); }
 .rm-cell--later { flex-direction: row; flex-wrap: wrap; align-content: start; }
 .rm-cell-empty { min-block-size: var(--s-4); display: block; }
 
+/* Empty cells are rendered as <div> (populated cells are <ul>). When the
+   lanes stack into a single column they would show as blank spacers, so
+   collapse them on narrow screens; the desktop grid restores them below
+   to keep each lane's three columns aligned. */
+div.rm-cell { display: none; }
+
 /* Cards: solid fills only - no gradients anywhere on the board. */
 .rm-card {
   background: var(--surface);
@@ -214,6 +220,8 @@ body[data-module="roadmap"] .page { max-inline-size: min(96rem, 100%); }
   }
   .rm-lane--head { display: grid; }
   .rm-col-head { border-block-end: 1px solid var(--line); }
+  /* Restore empty cells so the three columns line up across lanes. */
+  div.rm-cell { display: block; }
 }
 
 @page { size: A4 landscape; margin: 10mm; }
@@ -242,9 +250,11 @@ body[data-module="roadmap"] .page { max-inline-size: min(96rem, 100%); }
   .rm-lane--head { display: grid; }
 
   /* Condensed: summaries drop, every card becomes a one-line entry.
-     8pt is the minimum comfortable print size - nothing goes below it
-     except the freshness line. */
-  .rm-card-sum { display: none; }
+     The Next selector matches the base clamp rule's specificity and
+     comes later, so it wins; without it Next summaries would survive
+     into the export. 8pt is the minimum comfortable print size -
+     nothing goes below it except the freshness line. */
+  .rm-card-sum, .rm-card--next .rm-card-sum { display: none; }
   .rm-card { padding: 2pt 4pt; }
   .rm-card h3 { font-size: 9pt; }
   .rm-chip { font-size: 8pt; }
