@@ -29,12 +29,14 @@
   var LAYOUT_STORE = "roadmap-layout";
   var DELIVERED_STORE = "roadmap-delivered";
   var EXPAND_STORE = "roadmap-expanded";
+  var DEPT_STORE = "roadmap-department";
 
   var data = { categories: [], areas: [], items: [] };
   var current = "exec";
   var layout = "timeline";
   var showDelivered = true;
   var expanded = false;
+  var department = "";
   var ctx = null;
   var itemsById = {};
 
@@ -68,11 +70,26 @@
     catch (e) { return false; }
   }
 
+  // Department is a view-only filter (localStorage), not part of the
+  // shareable hash. "" means all departments; an unknown stored key
+  // falls back to all, so a retired department never sticks.
+  function readDepartment() {
+    var v = "";
+    try { v = window.localStorage.getItem(DEPT_STORE) || ""; } catch (e) { v = ""; }
+    var known = (App.registry.departments || []).some(function (d) { return d.key === v; });
+    return known ? v : "";
+  }
+
+  // The dataset the board and the export both draw, narrowed to the
+  // selected department (categories and areas stay intact).
+  function viewData() { return App.roadmapView.byDepartment(data, department); }
+
   function render(host) {
     var opts = { showDelivered: showDelivered, expanded: expanded };
+    var vd = viewData();
     host.innerHTML = layout === "cascade"
-      ? App.roadmapView.cascade(data, current, opts)
-      : App.roadmapView.timeline(data, current, opts);
+      ? App.roadmapView.cascade(vd, current, opts)
+      : App.roadmapView.timeline(vd, current, opts);
   }
 
   function renderDelivered(btn) {
@@ -138,6 +155,24 @@
     readState();
     showDelivered = readDelivered();
     expanded = readExpanded();
+    department = readDepartment();
+
+    var deptSelect = document.getElementById("roadmap-department");
+    if (deptSelect) {
+      (App.registry.departments || []).forEach(function (d) {
+        var option = document.createElement("option");
+        option.value = d.key;
+        option.textContent = d.label;
+        deptSelect.appendChild(option);
+      });
+      deptSelect.value = department;
+      deptSelect.addEventListener("change", function () {
+        department = deptSelect.value;
+        try { window.localStorage.setItem(DEPT_STORE, department); }
+        catch (e) { /* ignore */ }
+        render(host);
+      });
+    }
 
     var delBtn = document.getElementById("roadmap-delivered");
     if (delBtn) {
@@ -168,7 +203,7 @@
 
     var exportBtn = document.getElementById("roadmap-export-json");
     if (exportBtn) exportBtn.addEventListener("click", function () {
-      download("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(data.items, ctx));
+      download("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(viewData().items, ctx));
     });
 
     // Detail drawer: any element carrying a data-item-id opens the item.

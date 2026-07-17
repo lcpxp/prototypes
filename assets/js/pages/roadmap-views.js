@@ -67,6 +67,19 @@
   function productItems(items, scopeByArea) {
     return items.filter(function (i) { return scopeByArea[i.area_id] === "product"; });
   }
+
+  // Narrow a dataset to one owning department (work_items.department key),
+  // leaving categories and areas intact so every level still resolves
+  // themes. A falsy dept returns the data unchanged, so "all departments"
+  // is the natural default and costs nothing.
+  function byDepartment(data, dept) {
+    if (!dept) return data;
+    return {
+      categories: data.categories,
+      areas: data.areas,
+      items: (data.items || []).filter(function (i) { return i.department === dept; }),
+    };
+  }
   function byOrder(a, b) {
     return (a.priority - b.priority) || (a.sort_order - b.sort_order);
   }
@@ -357,7 +370,7 @@
 
   App.roadmapView = {
     colStart: colStart, colEnd: colEnd, isParked: isParked, isActive: isActive,
-    productItems: productItems, byOrder: byOrder, context: context,
+    productItems: productItems, byDepartment: byDepartment, byOrder: byOrder, context: context,
     themeLabel: themeLabel, bandLabel: bandLabel, endBandLabel: endBandLabel,
     progressOf: progressOf,
     presentationLabel: presentationLabel, freshnessHtml: freshnessHtml,

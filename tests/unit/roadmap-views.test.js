@@ -226,3 +226,35 @@ test("builders escape hostile content", () => {
   assert.match(V.timeline(data, "team"), /&lt;img/);
   assert.doesNotMatch(V.cascade(data, "team"), /<img src=x/);
 });
+
+test("byDepartment narrows items and passes areas/categories through", () => {
+  const V = loadView();
+  const data = {
+    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
+    areas: [{ id: "a1", scope: "product", category_id: "c1", sort_order: 10 }],
+    items: [
+      { id: "i1", area_id: "a1", department: "sales_commercial", title: "A" },
+      { id: "i2", area_id: "a1", department: "risk_underwriting", title: "B" },
+      { id: "i3", area_id: "a1", department: null, title: "C" },
+    ],
+  };
+  const filtered = V.byDepartment(data, "sales_commercial");
+  assert.equal(filtered.items.length, 1);
+  assert.equal(filtered.items[0].id, "i1");
+  assert.equal(filtered.areas, data.areas, "areas pass through unchanged");
+  assert.equal(filtered.categories, data.categories, "categories pass through unchanged");
+  // A falsy department returns the dataset unchanged (all departments).
+  assert.equal(V.byDepartment(data, ""), data);
+  assert.equal(V.byDepartment(data, null), data);
+});
+
+test("byDepartment feeds the board so a filter narrows the render", () => {
+  const V = loadView();
+  const data = sampleData();
+  data.items.forEach(function (i) { i.department = i.id === "i2" ? "product_technology" : "sales_commercial"; });
+  // Only the Unity focus item (i2) is product_technology; the Team board
+  // filtered to it shows Unity integration and not Core onboarding.
+  const html = V.timeline(V.byDepartment(data, "product_technology"), "team");
+  assert.match(html, /Unity integration/);
+  assert.doesNotMatch(html, /Core onboarding/);
+});
