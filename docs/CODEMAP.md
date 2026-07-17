@@ -24,6 +24,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 137 | guard.js - Blocks unauthenticated access to protected pages and |
 | assets/js/core/registry.js | 140 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
 | assets/js/core/ui.js | 123 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
@@ -48,6 +49,7 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 80 | Security model |
 | docs/SESSIONS.md | 997 | Session log |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
+| docs/SPRINTS.md | 109 | Sprints and dates |
 | docs/WORKFLOW.md | 100 | Work intake and backlog workflow |
 | index.html | 77 | Sign in - LPio / LaunchPad IO |
 | modules/backlog/index.html | 121 | Backlog - LPio / LaunchPad IO |
@@ -95,6 +97,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 70 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-views.test.js | 229 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
+| tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 
 ## JavaScript symbol index
@@ -108,6 +111,17 @@ document instead of walking the tree or reading whole files.
 | App.onAuthed | assets/js/core/guard.js:108 |
 | enforceModule() | assets/js/core/guard.js:116 |
 | App.moduleHref | assets/js/core/registry.js:136 |
+| pad2() | assets/js/core/sprints.js:31 |
+| iso() | assets/js/core/sprints.js:32 |
+| mod() | assets/js/core/sprints.js:35 |
+| codeIndex() | assets/js/core/sprints.js:39 |
+| indexToCode() | assets/js/core/sprints.js:47 |
+| toMs() | assets/js/core/sprints.js:54 |
+| sprintToRange() | assets/js/core/sprints.js:64 |
+| dateToSprint() | assets/js/core/sprints.js:72 |
+| currentSprint() | assets/js/core/sprints.js:77 |
+| sprintToQuarter() | assets/js/core/sprints.js:80 |
+| bandForSprint() | assets/js/core/sprints.js:93 |
 | stored() | assets/js/core/theme.js:25 |
 | systemTheme() | assets/js/core/theme.js:34 |
 | current() | assets/js/core/theme.js:38 |
@@ -244,6 +258,7 @@ document instead of walking the tree or reading whole files.
 | loadView() | tests/unit/roadmap-views.test.js:19 |
 | count() | tests/unit/roadmap-views.test.js:32 |
 | sampleData() | tests/unit/roadmap-views.test.js:36 |
+| loadSprints() | tests/unit/sprints.test.js:13 |
 | loadApp() | tests/unit/ui.test.js:13 |
 
 ## Conventions for agents
