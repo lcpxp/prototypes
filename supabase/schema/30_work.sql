@@ -174,6 +174,24 @@ create table if not exists public.work_items (
   impact text check (impact in ('low', 'medium', 'high')),
   starts_on date,
   ends_on date,
+  -- PXP delivery attributes (optional, light-touch; the board shows
+  -- only dates). progress is a coarse 0-100 completion rendered as a
+  -- subtle bar. prd_status/project_status mirror the KPI portal's own
+  -- status pickers and are DISTINCT from the internal `status`
+  -- lifecycle above. start_sprint/end_sprint hold precise sprint codes
+  -- (e.g. 26-16) alongside the coarse horizon band (see docs/SPRINTS.md).
+  progress smallint not null default 0 check (progress between 0 and 100),
+  prd_status text
+    check (prd_status in ('n_a', 'in_progress', 'pre_approved', 'approved', 'rejected')),
+  project_status text
+    check (project_status in ('planned', 'in_progress', 'pending', 'on_hold', 'completed')),
+  start_sprint text check (start_sprint ~ '^[0-9]{2}-[0-9]{2}$'),
+  end_sprint text check (end_sprint ~ '^[0-9]{2}-[0-9]{2}$'),
+  -- Light-touch bag for the remaining KPI-portal fields kept for record
+  -- and JSON export but never surfaced on the board: pnl_vertical,
+  -- team, region[], customer, resources, team_capacity, cost,
+  -- merchant_value, pxp_value, blockers, prd_link, legacy_priority_tags.
+  attributes jsonb not null default '{}'::jsonb,
   external_ref text,
   requested_by text,
   tags text[] not null default '{}',
@@ -219,6 +237,39 @@ drop trigger if exists work_items_resolution on public.work_items;
 create trigger work_items_resolution
   before update on public.work_items
   for each row execute function public.set_work_item_resolution();
+
+-- ---------------------------------------------------------------
+-- work_item_phases: optional delivery phases for a work item
+-- (Discovery, Build, Certification, Launch), each with a quarter and
+-- start/end dates. Either date may be flagged TBC (planned but not
+-- fixed). Light-touch: absent for high-level items, present when a
+-- work item carries KPI-portal-style phase planning. See
+-- docs/SPRINTS.md and docs/ROADMAP.md.
+-- ---------------------------------------------------------------
+
+create table if not exists public.work_item_phases (
+  id uuid primary key default gen_random_uuid(),
+  work_item_id uuid not null references public.work_items (id) on delete cascade,
+  phase text not null
+    check (phase in ('discovery', 'build', 'certification', 'launch')),
+  quarter text,
+  starts_on date,
+  ends_on date,
+  start_tbc boolean not null default false,
+  end_tbc boolean not null default false,
+  sort_order integer not null default 100,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (work_item_id, phase)
+);
+
+create index if not exists work_item_phases_item_idx
+  on public.work_item_phases (work_item_id, sort_order);
+
+drop trigger if exists work_item_phases_updated_at on public.work_item_phases;
+create trigger work_item_phases_updated_at
+  before update on public.work_item_phases
+  for each row execute function public.set_updated_at();
 
 -- Item-to-item ordering for waterfall views (empty until used).
 create table if not exists public.work_item_dependencies (

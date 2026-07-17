@@ -370,6 +370,40 @@ values
   40
 );
 
+-- Optional PXP depth on one sample item, proving the detail drawer and
+-- JSON export end to end. All light-touch and generic: progress is a
+-- coarse completion; attributes is the hidden record bag; start/end
+-- sprint are precise codes alongside the horizon band (docs/SPRINTS.md).
+update public.work_items
+set progress = 45,
+    prd_status = 'approved',
+    project_status = 'in_progress',
+    start_sprint = '26-16',
+    end_sprint = '26-18',
+    attributes = jsonb_build_object(
+      'pnl_vertical', 'Sample vertical',
+      'team', 'Sample team',
+      'region', jsonb_build_array('Sample region'),
+      'customer', 'Sample customer',
+      'merchant_value', 'Illustrative merchant value for the worked example.',
+      'pxp_value', 'Illustrative PXP value for the worked example.'
+    )
+where area_id = '22222222-2222-2222-2222-222222222222'
+  and title = 'Sample spanning item';
+
+-- Two phases on the same sample item; the second Build date is TBC.
+insert into public.work_item_phases
+  (work_item_id, phase, quarter, starts_on, ends_on, start_tbc, end_tbc, sort_order)
+select id, 'discovery', 'Q2 2026', '2026-04-06', '2026-05-01', false, false, 10
+from public.work_items
+where area_id = '22222222-2222-2222-2222-222222222222'
+  and title = 'Sample spanning item'
+union all
+select id, 'build', 'Q3 2026', '2026-07-20', null, false, true, 20
+from public.work_items
+where area_id = '22222222-2222-2222-2222-222222222222'
+  and title = 'Sample spanning item';
+
 -- Sample work intake ------------------------------------------------
 -- One document, one backlog item and one note proving the intake
 -- chain end to end (see docs/WORKFLOW.md).

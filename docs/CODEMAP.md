@@ -74,14 +74,16 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260715120000_platform_product_knowledge.sql | 86 | ------------------------------------------------------------------ |
 | supabase/migrations/20260716000000_roadmap_audience_and_area_theme.sql | 35 | ------------------------------------------------------------------ |
 | supabase/migrations/20260716120000_roadmap_spans_and_backlog_horizons.sql | 25 | ------------------------------------------------------------------ |
-| supabase/policies.sql | 243 | ------------------------------------------------------------------ |
+| supabase/migrations/20260716140000_unify_work_items.sql | 195 | ------------------------------------------------------------------ |
+| supabase/migrations/20260717000000_pxp_roadmap_fields.sql | 120 | ------------------------------------------------------------------ |
+| supabase/policies.sql | 245 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 57 | ------------------------------------------------------------------ |
-| supabase/schema/30_work.sql | 265 | ------------------------------------------------------------------ |
+| supabase/schema/30_work.sql | 316 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
-| supabase/schema/90_dashboard.sql | 31 | ------------------------------------------------------------------ |
-| supabase/seed.sql | 451 | ------------------------------------------------------------------ |
+| supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
+| supabase/seed.sql | 485 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 33 | tests/checks/size.test.js - File size budgets. |

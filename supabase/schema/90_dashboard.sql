@@ -24,6 +24,19 @@ as $$
     'integrations',  (select count(*) from (select 1 from public.integrations  limit 1001) c),
     'prototypes',    (select count(*) from (select 1 from public.prototypes    limit 1001) c),
     'work_items',    (select count(*) from (select 1 from public.work_items    limit 1001) c),
+    -- Roadmap delivery split for the dashboard progress meter, using the
+    -- same derived rules the roadmap views apply (delivered = status
+    -- done; parked = not done and (horizon someday or status dropped);
+    -- active = the rest). Capped at 1001 rows like the counts above.
+    'work_items_breakdown', (
+      select jsonb_build_object(
+        'total',     count(*),
+        'delivered', count(*) filter (where status = 'done'),
+        'parked',    count(*) filter (where status <> 'done' and (horizon = 'someday' or status = 'dropped')),
+        'active',    count(*) filter (where status <> 'done' and not (horizon = 'someday' or status = 'dropped'))
+      )
+      from (select status, horizon from public.work_items limit 1001) w
+    ),
     'product_capabilities', (select count(*) from (select 1 from public.product_capabilities limit 1001) c),
     'profiles',      (select count(*) from (select 1 from public.profiles      limit 1001) c)
   );

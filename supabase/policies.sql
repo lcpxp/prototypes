@@ -97,6 +97,7 @@ alter table public.roadmap_categories      enable row level security;
 alter table public.roadmap_milestones      enable row level security;
 alter table public.work_documents          enable row level security;
 alter table public.work_items              enable row level security;
+alter table public.work_item_phases        enable row level security;
 alter table public.work_item_dependencies  enable row level security;
 alter table public.work_notes              enable row level security;
 alter table public.product_capabilities    enable row level security;
@@ -122,6 +123,7 @@ begin
       ('roadmap_milestones',     '(select public.has_module_access(''roadmap''))'),
       ('work_documents',         '(select public.has_module_access(''backlog''))'),
       ('work_items',             '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('work_item_phases',       '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
       ('work_item_dependencies', '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
       ('work_notes',             '(select public.has_module_access(''backlog''))'),
       ('product_capabilities', '(select public.has_module_access(''platform''))')
