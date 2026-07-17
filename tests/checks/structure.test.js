@@ -110,3 +110,26 @@ test("every page has exactly one theme guard", () => {
       `${page}: the inline theme guard must appear exactly once, found ${n}.`);
   }
 });
+
+test("external scripts load deferred from <head> (theme.js excepted)", () => {
+  // Scripts live in <head> with defer so they never block first paint;
+  // defer preserves execution order, so the include contract still holds.
+  // theme.js is the one intentional exception: it must run before paint
+  // to apply the stored/OS theme without a flash, so it stays blocking.
+  for (const page of htmlPages()) {
+    const content = read(page);
+    const headEnd = content.indexOf("</head>");
+    const body = headEnd === -1 ? content : content.slice(headEnd);
+    assert.ok(!/<script\b[^>]*\ssrc=/.test(body),
+      `${page}: external scripts must live in <head> with defer, not in <body>.`);
+    for (const [full, src] of content.matchAll(/<script\b[^>]*\ssrc="([^"]+)"[^>]*>/g)) {
+      if (/core\/theme\.js$/.test(src)) {
+        assert.ok(!/\bdefer\b/.test(full),
+          `${page}: theme.js must stay render-blocking (no defer) to prevent a theme flash.`);
+      } else {
+        assert.match(full, /\bdefer\b/,
+          `${page}: <script src="${src}"> must carry defer.`);
+      }
+    }
+  }
+});

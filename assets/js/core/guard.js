@@ -23,6 +23,9 @@
   "use strict";
 
   window.App = window.App || {};
+  // Scripts load with defer from <head>, so the document is fully parsed
+  // and document.body is present by the time this runs. The `&&` guard
+  // keeps it safe regardless of load order.
   App.root = (document.body && document.body.dataset.root) || ".";
 
   App.requireAuth = (async function () {

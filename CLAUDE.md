@@ -113,11 +113,15 @@ is likely, checkpoint first.
 - Plain HTML, CSS and JavaScript. No frameworks, no build step, no
   new dependencies beyond the Supabase CDN client without explicit
   agreement from the repo owner recorded in docs/SESSIONS.md.
-- Every new protected page includes, in order: the Supabase CDN
-  script, then core/supabase.js, core/registry.js, core/guard.js,
-  core/ui.js, then its own page module from assets/js/pages/. Pages
-  below the repo root set data-root on body. (supabase.js carries the
-  public config; there is no separate config.js include.)
+- Every new protected page loads its scripts from <head>, each with
+  defer, in this order: the Supabase CDN script, then core/supabase.js,
+  core/registry.js, core/guard.js, core/ui.js, core/search.js, then its
+  own page module(s) from assets/js/pages/. defer keeps them off the
+  first-paint path and preserves execution order. core/theme.js is the
+  one exception: it stays render-blocking in <head> to apply the theme
+  before paint. Pages below the repo root set data-root on body.
+  (supabase.js carries the public config; there is no separate config.js
+  include.)
 - Interface copy is plain, specific and in sentence case. Buttons say
   what they do. Errors say what went wrong and how to fix it.
 - All dynamic content rendered into the DOM goes through App.escape.
