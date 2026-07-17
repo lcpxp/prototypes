@@ -19,6 +19,7 @@ function load() {
   sandbox.window = sandbox;
   vm.createContext(sandbox);
   for (const f of [
+    "assets/js/core/registry.js",
     "assets/js/core/ui.js",
     "assets/js/core/sprints.js",
     "assets/js/pages/roadmap-views.js",
@@ -37,6 +38,7 @@ function sample() {
     items: [
       { id: "i2", area_id: "a3", category_id: "c2", title: "Unity integration", summary: "Focus",
         status: "in_progress", horizon: "now", end_horizon: "next", presentation: "current",
+        department: "product_technology",
         priority: 20, sort_order: 20, progress: 45, prd_status: "approved", project_status: "in_progress",
         starts_on: "2026-07-20", ends_on: "2026-09-01", start_sprint: "26-16", end_sprint: "26-18",
         updated_at: "2026-07-15T09:00:00Z",
@@ -60,6 +62,7 @@ test("toKpiItem resolves theme, band and statuses into a lean object", () => {
   const data = sample();
   const item = plain(App.roadmapDetail.toKpiItem(data.items[0], ctxOf(App, data)));
   assert.equal(item.theme, "Unity");
+  assert.equal(item.department, "Product and Technology");
   assert.equal(item.band, "Now to Next");
   assert.equal(item.status, "In progress");
   assert.equal(item.prd_status, "Approved");
@@ -92,6 +95,7 @@ test("toKpiItem on a bare item carries no empty keys", () => {
   assert.ok(!("team" in item), "unset attributes are omitted");
   assert.ok(!("phases" in item), "no phases key when there are none");
   assert.ok(!("start_sprint" in item));
+  assert.ok(!("department" in item), "an unset department is omitted");
 });
 
 test("toKpiRoadmap excludes portal scope and carries sprint context", () => {
@@ -109,6 +113,7 @@ test("drawerHtml renders the facts, phases and an export button", () => {
   const data = sample();
   const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
   assert.match(html, /Unity integration/);
+  assert.match(html, /Product and Technology/);
   assert.match(html, /Approved/);
   assert.match(html, /Discovery/);
   assert.match(html, /Build/);

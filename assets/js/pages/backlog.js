@@ -63,6 +63,7 @@
       ["Band", App.escape(BAND_LABEL[band])],
       ["Horizon", App.escape(item.horizon || "")],
       ["Type", App.escape(item.type || "")],
+      ["Department", App.escape(App.departmentLabel(item.department))],
       ["Area", App.escape(areaTitle[item.area_id] || "")],
       ["Status", App.statusBadge(item.status)],
       ["Priority", App.escape(String(item.priority))],
@@ -96,10 +97,12 @@
 
   function filteredItems() {
     var area = document.getElementById("filter-area").value;
+    var department = document.getElementById("filter-department").value;
     var type = document.getElementById("filter-type").value;
     var band = document.getElementById("filter-band").value;
     return items.filter(function (item) {
       if (area && item.area_id !== area) return false;
+      if (department && item.department !== department) return false;
       if (type && item.type !== type) return false;
       if (band && BAND_GROUPS[band].indexOf(bandOf(item)) === -1) return false;
       return true;
@@ -126,7 +129,7 @@
     }
     var html =
       '<div class="table-wrap"><table><thead><tr>' +
-      "<th>Item</th><th>Band</th><th>Type</th><th>Area</th><th>Status</th><th>Priority</th>" +
+      "<th>Item</th><th>Band</th><th>Type</th><th>Department</th><th>Area</th><th>Status</th><th>Priority</th>" +
       "</tr></thead><tbody>";
     data.forEach(function (item) {
       html +=
@@ -135,6 +138,7 @@
         App.escape(item.id) + '">' + App.escape(item.title) + "</button></td>" +
         "<td>" + App.escape(BAND_LABEL[bandOf(item)]) + "</td>" +
         "<td>" + App.escape(item.type || "") + "</td>" +
+        "<td>" + App.escape(App.departmentLabel(item.department)) + "</td>" +
         "<td>" + App.escape(areaTitle[item.area_id] || "") + "</td>" +
         "<td>" + App.statusBadge(item.status) + "</td>" +
         '<td class="mono">' + App.escape(String(item.priority)) + "</td>" +
@@ -193,6 +197,13 @@
       option.textContent = area.title;
       areaSelect.appendChild(option);
     });
+    var departmentSelect = document.getElementById("filter-department");
+    (App.registry.departments || []).forEach(function (department) {
+      var option = document.createElement("option");
+      option.value = department.key;
+      option.textContent = department.label;
+      departmentSelect.appendChild(option);
+    });
     var typeSelect = document.getElementById("filter-type");
     TYPES.forEach(function (type) {
       var option = document.createElement("option");
@@ -200,7 +211,7 @@
       option.textContent = type;
       typeSelect.appendChild(option);
     });
-    ["filter-area", "filter-type", "filter-band"].forEach(function (id) {
+    ["filter-area", "filter-department", "filter-type", "filter-band"].forEach(function (id) {
       document.getElementById(id).addEventListener("change", renderItems);
     });
   }
@@ -228,7 +239,7 @@
         .order("captured_on", { ascending: false }),
       App.db
         .from(App.registry.tables.workItems)
-        .select("id, area_id, source_document_id, type, title, summary, details, " +
+        .select("id, area_id, source_document_id, type, department, title, summary, details, " +
           "status, horizon, end_horizon, priority, external_ref, requested_by, " +
           "tags, resolution, resolved_at, created_at, sort_order")
         .order("priority", { ascending: true })

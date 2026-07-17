@@ -305,9 +305,12 @@ values (
 -- spanning to end_horizon. presentation shapes how an Active item
 -- reads on the Now track. The Executive view rolls Active work up by
 -- theme (category_id, or the area's theme when unset).
+-- department is the coarse org-owner tag (see registry.js); each sample
+-- row carries a different one so the backlog filter and column, and the
+-- roadmap drawer, are exercised end to end with generic values.
 insert into public.work_items
   (area_id, category_id, title, summary, status, horizon, end_horizon,
-   presentation, priority, effort, impact, tags, sort_order)
+   presentation, priority, effort, impact, department, tags, sort_order)
 values
 (
   '22222222-2222-2222-2222-222222222222',
@@ -321,6 +324,7 @@ values
   10,
   'medium',
   'high',
+  'product_technology',
   array['sample'],
   10
 ),
@@ -336,6 +340,7 @@ values
   20,
   'large',
   'medium',
+  'operations_onboarding',
   array['sample'],
   20
 ),
@@ -351,6 +356,7 @@ values
   30,
   'medium',
   'high',
+  'sales_commercial',
   array['sample'],
   30
 ),
@@ -366,6 +372,7 @@ values
   100,
   null,
   null,
+  'risk_underwriting',
   array['sample'],
   40
 );

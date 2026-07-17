@@ -98,6 +98,7 @@
     var region = Array.isArray(a.region) ? a.region.map(esc).join(", ") : esc(a.region || "");
     var facts =
       row("Theme", esc(V.themeLabel(item, ctx))) +
+      row("Department", esc(App.departmentLabel(item.department))) +
       row("Band", esc(bandText(item))) +
       row("Status", esc(STATUS[item.status] || item.status)) +
       row("PRD status", esc(PRD_STATUS[item.prd_status] || "")) +
@@ -147,6 +148,7 @@
       id: item.id,
       title: item.title,
       theme: V.themeLabel(item, ctx),
+      department: App.departmentLabel(item.department) || null,
       band: bandText(item),
       status: STATUS[item.status] || item.status,
       prd_status: PRD_STATUS[item.prd_status] || null,

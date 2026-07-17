@@ -24,11 +24,17 @@ only.
 - work_items: roadmap and backlog work in one table, replacing the
   roll-forward Notion page. type is one of consideration, feature,
   functionality, bug, improvement, task (null for roadmap-origin
-  work). horizon places it (someday = an unscheduled candidate;
-  now/next/later = scheduled onto the roadmap). Items are never
-  deleted: closing one means status 'done' or 'dropped' plus a
-  resolution sentence; resolved_at is stamped by trigger. Reopening
-  clears it.
+  work). department is an optional coarse org-owner tag - the business
+  function accountable for the item (Sales & Commercial, Operations and
+  Onboarding, Product and Technology, Finance and Revenue, Legal &
+  Compliance, Risk & Underwriting) - orthogonal to area/theme, so any
+  view can group or filter by who owns the work; the keys live in the
+  work_items.department check constraint and their labels in
+  App.registry.departments (assets/js/core/registry.js). horizon places
+  it (someday = an unscheduled candidate; now/next/later = scheduled
+  onto the roadmap). Items are never deleted: closing one means status
+  'done' or 'dropped' plus a resolution sentence; resolved_at is stamped
+  by trigger. Reopening clears it.
 - work_notes: atomic distilled records - decision, fact, risk,
   question, action or note - each linked to whatever it concerns
   (an area, a document, a work item).
