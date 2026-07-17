@@ -21,6 +21,24 @@
       if (result.error || count == null) el.textContent = "-";
       else el.textContent = count > 1000 ? "1000+" : count;
     });
+    renderRoadmapMeter(result.data && result.data.work_items_breakdown);
+  }
+
+  // A slim roadmap delivery meter from the dashboard_counts() breakdown,
+  // so no extra query is needed. Hidden when there is no work to show.
+  function renderRoadmapMeter(bd) {
+    var host = document.getElementById("roadmap-meter");
+    if (!host) return;
+    if (!bd || !bd.total) { host.innerHTML = ""; return; }
+    var delivered = bd.delivered || 0, total = bd.total || 0;
+    var pct = total ? Math.round((delivered / total) * 100) : 0;
+    host.innerHTML =
+      '<div class="meter-head"><span class="eyebrow">Roadmap progress</span>' +
+      '<span class="meter-figure">' + delivered + " of " + total + " delivered</span></div>" +
+      '<div class="meter" role="img" aria-label="' + pct + ' percent delivered">' +
+      '<span class="meter-fill" style="width:' + pct + '%"></span></div>' +
+      '<p class="meter-legend">' + (bd.active || 0) + " active &middot; " +
+      (bd.parked || 0) + " parked</p>";
   }
 
   function cardHtml(mod) {
@@ -54,48 +72,71 @@
     loadCounts(modules);
   }
 
-  async function loadRecent() {
-    var host = document.getElementById("recent-specs");
+  function moduleByKey(key) {
+    return App.registry.modules.find(function (m) { return m.key === key; });
+  }
+
+  // Cross-module recent activity. Each source names the table it reads,
+  // its display-name column, and how to link a row. work_items is shared
+  // by the roadmap and backlog grants; the rest map one-to-one.
+  function activitySources() {
+    var t = App.registry.tables;
+    return [
+      { keys: ["roadmap", "backlog"], mod: "roadmap", table: t.workItems, name: "title", type: "Work item",
+        link: function (m) { return App.moduleHref(m); } },
+      { keys: ["prototypes"], mod: "prototypes", table: t.prototypes, name: "title", type: "Prototype",
+        link: function (m) { return App.moduleHref(m); } },
+      { keys: ["reference"], mod: "reference", table: t.apiSpecs, name: "title", type: "API spec",
+        link: function (m, r) { return App.moduleHref(m) + "index.html?spec=" + r.id; } },
+      { keys: ["platform"], mod: "platform", table: t.productCapabilities, name: "title", type: "Capability",
+        link: function (m) { return App.moduleHref(m); } },
+      { keys: ["integrations"], mod: "integrations", table: t.integrations, name: "name", type: "Integration",
+        link: function (m) { return App.moduleHref(m); } },
+    ];
+  }
+
+  function canReach(keys) {
+    if (!App.canAccess) return true;
+    return keys.some(function (k) { return App.canAccess(k); });
+  }
+
+  async function loadActivity() {
+    var host = document.getElementById("recent-activity");
     if (!host) return;
 
-    var reference = App.registry.modules.find(function (mod) {
-      return mod.key === "reference";
+    var sources = activitySources().filter(function (s) { return canReach(s.keys); });
+    var results = await Promise.all(sources.map(function (s) {
+      return App.db.from(s.table)
+        .select("id, " + s.name + ", updated_at")
+        .order("updated_at", { ascending: false })
+        .limit(8);
+    }));
+
+    var rows = [];
+    results.forEach(function (res, i) {
+      if (res.error || !res.data) return;
+      var s = sources[i], mod = moduleByKey(s.mod);
+      res.data.forEach(function (r) {
+        rows.push({ title: r[s.name], type: s.type, updated_at: r.updated_at,
+          href: mod ? s.link(mod, r) : "#" });
+      });
     });
+    rows.sort(function (a, b) { return (b.updated_at || "").localeCompare(a.updated_at || ""); });
+    rows = rows.slice(0, 8);
 
-    var result = await App.db
-      .from(App.registry.tables.apiSpecs)
-      .select("id, title, version, status, updated_at")
-      .order("updated_at", { ascending: false })
-      .limit(5);
-
-    if (result.error || !result.data || result.data.length === 0) {
-      host.innerHTML =
-        '<p class="notice">No specs yet. Add rows to the api_specs table ' +
-        "in Supabase and they will appear here and in the reference viewer.</p>";
+    if (!rows.length) {
+      host.innerHTML = '<p class="notice">No recent activity yet. Content changes ' +
+        "across modules will appear here as they happen.</p>";
       return;
     }
 
-    var html = '<div class="table-wrap"><table><thead><tr>' +
-      "<th>Spec</th><th>Version</th><th>Status</th><th>Updated</th>" +
-      "</tr></thead><tbody>";
-
-    result.data.forEach(function (spec) {
-      var updated = spec.updated_at
-        ? new Date(spec.updated_at).toLocaleDateString()
-        : "";
-      var href = App.moduleHref(reference) + "index.html?spec=" + spec.id;
-      html +=
-        "<tr>" +
-        '<td><a href="' + App.escape(href) + '">' +
-        App.escape(spec.title) + "</a></td>" +
-        '<td class="mono">' + App.escape(spec.version) + "</td>" +
-        "<td>" + App.statusBadge(spec.status) + "</td>" +
-        "<td>" + App.escape(updated) + "</td>" +
-        "</tr>";
-    });
-
-    html += "</tbody></table></div>";
-    host.innerHTML = html;
+    host.innerHTML = '<ul class="activity">' + rows.map(function (r) {
+      var when = r.updated_at ? new Date(r.updated_at).toLocaleDateString() : "";
+      return '<li class="activity-item"><a href="' + App.escape(r.href) + '">' +
+        App.escape(r.title) + "</a>" +
+        '<span class="activity-meta">' + App.escape(r.type) +
+        (when ? " &middot; " + App.escape(when) : "") + "</span></li>";
+    }).join("") + "</ul>";
   }
 
   // Explain a redirect from a module the user has no grant for.
@@ -113,6 +154,6 @@
   App.onAuthed(function () {
     showDeniedNotice();
     renderCards();
-    loadRecent();
+    loadActivity();
   });
 })();

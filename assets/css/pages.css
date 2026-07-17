@@ -253,3 +253,49 @@
     display: block;
   }
 }
+
+/* ------------------------------------------------------------------
+   Dashboard: roadmap progress meter and cross-module activity feed.
+------------------------------------------------------------------- */
+.roadmap-meter:empty { display: none; }
+.roadmap-meter {
+  margin-bottom: var(--s-5);
+  padding: var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+.meter-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-3);
+  margin-bottom: var(--s-2);
+}
+.meter-figure { color: var(--ink); font-weight: var(--weight-semibold); }
+.meter {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--alt-surface);
+  overflow: hidden;
+}
+.meter-fill { display: block; height: 100%; background: var(--ok); }
+.meter-legend { margin: var(--s-2) 0 0; color: var(--faint); font-size: var(--text-sm); }
+
+.activity { list-style: none; margin: 0; padding: 0; }
+.activity-item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-2);
+  padding: var(--s-3) 0;
+  border-top: 1px solid var(--line);
+}
+.activity-item:first-child { border-top: 0; }
+.activity-meta {
+  color: var(--faint);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}

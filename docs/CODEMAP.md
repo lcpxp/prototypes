@@ -16,7 +16,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/components.css | 426 | components.css - Reusable interface components: cards, forms, |
 | assets/css/layout.css | 183 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
-| assets/css/pages.css | 256 | pages.css - The reference viewer ("swagger") page. Everything |
+| assets/css/pages.css | 302 | pages.css - The reference viewer ("swagger") page. Everything |
 | assets/css/roadmap-detail.css | 151 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 233 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 285 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
@@ -30,7 +30,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
 | assets/js/core/ui.js | 123 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/backlog.js | 267 | backlog.js - The master work list for modules/backlog/. |
-| assets/js/pages/dashboard.js | 119 | dashboard.js - Renders module cards, counts and recent activity |
+| assets/js/pages/dashboard.js | 160 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 115 | integrations.js - Integration overview for modules/integrations/. |
 | assets/js/pages/platform.js | 201 | platform.js - The platform product-knowledge viewer for |
@@ -41,7 +41,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-views.js | 367 | roadmap-views.js - Pure HTML builders for the roadmap home |
 | assets/js/pages/roadmap.js | 273 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
-| dashboard.html | 58 | Dashboard - LPio / LaunchPad IO |
+| dashboard.html | 60 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 227 | Architecture |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 108 | Verification harness and working process |
@@ -148,11 +148,15 @@ document instead of walking the tree or reading whole files.
 | renderDocuments() | assets/js/pages/backlog.js:154 |
 | fillFilters() | assets/js/pages/backlog.js:188 |
 | loadCounts() | assets/js/pages/dashboard.js:14 |
-| cardHtml() | assets/js/pages/dashboard.js:26 |
-| visibleModules() | assets/js/pages/dashboard.js:42 |
-| renderCards() | assets/js/pages/dashboard.js:48 |
-| loadRecent() | assets/js/pages/dashboard.js:57 |
-| showDeniedNotice() | assets/js/pages/dashboard.js:102 |
+| renderRoadmapMeter() | assets/js/pages/dashboard.js:29 |
+| cardHtml() | assets/js/pages/dashboard.js:44 |
+| visibleModules() | assets/js/pages/dashboard.js:60 |
+| renderCards() | assets/js/pages/dashboard.js:66 |
+| moduleByKey() | assets/js/pages/dashboard.js:75 |
+| activitySources() | assets/js/pages/dashboard.js:82 |
+| canReach() | assets/js/pages/dashboard.js:98 |
+| loadActivity() | assets/js/pages/dashboard.js:103 |
+| showDeniedNotice() | assets/js/pages/dashboard.js:143 |
 | safeUrl() | assets/js/pages/integrations.js:15 |
 | modalHtml() | assets/js/pages/integrations.js:19 |
 | openModal() | assets/js/pages/integrations.js:47 |
