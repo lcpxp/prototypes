@@ -99,3 +99,14 @@ test("every page is marked noindex", () => {
       `${page}: missing <meta name="robots" content="noindex">.`);
   }
 });
+
+test("every page has exactly one theme guard", () => {
+  // The inline theme guard must run once, before the stylesheets, to
+  // set data-theme ahead of first paint. A past multi-edit duplicated
+  // it once per stylesheet link on the module pages; this pins it to one.
+  for (const page of htmlPages()) {
+    const n = (read(page).match(/localStorage\.getItem\("theme"\)/g) || []).length;
+    assert.equal(n, 1,
+      `${page}: the inline theme guard must appear exactly once, found ${n}.`);
+  }
+});
