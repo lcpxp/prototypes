@@ -1,0 +1,150 @@
+/* ------------------------------------------------------------------
+   roadmap-detail.css - Coarse progress bars, the expanded Executive
+   child lists, and the right-hand item detail drawer. Tokens only,
+   mobile-first (min-width queries). Loaded after roadmap-views.css.
+------------------------------------------------------------------- */
+
+/* --- Coarse progress buckets (shared width variable) --- */
+.rmv-prog-0   { --rmv-prog: 0%; }
+.rmv-prog-25  { --rmv-prog: 25%; }
+.rmv-prog-50  { --rmv-prog: 50%; }
+.rmv-prog-75  { --rmv-prog: 75%; }
+.rmv-prog-90  { --rmv-prog: 90%; }
+.rmv-prog-100 { --rmv-prog: 100%; }
+
+/* Timeline bar: a subtle progress underline along the bar's foot. The
+   bar already clips overflow, so the fill stays inside it. */
+.rmv-tl-bar { position: relative; }
+.rmv-tl-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: var(--rmv-prog, 0);
+  background: currentColor;
+  opacity: 0.45;
+}
+
+/* Cascade card and drawer head: a slim track with an accent fill. */
+.rm-card-progress {
+  margin-top: var(--s-2);
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+  overflow: hidden;
+}
+.rm-card-progress > span {
+  display: block;
+  height: 100%;
+  width: var(--rmv-prog, 0);
+  background: var(--accent);
+}
+
+/* --- Clickable affordance on items --- */
+.rmv-tl-bar[data-item-id],
+.rm-card[data-item-id],
+.rmv-exec-item { cursor: pointer; }
+.rm-card[data-item-id]:hover,
+.rm-card[data-item-id]:focus-within { border-color: var(--accent); }
+.rmv-tl-bar[data-item-id]:hover { filter: brightness(0.97); }
+.rmv-exec-item:hover .rmv-exec-item-title { color: var(--accent); }
+
+/* --- Expanded Executive child lists --- */
+.rmv-exec-details {
+  display: grid;
+  gap: var(--s-4);
+  margin-top: var(--s-5);
+}
+@media (min-width: 48rem) {
+  .rmv-exec-details { grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+}
+.rmv-exec-detail {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface);
+}
+.rmv-exec-items { list-style: none; margin: var(--s-2) 0 0; padding: 0; }
+.rmv-exec-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) 0;
+  border-top: 1px solid var(--line);
+}
+.rmv-exec-item:first-child { border-top: 0; }
+.rmv-exec-item-title { flex: 1; color: var(--ink); font-size: var(--text-sm); }
+.rmv-exec-item-band {
+  color: var(--faint);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+.rmv-prog-pill {
+  min-width: 2.75rem;
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--muted);
+  background: var(--alt-surface);
+  border-radius: var(--radius-pill);
+  padding: var(--s-0) var(--s-2);
+}
+
+/* --- Detail drawer --- */
+.rmd-scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; }
+.rmd-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 50;
+  width: min(30rem, 100%);
+  height: 100%;
+  overflow-y: auto;
+  background: var(--surface);
+  border-inline-start: 1px solid var(--line);
+  box-shadow: var(--shadow-overlay);
+  padding: var(--s-5);
+}
+.rmd-close { position: absolute; top: var(--s-3); right: var(--s-3); }
+.rmd-head { margin: 0 0 var(--s-4); padding-right: var(--s-6); }
+.rmd-head h2 { margin: var(--s-1) 0 var(--s-3); }
+.rmd-summary { color: var(--muted); margin: 0 0 var(--s-4); }
+.rmd-facts { margin: 0 0 var(--s-4); }
+.rmd-row {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: var(--s-2);
+  padding: var(--s-2) 0;
+  border-top: 1px solid var(--line);
+}
+.rmd-row dt { color: var(--faint); font-size: var(--text-sm); }
+.rmd-row dd { margin: 0; color: var(--ink); font-size: var(--text-sm); }
+.rmd-section, .rmd-note { margin: var(--s-4) 0; }
+.rmd-section h3, .rmd-note h3 {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--faint);
+  margin: 0 0 var(--s-2);
+}
+.rmd-phase {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-2) 0;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-sm);
+}
+.rmd-phase-name { color: var(--ink); }
+.rmd-phase-when { color: var(--muted); text-align: right; }
+.rmd-tbc {
+  font-size: var(--text-xs);
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--s-1);
+}
+.rmd-note p { margin: 0; color: var(--ink); font-size: var(--text-sm); }
+.rmd-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-5); }
+body.rmd-open { overflow: hidden; }

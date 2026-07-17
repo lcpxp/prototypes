@@ -93,6 +93,32 @@
   }
   function catClass(cat) { return cat ? " rm-cat-" + App.escape(cat.key) : ""; }
 
+  // Coarse progress: a stored 0-100 snapped to checkpoints for a subtle
+  // bar. Delivered work reads as complete regardless of the stored value.
+  var PROG_STOPS = [0, 25, 50, 75, 90, 100];
+  var PROG_LABELS = {
+    0: "Not started", 25: "Started", 50: "Halfway",
+    75: "Well underway", 90: "Nearly done", 100: "Complete",
+  };
+  function progressOf(item) {
+    var raw = item.status === "done" ? 100
+      : Math.max(0, Math.min(100, parseInt(item.progress, 10) || 0));
+    var bucket = PROG_STOPS[0];
+    PROG_STOPS.forEach(function (s) {
+      if (Math.abs(s - raw) < Math.abs(bucket - raw)) bucket = s;
+    });
+    return { pct: raw, bucket: bucket, label: PROG_LABELS[bucket] };
+  }
+
+  // Resolve an item's theme label and start/end band labels, so the
+  // detail drawer and JSON export read the same placement the board shows.
+  function themeLabel(i, ctx) {
+    var id = themeIdOf(i, ctx), cat = id ? ctx.catById[id] : null;
+    return cat ? cat.label : "General";
+  }
+  function bandLabel(i) { return BANDS[colStart(i)].label; }
+  function endBandLabel(i) { return BANDS[colEnd(i)].label; }
+
   function freshnessHtml(items) {
     var latest = "";
     items.forEach(function (i) { if (i.updated_at && i.updated_at > latest) latest = i.updated_at; });
@@ -125,9 +151,11 @@
         return '<span class="rmv-tl-col">' + b.label + "</span>"; }).join("") + "</div>";
     var body = visible.slice().sort(timelineOrder).map(function (p) {
       var s = p._s < first ? first : p._s, e = p._e > maxBand ? maxBand : p._e;
+      var progCls = p._prog ? " rmv-prog-" + p._prog.bucket : "";
+      var idAttr = p._id ? ' data-item-id="' + App.escape(p._id) + '"' : "";
       var bar = '<span class="rmv-tl-bar' + (p.done ? " rmv-tl-bar--done" : "") +
-        (p._s === PARKED ? " rmv-tl-bar--parked" : "") + catClass(p._cat) +
-        '" style="grid-column:' + (s - first + 2) + " / " + (e - first + 3) + '">' +
+        (p._s === PARKED ? " rmv-tl-bar--parked" : "") + catClass(p._cat) + progCls +
+        '"' + idAttr + ' style="grid-column:' + (s - first + 2) + " / " + (e - first + 3) + '">' +
         App.escape(p.label) + "</span>";
       return '<div class="rmv-tl-row"><span class="rmv-tl-label">' +
         App.escape(p._catLabel) + "</span>" + bar + "</div>";
@@ -141,7 +169,7 @@
     var catId = themeIdOf(i, ctx), cat = catId ? ctx.catById[catId] : null;
     return { _s: colStart(i), _e: colEnd(i), _cat: cat,
       _catLabel: cat ? cat.label : "General", _pri: i.priority, _so: i.sort_order,
-      label: i.title, done: i.status === "done" };
+      label: i.title, done: i.status === "done", _id: i.id, _prog: progressOf(i) };
   }
 
   // Roll a theme's items into one lane (bar = item count) for Executive.
@@ -160,14 +188,59 @@
       label: n + (n === 1 ? " item" : " items") };
   }
 
+  // The Executive dataset: active work, plus delivered when shown, never
+  // parked. Shared by the rollup lanes and the expanded child lists.
+  function execLive(items, ctx, show) {
+    return items.filter(function (i) {
+      if (isParked(i)) return false;
+      if (i.status === "done") return show;
+      return true;
+    });
+  }
+
+  // A compact child row for the expanded Executive view: title, a coarse
+  // progress pill and the item's band. Clickable through to the drawer.
+  function execItemRow(i) {
+    var prog = progressOf(i);
+    return '<li class="rmv-exec-item rm-card--' + BANDS[colStart(i)].key +
+      '" data-item-id="' + App.escape(i.id) + '">' +
+      '<span class="rmv-exec-item-title">' + App.escape(i.title) + "</span>" +
+      '<span class="rmv-prog-pill rmv-prog-' + prog.bucket + '">' + prog.pct + "%</span>" +
+      '<span class="rmv-exec-item-band">' + App.escape(bandLabel(i)) + "</span></li>";
+  }
+
+  // A theme block for the Executive rollup: header and description, plus
+  // the child item list when expanded (empty keeps the compact rollup).
+  function execThemeBlock(cat, items) {
+    var desc = cat && cat.description
+      ? '<p class="rmv-theme-desc">' + App.escape(cat.description) + "</p>" : "";
+    var list = items.length ? '<ul class="rmv-exec-items">' +
+      items.slice().sort(byOrder).map(execItemRow).join("") + "</ul>" : "";
+    return '<section class="rmv-theme' + catClass(cat) + '">' +
+      '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
+      desc + list + "</section>";
+  }
+
+  // Child-item lists per theme, appended under the Executive timeline
+  // when expanded so a rolled-up lane names the work it summarises.
+  function execDetail(live, ctx) {
+    var byCat = groupBy(live, function (i) { return themeIdOf(i, ctx); });
+    function block(cat, items) {
+      return '<section class="rmv-exec-detail' + catClass(cat) + '">' +
+        '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
+        '<ul class="rmv-exec-items">' +
+        items.slice().sort(byOrder).map(execItemRow).join("") + "</ul></section>";
+    }
+    var blocks = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
+      .map(function (c) { return block(c, byCat[c.id]); });
+    if (byCat.none) blocks.push(block(null, byCat.none));
+    return blocks.length ? '<div class="rmv-exec-details">' + blocks.join("") + "</div>" : "";
+  }
+
   // Executive keeps active work (plus delivered when shown), never
   // parked, rolled up by theme in category order. Always complete.
   function execLanes(items, ctx, showDelivered) {
-    var live = items.filter(function (i) {
-      if (isParked(i)) return false;
-      if (i.status === "done") return showDelivered;
-      return true;
-    });
+    var live = execLive(items, ctx, showDelivered);
     var byCat = groupBy(live, function (i) { return themeIdOf(i, ctx); });
     var lanes = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
       .map(function (c) { return themeLane(c, byCat[c.id]); });
@@ -186,9 +259,11 @@
     var all = productItems(data.items || [], ctx.scopeByArea);
     if (!all.length) return emptyNotice();
     if (level === "exec") {
-      return timelineGrid(execLanes(all, ctx, show), ACTIVE_MAX, show,
+      var grid = timelineGrid(execLanes(all, ctx, show), ACTIVE_MAX, show,
         '<p class="notice">No active roadmap work to summarise. Schedule ' +
-        "work by setting a horizon of now, next or later.</p>") + freshnessHtml(all);
+        "work by setting a horizon of now, next or later.</p>");
+      var detail = opts && opts.expanded ? execDetail(execLive(all, ctx, show), ctx) : "";
+      return grid + detail + freshnessHtml(all);
     }
     if (level === "backlog") {
       return timelineGrid(all.map(function (i) { return placeItem(i, ctx); }), PARKED, show,
@@ -205,11 +280,16 @@
   function itemCard(item, cat) {
     var band = colStart(item);
     var label = band === 1 ? presentationLabel(item.presentation) : "";
-    return '<li class="rm-card rm-card--' + BANDS[band].key + catClass(cat) + '">' +
+    var prog = progressOf(item);
+    return '<li class="rm-card rm-card--' + BANDS[band].key + catClass(cat) +
+      '" data-item-id="' + App.escape(item.id) + '">' +
       (label ? '<p class="rm-state rm-state--' + App.escape(item.presentation) + '">' +
         App.escape(label) + "</p>" : "") +
       "<h3>" + App.escape(item.title) + "</h3>" +
-      (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") + "</li>";
+      (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") +
+      '<div class="rm-card-progress rmv-prog-' + prog.bucket +
+      '" role="img" aria-label="Progress: ' + App.escape(prog.label) + '"><span></span></div>' +
+      "</li>";
   }
 
   function themeBlock(cat, items, cardFn) {
@@ -237,18 +317,23 @@
   // Stack items into the bands they span, grouped by theme. Executive
   // groups whole themes (description card, no items); Team/Backlog show
   // item cards. maxBand caps the axis.
-  function bandsCascade(list, ctx, maxBand, show, exec) {
+  function bandsCascade(list, ctx, maxBand, show, exec, expanded) {
     var html = "";
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx === 0 && !show) continue;
       var inBand = list.filter(function (i) { return colStart(i) <= idx && colEnd(i) >= idx; });
       if (!inBand.length) continue;
       var byCat = groupBy(inBand, function (i) { return themeIdOf(i, ctx); });
-      var body = exec
-        ? '<div class="rmv-themes">' + ctx.catSorted.filter(function (c) { return byCat[c.id]; })
-            .map(function (c) { return themeBlock(c, [], null); })
-            .concat(byCat.none ? [themeBlock(null, [], null)] : []).join("") + "</div>"
-        : themeBlocks(ctx, byCat, function (i) { return itemCard(i, ctx.catById[themeIdOf(i, ctx)] || null); });
+      var body;
+      if (exec) {
+        // Expanded lists child items under each theme; compact keeps the
+        // theme-only rollup (an empty item list renders no titles).
+        body = '<div class="rmv-themes">' + ctx.catSorted.filter(function (c) { return byCat[c.id]; })
+          .map(function (c) { return execThemeBlock(c, expanded ? byCat[c.id] : []); })
+          .concat(byCat.none ? [execThemeBlock(null, expanded ? byCat.none : [])] : []).join("") + "</div>";
+      } else {
+        body = themeBlocks(ctx, byCat, function (i) { return itemCard(i, ctx.catById[themeIdOf(i, ctx)] || null); });
+      }
       html += '<section class="rmv-band">' + bandHead(BANDS[idx].label, BANDS[idx].key) +
         body + "</section>";
     }
@@ -261,12 +346,9 @@
     var all = productItems(data.items || [], ctx.scopeByArea);
     if (!all.length) return emptyNotice();
     if (level === "exec") {
-      var live = all.filter(function (i) {
-        if (isParked(i)) return false;
-        if (i.status === "done") return show;
-        return true;
-      });
-      return bandsCascade(live, ctx, ACTIVE_MAX, show, true) + freshnessHtml(all);
+      var live = execLive(all, ctx, show);
+      return bandsCascade(live, ctx, ACTIVE_MAX, show, true, opts && opts.expanded) +
+        freshnessHtml(all);
     }
     var list = level === "backlog" ? all : teamList(all);
     var maxBand = level === "backlog" ? PARKED : ACTIVE_MAX;
@@ -275,7 +357,9 @@
 
   App.roadmapView = {
     colStart: colStart, colEnd: colEnd, isParked: isParked, isActive: isActive,
-    productItems: productItems, byOrder: byOrder,
+    productItems: productItems, byOrder: byOrder, context: context,
+    themeLabel: themeLabel, bandLabel: bandLabel, endBandLabel: endBandLabel,
+    progressOf: progressOf,
     presentationLabel: presentationLabel, freshnessHtml: freshnessHtml,
     timeline: timeline, cascade: cascade,
   };

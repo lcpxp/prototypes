@@ -63,6 +63,7 @@
   </script>
   <link rel="stylesheet" href="../../assets/css/roadmap.css">
   <link rel="stylesheet" href="../../assets/css/roadmap-views.css">
+  <link rel="stylesheet" href="../../assets/css/roadmap-detail.css">
   <script src="../../assets/js/core/theme.js"></script>
 </head>
 <body data-root="../.." data-module="roadmap">
@@ -89,6 +90,9 @@
         aria-label="Layout"></nav>
       <button class="button secondary" type="button" id="roadmap-delivered"
         aria-pressed="true">Hide delivered</button>
+      <button class="button secondary" type="button" id="roadmap-detail-toggle"
+        aria-pressed="false">Detailed view</button>
+      <button class="button secondary" type="button" id="roadmap-export-json">Export JSON</button>
       <button class="button secondary" type="button" id="roadmap-download">Download PDF</button>
     </div>
 
@@ -97,12 +101,21 @@
     </section>
   </main>
 
+  <div class="rmd-scrim" id="roadmap-scrim" hidden></div>
+  <aside class="rmd-drawer" id="roadmap-drawer" role="dialog" aria-modal="true"
+    aria-label="Work item detail" tabindex="-1" hidden>
+    <button class="rmd-close button quiet" type="button" id="rmd-close">Close</button>
+    <div id="rmd-body"></div>
+  </aside>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
   <script src="../../assets/js/core/supabase.js"></script>
   <script src="../../assets/js/core/registry.js"></script>
   <script src="../../assets/js/core/guard.js"></script>
   <script src="../../assets/js/core/ui.js"></script>
+  <script src="../../assets/js/core/sprints.js"></script>
   <script src="../../assets/js/pages/roadmap-views.js"></script>
+  <script src="../../assets/js/pages/roadmap-detail.js"></script>
   <script src="../../assets/js/pages/roadmap.js"></script>
 </body>
 </html>

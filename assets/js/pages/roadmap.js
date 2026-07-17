@@ -28,11 +28,15 @@
   var LEVEL_STORE = "roadmap-level";
   var LAYOUT_STORE = "roadmap-layout";
   var DELIVERED_STORE = "roadmap-delivered";
+  var EXPAND_STORE = "roadmap-expanded";
 
   var data = { categories: [], areas: [], items: [] };
   var current = "exec";
   var layout = "timeline";
   var showDelivered = true;
+  var expanded = false;
+  var ctx = null;
+  var itemsById = {};
 
   function find(list, key) { return list.filter(function (x) { return x.key === key; })[0]; }
 
@@ -56,8 +60,16 @@
     catch (e) { return true; }
   }
 
+  // Compact vs Detailed is a view-only preference (localStorage), not
+  // part of the shareable hash. Detailed expands the Executive rollup
+  // into its child items.
+  function readExpanded() {
+    try { return window.localStorage.getItem(EXPAND_STORE) === "expanded"; }
+    catch (e) { return false; }
+  }
+
   function render(host) {
-    var opts = { showDelivered: showDelivered };
+    var opts = { showDelivered: showDelivered, expanded: expanded };
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(data, current, opts)
       : App.roadmapView.timeline(data, current, opts);
@@ -66,6 +78,28 @@
   function renderDelivered(btn) {
     btn.setAttribute("aria-pressed", String(showDelivered));
     btn.textContent = showDelivered ? "Hide delivered" : "Show delivered";
+  }
+
+  function renderExpanded(btn) {
+    btn.setAttribute("aria-pressed", String(expanded));
+    btn.textContent = expanded ? "Compact view" : "Detailed view";
+  }
+
+  // Download a JSON object as a file (the KPI-ready export).
+  function download(name, obj) {
+    var blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+  function safeName(s) {
+    return String(s || "item").toLowerCase().replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "").slice(0, 40) || "item";
   }
 
   function tabs(list, activeKey, cls) {
@@ -103,6 +137,7 @@
     var layoutNav = document.getElementById("roadmap-layout");
     readState();
     showDelivered = readDelivered();
+    expanded = readExpanded();
 
     var delBtn = document.getElementById("roadmap-delivered");
     if (delBtn) {
@@ -118,6 +153,63 @@
 
     var dlBtn = document.getElementById("roadmap-download");
     if (dlBtn) dlBtn.addEventListener("click", function () { window.print(); });
+
+    var expandBtn = document.getElementById("roadmap-detail-toggle");
+    if (expandBtn) {
+      renderExpanded(expandBtn);
+      expandBtn.addEventListener("click", function () {
+        expanded = !expanded;
+        try { window.localStorage.setItem(EXPAND_STORE, expanded ? "expanded" : "compact"); }
+        catch (e) { /* ignore */ }
+        renderExpanded(expandBtn);
+        render(host);
+      });
+    }
+
+    var exportBtn = document.getElementById("roadmap-export-json");
+    if (exportBtn) exportBtn.addEventListener("click", function () {
+      download("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(data.items, ctx));
+    });
+
+    // Detail drawer: any element carrying a data-item-id opens the item.
+    var drawer = document.getElementById("roadmap-drawer");
+    var scrim = document.getElementById("roadmap-scrim");
+    var drawerBody = document.getElementById("rmd-body");
+    var closeBtn = document.getElementById("rmd-close");
+    var lastFocus = null;
+
+    function openDrawer(item) {
+      if (!drawer || !drawerBody) return;
+      drawerBody.innerHTML = App.roadmapDetail.drawerHtml(item, ctx);
+      lastFocus = document.activeElement;
+      drawer.hidden = false;
+      if (scrim) scrim.hidden = false;
+      document.body.classList.add("rmd-open");
+      var itemExport = document.getElementById("rmd-export");
+      if (itemExport) itemExport.addEventListener("click", function () {
+        download("roadmap-item-" + safeName(item.title) + ".json",
+          App.roadmapDetail.toKpiItem(item, ctx));
+      });
+      if (closeBtn) closeBtn.focus();
+    }
+    function closeDrawer() {
+      if (drawer) drawer.hidden = true;
+      if (scrim) scrim.hidden = true;
+      document.body.classList.remove("rmd-open");
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    if (closeBtn) closeBtn.addEventListener("click", closeDrawer);
+    if (scrim) scrim.addEventListener("click", closeDrawer);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && drawer && !drawer.hidden) closeDrawer();
+    });
+    host.addEventListener("click", function (e) {
+      var el = e.target.closest ? e.target.closest("[data-item-id]") : null;
+      if (!el) return;
+      var item = itemsById[el.getAttribute("data-item-id")];
+      if (item) openDrawer(item);
+    });
 
     // A closed <details> renders no content on paper; expand any first.
     window.addEventListener("beforeprint", function () {
@@ -141,8 +233,13 @@
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
         .select("id, area_id, category_id, title, summary, status, horizon, end_horizon, " +
-          "presentation, priority, effort, impact, sort_order, updated_at, tags")
+          "presentation, priority, effort, impact, starts_on, ends_on, progress, " +
+          "prd_status, project_status, start_sprint, end_sprint, attributes, " +
+          "sort_order, updated_at, tags")
         .order("priority", { ascending: true })
+        .order("sort_order", { ascending: true }),
+      App.db.from(App.registry.tables.workItemPhases)
+        .select("work_item_id, phase, quarter, starts_on, ends_on, start_tbc, end_tbc, sort_order")
         .order("sort_order", { ascending: true }),
     ]);
 
@@ -155,6 +252,19 @@
     data.categories = results[0].error ? [] : results[0].data || [];
     data.areas = results[1].error ? [] : results[1].data || [];
     data.items = itemsResult.data || [];
+
+    // Attach phases to their items (the phases table may be empty).
+    var phases = results[3] && !results[3].error ? results[3].data || [] : [];
+    var phasesByItem = {};
+    phases.forEach(function (p) {
+      (phasesByItem[p.work_item_id] = phasesByItem[p.work_item_id] || []).push(p);
+    });
+    itemsById = {};
+    data.items.forEach(function (i) {
+      i.phases = phasesByItem[i.id] || [];
+      itemsById[i.id] = i;
+    });
+    ctx = App.roadmapView.context(data);
 
     renderControls(nav, layoutNav, host);
     render(host);

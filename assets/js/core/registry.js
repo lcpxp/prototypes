@@ -89,6 +89,7 @@
       prototypes: "prototypes",
       integrations: "integrations",
       workAreas: "work_areas",
+      workItemPhases: "work_item_phases",
       roadmapCategories: "roadmap_categories",
       roadmapMilestones: "roadmap_milestones",
       workItems: "work_items",
