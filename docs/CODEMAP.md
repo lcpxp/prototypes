@@ -14,7 +14,7 @@ document instead of walking the tree or reading whole files.
 | README.md | 18 | LPio |
 | assets/css/base.css | 98 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 426 | components.css - Reusable interface components: cards, forms, |
-| assets/css/layout.css | 183 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/layout.css | 280 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 302 | pages.css - The reference viewer ("swagger") page. Everything |
 | assets/css/roadmap-detail.css | 151 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
@@ -25,10 +25,11 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 137 | guard.js - Blocks unauthenticated access to protected pages and |
 | assets/js/core/registry.js | 141 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/search.js | 104 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
-| assets/js/core/ui.js | 123 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/core/ui.js | 136 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/backlog.js | 267 | backlog.js - The master work list for modules/backlog/. |
 | assets/js/pages/dashboard.js | 160 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
@@ -41,30 +42,30 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-views.js | 367 | roadmap-views.js - Pure HTML builders for the roadmap home |
 | assets/js/pages/roadmap.js | 273 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
-| dashboard.html | 60 | Dashboard - LPio / LaunchPad IO |
+| dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 227 | Architecture |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 108 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
-| docs/ROADMAP-PROCESS.md | 101 | Roadmap process |
-| docs/ROADMAP.md | 169 | Roadmap |
+| docs/ROADMAP-PROCESS.md | 124 | Roadmap process |
+| docs/ROADMAP.md | 206 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SESSIONS.md | 997 | Session log |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
 | docs/WORKFLOW.md | 100 | Work intake and backlog workflow |
 | index.html | 77 | Sign in - LPio / LaunchPad IO |
-| modules/backlog/index.html | 121 | Backlog - LPio / LaunchPad IO |
-| modules/integrations/index.html | 93 | Integrations - LPio / LaunchPad IO |
-| modules/platform/index.html | 87 | Platform - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 85 | Prototypes - LPio / LaunchPad IO |
-| modules/reference/index.html | 106 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 122 | Roadmap - LPio / LaunchPad IO |
-| modules/users/index.html | 86 | Users - LPio / LaunchPad IO |
+| modules/backlog/index.html | 122 | Backlog - LPio / LaunchPad IO |
+| modules/integrations/index.html | 94 | Integrations - LPio / LaunchPad IO |
+| modules/platform/index.html | 88 | Platform - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 86 | Prototypes - LPio / LaunchPad IO |
+| modules/reference/index.html | 107 | API reference - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 123 | Roadmap - LPio / LaunchPad IO |
+| modules/users/index.html | 87 | Users - LPio / LaunchPad IO |
 | package.json | 12 |  |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
-| silos/index.html | 67 | Project silos - LPio / LaunchPad IO |
-| silos/tooling/index.html | 84 | Tooling silo - LPio / LaunchPad IO |
+| silos/index.html | 68 | Project silos - LPio / LaunchPad IO |
+| silos/tooling/index.html | 85 | Tooling silo - LPio / LaunchPad IO |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
 | supabase/migrations/20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected |
@@ -114,6 +115,14 @@ document instead of walking the tree or reading whole files.
 | App.onAuthed | assets/js/core/guard.js:108 |
 | enforceModule() | assets/js/core/guard.js:116 |
 | App.moduleHref | assets/js/core/registry.js:137 |
+| sources() | assets/js/core/search.js:21 |
+| canReach() | assets/js/core/search.js:35 |
+| moduleByKey() | assets/js/core/search.js:39 |
+| clean() | assets/js/core/search.js:43 |
+| render() | assets/js/core/search.js:45 |
+| attach() | assets/js/core/search.js:67 |
+| close() | assets/js/core/search.js:74 |
+| run() | assets/js/core/search.js:79 |
 | pad2() | assets/js/core/sprints.js:31 |
 | iso() | assets/js/core/sprints.js:32 |
 | mod() | assets/js/core/sprints.js:35 |
@@ -135,7 +144,7 @@ document instead of walking the tree or reading whole files.
 | App.copyText | assets/js/core/ui.js:34 |
 | isCurrentPage() | assets/js/core/ui.js:47 |
 | renderNav() | assets/js/core/ui.js:53 |
-| App.onThemeChange | assets/js/core/ui.js:103 |
+| App.onThemeChange | assets/js/core/ui.js:116 |
 | bandOf() | assets/js/pages/backlog.js:34 |
 | fmtDate() | assets/js/pages/backlog.js:40 |
 | kvHtml() | assets/js/pages/backlog.js:44 |

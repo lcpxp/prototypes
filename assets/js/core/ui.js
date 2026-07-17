@@ -75,6 +75,17 @@
         App.escape(link.label) + "</a>";
     });
     html += "</div>";
+    // Global search: only rendered when search.js is present, so a page
+    // without it never shows a dead input.
+    if (App.search) {
+      html +=
+        '<div class="nav-search">' +
+        '<input type="search" id="nav-search-input" class="nav-search-input" ' +
+        'placeholder="Search" autocomplete="off" aria-label="Search the portal" ' +
+        'role="combobox" aria-expanded="false" aria-controls="nav-search-results">' +
+        '<div class="nav-search-results" id="nav-search-results" role="listbox" hidden></div>' +
+        "</div>";
+    }
     html += '<span class="nav-user" id="nav-user"></span>';
     // Dark-mode switch: a real checkbox, on when the dark theme is
     // active. The wrapping label names it for assistive tech.
@@ -88,6 +99,8 @@
     html += '<button class="button quiet" id="nav-signout" type="button">Sign out</button>';
     html += "</nav>";
     host.innerHTML = html;
+
+    if (App.search) App.search.attach();
 
     document.getElementById("nav-signout").addEventListener("click", function () {
       if (App.db) App.db.auth.signOut();

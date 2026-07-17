@@ -136,6 +136,103 @@
 }
 
 /* ---------------------------------------------------------------
+   Global search. The input sits in the dark chrome; its results
+   panel is fixed under the nav (the nav clips overflow) and pinned
+   to the gutter, so it escapes the scroll region cleanly.
+--------------------------------------------------------------- */
+
+.nav-search {
+  position: relative;
+}
+
+.nav-search-input {
+  inline-size: 8rem;
+  color: var(--chrome-ink);
+  background: var(--chrome-line);
+  border: 1px solid var(--chrome-line);
+  border-radius: var(--radius-sm);
+  padding: var(--s-1) var(--s-2);
+  font-size: var(--text-sm);
+}
+
+.nav-search-input::placeholder {
+  color: var(--chrome-muted);
+}
+
+@media (min-width: 48rem) {
+  .nav-search-input {
+    inline-size: 12rem;
+  }
+}
+
+.nav-search-results {
+  position: fixed;
+  inset-block-start: calc(var(--nav-height) + var(--s-1));
+  inset-inline-end: var(--gutter);
+  z-index: 20;
+  inline-size: min(24rem, calc(100vw - 2 * var(--gutter)));
+  max-block-size: 70vh;
+  overflow-y: auto;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-overlay);
+  padding: var(--s-2);
+}
+
+.nav-search-group {
+  padding: var(--s-2) 0;
+}
+
+.nav-search-group + .nav-search-group {
+  border-block-start: 1px solid var(--line);
+}
+
+.nav-search-label {
+  margin: 0 0 var(--s-1);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--faint);
+}
+
+.nav-search-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-search-group li a {
+  display: block;
+  padding: var(--s-1) var(--s-2);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+
+.nav-search-group li a:hover {
+  background: var(--accent-soft);
+  text-decoration: none;
+}
+
+.nav-search-sub {
+  display: block;
+  color: var(--faint);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-search-empty {
+  margin: 0;
+  padding: var(--s-2);
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+/* ---------------------------------------------------------------
    Page scaffold
 --------------------------------------------------------------- */
 
