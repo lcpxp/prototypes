@@ -86,21 +86,63 @@
         '<div class="nav-search-results" id="nav-search-results" role="listbox" hidden></div>' +
         "</div>";
     }
-    html += '<span class="nav-user" id="nav-user"></span>';
-    // Dark-mode switch: a real checkbox, on when the dark theme is
-    // active. The wrapping label names it for assistive tech.
+    // Account menu: the only visible control is the profile icon. It
+    // opens a dropdown holding the signed-in email, the dark-mode
+    // switch and sign out. The email span keeps id "nav-user" and the
+    // toggle keeps id "theme-toggle" so the wiring below is unchanged.
     var dark = App.theme && App.theme.isDark();
     html +=
-      '<label class="nav-theme">' +
+      '<div class="nav-account">' +
+      '<button class="nav-account-trigger" id="nav-account-trigger" type="button" ' +
+      'aria-haspopup="true" aria-expanded="false" aria-controls="nav-account-menu" ' +
+      'aria-label="Account menu">' +
+      '<span class="nav-account-avatar" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<circle cx="12" cy="8" r="4"></circle>' +
+      '<path d="M4 20c0-3.5 3.6-5.5 8-5.5s8 2 8 5.5"></path>' +
+      "</svg></span></button>" +
+      '<div class="nav-account-menu" id="nav-account-menu" role="menu" hidden>' +
+      '<span class="nav-account-email" id="nav-user"></span>' +
+      '<label class="nav-account-theme">' +
       '<span class="nav-theme-text">Dark mode</span>' +
       '<span class="toggle"><input type="checkbox" id="theme-toggle"' +
       (dark ? " checked" : "") + ">" +
-      '<span class="track" aria-hidden="true"></span></span></label>';
-    html += '<button class="button quiet" id="nav-signout" type="button">Sign out</button>';
+      '<span class="track" aria-hidden="true"></span></span></label>' +
+      '<button class="button quiet" id="nav-signout" role="menuitem" type="button">Sign out</button>' +
+      "</div></div>";
     html += "</nav>";
     host.innerHTML = html;
 
     if (App.search) App.search.attach();
+
+    // Account dropdown: toggle on the profile icon, close on an outside
+    // click or Escape. Clicks inside the menu (the theme switch) keep it
+    // open so dark mode can be flipped without dismissing it.
+    var accountTrigger = document.getElementById("nav-account-trigger");
+    var accountMenu = document.getElementById("nav-account-menu");
+    if (accountTrigger && accountMenu) {
+      var setAccountOpen = function (open) {
+        accountMenu.hidden = !open;
+        accountTrigger.setAttribute("aria-expanded", open ? "true" : "false");
+      };
+      accountTrigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        setAccountOpen(accountMenu.hidden);
+      });
+      accountMenu.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+      document.addEventListener("click", function () {
+        if (!accountMenu.hidden) setAccountOpen(false);
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !accountMenu.hidden) {
+          setAccountOpen(false);
+          accountTrigger.focus();
+        }
+      });
+    }
 
     document.getElementById("nav-signout").addEventListener("click", function () {
       if (App.db) App.db.auth.signOut();

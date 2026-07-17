@@ -40,8 +40,8 @@ test("protected pages include scripts in the required order", () => {
         `${page}: missing or out-of-order script matching ${re}. Order found: ${srcs.join(", ")}`);
       cursor = idx;
     }
-    // CLAUDE.md asks for a page module after ui.js, but static pages
-    // (e.g. silos/) legitimately omit one. Warn, do not fail.
+    // CLAUDE.md asks for a page module after ui.js, but a purely
+    // static page legitimately omits one. Warn, do not fail.
     if (srcs.length === cursor + 1) {
       console.warn(`WARN ${page}: no page module after ui.js (static page?).`);
     }

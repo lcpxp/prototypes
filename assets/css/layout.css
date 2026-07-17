@@ -71,25 +71,89 @@
   border-block-end-color: var(--lime);
 }
 
-.nav-user {
+/* Account menu. The nav shows only the profile icon; the email, the
+   dark-mode switch and sign out live in a dropdown it opens. The menu
+   is fixed (like the search panel) so the nav's overflow scroll never
+   clips it. */
+.nav-account {
+  position: relative;
+  display: inline-flex;
+}
+
+.nav-account-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  padding: 0;
+  color: var(--chrome-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.nav-account-trigger:hover,
+.nav-account-trigger[aria-expanded="true"] {
+  color: var(--chrome-ink);
+  background: var(--chrome-line);
+}
+
+.nav-account-avatar {
+  display: inline-flex;
+}
+
+.nav-account-menu {
+  position: fixed;
+  inset-block-start: calc(var(--nav-height) + var(--s-1));
+  inset-inline-end: var(--gutter);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  min-inline-size: 12rem;
+  max-inline-size: min(20rem, calc(100vw - 2 * var(--gutter)));
+  padding: var(--s-3);
+  background: var(--chrome-bg);
+  border: 1px solid var(--chrome-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-overlay);
+}
+
+.nav-account-menu[hidden] {
+  display: none;
+}
+
+.nav-account-email {
   font-size: var(--text-sm);
   color: var(--chrome-muted);
-  white-space: nowrap;
+  word-break: break-all;
+  padding-block-end: var(--s-3);
+  border-block-end: 1px solid var(--chrome-line);
 }
 
 /* Dark-mode switch. The switch visual is the shared .toggle; this
-   just seats it and its label in the chrome. */
-.nav-theme {
-  display: inline-flex;
+   just seats it and its label as a menu row. */
+.nav-account-theme {
+  display: flex;
   align-items: center;
-  gap: var(--s-2);
-  white-space: nowrap;
+  justify-content: space-between;
+  gap: var(--s-3);
   cursor: pointer;
 }
 
 .nav-theme-text {
   font-size: var(--text-sm);
   color: var(--chrome-muted);
+}
+
+.nav-account-menu .button.quiet {
+  inline-size: 100%;
+  justify-content: flex-start;
+  text-align: start;
 }
 
 .nav .button.quiet {

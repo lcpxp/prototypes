@@ -9,8 +9,8 @@ docs/SESSIONS.md for the current state of work.
 A public repository containing the shell of LPio, a LaunchPad IO project
 hub for developer material, guidance, prototypes and independent
 workstreams. The site provides a login-gated dashboard, an API reference
-viewer ("swagger"), a prototype gallery and a central project-silo
-index. All substantive content (API specs, endpoint details, user
+viewer ("swagger") and a prototype gallery. All substantive content
+(API specs, endpoint details, user
 records, prototype registry) lives in Supabase, never in this repo. The
 repo holds only structure, styling and rendering logic.
 
@@ -21,7 +21,6 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
     index.html            Login page (entry point, unguarded)
     dashboard.html        Post-login hub
     modules/              One folder per module: reference/, prototypes/, users/
-    silos/                Central project-silo index and silo-specific pages
     assets/css/           tokens.css (design tokens) plus layered stylesheets
     assets/js/core/       Shared runtime: config, supabase, registry, guard, ui, auth
     assets/js/pages/      One module per page (dashboard, reference, gallery, users)

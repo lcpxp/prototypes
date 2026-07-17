@@ -10,9 +10,9 @@ code. Supabase provides everything dynamic: authentication, the user
 register, API specs, endpoint detail and the prototype registry.
 
 LPio is the overarching project shell. It is designed so that different
-streams of work can live as discrete silos (for example, a portal mock,
-a standalone tool prototype, or a set of swagger-style reference files)
-while still being discoverable from one hub.
+streams of work can live as discrete modules (for example, the API
+reference viewer, the prototype gallery, or the roadmap) while still
+being discoverable from one hub.
 
 The consequence of this split is the core design rule: the repo can be
 public because it contains only structure and rendering logic. All
@@ -36,9 +36,6 @@ substance lives behind Supabase Row Level Security.
    today), modules/roadmap/ (the roadmap view), modules/backlog/
    (rolling work items and ingested source material) and
    modules/users/ (the user and access register).
-5. silos/index.html is the central entry to project-specific
-   workstreams. Each silo can be its own folder or page and can be
-   linked from here.
 
 ## JavaScript module order
 

@@ -1,8 +1,7 @@
 # LPio
 
-A login-gated project hub: dashboard, API reference material,
-prototypes and independent project silos, organised as modules around
-a central dashboard.
+A login-gated project hub: dashboard, API reference material and
+prototypes, organised as modules around a central dashboard.
 
 This repository holds only the static shell (structure, styling and
 rendering logic). All content and accounts live in a Supabase backend

@@ -10,11 +10,11 @@ document instead of walking the tree or reading whole files.
 | .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 20 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 180 | CLAUDE.md |
-| README.md | 18 | LPio |
+| CLAUDE.md | 179 | CLAUDE.md |
+| README.md | 17 | LPio |
 | assets/css/base.css | 98 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 426 | components.css - Reusable interface components: cards, forms, |
-| assets/css/layout.css | 280 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/layout.css | 344 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 302 | pages.css - The reference viewer ("swagger") page. Everything |
 | assets/css/roadmap-detail.css | 151 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
@@ -24,12 +24,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 137 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 141 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 133 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 104 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
-| assets/js/core/ui.js | 136 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/core/ui.js | 178 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/backlog.js | 267 | backlog.js - The master work list for modules/backlog/. |
 | assets/js/pages/dashboard.js | 160 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
@@ -43,7 +43,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap.js | 273 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
-| docs/ARCHITECTURE.md | 227 | Architecture |
+| docs/ARCHITECTURE.md | 224 | Architecture |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 108 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
@@ -55,7 +55,7 @@ document instead of walking the tree or reading whole files.
 | docs/SPRINTS.md | 109 | Sprints and dates |
 | docs/WORKFLOW.md | 100 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
-| index.html | 77 | Sign in - LPio / LaunchPad IO |
+| index.html | 76 | Sign in - LPio / LaunchPad IO |
 | modules/backlog/index.html | 122 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 94 | Integrations - LPio / LaunchPad IO |
 | modules/platform/index.html | 88 | Platform - LPio / LaunchPad IO |
@@ -65,8 +65,6 @@ document instead of walking the tree or reading whole files.
 | modules/users/index.html | 87 | Users - LPio / LaunchPad IO |
 | package.json | 12 |  |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
-| silos/index.html | 68 | Project silos - LPio / LaunchPad IO |
-| silos/tooling/index.html | 85 | Tooling silo - LPio / LaunchPad IO |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
 | supabase/migrations/20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected |
@@ -115,7 +113,7 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:85 |
 | App.onAuthed | assets/js/core/guard.js:108 |
 | enforceModule() | assets/js/core/guard.js:116 |
-| App.moduleHref | assets/js/core/registry.js:137 |
+| App.moduleHref | assets/js/core/registry.js:129 |
 | sources() | assets/js/core/search.js:21 |
 | canReach() | assets/js/core/search.js:35 |
 | moduleByKey() | assets/js/core/search.js:39 |
@@ -145,7 +143,7 @@ document instead of walking the tree or reading whole files.
 | App.copyText | assets/js/core/ui.js:34 |
 | isCurrentPage() | assets/js/core/ui.js:47 |
 | renderNav() | assets/js/core/ui.js:53 |
-| App.onThemeChange | assets/js/core/ui.js:116 |
+| App.onThemeChange | assets/js/core/ui.js:158 |
 | bandOf() | assets/js/pages/backlog.js:34 |
 | fmtDate() | assets/js/pages/backlog.js:40 |
 | kvHtml() | assets/js/pages/backlog.js:44 |

@@ -16,14 +16,6 @@
   App.registry = {
     modules: [
       {
-        key: "silos",
-        title: "Project silos",
-        path: "silos/",
-        heading: "Silo index",
-        description: "Independent workstreams and mini-projects",
-        statTable: null,
-      },
-      {
         key: "reference",
         title: "API reference",
         path: "modules/reference/",

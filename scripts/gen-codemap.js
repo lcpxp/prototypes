@@ -82,8 +82,8 @@ const llms = `# LPio - LaunchPad IO (static shell of a project hub)
 
 > Public repository holding only the structure, styling and rendering
 > logic of LPio, a login-gated project hub (dashboard, API reference
-> viewer, prototype gallery, project silos). All substantive content
-> and credentials live in Supabase, never in this repo.
+> viewer, prototype gallery). All substantive content and credentials
+> live in Supabase, never in this repo.
 
 ## Start here
 - CLAUDE.md: operating rules for agent sessions (security rules are non-negotiable)
