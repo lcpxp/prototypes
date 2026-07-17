@@ -16,6 +16,22 @@
   App.registry = {
     modules: [
       {
+        key: "roadmap",
+        title: "Roadmap",
+        path: "modules/roadmap/",
+        heading: "Roadmap",
+        description: "Executive, team and backlog views of one work set",
+        statTable: null,
+      },
+      {
+        key: "backlog",
+        title: "Backlog",
+        path: "modules/backlog/",
+        description: "The full prioritised list of work items and their source material",
+        statTable: "work_items",
+        statLabel: "Work items",
+      },
+      {
         key: "reference",
         title: "API reference",
         path: "modules/reference/",
@@ -46,22 +62,6 @@
         description: "What Launchpad is and the capabilities in place today",
         statTable: "product_capabilities",
         statLabel: "Capabilities documented",
-      },
-      {
-        key: "roadmap",
-        title: "Roadmap",
-        path: "modules/roadmap/",
-        heading: "Roadmap",
-        description: "Executive, team and backlog views of one work set",
-        statTable: null,
-      },
-      {
-        key: "backlog",
-        title: "Backlog",
-        path: "modules/backlog/",
-        description: "The full prioritised list of work items and their source material",
-        statTable: "work_items",
-        statLabel: "Work items",
       },
       {
         key: "users",

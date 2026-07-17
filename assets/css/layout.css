@@ -80,7 +80,7 @@
   display: inline-flex;
 }
 
-.nav-account-trigger {
+.nav-icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -96,13 +96,13 @@
     background var(--dur-fast) var(--ease);
 }
 
-.nav-account-trigger:hover,
-.nav-account-trigger[aria-expanded="true"] {
+.nav-icon-btn:hover,
+.nav-icon-btn[aria-expanded="true"] {
   color: var(--chrome-ink);
   background: var(--chrome-line);
 }
 
-.nav-account-avatar {
+.nav-icon {
   display: inline-flex;
 }
 
@@ -135,21 +135,6 @@
   border-block-end: 1px solid var(--chrome-line);
 }
 
-/* Dark-mode switch. The switch visual is the shared .toggle; this
-   just seats it and its label as a menu row. */
-.nav-account-theme {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-3);
-  cursor: pointer;
-}
-
-.nav-theme-text {
-  font-size: var(--text-sm);
-  color: var(--chrome-muted);
-}
-
 .nav-account-menu .button.quiet {
   inline-size: 100%;
   justify-content: flex-start;
@@ -169,13 +154,8 @@
 /* The global focus ring (var(--accent)) is only ~2.6:1 against the
    near-black chrome, below the 3:1 UI floor. On the nav it becomes
    white, which clears it comfortably; the width and offset are
-   inherited from the base rule. The toggle draws its ring on the
-   track, so it needs the same override. */
+   inherited from the base rule. */
 .nav :focus-visible {
-  outline-color: var(--chrome-ink);
-}
-
-.nav .toggle input:focus-visible + .track {
   outline-color: var(--chrome-ink);
 }
 
@@ -193,10 +173,6 @@
   align-items: center;
   gap: var(--s-3);
   margin-inline-start: auto;
-}
-
-.nav .toggle {
-  margin-inline-end: var(--s-1);
 }
 
 /* ---------------------------------------------------------------

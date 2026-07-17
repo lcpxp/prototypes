@@ -14,7 +14,7 @@ document instead of walking the tree or reading whole files.
 | README.md | 17 | LPio |
 | assets/css/base.css | 98 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 426 | components.css - Reusable interface components: cards, forms, |
-| assets/css/layout.css | 344 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/layout.css | 320 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 302 | pages.css - The reference viewer ("swagger") page. Everything |
 | assets/css/roadmap-detail.css | 151 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
@@ -29,7 +29,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
-| assets/js/core/ui.js | 178 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/core/ui.js | 205 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/backlog.js | 267 | backlog.js - The master work list for modules/backlog/. |
 | assets/js/pages/dashboard.js | 160 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
@@ -142,8 +142,9 @@ document instead of walking the tree or reading whole files.
 | App.statusBadge | assets/js/core/ui.js:29 |
 | App.copyText | assets/js/core/ui.js:34 |
 | isCurrentPage() | assets/js/core/ui.js:47 |
-| renderNav() | assets/js/core/ui.js:53 |
-| App.onThemeChange | assets/js/core/ui.js:158 |
+| themeIcon() | assets/js/core/ui.js:55 |
+| renderNav() | assets/js/core/ui.js:72 |
+| App.onThemeChange | assets/js/core/ui.js:180 |
 | bandOf() | assets/js/pages/backlog.js:34 |
 | fmtDate() | assets/js/pages/backlog.js:40 |
 | kvHtml() | assets/js/pages/backlog.js:44 |
