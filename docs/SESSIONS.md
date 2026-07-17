@@ -37,6 +37,50 @@ Paste this as the first message of a new Claude Code session:
 
 ## Log
 
+## 2026-07-17 - Department tag on work items
+Branch: claude/department-work-item-tags-i0qc34 (merged to main, fast-forward)
+Completed:
+- Added an optional owning-department tag to work_items: the business
+  function accountable for an item (Sales & Commercial, Operations and
+  Onboarding, Product and Technology, Finance and Revenue, Legal &
+  Compliance, Risk & Underwriting). A coarse org-owner axis, orthogonal
+  to area/theme. Nullable check-constraint column, keys lowercase with
+  underscores. Migration 20260717120000_work_item_department.sql applied
+  live and mirrored in schema/30_work.sql; same table so the existing
+  work_items RLS covers it - security advisors show only the pre-existing,
+  already-tracked warns (three SECURITY DEFINER RPCs, leaked-password
+  protection). 50 live rows, 0 tagged yet (this ships the mechanism, not
+  assignments).
+- registry.js is the single source of truth: App.registry.departments
+  (ordered {key,label}, carrying the exact mixed "&"/"and" labels) plus an
+  App.departmentLabel helper, so no page hard-codes the labels. Keys mirror
+  the DB check constraint.
+- Surfaced: backlog gains a Department filter, table column and detail-modal
+  row (backlog.js, modules/backlog/index.html); the roadmap item drawer
+  shows Department and the KPI JSON export carries it (roadmap.js fetch +
+  roadmap-detail.js). seed.sql tags each sample row with a different
+  department so the field is exercised end to end.
+- Tests: registry.test.js (department vocab + helper), roadmap-detail.test.js
+  (drawer + export; its vm harness now also loads registry.js). npm test 77
+  green. A throwaway Node harness drove the real backlog render path (mock
+  db) and confirmed the Department column, escaped labels and the populated
+  filter with no exceptions. Codemap regenerated.
+- Committed in three atomic units, pushed; main fast-forwarded
+  683a3ea..b880b07 (which also lands the prior unmerged branch work) and
+  pushed. Both Pages workflows (Deploy to GitHub Pages, pages build and
+  deployment) completed green for b880b07.
+In progress:
+- None.
+Next steps:
+1. Owner: assign departments to the 50 live work_items - a data-only pass in
+   Supabase (or via an AI chat with Supabase access); the mechanism is ready.
+2. Optional: add a Department filter to the roadmap board toolbar (today it
+   is filterable only on the backlog; the drawer and JSON export already
+   carry it).
+Open decisions:
+- schema/30_work.sql is now ~327 lines (over the 300 soft budget, under the
+  500 hard): split it by sub-domain when next touched, per the standing note.
+
 ## 2026-07-17 - Portal feature additions + PXP-aligned roadmap depth
 Branch: claude/portal-feature-additions-i9q9tw
 Completed:

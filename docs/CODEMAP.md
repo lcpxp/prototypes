@@ -50,7 +50,7 @@ document instead of walking the tree or reading whole files.
 | docs/ROADMAP-PROCESS.md | 124 | Roadmap process |
 | docs/ROADMAP.md | 206 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
-| docs/SESSIONS.md | 858 | Session log |
+| docs/SESSIONS.md | 902 | Session log |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
 | docs/WORKFLOW.md | 106 | Work intake and backlog workflow |
