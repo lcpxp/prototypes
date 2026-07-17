@@ -59,6 +59,28 @@ test("spec families are unique, labelled and include the fallback", () => {
     "specFamilies must keep the 'other' fallback used for unset rows");
 });
 
+test("departments are unique, lowercase keys with labels", () => {
+  const App = loadApp();
+  const departments = App.registry.departments;
+  assert.ok(Array.isArray(departments) && departments.length > 0,
+    "registry must define departments for the work_items tag");
+  const keys = departments.map((d) => d.key);
+  assert.equal(new Set(keys).size, keys.length, "duplicate department keys");
+  for (const d of departments) {
+    assert.match(d.key, /^[a-z][a-z0-9_]*$/,
+      `${d.key}: department keys mirror the DB check constraint (lowercase, underscores)`);
+    assert.ok(d.label, `${d.key}: department without a label`);
+  }
+});
+
+test("App.departmentLabel resolves keys and tolerates unset ones", () => {
+  const App = loadApp();
+  const first = App.registry.departments[0];
+  assert.equal(App.departmentLabel(first.key), first.label);
+  assert.equal(App.departmentLabel(null), "");
+  assert.equal(App.departmentLabel("not_a_department"), "");
+});
+
 test("App.moduleHref prefixes the page root", () => {
   const App = loadApp();
   const mod = App.registry.modules[0];

@@ -120,6 +120,20 @@
         description: "Uncategorised reference material.",
       },
     ],
+    // Department is a coarse org-owner tag on a work item (see
+    // docs/WORKFLOW.md): the business function accountable for it,
+    // orthogonal to its area or theme. Keys mirror the
+    // work_items.department check constraint; order here is display
+    // order. The label carries the exact wording (mixed "&"/"and") so
+    // no page hard-codes it - resolve with App.departmentLabel.
+    departments: [
+      { key: "sales_commercial", label: "Sales & Commercial" },
+      { key: "operations_onboarding", label: "Operations and Onboarding" },
+      { key: "product_technology", label: "Product and Technology" },
+      { key: "finance_revenue", label: "Finance and Revenue" },
+      { key: "legal_compliance", label: "Legal & Compliance" },
+      { key: "risk_underwriting", label: "Risk & Underwriting" },
+    ],
     roles: {
       admin: "admin",
       member: "member",
@@ -128,5 +142,14 @@
 
   App.moduleHref = function (mod) {
     return (App.root || ".") + "/" + mod.path;
+  };
+
+  // Resolve a work_items.department key to its display label. Returns
+  // "" for an unset or unknown key, so callers can render it directly.
+  App.departmentLabel = function (key) {
+    var match = (App.registry.departments || []).filter(function (dept) {
+      return dept.key === key;
+    })[0];
+    return match ? match.label : "";
   };
 })();
