@@ -50,10 +50,11 @@ document instead of walking the tree or reading whole files.
 | docs/ROADMAP-PROCESS.md | 124 | Roadmap process |
 | docs/ROADMAP.md | 206 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
-| docs/SESSIONS.md | 997 | Session log |
+| docs/SESSIONS.md | 858 | Session log |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
 | docs/WORKFLOW.md | 100 | Work intake and backlog workflow |
+| docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | index.html | 77 | Sign in - LPio / LaunchPad IO |
 | modules/backlog/index.html | 122 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 94 | Integrations - LPio / LaunchPad IO |

@@ -87,6 +87,29 @@ a copy.
 5. **Record the reasoning** as a `work_notes` decision so movement never
    becomes informal drift.
 
+## Optional delivery detail (PXP alignment)
+
+Beyond placement, an item can carry light-touch delivery detail for the
+KPI-portal alignment - all optional and never shown on the board except
+dates:
+
+- **Progress**: a coarse `progress` (0-100) rendered as a subtle bar,
+  moved by conversation (docs/SPRINTS.md), not precise tracking.
+- **Sprints**: `start_sprint` / `end_sprint` codes (e.g. `26-16`) held
+  alongside the horizon band. Talk in sprints and the ruleset in
+  docs/SPRINTS.md translates to bands.
+- **Statuses**: `prd_status` and `project_status`, the KPI portal's own
+  pickers, distinct from the internal `status` lifecycle.
+- **Phases**: `work_item_phases` rows (Discovery, Build, Certification,
+  Launch), each with a quarter, dates and per-date TBC flags.
+- **Attributes**: a jsonb bag (team, vertical, customer, region,
+  resources, cost, merchant/PXP value, blockers, PRD link) held for
+  record and the JSON export only.
+
+The detail drawer shows all of it; the toolbar **Export JSON** emits the
+KPI-portal-ready output, and the drawer's per-item Export JSON does the
+same for one item.
+
 ## The refinement ritual
 
 Roadmap refinement is done as a wave-by-wave conversation: the owner and

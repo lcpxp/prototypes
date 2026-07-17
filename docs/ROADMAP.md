@@ -73,6 +73,24 @@ colour survives. A "Data as of <date>" line (max updated_at) dates every
 export. Chrome, Edge and Firefox preselect landscape; Safari ignores the
 size hint, so a print-only line reminds the reader to pick it by hand.
 
+### Item detail, progress and export
+
+- Every item is clickable and opens a right-hand **detail drawer** with
+  its full context - statuses, real dates, sprints, delivery phases (with
+  any TBC dates) and the light-touch `attributes` - plus an **Export
+  JSON** action for that one item.
+- A **Detailed view** toggle expands the Executive rollup so each theme
+  lists its child items (title, a coarse progress pill and band), each
+  clickable through to the drawer. It is a view-only localStorage
+  preference, like Hide delivered.
+- Each item carries a coarse **progress** bar (0-100 snapped to
+  checkpoints), rendered subtly on bars and cards. It is set by
+  conversation, not precise tracking (see docs/SPRINTS.md).
+- **Export JSON** on the toolbar produces the AI-optimised,
+  KPI-portal-ready roadmap output: one streamlined record per product
+  item (resolved theme and band, statuses, progress, dates, sprints,
+  phases and attributes), with empty fields omitted.
+
 Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
 
 - work_areas: the shared taxonomy. scope 'product' is the LaunchPad
@@ -102,6 +120,15 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   - bridge: points to the next horizon.
   The state label shows on Now cards only; Next, Later, Parked and
   delivered items ignore presentation.
+  work_items also carries optional, light-touch PXP fields, none shown on
+  the board except dates: progress (0-100), prd_status and project_status
+  (the KPI portal's own pickers, distinct from status), start_sprint /
+  end_sprint codes (docs/SPRINTS.md), and an attributes jsonb bag
+  (pnl_vertical, team, region, customer, resources, cost, merchant_value,
+  pxp_value, blockers, prd_link, legacy_priority_tags).
+- work_item_phases: optional Discovery / Build / Certification / Launch
+  phases per item, each with a quarter, start/end dates and per-date TBC
+  flags. Absent for high-level items; surfaced in the detail drawer.
 - roadmap_milestones, work_item_dependencies: named targets and
   item-to-item ordering, for future timeline and waterfall views.
 
@@ -156,6 +183,16 @@ overhaul it without touching the repo. A cold session should:
    - Add a theme: insert into roadmap_categories; add matching
      --rm-<key> tokens and a .rm-cat-<key> rule for a bespoke colour,
      otherwise it renders neutral.
+   - Set progress: update work_items set progress = ... (coarse 0-100;
+     docs/SPRINTS.md has the nudge conventions).
+   - Schedule by sprint: set start_sprint / end_sprint (e.g. '26-16') and
+     the matching horizon/end_horizon band; the translation ruleset is in
+     docs/SPRINTS.md.
+   - Add delivery phases: insert work_item_phases rows (phase, quarter,
+     dates, TBC flags).
+   - Record PXP detail: set the attributes jsonb (team, vertical, cost,
+     merchant/PXP value, blockers, PRD link) - held for record and the
+     JSON export, never shown on the board.
 
 3. Writes need the admin role under RLS. Editing through the Supabase
    MCP/service context applies directly; the browser page is
