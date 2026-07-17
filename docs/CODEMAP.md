@@ -24,13 +24,13 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 137 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 133 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 156 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 104 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
 | assets/js/core/ui.js | 205 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
-| assets/js/pages/backlog.js | 267 | backlog.js - The master work list for modules/backlog/. |
+| assets/js/pages/backlog.js | 278 | backlog.js - The master work list for modules/backlog/. |
 | assets/js/pages/dashboard.js | 160 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 115 | integrations.js - Integration overview for modules/integrations/. |
@@ -38,7 +38,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 296 | reference.js - The reference viewer ("swagger") for modules/reference/. |
-| assets/js/pages/roadmap-detail.js | 195 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
+| assets/js/pages/roadmap-detail.js | 197 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-views.js | 367 | roadmap-views.js - Pure HTML builders for the roadmap home |
 | assets/js/pages/roadmap.js | 273 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
@@ -53,10 +53,10 @@ document instead of walking the tree or reading whole files.
 | docs/SESSIONS.md | 858 | Session log |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/WORKFLOW.md | 100 | Work intake and backlog workflow |
+| docs/WORKFLOW.md | 106 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | index.html | 76 | Sign in - LPio / LaunchPad IO |
-| modules/backlog/index.html | 122 | Backlog - LPio / LaunchPad IO |
+| modules/backlog/index.html | 124 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 94 | Integrations - LPio / LaunchPad IO |
 | modules/platform/index.html | 88 | Platform - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 86 | Prototypes - LPio / LaunchPad IO |
@@ -80,14 +80,15 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260716120000_roadmap_spans_and_backlog_horizons.sql | 25 | ------------------------------------------------------------------ |
 | supabase/migrations/20260716140000_unify_work_items.sql | 195 | ------------------------------------------------------------------ |
 | supabase/migrations/20260717000000_pxp_roadmap_fields.sql | 120 | ------------------------------------------------------------------ |
+| supabase/migrations/20260717120000_work_item_department.sql | 25 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 245 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 57 | ------------------------------------------------------------------ |
-| supabase/schema/30_work.sql | 316 | ------------------------------------------------------------------ |
+| supabase/schema/30_work.sql | 326 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
-| supabase/seed.sql | 485 | ------------------------------------------------------------------ |
+| supabase/seed.sql | 492 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 33 | tests/checks/size.test.js - File size budgets. |
@@ -97,8 +98,8 @@ document instead of walking the tree or reading whole files.
 | tests/size-budget.json | 22 |  |
 | tests/unit/platform-render.test.js | 127 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
-| tests/unit/registry.test.js | 70 | tests/unit/registry.test.js - Benchmarks for the module registry, |
-| tests/unit/roadmap-detail.test.js | 127 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
+| tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
+| tests/unit/roadmap-detail.test.js | 132 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views.test.js | 229 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
@@ -113,7 +114,8 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:85 |
 | App.onAuthed | assets/js/core/guard.js:108 |
 | enforceModule() | assets/js/core/guard.js:116 |
-| App.moduleHref | assets/js/core/registry.js:129 |
+| App.moduleHref | assets/js/core/registry.js:143 |
+| App.departmentLabel | assets/js/core/registry.js:149 |
 | sources() | assets/js/core/search.js:21 |
 | canReach() | assets/js/core/search.js:35 |
 | moduleByKey() | assets/js/core/search.js:39 |
@@ -150,12 +152,12 @@ document instead of walking the tree or reading whole files.
 | kvHtml() | assets/js/pages/backlog.js:44 |
 | badges() | assets/js/pages/backlog.js:53 |
 | openItemModal() | assets/js/pages/backlog.js:59 |
-| openDocumentModal() | assets/js/pages/backlog.js:82 |
-| filteredItems() | assets/js/pages/backlog.js:97 |
-| ordered() | assets/js/pages/backlog.js:111 |
-| renderItems() | assets/js/pages/backlog.js:118 |
-| renderDocuments() | assets/js/pages/backlog.js:154 |
-| fillFilters() | assets/js/pages/backlog.js:188 |
+| openDocumentModal() | assets/js/pages/backlog.js:83 |
+| filteredItems() | assets/js/pages/backlog.js:98 |
+| ordered() | assets/js/pages/backlog.js:114 |
+| renderItems() | assets/js/pages/backlog.js:121 |
+| renderDocuments() | assets/js/pages/backlog.js:158 |
+| fillFilters() | assets/js/pages/backlog.js:192 |
 | loadCounts() | assets/js/pages/dashboard.js:14 |
 | renderRoadmapMeter() | assets/js/pages/dashboard.js:29 |
 | cardHtml() | assets/js/pages/dashboard.js:44 |
@@ -221,8 +223,8 @@ document instead of walking the tree or reading whole files.
 | note() | assets/js/pages/roadmap-detail.js:75 |
 | phasesHtml() | assets/js/pages/roadmap-detail.js:80 |
 | drawerHtml() | assets/js/pages/roadmap-detail.js:94 |
-| toKpiItem() | assets/js/pages/roadmap-detail.js:135 |
-| toKpiRoadmap() | assets/js/pages/roadmap-detail.js:175 |
+| toKpiItem() | assets/js/pages/roadmap-detail.js:136 |
+| toKpiRoadmap() | assets/js/pages/roadmap-detail.js:177 |
 | presentationLabel() | assets/js/pages/roadmap-views.js:46 |
 | hzIdx() | assets/js/pages/roadmap-views.js:49 |
 | colStart() | assets/js/pages/roadmap-views.js:53 |
@@ -301,9 +303,9 @@ document instead of walking the tree or reading whole files.
 | loadApp() | tests/unit/reference-render.test.js:13 |
 | loadApp() | tests/unit/registry.test.js:12 |
 | load() | tests/unit/roadmap-detail.test.js:13 |
-| sample() | tests/unit/roadmap-detail.test.js:30 |
-| ctxOf() | tests/unit/roadmap-detail.test.js:55 |
-| plain() | tests/unit/roadmap-detail.test.js:56 |
+| sample() | tests/unit/roadmap-detail.test.js:31 |
+| ctxOf() | tests/unit/roadmap-detail.test.js:57 |
+| plain() | tests/unit/roadmap-detail.test.js:58 |
 | loadView() | tests/unit/roadmap-views.test.js:19 |
 | count() | tests/unit/roadmap-views.test.js:32 |
 | sampleData() | tests/unit/roadmap-views.test.js:36 |

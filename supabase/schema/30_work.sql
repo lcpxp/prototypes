@@ -154,6 +154,16 @@ create table if not exists public.work_items (
   -- Backlog classification; null for roadmap-origin work.
   type text
     check (type in ('consideration', 'feature', 'functionality', 'bug', 'improvement', 'task')),
+  -- Owning department: the business function accountable for the item.
+  -- A coarse org-owner tag, orthogonal to area/theme, so any view can
+  -- group or filter work by who owns it. Optional. Keys mirror the
+  -- App.registry.departments list in assets/js/core/registry.js, which
+  -- holds the display labels (the exact "&"/"and" wording) so no page
+  -- hard-codes them (see docs/WORKFLOW.md).
+  department text
+    check (department in ('sales_commercial', 'operations_onboarding',
+      'product_technology', 'finance_revenue', 'legal_compliance',
+      'risk_underwriting')),
   status text not null default 'idea'
     check (status in ('idea', 'planned', 'in_progress', 'blocked', 'done', 'dropped')),
   -- Start band on the continuous axis. 'someday' is the Parked
