@@ -71,7 +71,8 @@
       var added = profile.created_at
         ? new Date(profile.created_at).toLocaleDateString()
         : "";
-      body += "<tr><td>" + App.escape(profile.display_name || "") + "</td>" +
+      body += '<tr id="user-' + App.escape(profile.id) + '"><td>' +
+        App.escape(profile.display_name || "") + "</td>" +
         '<td class="mono">' + App.escape(profile.email || "") + "</td>" +
         "<td>" + (admin ? roleCell(profile) : roleBadge(profile.role)) + "</td>";
       if (admin) {
@@ -118,6 +119,7 @@
     });
 
     render(results[0].data, deniedMap);
+    App.deepLinkScroll();
   }
 
   async function saveToggle(input) {

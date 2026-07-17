@@ -243,6 +243,22 @@
     });
   }
 
+  // Honour a #ep-<id> deep link once the initial spec has rendered:
+  // open that endpoint and scroll to it. Endpoints render with
+  // id="ep-<id>"; other fragments the browser resolves natively.
+  function openHashTarget() {
+    var hash = window.location.hash || "";
+    if (hash.indexOf("#ep-") !== 0) return;
+    var element = document.getElementById(hash.slice(1));
+    if (!element) return;
+    if (element.tagName === "DETAILS") element.open = true;
+    var ep = (current.endpoints || []).find(function (e) {
+      return "ep-" + e.id === element.id;
+    });
+    if (ep && ep._lean) hydrate([ep]);
+    element.scrollIntoView({ block: "start" });
+  }
+
   App.onAuthed(async function () {
     picker = document.getElementById("spec-picker");
     sidebar = document.getElementById("ref-sidebar");
@@ -290,6 +306,7 @@
     document.getElementById("ref-collapse")
       .addEventListener("click", function () { setAllOpen(false); });
 
-    loadSpec(initial, specs);
+    await loadSpec(initial, specs);
+    openHashTarget();
   });
 })();

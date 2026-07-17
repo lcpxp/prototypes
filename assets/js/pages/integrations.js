@@ -58,7 +58,7 @@
       "</tr></thead><tbody>";
     data.forEach(function (row, index) {
       html +=
-        "<tr>" +
+        '<tr id="integration-' + App.escape(row.id) + '">' +
         '<td><button class="button quiet" type="button" data-index="' +
         index + '">' + App.escape(row.name) + "</button></td>" +
         "<td>" + App.escape(row.category) + "</td>" +
@@ -85,7 +85,7 @@
 
     var result = await App.db
       .from(App.registry.tables.integrations)
-      .select("name, category, purpose, direction, status, docs_url, owner, detail")
+      .select("id, name, category, purpose, direction, status, docs_url, owner, detail")
       .order("sort_order", { ascending: true })
       .order("name", { ascending: true });
 
@@ -110,5 +110,6 @@
         openModal(rows[Number(button.getAttribute("data-index"))]);
       });
     });
+    App.deepLinkScroll();
   });
 })();

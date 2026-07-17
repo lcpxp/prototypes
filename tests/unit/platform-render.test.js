@@ -91,6 +91,14 @@ test("capabilityCard renders the maturity chip, marks unverified rows, escapes c
   });
   assert.ok(verified.includes('class="badge live"'));
   assert.ok(!verified.includes("unverified"));
+  // No id attribute when the row carries no id.
+  assert.ok(!verified.includes("id=\"capability-"));
+
+  // A row with an id gets a stable deep-link anchor.
+  const anchored = V.capabilityCard({
+    id: "c9", title: "Anchored", maturity: "live", verified: true, blocks: [],
+  });
+  assert.ok(anchored.includes('id="capability-c9"'));
 });
 
 test("groupByArea groups capability rows by area and sorts by sort_order", () => {

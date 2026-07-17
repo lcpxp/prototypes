@@ -213,6 +213,17 @@
     var closeBtn = document.getElementById("rmd-close");
     var lastFocus = null;
 
+    // Reflect the open item in the URL (?item=<id>) so a drawer is
+    // shareable and deep-linkable, without disturbing the view-state
+    // hash (#level/layout).
+    function setItemParam(id) {
+      if (!window.history || !window.history.replaceState) return;
+      var url = new URL(window.location.href);
+      if (id) url.searchParams.set("item", id);
+      else url.searchParams.delete("item");
+      window.history.replaceState(null, "", url.href);
+    }
+
     function openDrawer(item) {
       if (!drawer || !drawerBody) return;
       drawerBody.innerHTML = App.roadmapDetail.drawerHtml(item, ctx);
@@ -220,6 +231,7 @@
       drawer.hidden = false;
       if (scrim) scrim.hidden = false;
       document.body.classList.add("rmd-open");
+      setItemParam(item.id);
       var itemExport = document.getElementById("rmd-export");
       if (itemExport) itemExport.addEventListener("click", function () {
         download("roadmap-item-" + safeName(item.title) + ".json",
@@ -231,6 +243,7 @@
       if (drawer) drawer.hidden = true;
       if (scrim) scrim.hidden = true;
       document.body.classList.remove("rmd-open");
+      setItemParam(null);
       if (lastFocus && lastFocus.focus) lastFocus.focus();
     }
 
@@ -303,5 +316,9 @@
 
     renderControls(nav, layoutNav, host);
     render(host);
+
+    // Deep link: ?item=<id> opens that work item's drawer on load.
+    var requestedItem = new URLSearchParams(window.location.search).get("item");
+    if (requestedItem && itemsById[requestedItem]) openDrawer(itemsById[requestedItem]);
   });
 })();

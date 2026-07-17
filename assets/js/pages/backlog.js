@@ -273,5 +273,12 @@
     fillFilters(areasResult.data || []);
     renderItems();
     renderDocuments();
+
+    // Deep link: ?item=<id> opens that work item's detail on load.
+    var requestedItem = new URLSearchParams(window.location.search).get("item");
+    if (requestedItem) {
+      var deep = items.find(function (i) { return i.id === requestedItem; });
+      if (deep) openItemModal(deep);
+    }
   });
 })();

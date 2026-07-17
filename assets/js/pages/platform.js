@@ -99,7 +99,8 @@
   }
 
   function capabilityCard(cap) {
-    var html = '<article class="card cap-card">' +
+    var html = '<article class="card cap-card"' +
+      (cap.id ? ' id="capability-' + App.escape(cap.id) + '"' : "") + ">" +
       '<p class="cap-chips">' + maturityChips(cap) + "</p>" +
       "<h2>" + App.escape(cap.title) + "</h2>";
     if (cap.summary) html += '<p class="card-meta">' + App.escape(cap.summary) + "</p>";
@@ -196,5 +197,6 @@
       areas: results[0].error ? [] : results[0].data || [],
       capabilities: capsResult.data || [],
     });
+    App.deepLinkScroll();
   });
 })();

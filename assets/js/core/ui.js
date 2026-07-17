@@ -42,6 +42,20 @@
     });
   };
 
+  // Deep-link support for list pages: when the URL carries a #<id>
+  // fragment naming a rendered item (e.g. #capability-<id>), bring it
+  // into view and flag it briefly. Pages call this after they render,
+  // since their content is fetched asynchronously.
+  App.deepLinkScroll = function () {
+    var id = (window.location.hash || "").replace(/^#/, "");
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ block: "center" });
+    el.classList.add("is-linked");
+    window.setTimeout(function () { el.classList.remove("is-linked"); }, 2000);
+  };
+
   // True when href resolves to the page currently open, treating a
   // directory and its index.html as the same page.
   function isCurrentPage(href) {

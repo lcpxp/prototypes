@@ -354,6 +354,13 @@ td.mono {
 .badge.partial     { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
 .badge.exploratory { color: var(--violet); background: var(--violet-soft); border-color: transparent; }
 
+/* Deep-link target: a card or row that a search result or shared URL
+   points to is flagged briefly (App.deepLinkScroll removes the class). */
+.is-linked {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* Platform capability cards: a chip row above the title, stacked
    full-width rather than the small-tile card grid. */
 .cap-card {
