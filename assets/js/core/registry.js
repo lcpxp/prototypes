@@ -144,6 +144,40 @@
     return (App.root || ".") + "/" + mod.path;
   };
 
+  // Build a deep link to a single row inside a module, matching the
+  // per-module routing each page understands (roadmap/backlog open a
+  // detail by ?item=, reference by ?spec=#ep-, prototypes link to their
+  // own page, the list modules use a #<prefix>-<id> anchor). Falls back
+  // to the module index when the row lacks what a link needs. Shared by
+  // search.js and the dashboard activity feed so they cannot drift.
+  App.itemHref = function (mod, row) {
+    if (!mod) return "#";
+    var base = App.moduleHref(mod);
+    var id = row && row.id;
+    switch (mod.key) {
+      case "prototypes":
+        return row && row.path
+          ? (App.root || ".") + "/" + String(row.path).replace(/^\/+/, "")
+          : base;
+      case "reference":
+        return row && row.spec_id
+          ? base + "index.html?spec=" + encodeURIComponent(row.spec_id) +
+            (id ? "#ep-" + id : "")
+          : base;
+      case "roadmap":
+      case "backlog":
+        return id ? base + "index.html?item=" + encodeURIComponent(id) : base;
+      case "platform":
+        return id ? base + "index.html#capability-" + id : base;
+      case "users":
+        return id ? base + "index.html#user-" + id : base;
+      case "integrations":
+        return id ? base + "index.html#integration-" + id : base;
+      default:
+        return base;
+    }
+  };
+
   // Resolve a work_items.department key to its display label. Returns
   // "" for an unset or unknown key, so callers can render it directly.
   App.departmentLabel = function (key) {
