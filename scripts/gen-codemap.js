@@ -72,7 +72,7 @@ for (const file of files) {
 md += "\n## JavaScript symbol index\n\n| Symbol | Location |\n|---|---|\n";
 md += symbolRows.join("\n") + "\n";
 md += "\n## Conventions for agents\n\n";
-md += "- Read this map, docs/SESSIONS.md (latest checkpoint) and CLAUDE.md before anything else.\n";
+md += "- Read this map, docs/STATE.md (current state) and CLAUDE.md before anything else.\n";
 md += "- Jump to symbols with the file:line references above; read targeted ranges, not whole files.\n";
 md += "- File size budgets live in tests/size-budget.json; the suite in tests/ is the definition of done.\n";
 
@@ -87,7 +87,7 @@ const llms = `# LPio - LaunchPad IO (static shell of a project hub)
 
 ## Start here
 - CLAUDE.md: operating rules for agent sessions (security rules are non-negotiable)
-- docs/SESSIONS.md: rolling session log; latest checkpoint = current state of work
+- docs/STATE.md: fixed-size current state; git log and docs/CHANGELOG.md are the history
 - docs/CODEMAP.md: generated index of every file, its size, purpose and JS symbols
 
 ## Architecture and process

@@ -81,7 +81,7 @@ the default reading of a comprehensive current-capabilities overview
 is that everything it describes is shipped: rows load as maturity
 'live' and verified = true. verified marks that the owner has
 knowingly accepted the row at that maturity (recorded as a decision
-in docs/SESSIONS.md), not a demand for painstaking per-row
+by the owner), not a demand for painstaking per-row
 inspection before anything can render. The practical guard is
 narrower: mark a row down (lower maturity, verified = false) only
 when there is a concrete reason to doubt it - the source itself

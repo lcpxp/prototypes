@@ -29,7 +29,7 @@ checkpoint commit stays instant without losing coverage.
 
 ## The loop for any change
 
-1. Read the latest checkpoint in docs/SESSIONS.md; branch per
+1. Read docs/STATE.md for the current state; branch per
    CLAUDE.md (feat/x, fix/x, docs/x).
 2. Before writing code, extend or add a benchmark in tests/ that
    defines "working" for the change (see below). Watch it fail.
@@ -39,8 +39,9 @@ checkpoint commit stays instant without losing coverage.
 5. Commit small and atomic. The template prompts for Why and
    Verified; the pre-commit hook re-runs the gates and refreshes
    the codemap automatically.
-6. End of session or low credits: write the SESSIONS.md checkpoint
-   first, feature work second.
+6. End of session or low credits: overwrite the docs/STATE.md checkpoint
+   first (it is left in flight only while work is unfinished), feature
+   work second.
 
 ## What counts as a functioning benchmark
 
@@ -57,8 +58,8 @@ implementation detail:
 Definition of done for a feature now includes: its benchmark exists
 and passes, and no gate regressed. Browser-only behaviour (auth
 redirects, live Supabase queries) is verified manually against the
-checklist in the SESSIONS.md entry that introduced it; do not mock
-Supabase in this repo.
+change's own commit and docs/STATE.md; do not mock Supabase in this
+repo.
 
 ## File size policy (researched)
 
@@ -101,9 +102,10 @@ Three layers, cheapest first:
 
 1. Commit messages - imperative subject plus Why and Verified
    fields from .gitmessage. This is the per-change record.
-2. docs/SESSIONS.md - per-session checkpoints: what finished, what
-   is half-done and exactly where, ordered next steps, open
-   decisions. This is the resume prompt for the next session.
+2. docs/STATE.md - the fixed-size current state: what is half-done and
+   exactly where, ordered next steps, open decisions. Overwritten each
+   checkpoint, it is the resume prompt for the next session;
+   docs/CHANGELOG.md records what changed for users.
 3. Generated codemap diffs - because CODEMAP.md is committed, the
    history of the map is itself a structural audit trail.
 

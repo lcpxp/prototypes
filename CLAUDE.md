@@ -2,7 +2,7 @@
 
 Operating rules for any Claude Code session working in this repository.
 Read this file in full at the start of every session, then read
-docs/SESSIONS.md for the current state of work.
+docs/STATE.md for the current state of work.
 
 ## What this repository is
 
@@ -90,29 +90,29 @@ deny rule blocks (force-push, git add -f, committing config.js).
 - Keep files under roughly 500 lines. If a module approaches that,
   split it before extending it.
 - Never paste large file contents into commit messages, logs, or
-  docs/SESSIONS.md. Reference paths and line ranges instead.
+  docs/STATE.md. Reference paths and line ranges instead.
 
-## Session management, resume prompts and credits
+## Session state and resume
 
-Sessions are tracked in docs/SESSIONS.md. The workflow:
+Current state lives in one fixed file, docs/STATE.md - never a growing
+log. Git history is the record of what changed in the code;
+docs/CHANGELOG.md is what changed for users; docs/STATE.md is only what
+is not yet finished. No overlap between the three.
 
-1. Session start: read CLAUDE.md, then the latest entry in
-   docs/SESSIONS.md. Confirm the branch and pick up from "Next steps".
-2. During work: keep a running sense of what is done versus in
-   progress. Commit completed units as you go so an interrupted
-   session loses nothing.
-3. Session end, or when credits or context are running low: STOP
-   feature work early and spend the remaining budget writing a
-   checkpoint entry in docs/SESSIONS.md using the template there:
-   date, branch, what was completed, what is half-done and exactly
-   where, next steps in order, and open decisions. Commit it.
-4. The checkpoint doubles as the resume prompt. A new session begins
-   by pasting the resume template from docs/SESSIONS.md, which points
-   back to the latest checkpoint.
+1. Session start: read CLAUDE.md, then docs/STATE.md, and continue from
+   its "Next steps".
+2. During work: commit completed units as you go, in atomic commits with
+   imperative messages, so an interrupted session loses nothing and git
+   carries the history.
+3. Session end, before likely credit or context exhaustion, or before a
+   risky operation: OVERWRITE docs/STATE.md in place - it never grows
+   (40-line cap, enforced). Update In progress, Next steps and Open
+   decisions, and prune decisions once resolved. There is no Completed
+   section: finished work is expressed as commits.
 
-A checkpoint that lets a cold session resume in one message is more
-valuable than one more half-finished feature. When credit exhaustion
-is likely, checkpoint first.
+Overwriting STATE.md costs under a minute, so checkpoint first when
+exhaustion is likely; a clean one-message resume beats one more
+half-finished change.
 
 ## Front-end rules
 
@@ -125,7 +125,7 @@ is likely, checkpoint first.
   comments. No decorative icons, gradients or filler copy.
 - Plain HTML, CSS and JavaScript. No frameworks, no build step, no
   new dependencies beyond the Supabase CDN client without explicit
-  agreement from the repo owner recorded in docs/SESSIONS.md.
+  agreement from the repo owner recorded in docs/STATE.md open decisions.
 - Every new protected page loads its scripts from <head>, each with
   defer, in this order: the Supabase CDN script, then core/supabase.js,
   core/registry.js, core/guard.js, core/ui.js, core/search.js, then its

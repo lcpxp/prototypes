@@ -133,3 +133,18 @@ test("external scripts load deferred from <head> (theme.js excepted)", () => {
     }
   }
 });
+
+test("docs/STATE.md is a fixed-size state file, not a log", () => {
+  // The rolling session log was replaced by one overwritten state file.
+  // Regressing to log-keeping (a Completed section, unbounded growth) is
+  // a test failure, not a habit.
+  const state = read("docs/STATE.md");
+  for (const heading of ["## In progress", "## Next steps", "## Open decisions"]) {
+    assert.ok(state.includes(heading),
+      `docs/STATE.md must contain the "${heading}" heading.`);
+  }
+  assert.doesNotMatch(state, /^#+\s*Completed/im,
+    "docs/STATE.md must have no Completed section - finished work lives in commits.");
+  const lines = state.split("\n").length;
+  assert.ok(lines <= 40, `docs/STATE.md must be 40 lines or fewer, found ${lines}.`);
+});

@@ -9,9 +9,9 @@
   },
   "generated": ["docs/CODEMAP.md", "llms.txt"],
   "exceptions": {
-    "docs/SESSIONS.md": {
-      "hard": 1000,
-      "note": "Rolling log. When it passes 600 lines, move entries older than 30 days to docs/sessions-archive/YYYY-MM.md."
+    "docs/STATE.md": {
+      "hard": 40,
+      "note": "Fixed-size current state; overwritten each checkpoint, never grown. The 40-line cap is the point."
     },
     "docs/HARNESS.md": {
       "hard": 400,

@@ -15,6 +15,8 @@ test("all files are inside their line budgets", () => {
   const warnings = [];
   for (const file of trackedFiles()) {
     if (budget.generated.includes(file)) continue;
+    // Closed read-only history; never reflowed to a budget.
+    if (file.startsWith("docs/sessions-archive/")) continue;
     const rule = budget.byExtension[path.extname(file)];
     if (!rule) continue;
     const lines = read(file).split("\n").length;

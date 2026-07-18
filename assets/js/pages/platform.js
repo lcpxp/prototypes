@@ -70,8 +70,8 @@
 
   // The typed block vocabulary shared with the reference viewer's
   // api_topics rendering (assets/js/pages/reference-topics.js). Kept
-  // as a local copy rather than a cross-module dependency; see
-  // docs/SESSIONS.md for the noted future-refactor option.
+  // as a local copy rather than a cross-module dependency; a shared
+  // typed-block module is a possible future refactor.
   function blockHtml(block) {
     if (!block || typeof block !== "object") return "";
     switch (block.kind) {
