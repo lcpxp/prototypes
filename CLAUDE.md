@@ -169,8 +169,9 @@ half-finished change.
 - Works when served locally and from a static host.
 - No console errors; unauthenticated access redirects to login.
 - No hard-coded design values; no sensitive data introduced.
-- Relevant docs updated; session log updated if the change is part of
-  a tracked piece of work.
+- Relevant docs updated; a user-visible change adds one line under
+  Unreleased in docs/CHANGELOG.md in the same commit; docs/STATE.md
+  updated if any work is left in flight.
 - Committed to main; the GitHub Pages deploy workflow is green and the
   change is reviewable at the Pages URL.
 
@@ -178,8 +179,9 @@ half-finished change.
 ## Verification harness
 
 - Commands: `npm run setup` (once per clone), `npm test` (full
-  suite), `npm run map` (regenerate codemap). Zero dependencies;
-  Node built-in test runner.
+  suite), `npm run map` (regenerate codemap), `npm run audit`
+  (one-screen health report). Zero dependencies; Node built-in
+  test runner.
 - Definition of done now includes: a benchmark in tests/ covers the
   change and the whole suite is green. Gates in tests/checks/
   enforce the security, structure, style and size rules above
