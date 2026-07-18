@@ -16,6 +16,50 @@
     "docs/HARNESS.md": {
       "hard": 400,
       "note": "Process reference, read on demand rather than every session."
+    },
+    "supabase/seed.sql": {
+      "hard": 500,
+      "note": "Sample data, not logic; length tracks the number of seeded rows."
+    },
+    "supabase/schema/30_work.sql": {
+      "hard": 500,
+      "note": "The work-items domain (items, phases, dependencies, notes) in one file; split by sub-table if it nears the hard limit."
+    },
+    "assets/css/components.css": {
+      "hard": 500,
+      "note": "Over soft. Exit plan: shed badge and table styles into components-data.css, linked wherever components.css is."
+    },
+    "assets/css/layout.css": {
+      "hard": 500,
+      "note": "Over soft. Exit plan: the nav and page-head blocks are the split seam when it grows further."
+    },
+    "assets/css/pages.css": {
+      "hard": 500,
+      "note": "Just over soft; split per page section if it grows."
+    },
+    "assets/css/tokens.css": {
+      "hard": 500,
+      "note": "Design tokens plus dark-theme overrides; inherently long, not logic."
+    },
+    "assets/js/pages/roadmap-views.js": {
+      "hard": 500,
+      "note": "Over soft. Exit plan: split the cascade family into roadmap-views-cascade.js, sharing helpers via a private App namespace."
+    },
+    "assets/js/pages/roadmap.js": {
+      "hard": 500,
+      "note": "Over soft; the drawer wiring is the extract-to-a-module seam."
+    },
+    "assets/js/pages/reference.js": {
+      "hard": 500,
+      "note": "Over soft; loadSpec/hydrate could move to a reference-data.js."
+    },
+    "docs/ARCHITECTURE.md": {
+      "hard": 300,
+      "note": "Architecture reference, read on demand rather than every session."
+    },
+    "docs/ROADMAP.md": {
+      "hard": 300,
+      "note": "Roadmap process reference, read on demand."
     }
   }
 }
