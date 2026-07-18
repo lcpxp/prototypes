@@ -6,64 +6,69 @@ document instead of walking the tree or reading whole files.
 
 | File | Lines | Purpose |
 |---|---:|---|
-| .githooks/pre-commit | 20 |  |
+| .claude/settings.json | 49 |  |
+| .githooks/pre-commit | 29 |  |
 | .github/workflows/deploy.yml | 53 |  |
-| .gitignore | 20 |  |
+| .gitignore | 24 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 179 | CLAUDE.md |
+| CLAUDE.md | 198 | CLAUDE.md |
 | README.md | 17 | LPio |
 | assets/css/base.css | 98 | base.css - Reset, typography and global element styles. |
-| assets/css/components.css | 426 | components.css - Reusable interface components: cards, forms, |
-| assets/css/layout.css | 320 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/components.css | 433 | components.css - Reusable interface components: cards, forms, |
+| assets/css/layout.css | 351 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
-| assets/css/pages.css | 302 | pages.css - The reference viewer ("swagger") page. Everything |
+| assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
 | assets/css/roadmap-detail.css | 151 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 233 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 285 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
 | assets/css/tokens.css | 307 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
-| assets/js/core/guard.js | 137 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 156 | registry.js - Single source of truth for the hub's modules, the |
-| assets/js/core/search.js | 104 | search.js - Global header search (App.search). Renders results for |
+| assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
+| assets/js/core/registry.js | 190 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
-| assets/js/core/ui.js | 205 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
-| assets/js/pages/backlog.js | 278 | backlog.js - The master work list for modules/backlog/. |
-| assets/js/pages/dashboard.js | 160 | dashboard.js - Renders module cards, counts and recent activity |
-| assets/js/pages/gallery.js | 55 | gallery.js - Prototype registry for modules/prototypes/. |
-| assets/js/pages/integrations.js | 115 | integrations.js - Integration overview for modules/integrations/. |
-| assets/js/pages/platform.js | 201 | platform.js - The platform product-knowledge viewer for |
+| assets/js/core/ui.js | 234 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/pages/backlog.js | 281 | backlog.js - The master work list for modules/backlog/. |
+| assets/js/pages/dashboard.js | 159 | dashboard.js - Renders module cards, counts and recent activity |
+| assets/js/pages/gallery.js | 53 | gallery.js - Prototype registry for modules/prototypes/. |
+| assets/js/pages/integrations.js | 114 | integrations.js - Integration overview for modules/integrations/. |
+| assets/js/pages/platform.js | 202 | platform.js - The platform product-knowledge viewer for |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
-| assets/js/pages/reference.js | 296 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail.js | 197 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-views.js | 380 | roadmap-views.js - Pure HTML builders for the roadmap home |
-| assets/js/pages/roadmap.js | 308 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
-| assets/js/pages/users.js | 170 | users.js - User and access management for modules/users/. |
+| assets/js/pages/roadmap.js | 324 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
+| assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
-| docs/ARCHITECTURE.md | 224 | Architecture |
+| docs/ARCHITECTURE.md | 247 | Architecture |
+| docs/CHANGELOG.md | 32 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
-| docs/HARNESS.md | 108 | Verification harness and working process |
+| docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
 | docs/ROADMAP-PROCESS.md | 124 | Roadmap process |
 | docs/ROADMAP.md | 206 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
-| docs/SESSIONS.md | 902 | Session log |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
+| docs/STATE.md | 26 | Current state |
 | docs/WORKFLOW.md | 106 | Work intake and backlog workflow |
+| docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
+| docs/sessions-archive/README.md | 13 | Session archive (closed) |
 | index.html | 76 | Sign in - LPio / LaunchPad IO |
-| modules/backlog/index.html | 124 | Backlog - LPio / LaunchPad IO |
-| modules/integrations/index.html | 94 | Integrations - LPio / LaunchPad IO |
-| modules/platform/index.html | 88 | Platform - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 86 | Prototypes - LPio / LaunchPad IO |
-| modules/reference/index.html | 107 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 127 | Roadmap - LPio / LaunchPad IO |
-| modules/users/index.html | 87 | Users - LPio / LaunchPad IO |
-| package.json | 12 |  |
+| modules/backlog/index.html | 92 | Backlog - LPio / LaunchPad IO |
+| modules/integrations/index.html | 62 | Integrations - LPio / LaunchPad IO |
+| modules/platform/index.html | 56 | Platform - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 54 | Prototypes - LPio / LaunchPad IO |
+| modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 87 | Roadmap - LPio / LaunchPad IO |
+| modules/users/index.html | 55 | Users - LPio / LaunchPad IO |
+| package.json | 13 |  |
+| scripts/audit.js | 123 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
@@ -91,16 +96,17 @@ document instead of walking the tree or reading whole files.
 | supabase/seed.sql | 492 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
-| tests/checks/size.test.js | 33 | tests/checks/size.test.js - File size budgets. |
-| tests/checks/structure.test.js | 102 | tests/checks/structure.test.js - Page structure gates. |
-| tests/checks/style.test.js | 68 | tests/checks/style.test.js - Design-system gates. |
+| tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
+| tests/checks/structure.test.js | 151 | tests/checks/structure.test.js - Page structure gates. |
+| tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
-| tests/size-budget.json | 22 |  |
-| tests/unit/platform-render.test.js | 127 | tests/unit/platform-render.test.js - Benchmarks for the platform |
+| tests/size-budget.json | 66 |  |
+| tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-detail.test.js | 132 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views.test.js | 261 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
+| tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 
@@ -108,22 +114,30 @@ document instead of walking the tree or reading whole files.
 
 | Symbol | Location |
 |---|---|
-| readCache() | assets/js/core/guard.js:51 |
-| writeCache() | assets/js/core/guard.js:58 |
-| fetchAccess() | assets/js/core/guard.js:65 |
-| App.canAccess | assets/js/core/guard.js:85 |
-| App.onAuthed | assets/js/core/guard.js:108 |
-| enforceModule() | assets/js/core/guard.js:116 |
+| readCache() | assets/js/core/guard.js:54 |
+| writeCache() | assets/js/core/guard.js:61 |
+| fetchAccess() | assets/js/core/guard.js:68 |
+| App.canAccess | assets/js/core/guard.js:88 |
+| App.onAuthed | assets/js/core/guard.js:116 |
+| enforceModule() | assets/js/core/guard.js:124 |
 | App.moduleHref | assets/js/core/registry.js:143 |
-| App.departmentLabel | assets/js/core/registry.js:149 |
-| sources() | assets/js/core/search.js:21 |
-| canReach() | assets/js/core/search.js:35 |
-| moduleByKey() | assets/js/core/search.js:39 |
-| clean() | assets/js/core/search.js:43 |
-| render() | assets/js/core/search.js:45 |
-| attach() | assets/js/core/search.js:67 |
-| close() | assets/js/core/search.js:74 |
-| run() | assets/js/core/search.js:79 |
+| App.itemHref | assets/js/core/registry.js:153 |
+| App.departmentLabel | assets/js/core/registry.js:183 |
+| sources() | assets/js/core/search.js:24 |
+| canReach() | assets/js/core/search.js:47 |
+| moduleByKey() | assets/js/core/search.js:51 |
+| targetMod() | assets/js/core/search.js:57 |
+| clean() | assets/js/core/search.js:66 |
+| selectFor() | assets/js/core/search.js:70 |
+| highlight() | assets/js/core/search.js:81 |
+| badgeHtml() | assets/js/core/search.js:91 |
+| buildHtml() | assets/js/core/search.js:100 |
+| attach() | assets/js/core/search.js:129 |
+| close() | assets/js/core/search.js:139 |
+| open() | assets/js/core/search.js:148 |
+| paint() | assets/js/core/search.js:153 |
+| setActive() | assets/js/core/search.js:162 |
+| run() | assets/js/core/search.js:174 |
 | pad2() | assets/js/core/sprints.js:31 |
 | iso() | assets/js/core/sprints.js:32 |
 | mod() | assets/js/core/sprints.js:35 |
@@ -143,10 +157,12 @@ document instead of walking the tree or reading whole files.
 | App.methodBadge | assets/js/core/ui.js:21 |
 | App.statusBadge | assets/js/core/ui.js:29 |
 | App.copyText | assets/js/core/ui.js:34 |
-| isCurrentPage() | assets/js/core/ui.js:47 |
-| themeIcon() | assets/js/core/ui.js:55 |
-| renderNav() | assets/js/core/ui.js:72 |
-| App.onThemeChange | assets/js/core/ui.js:180 |
+| App.notice | assets/js/core/ui.js:53 |
+| App.deepLinkScroll | assets/js/core/ui.js:64 |
+| isCurrentPage() | assets/js/core/ui.js:76 |
+| themeIcon() | assets/js/core/ui.js:84 |
+| renderNav() | assets/js/core/ui.js:101 |
+| App.onThemeChange | assets/js/core/ui.js:209 |
 | bandOf() | assets/js/pages/backlog.js:34 |
 | fmtDate() | assets/js/pages/backlog.js:40 |
 | kvHtml() | assets/js/pages/backlog.js:44 |
@@ -180,10 +196,10 @@ document instead of walking the tree or reading whole files.
 | blockHtml() | assets/js/pages/platform.js:75 |
 | maturityChips() | assets/js/pages/platform.js:96 |
 | capabilityCard() | assets/js/pages/platform.js:101 |
-| byOrder() | assets/js/pages/platform.js:110 |
-| groupByArea() | assets/js/pages/platform.js:114 |
-| sectionHeading() | assets/js/pages/platform.js:126 |
-| pageHtml() | assets/js/pages/platform.js:134 |
+| byOrder() | assets/js/pages/platform.js:111 |
+| groupByArea() | assets/js/pages/platform.js:115 |
+| sectionHeading() | assets/js/pages/platform.js:127 |
+| pageHtml() | assets/js/pages/platform.js:135 |
 | codeblock() | assets/js/pages/reference-render.js:18 |
 | specOverview() | assets/js/pages/reference-render.js:32 |
 | paramsTable() | assets/js/pages/reference-render.js:69 |
@@ -209,8 +225,9 @@ document instead of walking the tree or reading whole files.
 | applyFilter() | assets/js/pages/reference.js:116 |
 | setAllOpen() | assets/js/pages/reference.js:123 |
 | loadSpec() | assets/js/pages/reference.js:130 |
-| fillPicker() | assets/js/pages/reference.js:191 |
-| wireContent() | assets/js/pages/reference.js:220 |
+| fillPicker() | assets/js/pages/reference.js:189 |
+| wireContent() | assets/js/pages/reference.js:218 |
+| openHashTarget() | assets/js/pages/reference.js:247 |
 | esc() | assets/js/pages/roadmap-detail.js:33 |
 | day() | assets/js/pages/roadmap-detail.js:34 |
 | dateRange() | assets/js/pages/roadmap-detail.js:35 |
@@ -278,16 +295,25 @@ document instead of walking the tree or reading whole files.
 | tabs() | assets/js/pages/roadmap.js:122 |
 | renderControls() | assets/js/pages/roadmap.js:131 |
 | set() | assets/js/pages/roadmap.js:142 |
-| openDrawer() | assets/js/pages/roadmap.js:216 |
-| closeDrawer() | assets/js/pages/roadmap.js:230 |
+| setItemParam() | assets/js/pages/roadmap.js:219 |
+| openDrawer() | assets/js/pages/roadmap.js:227 |
+| closeDrawer() | assets/js/pages/roadmap.js:242 |
 | notice() | assets/js/pages/users.js:15 |
 | roleBadge() | assets/js/pages/users.js:24 |
 | roleCell() | assets/js/pages/users.js:30 |
 | toggleCell() | assets/js/pages/users.js:46 |
 | render() | assets/js/pages/users.js:57 |
-| load() | assets/js/pages/users.js:89 |
-| saveToggle() | assets/js/pages/users.js:123 |
-| saveRole() | assets/js/pages/users.js:142 |
+| load() | assets/js/pages/users.js:90 |
+| saveToggle() | assets/js/pages/users.js:125 |
+| saveRole() | assets/js/pages/users.js:144 |
+| row() | scripts/audit.js:12 |
+| head() | scripts/audit.js:13 |
+| testTotals() | scripts/audit.js:17 |
+| overSoft() | scripts/audit.js:34 |
+| tablesMissingPolicy() | scripts/audit.js:50 |
+| themeGuardAnomalies() | scripts/audit.js:63 |
+| thenBalance() | scripts/audit.js:74 |
+| stalePaths() | scripts/audit.js:88 |
 | firstLineMatching() | scripts/gen-codemap.js:22 |
 | purposeOf() | scripts/gen-codemap.js:30 |
 | symbolsOf() | scripts/gen-codemap.js:41 |
@@ -312,11 +338,12 @@ document instead of walking the tree or reading whole files.
 | loadView() | tests/unit/roadmap-views.test.js:19 |
 | count() | tests/unit/roadmap-views.test.js:32 |
 | sampleData() | tests/unit/roadmap-views.test.js:36 |
+| load() | tests/unit/search.test.js:15 |
 | loadSprints() | tests/unit/sprints.test.js:13 |
 | loadApp() | tests/unit/ui.test.js:13 |
 
 ## Conventions for agents
 
-- Read this map, docs/SESSIONS.md (latest checkpoint) and CLAUDE.md before anything else.
+- Read this map, docs/STATE.md (current state) and CLAUDE.md before anything else.
 - Jump to symbols with the file:line references above; read targeted ranges, not whole files.
 - File size budgets live in tests/size-budget.json; the suite in tests/ is the definition of done.

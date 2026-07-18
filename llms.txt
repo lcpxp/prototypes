@@ -7,7 +7,7 @@
 
 ## Start here
 - CLAUDE.md: operating rules for agent sessions (security rules are non-negotiable)
-- docs/SESSIONS.md: rolling session log; latest checkpoint = current state of work
+- docs/STATE.md: fixed-size current state; git log and docs/CHANGELOG.md are the history
 - docs/CODEMAP.md: generated index of every file, its size, purpose and JS symbols
 
 ## Architecture and process
