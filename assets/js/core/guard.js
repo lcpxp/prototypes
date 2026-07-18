@@ -98,6 +98,11 @@
       writeCache(session.user.id, access);
       enforceModule();
       return access;
+    }).catch(function () {
+      // Background revalidation failed (e.g. offline). Keep whatever
+      // access we already have - the cached grants or the safe default -
+      // rather than leave this promise rejected. RLS still gates data.
+      return App.access;
     });
 
     var cached = readCache(session.user.id);

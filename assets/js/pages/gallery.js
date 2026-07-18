@@ -16,9 +16,7 @@
       .order("title", { ascending: true });
 
     if (result.error) {
-      host.innerHTML =
-        '<p class="notice error">Could not load prototypes: ' +
-        App.escape(result.error.message) + "</p>";
+      App.notice(host, "error", "Could not load prototypes: " + result.error.message);
       return;
     }
 

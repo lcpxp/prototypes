@@ -90,9 +90,7 @@
       .order("name", { ascending: true });
 
     if (result.error) {
-      host.innerHTML =
-        '<p class="notice error">Could not load integrations: ' +
-        App.escape(result.error.message) + "</p>";
+      App.notice(host, "error", "Could not load integrations: " + result.error.message);
       return;
     }
 

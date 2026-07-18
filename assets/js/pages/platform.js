@@ -188,8 +188,7 @@
 
     var capsResult = results[1];
     if (capsResult.error) {
-      host.innerHTML = '<p class="notice error">Could not load platform knowledge: ' +
-        App.escape(capsResult.error.message) + "</p>";
+      App.notice(host, "error", "Could not load platform knowledge: " + capsResult.error.message);
       return;
     }
 

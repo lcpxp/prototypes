@@ -250,9 +250,7 @@
     var itemsResult = results[2];
 
     if (areasResult.error) {
-      document.getElementById("backlog-list").innerHTML =
-        '<p class="notice error">Could not load work areas: ' +
-        App.escape(areasResult.error.message) + "</p>";
+      App.notice("backlog-list", "error", "Could not load work areas: " + areasResult.error.message);
       return;
     }
     (areasResult.data || []).forEach(function (area) {
@@ -263,9 +261,7 @@
     documents.forEach(function (doc) { docTitle[doc.id] = doc.title; });
 
     if (itemsResult.error) {
-      document.getElementById("backlog-list").innerHTML =
-        '<p class="notice error">Could not load work items: ' +
-        App.escape(itemsResult.error.message) + "</p>";
+      App.notice("backlog-list", "error", "Could not load work items: " + itemsResult.error.message);
       return;
     }
     items = itemsResult.data || [];

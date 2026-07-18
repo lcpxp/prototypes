@@ -145,10 +145,9 @@
     var el = document.getElementById("page-notice");
     if (!key || !el) return;
     var mod = App.registry.modules.find(function (m) { return m.key === key; });
-    el.innerHTML =
-      '<p class="notice error">You do not have access to ' +
-      App.escape(mod ? mod.title : key) +
-      ". Ask an admin to enable it for you on the users page.</p>";
+    App.notice(el, "error",
+      "You do not have access to " + (mod ? mod.title : key) +
+      ". Ask an admin to enable it for you on the users page.");
   }
 
   App.onAuthed(function () {

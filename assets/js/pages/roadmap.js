@@ -293,8 +293,7 @@
 
     var itemsResult = results[2];
     if (itemsResult.error) {
-      host.innerHTML = '<p class="notice error">Could not load the roadmap: ' +
-        App.escape(itemsResult.error.message) + "</p>";
+      App.notice(host, "error", "Could not load the roadmap: " + itemsResult.error.message);
       return;
     }
     data.categories = results[0].error ? [] : results[0].data || [];

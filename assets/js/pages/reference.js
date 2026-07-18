@@ -159,9 +159,7 @@
     ]);
 
     if (results[0].error) {
-      content.innerHTML =
-        '<p class="notice error">Could not load endpoints: ' +
-        App.escape(results[0].error.message) + "</p>";
+      App.notice(content, "error", "Could not load endpoints: " + results[0].error.message);
       return;
     }
     current.tags = results[1].error ? [] : results[1].data;
@@ -273,9 +271,7 @@
       .order("title", { ascending: true });
 
     if (result.error) {
-      content.innerHTML =
-        '<p class="notice error">Could not load specs: ' +
-        App.escape(result.error.message) + "</p>";
+      App.notice(content, "error", "Could not load specs: " + result.error.message);
       return;
     }
 

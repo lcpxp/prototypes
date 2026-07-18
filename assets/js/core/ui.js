@@ -32,14 +32,29 @@
   };
 
   App.copyText = function (text, button) {
+    // Capture the label before the async work so both outcomes can
+    // restore it; a denied clipboard permission must not fail silently.
+    var previous = button ? button.textContent : "";
     navigator.clipboard.writeText(text).then(function () {
       if (!button) return;
-      var previous = button.textContent;
       button.textContent = "Copied";
-      window.setTimeout(function () {
-        button.textContent = previous;
-      }, 1200);
+      window.setTimeout(function () { button.textContent = previous; }, 1200);
+    }).catch(function () {
+      if (!button) return;
+      button.textContent = "Copy failed";
+      window.setTimeout(function () { button.textContent = previous; }, 1600);
     });
+  };
+
+  // Render a standard notice into a host element (or its id). kind
+  // "error" adds the error styling; anything else is a plain notice.
+  // The message is escaped, so callers pass plain text (including a
+  // raw error.message).
+  App.notice = function (host, kind, message) {
+    var el = typeof host === "string" ? document.getElementById(host) : host;
+    if (!el) return;
+    el.innerHTML = '<p class="notice' + (kind === "error" ? " error" : "") +
+      '">' + App.escape(message) + "</p>";
   };
 
   // Deep-link support for list pages: when the URL carries a #<id>
