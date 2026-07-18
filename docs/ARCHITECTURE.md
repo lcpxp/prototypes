@@ -177,6 +177,29 @@ waterfall, exported snapshots) reads these same rows, so
 reprioritising or rescheduling is always a data change, never a
 code change.
 
+## Schema and migrations
+
+Two representations of the same database, kept in step:
+
+- supabase/schema/ is the canonical, readable definition - one file per
+  domain (00_core, 10_reference, 20_portal, 30_work, 40_platform,
+  90_dashboard), run in lexical order. Read this to understand the
+  current shape.
+- supabase/migrations/ is the applied history - timestamped files the
+  live project has already run, in order.
+
+The baseline policy: every schema change updates BOTH in the same commit
+- the readable definition in schema/ and a new timestamped migration the
+  live project applies. Never edit a migration that has been applied; a
+  correction is a new migration. schema/ must always equal the net effect
+  of all migrations, so where a later migration supersedes earlier tables
+  (the roadmap_items and backlog_items tables were unified into work_items
+  by 20260716140000_unify_work_items), the old migrations stay untouched
+  as history and schema/ reflects only the current state.
+  tests/checks/security.test.js enforces that every table declared in
+  schema/ has RLS enabled and a policy in policies.sql - a table without
+  them is publicly readable via the anon key.
+
 ## Performance
 
 The portal is built to stay fast as the Supabase content grows.
