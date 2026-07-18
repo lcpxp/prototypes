@@ -299,3 +299,9 @@
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
 }
+
+/* Spacing utilities that replace former inline styles (tokens only). */
+.dashboard-cards { margin-block-end: var(--s-6); }
+.dashboard-activity { margin-block-start: var(--s-3); }
+.page-head-gap { margin-block-start: var(--section-gap); }
+.eyebrow-heading { margin: var(--s-5) 0 var(--s-3); }

@@ -106,8 +106,10 @@ is likely, checkpoint first.
 ## Front-end rules
 
 - Follow docs/DESIGN.md exactly. All colour, type and spacing values
-  come from assets/css/tokens.css; never hard-code values in pages or
-  main.css.
+  come from assets/css/tokens.css; never hard-code values in the layered
+  stylesheets or inline on an element. Static inline style attributes are
+  banned (tests/checks/style.test.js); only runtime-computed values
+  (a grid position, a percentage width) may be set inline.
 - No emojis anywhere: not in UI, docs, commit messages or code
   comments. No decorative icons, gradients or filler copy.
 - Plain HTML, CSS and JavaScript. No frameworks, no build step, no

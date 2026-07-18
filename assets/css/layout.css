@@ -27,6 +27,10 @@
   overflow-x: auto;
 }
 
+.nav-brand-mark {
+  color: var(--lime);
+}
+
 .nav-brand {
   font-family: var(--font-mono);
   font-size: var(--text-sm);

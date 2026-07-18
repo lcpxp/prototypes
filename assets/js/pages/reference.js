@@ -65,7 +65,7 @@
         '<div class="group"><span class="eyebrow">' + App.escape(tag) +
         "</span><ul>";
       mainHtml +=
-        '<h2 class="eyebrow" style="margin: var(--s-5) 0 var(--s-3)">' +
+        '<h2 class="eyebrow eyebrow-heading">' +
         App.escape(tag) + "</h2>";
       if (grouped.descriptions[tag]) {
         mainHtml += '<p class="tag-description">' +

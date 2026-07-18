@@ -125,7 +125,7 @@
   }
 
   function sectionHeading(title, description) {
-    var html = '<h2 class="eyebrow" style="margin: var(--s-5) 0 var(--s-3)">' +
+    var html = '<h2 class="eyebrow eyebrow-heading">' +
       App.escape(title) + "</h2>";
     if (description) html += '<p class="tag-description">' + App.escape(description) + "</p>";
     return html;

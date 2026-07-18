@@ -52,6 +52,27 @@ test("roadmap.css uses solid fills, no gradients", () => {
     "roadmap.css must not reintroduce gradient fills (docs/ROADMAP.md)");
 });
 
+test("no static inline styles: design values live in classes", () => {
+  // Design values belong in token-based classes, never inline. Only
+  // runtime-computed styles are allowed inline, and those are built by
+  // string concatenation (style="...:" + value), so the closing quote
+  // never sits inside a single literal - this pattern matches only a
+  // fully-literal style="..." attribute (no + splicing a value in).
+  const offences = [];
+  const STATIC = /style="[^"+]*"/g;
+  for (const file of trackedFiles()) {
+    if (!file.endsWith(".html") && !file.endsWith(".js")) continue;
+    if (file.startsWith("tests/")) continue; // fixtures are not shipped
+    const content = read(file);
+    let m;
+    STATIC.lastIndex = 0;
+    while ((m = STATIC.exec(content)) !== null) {
+      offences.push(`${file}:${lineOf(content, m.index)} ${m[0]} - move it to a class`);
+    }
+  }
+  assert.deepEqual(offences, [], "Static inline styles found:\n" + offences.join("\n"));
+});
+
 test("no emojis in any tracked file", () => {
   const offences = [];
   for (const file of trackedFiles()) {
