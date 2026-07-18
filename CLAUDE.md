@@ -70,6 +70,17 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
 - Never use git add -f. If git refuses to add a file, that is the
   .gitignore doing its job.
 
+## Session autonomy
+
+Once the owner issues a request, work it end to end without pausing for
+confirmation on routine steps: reading, editing, running tests, committing
+and pushing to the working branch. .claude/settings.json (committed)
+pre-approves those commands and denies the dangerous ones;
+.claude/settings.local.json holds a developer's personal extras and stays
+gitignored. Pause and ask only for actions that are destructive or hard to
+reverse, that add a dependency, that change live-data schema, or that a
+deny rule blocks (force-push, git add -f, committing config.js).
+
 ## Working with large files
 
 - Read targeted ranges, not whole files. Locate the region with grep

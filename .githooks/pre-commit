@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Pre-commit gate. Fast (<2s), zero dependencies.
-# 1. Hard-blocks committing the local config file.
-# 2. Runs the check suites (security, structure, style, size).
-# 3. Regenerates the codemap so navigation aids never go stale.
+# Pre-commit gate. Fast, zero dependencies.
+# 1. Hard-blocks committing the local config file (always, instant).
+# 2. Runs the check suites only when code/content changed and the commit
+#    is not solely the session checkpoint (docs/STATE.md).
+# 3. Regenerates the codemap only when a rendered source file changed.
+# CI still runs the full suite on every push (.github/workflows/deploy.yml),
+# so nothing is lost - only per-commit latency.
 set -euo pipefail
 
 if git diff --cached --name-only --diff-filter=AMC | grep -qxE "assets/js(/core)?/config.js"; then
@@ -10,10 +13,16 @@ if git diff --cached --name-only --diff-filter=AMC | grep -qxE "assets/js(/core)
   exit 1
 fi
 
-if ! node --test "tests/checks/*.test.js" >/dev/null 2>&1; then
-  echo "BLOCKED: check suite failed. Run 'npm test' to see details."
-  exit 1
+STAGED=$(git diff --cached --name-only --diff-filter=AMCR)
+
+if echo "$STAGED" | grep -qE '\.(js|css|html|sql|md)$' && [ "$STAGED" != "docs/STATE.md" ]; then
+  if ! node --test "tests/checks/*.test.js" >/dev/null 2>&1; then
+    echo "BLOCKED: check suite failed. Run 'npm test' to see details."
+    exit 1
+  fi
 fi
 
-node scripts/gen-codemap.js --quiet
-git add docs/CODEMAP.md llms.txt
+if echo "$STAGED" | grep -qE '\.(js|css|html)$'; then
+  node scripts/gen-codemap.js --quiet
+  git add docs/CODEMAP.md llms.txt
+fi

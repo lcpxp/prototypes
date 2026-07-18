@@ -17,3 +17,7 @@ node_modules/
 # Local scratch files
 *.local.*
 scratch/
+
+# Claude Code personal overrides (the shared policy is .claude/settings.json,
+# which IS committed; settings.local.json is per-developer and stays local).
+.claude/settings.local.json

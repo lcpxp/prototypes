@@ -11,6 +11,22 @@ Node.js built-in test runner and git.
     npm test         full suite: gates + behaviour benchmarks
     npm run map      regenerate docs/CODEMAP.md and llms.txt
 
+## Permissions and the pre-commit hook
+
+`.claude/settings.json` is committed and shared: an allow list that
+pre-approves the routine commands of a session (npm/node, read-only and
+write git, the search tools, a local http server, file reads/edits) and a
+deny list that mechanically blocks the hard rules - reading config.js or
+.env, force-pushing, `git add -f`, `rm -rf`. `.claude/settings.local.json`
+is per-developer and gitignored for personal extras.
+
+`.githooks/pre-commit` (wired by `npm run setup`) stays fast: it always
+hard-blocks a staged config.js, but runs the check suite only when
+code/content changed and the commit is not solely the checkpoint
+(docs/STATE.md), and regenerates the codemap only when a rendered source
+file (js/css/html) changed. CI runs the full suite on every push, so the
+checkpoint commit stays instant without losing coverage.
+
 ## The loop for any change
 
 1. Read the latest checkpoint in docs/SESSIONS.md; branch per
