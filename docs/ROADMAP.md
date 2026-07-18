@@ -79,10 +79,11 @@ size hint, so a print-only line reminds the reader to pick it by hand.
   its full context - statuses, real dates, sprints, delivery phases (with
   any TBC dates) and the light-touch `attributes` - plus an **Export
   JSON** action for that one item.
-- A **Detailed view** toggle expands the Executive rollup so each theme
-  lists its child items (title, a coarse progress pill and band), each
-  clickable through to the drawer. It is a view-only localStorage
-  preference, like Hide delivered.
+- A **Detailed view** toggle drills every level down: the Executive
+  rollup lists each category's items under its owning department, and Team
+  and Backlog expand into a Category -> Area -> item breakdown with each
+  item's sub-step checklist. Each item is clickable through to the drawer.
+  It is a view-only localStorage preference, like Hide delivered.
 - Each item carries a coarse **progress** bar (0-100 snapped to
   checkpoints), rendered subtly on bars and cards. It is set by
   conversation, not precise tracking (see docs/SPRINTS.md).
@@ -90,6 +91,9 @@ size hint, so a print-only line reminds the reader to pick it by hand.
   KPI-portal-ready roadmap output: one streamlined record per product
   item (resolved theme and band, statuses, progress, dates, sprints,
   phases and attributes), with empty fields omitted.
+- **Export CSV** (toolbar, and the backlog page) writes one row per item
+  with a stable leading column set plus an `attr_<key>` column for every
+  attributes key, derived dynamically so a new field needs no code change.
 
 Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
 
@@ -125,7 +129,11 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   (the KPI portal's own pickers, distinct from status), start_sprint /
   end_sprint codes (docs/SPRINTS.md), and an attributes jsonb bag
   (pnl_vertical, team, region, customer, resources, cost, merchant_value,
-  pxp_value, blockers, prd_link, legacy_priority_tags).
+  pxp_value, blockers, prd_link, legacy_priority_tags). It also carries an
+  optional department (the owning business function, which the Executive
+  view groups by) and an optional parent_id linking a sub-step to its
+  parent item (one level; children nest under the parent, never placed as
+  their own bars).
 - work_item_phases: optional Discovery / Build / Certification / Launch
   phases per item, each with a quarter, start/end dates and per-date TBC
   flags. Absent for high-level items; surfaced in the detail drawer.

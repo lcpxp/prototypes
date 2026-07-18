@@ -148,6 +148,13 @@ create table if not exists public.work_items (
   category_id uuid references public.roadmap_categories (id) on delete set null,
   milestone_id uuid references public.roadmap_milestones (id) on delete set null,
   source_document_id uuid references public.work_documents (id) on delete set null,
+  -- Parent work item, for breaking a coarse item into ordered sub-steps
+  -- that are themselves work items (e.g. "Unity integration" -> Merchant
+  -- Group, Merchant, Site, ...). Self-referential; deleting a parent
+  -- removes its steps. One level of nesting by convention: the roadmap
+  -- nests parent -> children only and never places a child as its own
+  -- bar. A child carries its own status/progress.
+  parent_id uuid references public.work_items (id) on delete cascade,
   title text not null,
   summary text,
   details text,
@@ -210,11 +217,14 @@ create table if not exists public.work_items (
   resolution text,
   resolved_at timestamptz,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  constraint work_items_parent_not_self check (parent_id is null or parent_id <> id)
 );
 
 create index if not exists work_items_area_idx
   on public.work_items (area_id, horizon, priority, sort_order);
+create index if not exists work_items_parent_idx
+  on public.work_items (parent_id, sort_order);
 create index if not exists work_items_category_idx
   on public.work_items (category_id);
 create index if not exists work_items_status_idx

@@ -2,22 +2,28 @@
 // roadmap-views.js - Pure HTML builders for the roadmap home
 // (modules/roadmap/). Data-in / string-out, no DOM, so they load in a
 // Node vm for unit testing (tests/unit/roadmap-views.test.js). The DOM
-// wiring, data fetch and switcher live in roadmap.js.
+// wiring, data fetch and switcher live in roadmap.js. The cascade family
+// lives in roadmap-views-cascade.js, sharing these helpers via the
+// private App._rmv namespace.
 //
 // One dataset (work_items), three levels x two layouts:
-//   Level   Executive - a theme rollup of active work, always complete.
-//           Team      - active work at item level.
+//   Level   Executive - a department-first rollup of active work: each
+//           department, the categories it owns and their item counts.
+//           Layout-independent (the C-suite one-pager).
+//           Team      - active work at item level; Detailed adds a
+//           Category -> Area -> item breakdown with sub-step checklists.
 //           Backlog   - every item (active + parked + delivered).
 //   Layout  Timeline  - a continuous Delivered|Now|Next|Later|Parked
 //           axis where a bar SPANS the columns it runs across.
-//           Cascade   - the same work as stacked bands, an item
-//           repeating under each band it covers.
+//           Cascade   - the same work as stacked bands.
 //
 // Placement derives from an item's own fields, so a move between views
 // is a data edit (see docs/ROADMAP.md, docs/ROADMAP-PROCESS.md):
 //   Delivered = status 'done'
 //   Parked    = not done AND (horizon 'someday' OR status 'dropped')
 //   Active    = the rest (horizon now/next/later)
+// Sub-items (parent_id set) are never placed as their own bars; they
+// surface nested under their parent in the detail and the drawer.
 // ------------------------------------------------------------------
 
 (function () {
@@ -68,6 +74,12 @@
     return items.filter(function (i) { return scopeByArea[i.area_id] === "product"; });
   }
 
+  // Only items without a parent are placed on the board; sub-items
+  // surface nested under their parent, never as their own bars.
+  function topLevel(items) {
+    return items.filter(function (i) { return !i.parent_id; });
+  }
+
   // Narrow a dataset to one owning department (work_items.department key),
   // leaving categories and areas intact so every level still resolves
   // themes. A falsy dept returns the data unchanged, so "all departments"
@@ -85,15 +97,23 @@
   }
 
   function context(data) {
-    var catById = {}, scopeByArea = {}, themeOfArea = {};
+    var catById = {}, scopeByArea = {}, themeOfArea = {}, areaById = {};
     (data.categories || []).forEach(function (c) { catById[c.id] = c; });
     (data.areas || []).forEach(function (a) {
       scopeByArea[a.id] = a.scope; themeOfArea[a.id] = a.category_id || null;
+      areaById[a.id] = a;
     });
+    // Map each parent to its ordered sub-items so the detail and drawer
+    // can nest them without another pass over the dataset.
+    var childrenByParent = {};
+    (data.items || []).forEach(function (i) {
+      if (i.parent_id) (childrenByParent[i.parent_id] = childrenByParent[i.parent_id] || []).push(i);
+    });
+    Object.keys(childrenByParent).forEach(function (pid) { childrenByParent[pid].sort(byOrder); });
     var catSorted = (data.categories || []).slice()
       .sort(function (a, b) { return a.sort_order - b.sort_order; });
-    return { catById: catById, catSorted: catSorted,
-      scopeByArea: scopeByArea, themeOfArea: themeOfArea };
+    return { catById: catById, catSorted: catSorted, scopeByArea: scopeByArea,
+      themeOfArea: themeOfArea, areaById: areaById, childrenByParent: childrenByParent };
   }
 
   // An item's theme: its own category, else the theme of its area.
@@ -108,6 +128,8 @@
 
   // Coarse progress: a stored 0-100 snapped to checkpoints for a subtle
   // bar. Delivered work reads as complete regardless of the stored value.
+  // The number itself is never shown at board level - progress is a
+  // subtle internal signal (see docs/ROADMAP-PROCESS.md).
   var PROG_STOPS = [0, 25, 50, 75, 90, 100];
   var PROG_LABELS = {
     0: "Not started", 25: "Started", 50: "Halfway",
@@ -131,6 +153,33 @@
   }
   function bandLabel(i) { return BANDS[colStart(i)].label; }
   function endBandLabel(i) { return BANDS[colEnd(i)].label; }
+  function areaTitleOf(i, ctx) { var a = ctx.areaById[i.area_id]; return a ? a.title : ""; }
+
+  // Sub-steps of an item (its child work items), and a done/total read
+  // used in place of a percentage - a subtle progress signal.
+  function childItems(item, ctx) { return ctx.childrenByParent[item.id] || []; }
+  function childStats(item, ctx) {
+    var kids = childItems(item, ctx);
+    var done = kids.filter(function (k) { return k.status === "done"; }).length;
+    return { total: kids.length, done: done };
+  }
+  // A compact checklist of an item's sub-steps: each step's done state is
+  // a CSS-drawn mark (no glyphs), the step title, and a click-through to
+  // the step's own drawer. Empty when the item has no sub-items.
+  function checklistHtml(item, ctx) {
+    var kids = childItems(item, ctx);
+    if (!kids.length) return "";
+    var st = childStats(item, ctx);
+    var steps = kids.map(function (k) {
+      var done = k.status === "done";
+      return '<li class="rmv-step' + (done ? " rmv-step--done" : "") +
+        '" data-item-id="' + App.escape(k.id) + '">' +
+        '<span class="rmv-step-mark" aria-hidden="true"></span>' +
+        '<span class="rmv-step-title">' + App.escape(k.title) + "</span></li>";
+    }).join("");
+    return '<div class="rmv-steps"><p class="rmv-steps-head">Steps: ' + st.done +
+      " of " + st.total + " done</p><ul class=\"rmv-step-list\">" + steps + "</ul></div>";
+  }
 
   function freshnessHtml(items) {
     var latest = "";
@@ -185,24 +234,10 @@
       label: i.title, done: i.status === "done", _id: i.id, _prog: progressOf(i) };
   }
 
-  // Roll a theme's items into one lane (bar = item count) for Executive.
-  function themeLane(cat, items) {
-    var s = PARKED, e = 0, pri = Infinity, so = Infinity;
-    items.forEach(function (i) {
-      var cs = colStart(i), ce = colEnd(i);
-      if (cs < s) s = cs;
-      if (ce > e) e = ce;
-      if (i.priority < pri) pri = i.priority;
-      if (i.sort_order < so) so = i.sort_order;
-    });
-    var n = items.length;
-    return { _s: s, _e: e, _cat: cat, _catLabel: cat ? cat.label : "General",
-      _pri: pri, _so: so, done: e === 0,
-      label: n + (n === 1 ? " item" : " items") };
-  }
+  // --- Executive: department-first rollup ---------------------------
 
   // The Executive dataset: active work, plus delivered when shown, never
-  // parked. Shared by the rollup lanes and the expanded child lists.
+  // parked. Top-level items only (sub-steps roll into their parent).
   function execLive(items, ctx, show) {
     return items.filter(function (i) {
       if (isParked(i)) return false;
@@ -211,169 +246,174 @@
     });
   }
 
-  // A compact child row for the expanded Executive view: title, a coarse
-  // progress pill and the item's band. Clickable through to the drawer.
-  function execItemRow(i) {
-    var prog = progressOf(i);
+  // Group live work by owning department (registry order, Unassigned
+  // last), then by theme/category, each with its item list for counts.
+  function execDeptGroups(live, ctx) {
+    var byDept = groupBy(live, function (i) { return i.department || "none"; });
+    var order = ((App.registry && App.registry.departments) || []).map(function (d) { return d.key; });
+    var keys = [];
+    order.forEach(function (k) { if (byDept[k]) keys.push(k); });
+    Object.keys(byDept).forEach(function (k) {
+      if (k !== "none" && keys.indexOf(k) === -1) keys.push(k);
+    });
+    if (byDept.none) keys.push("none");
+    return keys.map(function (k) {
+      var items = byDept[k];
+      var byCat = groupBy(items, function (i) { return themeIdOf(i, ctx); });
+      var cats = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
+        .map(function (c) { return { cat: c, items: byCat[c.id] }; });
+      if (byCat.none) cats.push({ cat: null, items: byCat.none });
+      return { key: k, label: k === "none" ? "Unassigned" : (App.departmentLabel(k) || k),
+        items: items, cats: cats };
+    });
+  }
+
+  function countLabel(n) { return n + (n === 1 ? " item" : " items"); }
+
+  // A child row in the expanded Executive view: title, a subtle step
+  // summary (done/total) in place of the old numeric percentage, and the
+  // item's band. Clickable through to the drawer.
+  function execItemRow(i, ctx) {
+    var st = childStats(i, ctx);
+    var steps = st.total
+      ? '<span class="rmv-exec-item-steps">' + st.done + " of " + st.total + " steps</span>" : "";
     return '<li class="rmv-exec-item rm-card--' + BANDS[colStart(i)].key +
       '" data-item-id="' + App.escape(i.id) + '">' +
-      '<span class="rmv-exec-item-title">' + App.escape(i.title) + "</span>" +
-      '<span class="rmv-prog-pill rmv-prog-' + prog.bucket + '">' + prog.pct + "%</span>" +
+      '<span class="rmv-exec-item-title">' + App.escape(i.title) + "</span>" + steps +
       '<span class="rmv-exec-item-band">' + App.escape(bandLabel(i)) + "</span></li>";
   }
 
-  // A theme block for the Executive rollup: header and description, plus
-  // the child item list when expanded (empty keeps the compact rollup).
-  function execThemeBlock(cat, items) {
-    var desc = cat && cat.description
-      ? '<p class="rmv-theme-desc">' + App.escape(cat.description) + "</p>" : "";
-    var list = items.length ? '<ul class="rmv-exec-items">' +
-      items.slice().sort(byOrder).map(execItemRow).join("") + "</ul>" : "";
-    return '<section class="rmv-theme' + catClass(cat) + '">' +
-      '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
-      desc + list + "</section>";
+  // One category line under a department: name and count (compact); the
+  // item list appears when Detailed is on.
+  function execCatRow(entry, expanded, ctx) {
+    var label = entry.cat ? entry.cat.label : "General";
+    var head = '<div class="rmv-exec-cat-head">' +
+      '<span class="rmv-exec-cat-name">' + App.escape(label) + "</span>" +
+      '<span class="rmv-exec-cat-count">' + countLabel(entry.items.length) + "</span></div>";
+    var list = expanded ? '<ul class="rmv-exec-items">' +
+      entry.items.slice().sort(byOrder).map(function (i) { return execItemRow(i, ctx); }).join("") +
+      "</ul>" : "";
+    return '<li class="rmv-exec-cat' + catClass(entry.cat) + '">' + head + list + "</li>";
   }
 
-  // Child-item lists per theme, appended under the Executive timeline
-  // when expanded so a rolled-up lane names the work it summarises.
-  function execDetail(live, ctx) {
-    var byCat = groupBy(live, function (i) { return themeIdOf(i, ctx); });
-    function block(cat, items) {
-      return '<section class="rmv-exec-detail' + catClass(cat) + '">' +
-        '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
-        '<ul class="rmv-exec-items">' +
-        items.slice().sort(byOrder).map(execItemRow).join("") + "</ul></section>";
+  function execDeptSection(g, expanded, ctx) {
+    return '<section class="rmv-exec-dept">' +
+      '<h3 class="rmv-exec-dept-name">' + App.escape(g.label) +
+      '<span class="rmv-exec-dept-count">' + countLabel(g.items.length) + "</span></h3>" +
+      '<ul class="rmv-exec-cats">' +
+      g.cats.map(function (c) { return execCatRow(c, expanded, ctx); }).join("") + "</ul></section>";
+  }
+
+  // Executive board: departments -> categories -> counts, expanding to
+  // items when Detailed. Layout-independent, so the same summary prints
+  // whether Timeline or Cascade is selected.
+  function execBoard(all, ctx, show, expanded) {
+    var groups = execDeptGroups(execLive(topLevel(all), ctx, show), ctx);
+    if (!groups.length) {
+      return '<p class="notice">No active roadmap work to summarise. Schedule ' +
+        "work by setting a horizon of now, next or later.</p>";
     }
-    var blocks = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
-      .map(function (c) { return block(c, byCat[c.id]); });
-    if (byCat.none) blocks.push(block(null, byCat.none));
-    return blocks.length ? '<div class="rmv-exec-details">' + blocks.join("") + "</div>" : "";
+    return '<div class="rmv-exec">' +
+      groups.map(function (g) { return execDeptSection(g, expanded, ctx); }).join("") + "</div>";
   }
 
-  // Executive keeps active work (plus delivered when shown), never
-  // parked, rolled up by theme in category order. Always complete.
-  function execLanes(items, ctx, showDelivered) {
-    var live = execLive(items, ctx, showDelivered);
-    var byCat = groupBy(live, function (i) { return themeIdOf(i, ctx); });
-    var lanes = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
-      .map(function (c) { return themeLane(c, byCat[c.id]); });
-    if (byCat.none) lanes.push(themeLane(null, byCat.none));
-    return lanes;
-  }
+  // --- Team / Backlog detail breakdown ------------------------------
 
   // Team keeps active work at item level, plus delivered when shown.
   function teamList(items) {
     return items.filter(function (i) { return i.status === "done" || isActive(i); });
   }
 
+  // One item in the Detailed breakdown: title, owning department tag,
+  // band, its summary, and its sub-step checklist.
+  function breakdownItemRow(i, ctx) {
+    var dept = App.departmentLabel(i.department);
+    var deptTag = dept ? '<span class="rmv-td-dept">' + App.escape(dept) + "</span>" : "";
+    var summary = i.summary ? '<p class="rmv-td-sum">' + App.escape(i.summary) + "</p>" : "";
+    return '<li class="rmv-td-item rm-card--' + BANDS[colStart(i)].key +
+      '" data-item-id="' + App.escape(i.id) + '">' +
+      '<div class="rmv-td-item-head"><span class="rmv-td-title">' + App.escape(i.title) + "</span>" +
+      deptTag + '<span class="rmv-td-band">' + App.escape(bandLabel(i)) + "</span></div>" +
+      summary + checklistHtml(i, ctx) + "</li>";
+  }
+
+  // The Detailed breakdown: everything the level lists, grouped
+  // Category -> Area -> item, so Team reads as a full drill-down.
+  function breakdown(list, ctx) {
+    if (!list.length) return "";
+    var byCat = groupBy(list, function (i) { return themeIdOf(i, ctx); });
+    function areaSort(a, b) {
+      var aa = ctx.areaById[a], ab = ctx.areaById[b];
+      return (aa ? aa.sort_order : 1e9) - (ab ? ab.sort_order : 1e9);
+    }
+    function catBlock(cat, catItems) {
+      var byArea = groupBy(catItems, function (i) { return i.area_id || "none"; });
+      var areas = Object.keys(byArea).sort(areaSort).map(function (aid) {
+        var a = ctx.areaById[aid];
+        var rows = byArea[aid].slice().sort(byOrder)
+          .map(function (i) { return breakdownItemRow(i, ctx); }).join("");
+        return '<div class="rmv-td-area"><h4 class="rmv-td-area-name">' +
+          App.escape(a ? a.title : "General") + '</h4><ul class="rmv-td-items">' + rows + "</ul></div>";
+      }).join("");
+      return '<section class="rmv-td-cat' + catClass(cat) + '">' +
+        '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
+        areas + "</section>";
+    }
+    var blocks = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
+      .map(function (c) { return catBlock(c, byCat[c.id]); });
+    if (byCat.none) blocks.push(catBlock(null, byCat.none));
+    return '<div class="rmv-td">' + blocks.join("") + "</div>";
+  }
+
+  // Drop delivered work from a detail list when delivered is hidden, so
+  // the breakdown tracks the board above it.
+  function visibleDetail(list, show) {
+    return show ? list : list.filter(function (i) { return i.status !== "done"; });
+  }
+
   function timeline(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
+    var expanded = !!(opts && opts.expanded);
     var ctx = context(data);
     var all = productItems(data.items || [], ctx.scopeByArea);
     if (!all.length) return emptyNotice();
     if (level === "exec") {
-      var grid = timelineGrid(execLanes(all, ctx, show), ACTIVE_MAX, show,
-        '<p class="notice">No active roadmap work to summarise. Schedule ' +
-        "work by setting a horizon of now, next or later.</p>");
-      var detail = opts && opts.expanded ? execDetail(execLive(all, ctx, show), ctx) : "";
-      return grid + detail + freshnessHtml(all);
+      return execBoard(all, ctx, show, expanded) + freshnessHtml(all);
     }
+    var tops = topLevel(all);
     if (level === "backlog") {
-      return timelineGrid(all.map(function (i) { return placeItem(i, ctx); }), PARKED, show,
-        emptyNotice()) + freshnessHtml(all);
+      var grid = timelineGrid(tops.map(function (i) { return placeItem(i, ctx); }),
+        PARKED, show, emptyNotice());
+      return grid + (expanded ? breakdown(visibleDetail(tops, show), ctx) : "") + freshnessHtml(all);
     }
-    return timelineGrid(teamList(all).map(function (i) { return placeItem(i, ctx); }),
+    var teamTops = teamList(tops);
+    var teamGrid = timelineGrid(teamTops.map(function (i) { return placeItem(i, ctx); }),
       ACTIVE_MAX, show,
       '<p class="notice">No active roadmap work. Items wait in the Backlog ' +
-      "until scheduled (set a horizon of now, next or later).</p>") + freshnessHtml(all);
+      "until scheduled (set a horizon of now, next or later).</p>");
+    return teamGrid + (expanded ? breakdown(visibleDetail(teamTops, show), ctx) : "") +
+      freshnessHtml(all);
   }
 
-  // --- Cascade: stacked stage bands, spanning items repeat ---------
-
-  function itemCard(item, cat) {
-    var band = colStart(item);
-    var label = band === 1 ? presentationLabel(item.presentation) : "";
-    var prog = progressOf(item);
-    return '<li class="rm-card rm-card--' + BANDS[band].key + catClass(cat) +
-      '" data-item-id="' + App.escape(item.id) + '">' +
-      (label ? '<p class="rm-state rm-state--' + App.escape(item.presentation) + '">' +
-        App.escape(label) + "</p>" : "") +
-      "<h3>" + App.escape(item.title) + "</h3>" +
-      (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") +
-      '<div class="rm-card-progress rmv-prog-' + prog.bucket +
-      '" role="img" aria-label="Progress: ' + App.escape(prog.label) + '"><span></span></div>' +
-      "</li>";
-  }
-
-  function themeBlock(cat, items, cardFn) {
-    var desc = cat && cat.description
-      ? '<p class="rmv-theme-desc">' + App.escape(cat.description) + "</p>" : "";
-    var cards = items.length ? '<ul class="rmv-cards">' +
-      items.map(cardFn).join("") + "</ul>" : "";
-    return '<section class="rmv-theme' + catClass(cat) + '">' +
-      '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
-      desc + cards + "</section>";
-  }
-
-  function themeBlocks(ctx, byCat, cardFn) {
-    var blocks = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
-      .map(function (c) { return themeBlock(c, byCat[c.id].slice().sort(byOrder), cardFn); });
-    if (byCat.none) blocks.push(themeBlock(null, byCat.none.slice().sort(byOrder), cardFn));
-    return '<div class="rmv-themes">' + blocks.join("") + "</div>";
-  }
-
-  function bandHead(label, key) {
-    return '<h2 class="rmv-band-head rmv-band-head--' + App.escape(key) + '">' +
-      App.escape(label) + "</h2>";
-  }
-
-  // Stack items into the bands they span, grouped by theme. Executive
-  // groups whole themes (description card, no items); Team/Backlog show
-  // item cards. maxBand caps the axis.
-  function bandsCascade(list, ctx, maxBand, show, exec, expanded) {
-    var html = "";
-    for (var idx = 0; idx <= maxBand; idx++) {
-      if (idx === 0 && !show) continue;
-      var inBand = list.filter(function (i) { return colStart(i) <= idx && colEnd(i) >= idx; });
-      if (!inBand.length) continue;
-      var byCat = groupBy(inBand, function (i) { return themeIdOf(i, ctx); });
-      var body;
-      if (exec) {
-        // Expanded lists child items under each theme; compact keeps the
-        // theme-only rollup (an empty item list renders no titles).
-        body = '<div class="rmv-themes">' + ctx.catSorted.filter(function (c) { return byCat[c.id]; })
-          .map(function (c) { return execThemeBlock(c, expanded ? byCat[c.id] : []); })
-          .concat(byCat.none ? [execThemeBlock(null, expanded ? byCat.none : [])] : []).join("") + "</div>";
-      } else {
-        body = themeBlocks(ctx, byCat, function (i) { return itemCard(i, ctx.catById[themeIdOf(i, ctx)] || null); });
-      }
-      html += '<section class="rmv-band">' + bandHead(BANDS[idx].label, BANDS[idx].key) +
-        body + "</section>";
-    }
-    return html;
-  }
-
-  function cascade(data, level, opts) {
-    var show = !opts || opts.showDelivered !== false;
-    var ctx = context(data);
-    var all = productItems(data.items || [], ctx.scopeByArea);
-    if (!all.length) return emptyNotice();
-    if (level === "exec") {
-      var live = execLive(all, ctx, show);
-      return bandsCascade(live, ctx, ACTIVE_MAX, show, true, opts && opts.expanded) +
-        freshnessHtml(all);
-    }
-    var list = level === "backlog" ? all : teamList(all);
-    var maxBand = level === "backlog" ? PARKED : ACTIVE_MAX;
-    return bandsCascade(list, ctx, maxBand, show, false) + freshnessHtml(all);
-  }
+  // Shared internals for the cascade family (roadmap-views-cascade.js).
+  App._rmv = {
+    BANDS: BANDS, ACTIVE_MAX: ACTIVE_MAX, PARKED: PARKED,
+    presentationLabel: presentationLabel, colStart: colStart, colEnd: colEnd,
+    productItems: productItems, byOrder: byOrder, context: context,
+    themeIdOf: themeIdOf, groupBy: groupBy, catClass: catClass, progressOf: progressOf,
+    topLevel: topLevel, teamList: teamList, freshnessHtml: freshnessHtml,
+    emptyNotice: emptyNotice, breakdown: breakdown, execBoard: execBoard,
+    visibleDetail: visibleDetail,
+  };
 
   App.roadmapView = {
     colStart: colStart, colEnd: colEnd, isParked: isParked, isActive: isActive,
     productItems: productItems, byDepartment: byDepartment, byOrder: byOrder, context: context,
     themeLabel: themeLabel, bandLabel: bandLabel, endBandLabel: endBandLabel,
-    progressOf: progressOf,
+    areaTitleOf: areaTitleOf, progressOf: progressOf,
+    childItems: childItems, childStats: childStats, checklistHtml: checklistHtml,
     presentationLabel: presentationLabel, freshnessHtml: freshnessHtml,
-    timeline: timeline, cascade: cascade,
+    topLevel: topLevel, execBoard: execBoard, breakdown: breakdown,
+    timeline: timeline,
   };
 })();

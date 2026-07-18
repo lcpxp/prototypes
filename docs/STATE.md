@@ -1,24 +1,27 @@
 # Current state
 
-Updated: 2026-07-18 (session end)
-Branch: claude/lpio-refactor-search-optimise-t990at
+Updated: 2026-07-18 (session)
+Branch: claude/ai-portal-backlog-roadmap-59pvcp
 
 ## In progress
-- none. The maintenance, optimisation and search refactor is complete:
-  theme-guard fix, deferred scripts, the search upgrade with item
-  deep-linking, the inline-style and size gates, the schema baseline,
-  the permission policy and slimmer hook, App.notice error states, this
-  STATE.md replacing the log, and the changelog and audit. All committed
-  and pushed; npm test 90/90 and npm run audit clean.
+- none. Roadmap/backlog overhaul complete: department-first Executive
+  view, working Compact/Detailed on Team and Backlog (a Category -> Area
+  -> item breakdown), sub-steps via work_items.parent_id shown as a
+  checklist, progress de-emphasised (no board-level %), and Export CSV on
+  the roadmap and backlog (App.csvFromRows + App.download in ui.js). The
+  cascade family is split into roadmap-views-cascade.js. Schema: the
+  parent_id migration is applied and mirrored in 30_work.sql; departments
+  are backfilled on all product-scope items.
 
 ## Next steps
-1. Owner: review and merge this branch; the GitHub Pages deploy runs on
-   merge to main, so verify the live dashboard, roadmap and keyboard-only
-   search there afterwards.
-2. Owner, data-only in Supabase (not the repo): assign departments to the
-   ~50 live work_items; the mechanism already ships.
-3. When next touching them, split the over-soft files that carry a
-   size-budget exit plan (components.css, roadmap-views.js, others).
+1. Owner: review and merge; the Pages deploy runs on merge to main, then
+   verify the live Executive/Team/Backlog views, the sub-step drawer and
+   both CSV exports there.
+2. Data (Supabase, not the repo): Legal & Compliance owns no work yet;
+   assign it when work lands. Grow the Front end backlog and the Unity
+   sub-steps as they progress.
+3. When next touching them, split the over-soft files with a size-budget
+   exit plan (roadmap-views.js exec/breakdown builders, backlog.js CSV).
 
 ## Open decisions
 - none

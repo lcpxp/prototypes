@@ -102,17 +102,10 @@
     btn.textContent = expanded ? "Compact view" : "Detailed view";
   }
 
-  // Download a JSON object as a file (the KPI-ready export).
-  function download(name, obj) {
-    var blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+  // Download a JSON object as a file (the KPI-ready export), via the
+  // shared App.download helper.
+  function downloadJson(name, obj) {
+    App.download(name, JSON.stringify(obj, null, 2), "application/json");
   }
   function safeName(s) {
     return String(s || "item").toLowerCase().replace(/[^a-z0-9]+/g, "-")
@@ -131,6 +124,9 @@
   function renderControls(nav, layoutNav, host) {
     nav.innerHTML = tabs(LEVELS, current, "rmv-switch-btn");
     layoutNav.innerHTML = tabs(LAYOUTS, layout, "rmv-switch-btn");
+    // Executive is a layout-independent summary, so the Timeline/Cascade
+    // switch has no effect there; hide it rather than leave a dead toggle.
+    layoutNav.hidden = current === "exec";
     nav.querySelectorAll("button[data-key]").forEach(function (b) {
       b.addEventListener("click", function () { set(LEVEL_STORE, "current", b.getAttribute("data-key"), nav, layoutNav, host); });
     });
@@ -203,7 +199,13 @@
 
     var exportBtn = document.getElementById("roadmap-export-json");
     if (exportBtn) exportBtn.addEventListener("click", function () {
-      download("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(viewData().items, ctx));
+      downloadJson("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(viewData().items, ctx));
+    });
+
+    var csvBtn = document.getElementById("roadmap-export-csv");
+    if (csvBtn) csvBtn.addEventListener("click", function () {
+      App.download("roadmap-export.csv",
+        App.roadmapDetail.toCsvRoadmap(viewData().items, ctx), "text/csv");
     });
 
     // Detail drawer: any element carrying a data-item-id opens the item.
@@ -234,7 +236,7 @@
       setItemParam(item.id);
       var itemExport = document.getElementById("rmd-export");
       if (itemExport) itemExport.addEventListener("click", function () {
-        download("roadmap-item-" + safeName(item.title) + ".json",
+        downloadJson("roadmap-item-" + safeName(item.title) + ".json",
           App.roadmapDetail.toKpiItem(item, ctx));
       });
       if (closeBtn) closeBtn.focus();
@@ -280,7 +282,7 @@
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
-        .select("id, area_id, category_id, title, summary, status, horizon, end_horizon, " +
+        .select("id, parent_id, area_id, category_id, title, summary, status, horizon, end_horizon, " +
           "presentation, priority, effort, impact, department, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
           "sort_order, updated_at, tags")

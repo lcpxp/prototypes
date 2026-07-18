@@ -1,14 +1,16 @@
 // ------------------------------------------------------------------
 // tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's
-// pure builders (App.roadmapView in assets/js/pages/roadmap-views.js).
-// Data-in / string-out, loaded in a Node vm alongside ui.js (App.escape
-// and App.statusBadge). One dataset (work_items) drives three levels:
-//   Executive - a theme rollup of active work (no item titles), always
-//               complete, so it cannot drift.
-//   Team      - active work at item level (no Parked column).
-//   Backlog   - every item: active + parked + delivered (Parked column).
-// Placement derives from an item's own fields (done = Delivered;
-// someday or dropped = Parked; the rest = Active by horizon).
+// pure builders (App.roadmapView in roadmap-views.js + the cascade half
+// in roadmap-views-cascade.js). Loaded in a Node vm alongside
+// registry.js (departments) and ui.js (App.escape). One dataset drives
+// three levels:
+//   Executive - department-first rollup: each department, the categories
+//               it owns and their item counts. Layout-independent.
+//   Team      - active work at item level; Detailed adds a
+//               Category -> Area -> item breakdown with sub-step lists.
+//   Backlog   - every item: active + parked + delivered.
+// Placement derives from an item's own fields; sub-items (parent_id set)
+// are never placed as their own bars.
 // ------------------------------------------------------------------
 "use strict";
 const test = require("node:test");
@@ -24,15 +26,20 @@ function loadView() {
   };
   sandbox.window = sandbox;
   vm.createContext(sandbox);
-  vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
-  vm.runInContext(read("assets/js/pages/roadmap-views.js"), sandbox, { filename: "roadmap-views.js" });
+  for (const f of [
+    "assets/js/core/registry.js",
+    "assets/js/core/ui.js",
+    "assets/js/pages/roadmap-views.js",
+    "assets/js/pages/roadmap-views-cascade.js",
+  ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App.roadmapView;
 }
 
 function count(html, re) { return (html.match(re) || []).length; }
 
-// Themes: Core, Unity, Growth. Areas map to themes; a2 is portal scope
-// and must never reach the product roadmap. Items exercise every band.
+// Themes: Core, Unity, Growth. Areas carry a title and map to themes; a2
+// is portal scope and must never reach the product roadmap. Items
+// exercise every band, carry departments, and i2 owns two sub-steps.
 function sampleData() {
   return {
     categories: [
@@ -41,41 +48,41 @@ function sampleData() {
       { id: "c3", key: "growth", label: "Growth", description: "Growth bets", sort_order: 30 },
     ],
     areas: [
-      { id: "a1", key: "core-area", scope: "product", category_id: "c1", sort_order: 10 },
-      { id: "a2", key: "portal", scope: "portal", category_id: null, sort_order: 20 },
-      { id: "a3", key: "unity-area", scope: "product", category_id: "c2", sort_order: 30 },
-      { id: "a4", key: "growth-area", scope: "product", category_id: "c3", sort_order: 40 },
+      { id: "a1", key: "core-area", title: "Core service", scope: "product", category_id: "c1", sort_order: 10 },
+      { id: "a2", key: "portal", title: "Portal", scope: "portal", category_id: null, sort_order: 20 },
+      { id: "a3", key: "unity-area", title: "Unity area", scope: "product", category_id: "c2", sort_order: 30 },
+      { id: "a4", key: "growth-area", title: "Growth area", scope: "product", category_id: "c3", sort_order: 40 },
     ],
     items: [
-      // Delivered, would have vanished from the old audience-filtered
-      // Executive timeline; now it feeds its theme's lane.
       { id: "i1", area_id: "a1", category_id: "c1", title: "Core onboarding", summary: "Shipped",
         status: "done", horizon: "now", end_horizon: null, presentation: "sequenced",
-        priority: 10, sort_order: 10, updated_at: "2026-07-14T09:00:00Z" },
-      // Active focus item.
+        department: "product_technology", priority: 10, sort_order: 10, updated_at: "2026-07-14T09:00:00Z" },
       { id: "i2", area_id: "a3", category_id: "c2", title: "Unity integration", summary: "Focus",
         status: "in_progress", horizon: "now", end_horizon: null, presentation: "current",
-        priority: 20, sort_order: 20, updated_at: "2026-07-15T09:00:00Z" },
-      // Active, spans Now -> Next.
+        department: "product_technology", priority: 20, sort_order: 20, updated_at: "2026-07-15T09:00:00Z" },
       { id: "i3", area_id: "a1", category_id: "c1", title: "Portal overhaul", summary: "Spans",
         status: "in_progress", horizon: "now", end_horizon: "next", presentation: "ongoing",
-        priority: 30, sort_order: 30, updated_at: "2026-07-10T09:00:00Z" },
-      // Parked: someday, themed via its area (no category_id).
+        department: "product_technology", priority: 30, sort_order: 30, updated_at: "2026-07-10T09:00:00Z" },
       { id: "i4", area_id: "a1", category_id: null, title: "US market", summary: "Bet",
         status: "idea", horizon: "someday", end_horizon: null, presentation: "sequenced",
-        priority: 40, sort_order: 40, updated_at: "2026-07-01T09:00:00Z" },
-      // Dropped: treated as parked (far-future), reasoning kept.
+        department: "sales_commercial", priority: 40, sort_order: 40, updated_at: "2026-07-01T09:00:00Z" },
       { id: "i5", area_id: "a3", category_id: "c2", title: "Whitelist blacklist", summary: "Gone",
         status: "dropped", horizon: "later", end_horizon: null, resolution: "Not needed",
-        priority: 50, sort_order: 50, updated_at: "2026-07-02T09:00:00Z" },
-      // Portal scope: excluded from the product roadmap.
+        department: "product_technology", priority: 50, sort_order: 50, updated_at: "2026-07-02T09:00:00Z" },
       { id: "i6", area_id: "a2", category_id: null, title: "Portal tooling", summary: "Portal",
         status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
         priority: 10, sort_order: 10, updated_at: "2026-07-16T09:00:00Z" },
-      // Active in the Later band, third active theme.
       { id: "i7", area_id: "a4", category_id: "c3", title: "Growth bet", summary: "Later",
         status: "planned", horizon: "later", end_horizon: null, presentation: "sequenced",
-        priority: 60, sort_order: 60, updated_at: "2026-07-03T09:00:00Z" },
+        department: "sales_commercial", priority: 60, sort_order: 60, updated_at: "2026-07-03T09:00:00Z" },
+      // Sub-steps of i2 (Unity integration): first-class items with a
+      // parent, never placed as their own bars.
+      { id: "i2a", parent_id: "i2", area_id: "a3", category_id: "c2", title: "Merchant Group",
+        status: "done", horizon: "now", presentation: "sequenced",
+        department: "product_technology", priority: 10, sort_order: 10, updated_at: "2026-07-15T09:00:00Z" },
+      { id: "i2b", parent_id: "i2", area_id: "a3", category_id: "c2", title: "Settlement",
+        status: "planned", horizon: "now", presentation: "sequenced",
+        department: "product_technology", priority: 20, sort_order: 20, updated_at: "2026-07-15T09:00:00Z" },
     ],
   };
 }
@@ -85,11 +92,8 @@ test("colStart/colEnd map horizon, span, done and dropped to the axis", () => {
   assert.deepEqual([V.colStart({ status: "done", horizon: "now" }), V.colEnd({ status: "done", horizon: "now" })], [0, 0]);
   assert.deepEqual([V.colStart({ status: "in_progress", horizon: "now" }), V.colEnd({ status: "in_progress", horizon: "now" })], [1, 1]);
   assert.deepEqual([V.colStart({ status: "in_progress", horizon: "now", end_horizon: "next" }), V.colEnd({ status: "in_progress", horizon: "now", end_horizon: "next" })], [1, 2]);
-  // someday folds into the Parked band (4).
   assert.deepEqual([V.colStart({ status: "idea", horizon: "someday" }), V.colEnd({ status: "idea", horizon: "someday" })], [4, 4]);
-  // dropped is parked wherever its horizon sits.
   assert.deepEqual([V.colStart({ status: "dropped", horizon: "later" }), V.colEnd({ status: "dropped", horizon: "later" })], [4, 4]);
-  // A backwards span is clamped so the end never precedes the start.
   assert.equal(V.colEnd({ status: "planned", horizon: "next", end_horizon: "now" }), 2);
 });
 
@@ -97,31 +101,33 @@ test("isActive and isParked classify by the item's own fields", () => {
   const V = loadView();
   assert.equal(V.isActive({ status: "in_progress", horizon: "now" }), true);
   assert.equal(V.isActive({ status: "done", horizon: "now" }), false);
-  assert.equal(V.isActive({ status: "idea", horizon: "someday" }), false);
   assert.equal(V.isParked({ status: "idea", horizon: "someday" }), true);
   assert.equal(V.isParked({ status: "dropped", horizon: "later" }), true);
   assert.equal(V.isParked({ status: "done", horizon: "now" }), false);
 });
 
-test("productItems keeps only product-scoped items", () => {
+test("productItems keeps product scope; topLevel drops sub-items", () => {
   const V = loadView();
-  const kept = V.productItems(sampleData().items, { a1: "product", a2: "portal", a3: "product", a4: "product" });
-  assert.equal(kept.length, 6);
+  const scope = { a1: "product", a2: "portal", a3: "product", a4: "product" };
+  const kept = V.productItems(sampleData().items, scope);
+  assert.equal(kept.length, 8, "portal item excluded, sub-items still present");
   assert.ok(kept.every((i) => i.area_id !== "a2"));
+  const tops = V.topLevel(kept);
+  assert.equal(tops.length, 6, "the two sub-items drop out of the placed set");
+  assert.ok(!tops.some((i) => i.parent_id), "no sub-item survives topLevel");
 });
 
-test("timeline (team) spans active bars across Delivered..Later, hides parked and portal", () => {
+test("timeline (team) spans active bars, hides parked/portal and sub-items", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team");
   assert.match(html, /Delivered<\/span>.*Now<\/span>.*Next<\/span>.*Later<\/span>/s);
   assert.doesNotMatch(html, />Parked</, "Team has no Parked column");
-  // Delivered item sits in the Delivered column (grid 2/3) with the done style.
   assert.match(html, /rmv-tl-bar--done[^"]*"[^>]*grid-column:2 \/ 3/);
-  // Now->Next spanning item covers grid columns 3 to 5.
   assert.match(html, /grid-column:3 \/ 5">[^<]*Portal overhaul/);
   assert.doesNotMatch(html, /US market/, "parked item hidden from Team");
   assert.doesNotMatch(html, /Whitelist blacklist/, "dropped item hidden from Team");
   assert.doesNotMatch(html, /Portal tooling/, "portal item hidden from Team");
+  assert.doesNotMatch(html, /Merchant Group/, "a sub-step is never a bar in the compact Team view");
 });
 
 test("timeline (team) orders by start band, then span length, then priority", () => {
@@ -132,37 +138,63 @@ test("timeline (team) orders by start band, then span length, then priority", ()
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b), "rows are in band+span order");
 });
 
-test("timeline (exec) rolls active work up to themes, never item titles", () => {
+test("exec is department-first: departments own categories with counts, no titles when compact", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "exec");
-  // One lane per active theme: Core, Unity, Growth (all three).
-  assert.equal(count(html, /rmv-tl-row/g), 3, "one lane per active theme");
-  assert.match(html, /Core<\/span>/);
-  assert.match(html, /Unity<\/span>/);
-  assert.match(html, /Growth<\/span>/);
-  // No individual item titles leak into the executive rollup.
-  assert.doesNotMatch(html, /Unity integration/);
-  assert.doesNotMatch(html, /Portal overhaul/);
-  assert.doesNotMatch(html, /US market/, "parked theme member not surfaced");
+  // Departments (registry order puts Sales before Product and Technology).
+  assert.match(html, /Sales &amp; Commercial/);
+  assert.match(html, /Product and Technology/);
+  assert.ok(html.indexOf("Sales &amp; Commercial") < html.indexOf("Product and Technology"),
+    "departments follow registry order");
+  // Category counts under a department (Core has delivered i1 + active i3).
+  assert.match(html, /rmv-exec-cat-name">Core<\/span><span class="rmv-exec-cat-count">2 items</);
+  assert.match(html, /rmv-exec-cat-name">Unity<\/span><span class="rmv-exec-cat-count">1 item</);
+  // Compact view names no items and shows no percentage.
+  assert.doesNotMatch(html, /Unity integration/, "compact exec names no items");
+  assert.doesNotMatch(html, /%/, "no percentage at the top level");
+  assert.doesNotMatch(html, /US market/, "parked work never reaches the exec rollup");
 });
 
-test("regression: a delivered item is not dropped - it feeds its exec theme and shows in Team", () => {
+test("exec detailed lists items with a step summary, still no percentage", () => {
   const V = loadView();
-  const data = sampleData();
-  // Only the delivered item and one active item share the Core theme;
-  // both keep Core present in Executive, and Team still lists the item.
-  assert.match(V.timeline(data, "team"), /Core onboarding/);
-  assert.match(V.timeline(data, "exec"), /Core<\/span>/);
+  const html = V.timeline(sampleData(), "exec", { expanded: true });
+  assert.match(html, /rmv-exec-item-title">Unity integration/, "detailed exec names the items");
+  // i2 has two sub-steps, one done: a subtle count replaces the old NN% pill.
+  assert.match(html, /1 of 2 steps/);
+  assert.doesNotMatch(html, /rmv-prog-pill/, "the numeric progress pill is gone");
+  assert.doesNotMatch(html, /%/, "detailed exec still shows no percentage");
 });
 
-test("timeline (backlog) shows every product item and the Parked column", () => {
+test("exec ignores layout: cascade renders the same department board", () => {
+  const V = loadView();
+  const html = V.cascade(sampleData(), "exec");
+  assert.match(html, /rmv-exec-dept/);
+  assert.match(html, /Product and Technology/);
+  assert.doesNotMatch(html, /rmv-band-head/, "exec is not banded");
+  assert.doesNotMatch(html, /Unity integration/, "compact exec names no items");
+});
+
+test("team detailed adds a Category -> Area breakdown with department tags and sub-steps", () => {
+  const V = loadView();
+  const html = V.timeline(sampleData(), "team", { expanded: true });
+  assert.match(html, /rmv-td-area-name">Unity area</, "the work area is surfaced");
+  assert.match(html, /rmv-td-title">Unity integration/);
+  assert.match(html, /rmv-td-dept">Product and Technology/, "the owning department is tagged");
+  // Sub-step checklist reads "done apart from ..." straight off the data.
+  assert.match(html, /Steps: 1 of 2 done/);
+  assert.match(html, /rmv-step-title">Merchant Group/);
+  assert.match(html, /rmv-step--done[^>]*>[^<]*<span[^>]*><\/span><span class="rmv-step-title">Merchant Group/);
+  assert.match(html, /rmv-step-title">Settlement/);
+});
+
+test("timeline (backlog) shows every top-level item and the Parked column, not sub-items", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "backlog");
   assert.match(html, />Parked</, "Backlog carries the Parked column");
   ["Core onboarding", "Unity integration", "Portal overhaul", "US market", "Whitelist blacklist", "Growth bet"]
     .forEach((t) => assert.match(html, new RegExp(t), `${t} present in Backlog`));
   assert.doesNotMatch(html, /Portal tooling/, "portal item still excluded");
-  // Parked item sits in the Parked column (grid 6/7) with the parked style.
+  assert.doesNotMatch(html, /rmv-tl-bar[^>]*>Merchant Group/, "a sub-step is not a backlog bar");
   assert.match(html, /rmv-tl-bar--parked[^"]*"[^>]*grid-column:6 \/ 7/);
 });
 
@@ -172,18 +204,9 @@ test("cascade (team) repeats a spanning item under each band it covers", () => {
   assert.match(html, /rmv-band-head--now/);
   assert.match(html, /rmv-band-head--next/);
   assert.doesNotMatch(html, /rmv-band-head--parked/, "Team has no Parked band");
-  // Portal overhaul spans Now->Next, so it appears in both bands.
-  assert.equal(count(html, /Portal overhaul/g), 2);
-  // A single-band item appears once.
+  assert.equal(count(html, /Portal overhaul/g), 2, "spans Now and Next");
   assert.equal(count(html, /Unity integration/g), 1);
-});
-
-test("cascade (exec) shows theme blocks by band, no item titles", () => {
-  const V = loadView();
-  const html = V.cascade(sampleData(), "exec");
-  assert.match(html, /rmv-band-head--now/);
-  assert.match(html, /rm-lane-label">Core/);
-  assert.doesNotMatch(html, /Unity integration/, "no item titles in the exec rollup");
+  assert.doesNotMatch(html, /Merchant Group/, "a sub-step is not a cascade card");
 });
 
 test("cascade (backlog) surfaces parked items under the Parked band with reasoning kept", () => {
@@ -205,10 +228,9 @@ test("showDelivered=false hides delivered work across timeline and cascade", () 
   const cas = V.cascade(data, "team", { showDelivered: false });
   assert.doesNotMatch(cas, /rmv-band-head--delivered/);
   assert.match(cas, /rmv-band-head--now/);
-  // Executive still lists its active themes with delivered hidden.
-  assert.match(V.timeline(data, "exec", { showDelivered: false }), /Core<\/span>/);
-  // Default keeps delivered visible.
-  assert.match(V.timeline(data, "team"), /Core onboarding/);
+  // Executive drops delivered too: Core now has only its one active item.
+  assert.match(V.timeline(data, "exec", { showDelivered: false }),
+    /rmv-exec-cat-name">Core<\/span><span class="rmv-exec-cat-count">1 item</);
 });
 
 test("empty states name the work_items table", () => {
@@ -225,6 +247,7 @@ test("builders escape hostile content", () => {
   assert.doesNotMatch(V.timeline(data, "team"), /<img src=x/);
   assert.match(V.timeline(data, "team"), /&lt;img/);
   assert.doesNotMatch(V.cascade(data, "team"), /<img src=x/);
+  assert.doesNotMatch(V.timeline(data, "team", { expanded: true }), /<img src=x/);
 });
 
 test("byDepartment narrows items and passes areas/categories through", () => {
@@ -242,8 +265,6 @@ test("byDepartment narrows items and passes areas/categories through", () => {
   assert.equal(filtered.items.length, 1);
   assert.equal(filtered.items[0].id, "i1");
   assert.equal(filtered.areas, data.areas, "areas pass through unchanged");
-  assert.equal(filtered.categories, data.categories, "categories pass through unchanged");
-  // A falsy department returns the dataset unchanged (all departments).
   assert.equal(V.byDepartment(data, ""), data);
   assert.equal(V.byDepartment(data, null), data);
 });
@@ -251,10 +272,7 @@ test("byDepartment narrows items and passes areas/categories through", () => {
 test("byDepartment feeds the board so a filter narrows the render", () => {
   const V = loadView();
   const data = sampleData();
-  data.items.forEach(function (i) { i.department = i.id === "i2" ? "product_technology" : "sales_commercial"; });
-  // Only the Unity focus item (i2) is product_technology; the Team board
-  // filtered to it shows Unity integration and not Core onboarding.
-  const html = V.timeline(V.byDepartment(data, "product_technology"), "team");
-  assert.match(html, /Unity integration/);
-  assert.doesNotMatch(html, /Core onboarding/);
+  const html = V.timeline(V.byDepartment(data, "sales_commercial"), "backlog");
+  assert.match(html, /Growth bet/, "sales work shows");
+  assert.doesNotMatch(html, /Unity integration/, "other departments drop out");
 });

@@ -118,6 +118,47 @@
     });
   }
 
+  // CSV export: one flat record per item, resolved to the same labels
+  // the table shows (band, department, area, source, parent title). The
+  // leading column order; App.csvFromRows adds any further keys, so the
+  // export stays future-proof against new fields.
+  var CSV_COLUMNS = [
+    "id", "parent_id", "parent_title", "title", "band", "type", "department",
+    "area", "status", "horizon", "end_horizon", "priority", "summary", "details",
+    "external_ref", "requested_by", "source", "tags", "resolution", "raised", "resolved",
+  ];
+  function toCsvRecord(item, titleById) {
+    return {
+      id: item.id,
+      parent_id: item.parent_id || "",
+      parent_title: item.parent_id ? (titleById[item.parent_id] || "") : "",
+      title: item.title,
+      band: BAND_LABEL[bandOf(item)],
+      type: item.type || "",
+      department: App.departmentLabel(item.department) || "",
+      area: areaTitle[item.area_id] || "",
+      status: item.status,
+      horizon: item.horizon || "",
+      end_horizon: item.end_horizon || "",
+      priority: item.priority,
+      summary: item.summary || "",
+      details: item.details || "",
+      external_ref: item.external_ref || "",
+      requested_by: item.requested_by || "",
+      source: docTitle[item.source_document_id] || "",
+      tags: item.tags || [],
+      resolution: item.resolution || "",
+      raised: item.created_at || "",
+      resolved: item.resolved_at || "",
+    };
+  }
+  function exportCsv() {
+    var titleById = {};
+    items.forEach(function (i) { titleById[i.id] = i.title; });
+    var records = ordered(filteredItems()).map(function (i) { return toCsvRecord(i, titleById); });
+    App.download("backlog-export.csv", App.csvFromRows(records, CSV_COLUMNS), "text/csv");
+  }
+
   function renderItems() {
     var host = document.getElementById("backlog-list");
     var data = ordered(filteredItems());
@@ -239,7 +280,7 @@
         .order("captured_on", { ascending: false }),
       App.db
         .from(App.registry.tables.workItems)
-        .select("id, area_id, source_document_id, type, department, title, summary, details, " +
+        .select("id, parent_id, area_id, source_document_id, type, department, title, summary, details, " +
           "status, horizon, end_horizon, priority, external_ref, requested_by, " +
           "tags, resolution, resolved_at, created_at, sort_order")
         .order("priority", { ascending: true })
@@ -267,6 +308,8 @@
     items = itemsResult.data || [];
 
     fillFilters(areasResult.data || []);
+    var csvBtn = document.getElementById("backlog-export-csv");
+    if (csvBtn) csvBtn.addEventListener("click", exportCsv);
     renderItems();
     renderDocuments();
 

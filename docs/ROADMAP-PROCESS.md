@@ -35,12 +35,16 @@ chooses the altitude/content; the **layout** chooses how it is drawn.
 
 Levels:
 
-- **Executive** - a theme rollup of active work: one lane per theme, no
-  item titles, so it stays a high-level overview. Every theme with
-  active work appears automatically, so it is always complete and cannot
-  drift. Prints as the C-suite one-pager.
+- **Executive** - a department-first rollup of active work: one section
+  per owning department, the categories it owns and their item counts,
+  drilling to the items when Detailed is on. Layout-independent (the same
+  summary prints whether Timeline or Cascade is picked) and complete by
+  construction - every department with active work appears automatically.
+  Prints as the C-suite one-pager.
 - **Team** - the same active work at item level (every product item on
-  the now/next/later horizons, plus delivered when shown).
+  the now/next/later horizons, plus delivered when shown). Detailed adds
+  a Category -> Area -> item breakdown, each item carrying its owning
+  department tag and its sub-step checklist.
 - **Backlog** - the full list: active, parked (far-future) and
   delivered, on one axis, with the Parked column shown.
 
@@ -61,13 +65,25 @@ on the one timeline and can be re-ordered there.
 
 ## What the C-suite sees
 
-The Executive view needs no per-item tagging. It rolls **active** work
-(horizon now/next/later) up by theme and shows every theme that has any,
-so it is complete by construction - a curated list silently dropping an
-item cannot happen. To keep work off the executive rollup, park it
-(`horizon='someday'`) or deliver it (`status='done'`); to raise a
-theme's profile, give it active work. It is one dataset projected, never
-a copy.
+The Executive view groups **active** work (horizon now/next/later) by its
+owning `department`, then by theme, and shows every department that has
+any, so it is complete by construction - a curated list silently dropping
+an item cannot happen. Compact shows the category counts; Detailed drills
+to the items. To keep work off the rollup, park it (`horizon='someday'`)
+or deliver it (`status='done'`); set each item's `department` so it lands
+under the right owner (an item with none shows under Unassigned). It is
+one dataset projected, never a copy.
+
+## Sub-steps
+
+A coarse item can break into ordered **sub-steps** that are themselves
+work items, linked by `parent_id` (e.g. "Unity integration" -> Merchant
+Group, Merchant, Site, Products, Services, Pricing, Settlement). Each
+sub-step carries its own `status`, so "done apart from pricing and
+settlement" reads straight off the data. Sub-steps are never placed as
+their own bars; they surface as a checklist on the parent in Detailed
+view and the drawer, and the parent shows a done/total step count in
+place of a percentage. Keep nesting to one level.
 
 ## How work enters and moves
 
@@ -108,7 +124,10 @@ dates:
 
 The detail drawer shows all of it; the toolbar **Export JSON** emits the
 KPI-portal-ready output, and the drawer's per-item Export JSON does the
-same for one item.
+same for one item. **Export CSV** (roadmap toolbar and backlog) emits one
+row per item with a stable leading column set plus an `attr_<key>` column
+for every attributes key, derived dynamically so new fields flow in with
+no code change; the backlog page exports its filtered rows the same way.
 
 ## The refinement ritual
 

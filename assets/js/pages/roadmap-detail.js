@@ -103,7 +103,7 @@
       row("Status", esc(STATUS[item.status] || item.status)) +
       row("PRD status", esc(PRD_STATUS[item.prd_status] || "")) +
       row("Project status", esc(PROJECT_STATUS[item.project_status] || "")) +
-      row("Progress", prog.pct + "% &middot; " + esc(prog.label)) +
+      row("Progress", esc(prog.label)) +
       row("Dates", esc(dateRange(item.starts_on, item.ends_on))) +
       row("Sprints", item.end_sprint && item.end_sprint !== item.start_sprint
         ? esc((item.start_sprint || "?") + " to " + item.end_sprint)
@@ -117,12 +117,15 @@
     var prd = a.prd_link
       ? '<a class="button secondary" href="' + esc(a.prd_link) +
         '" target="_blank" rel="noopener">Open PRD</a>' : "";
+    var steps = V.checklistHtml(item, ctx);
+    var stepsSection = steps ? '<section class="rmd-section"><h3>Sub-steps</h3>' + steps + "</section>" : "";
     return '<div class="rmd-head"><span class="eyebrow">' + esc(V.themeLabel(item, ctx)) +
         "</span><h2>" + esc(item.title) + "</h2>" +
         '<div class="rm-card-progress rmv-prog-' + prog.bucket +
         '" role="img" aria-label="Progress: ' + esc(prog.label) + '"><span></span></div></div>' +
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
       '<dl class="rmd-facts">' + facts + "</dl>" +
+      stepsSection +
       phasesHtml(item) +
       note("Merchant value", a.merchant_value) +
       note("PXP value", a.pxp_value) +
@@ -188,9 +191,71 @@
     };
   }
 
+  // --- CSV export --------------------------------------------------
+  // The leading, stable column order; every attributes key follows as an
+  // attr_<key> column, derived dynamically by App.csvFromRows so a new
+  // KPI field flows into the CSV with no code change (future-proof).
+  var CSV_COLUMNS = [
+    "id", "parent_id", "parent_title", "title", "theme", "area", "department",
+    "band", "status", "horizon", "end_horizon", "prd_status", "project_status",
+    "progress", "progress_label", "sub_steps_total", "sub_steps_done", "priority",
+    "start_date", "end_date", "start_sprint", "end_sprint", "tags", "updated_at",
+  ];
+
+  // One flat record per work item: the resolved, board-accurate values
+  // (theme/area/band/department labels), the sub-step roll-up, and every
+  // attributes key spread as attr_<key>. parent_id/parent_title keep the
+  // hierarchy reconstructable so children read as their own rows.
+  function flattenItem(item, ctx, titleById) {
+    var V = App.roadmapView;
+    var a = attrs(item);
+    var prog = V.progressOf(item);
+    var st = V.childStats(item, ctx);
+    var rec = {
+      id: item.id,
+      parent_id: item.parent_id || "",
+      parent_title: item.parent_id ? (titleById[item.parent_id] || "") : "",
+      title: item.title,
+      theme: V.themeLabel(item, ctx),
+      area: V.areaTitleOf(item, ctx),
+      department: App.departmentLabel(item.department) || "",
+      band: bandText(item),
+      status: STATUS[item.status] || item.status,
+      horizon: item.horizon || "",
+      end_horizon: item.end_horizon || "",
+      prd_status: PRD_STATUS[item.prd_status] || "",
+      project_status: PROJECT_STATUS[item.project_status] || "",
+      progress: prog.pct,
+      progress_label: prog.label,
+      sub_steps_total: st.total,
+      sub_steps_done: st.done,
+      priority: item.priority,
+      start_date: item.starts_on || "",
+      end_date: item.ends_on || "",
+      start_sprint: item.start_sprint || "",
+      end_sprint: item.end_sprint || "",
+      tags: item.tags || [],
+      updated_at: item.updated_at || "",
+    };
+    Object.keys(a).forEach(function (k) { rec["attr_" + k] = a[k]; });
+    return rec;
+  }
+
+  // The whole roadmap as CSV: every product item (top-level and
+  // sub-item) as a row, in board order.
+  function toCsvRoadmap(items, ctx) {
+    var V = App.roadmapView;
+    var list = V.productItems(items || [], ctx.scopeByArea).slice().sort(V.byOrder);
+    var titleById = {};
+    list.forEach(function (i) { titleById[i.id] = i.title; });
+    var records = list.map(function (i) { return flattenItem(i, ctx, titleById); });
+    return App.csvFromRows(records, CSV_COLUMNS);
+  }
+
   App.roadmapDetail = {
     drawerHtml: drawerHtml,
     toKpiItem: toKpiItem,
     toKpiRoadmap: toKpiRoadmap,
+    toCsvRoadmap: toCsvRoadmap,
   };
 })();

@@ -57,6 +57,57 @@
       '">' + App.escape(message) + "</p>";
   };
 
+  // Trigger a client-side download of in-memory text. The single
+  // download path in the app (JSON and CSV exports); the caller supplies
+  // the MIME type. Uses a Blob URL and a transient anchor click.
+  App.download = function (name, text, mime) {
+    var blob = new Blob([text], { type: (mime || "text/plain") + ";charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  // Serialise an array of flat records to CSV (RFC 4180). Columns are
+  // the UNION of every record's keys, so a record that grows a new field
+  // (a fresh attributes key, a new column) widens the export on its own -
+  // nothing is hard-coded, which keeps exports future-proof against list
+  // additions. The `preferred` names lead the column order; every other
+  // key follows alphabetically. Values are stringified (arrays joined,
+  // objects JSON-encoded) and any value carrying a comma, quote or
+  // newline is quoted with its quotes doubled.
+  App.csvFromRows = function (records, preferred) {
+    var rows = records || [];
+    var seen = {};
+    var cols = [];
+    (preferred || []).forEach(function (k) {
+      if (!(k in seen)) { seen[k] = true; cols.push(k); }
+    });
+    var extra = [];
+    rows.forEach(function (r) {
+      Object.keys(r || {}).forEach(function (k) {
+        if (!(k in seen)) { seen[k] = true; extra.push(k); }
+      });
+    });
+    cols = cols.concat(extra.sort());
+    var cell = function (v) {
+      if (v === null || v === undefined) return "";
+      if (Array.isArray(v)) v = v.join("; ");
+      else if (typeof v === "object") v = JSON.stringify(v);
+      else v = String(v);
+      return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    };
+    var lines = [cols.map(cell).join(",")];
+    rows.forEach(function (r) {
+      lines.push(cols.map(function (k) { return cell(r ? r[k] : ""); }).join(","));
+    });
+    return lines.join("\r\n") + "\r\n";
+  };
+
   // Deep-link support for list pages: when the URL carries a #<id>
   // fragment naming a rendered item (e.g. #capability-<id>), bring it
   // into view and flag it briefly. Pages call this after they render,

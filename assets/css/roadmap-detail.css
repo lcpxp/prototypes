@@ -50,21 +50,53 @@
 .rmv-tl-bar[data-item-id]:hover { filter: brightness(0.97); }
 .rmv-exec-item:hover .rmv-exec-item-title { color: var(--accent); }
 
-/* --- Expanded Executive child lists --- */
-.rmv-exec-details {
-  display: grid;
-  gap: var(--s-4);
-  margin-top: var(--s-5);
-}
+/* --- Executive: department-first board --- */
+.rmv-exec { display: grid; gap: var(--s-4); }
 @media (min-width: 48rem) {
-  .rmv-exec-details { grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+  .rmv-exec { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
 }
-.rmv-exec-detail {
+.rmv-exec-dept {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: var(--s-3) var(--s-4);
+  padding: var(--s-4);
   background: var(--surface);
 }
+.rmv-exec-dept-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-3);
+}
+.rmv-exec-dept-count,
+.rmv-exec-cat-count,
+.rmv-exec-item-steps {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.rmv-exec-cats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.rmv-exec-cat {
+  border-inline-start: 3px solid var(--rm-a, var(--line-strong));
+  padding-inline-start: var(--s-3);
+}
+.rmv-exec-cat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.rmv-exec-cat-name { color: var(--ink); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+
+/* Child item rows under an expanded category (also reused elsewhere). */
 .rmv-exec-items { list-style: none; margin: var(--s-2) 0 0; padding: 0; }
 .rmv-exec-item {
   display: flex;
@@ -81,14 +113,79 @@
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
 }
-.rmv-prog-pill {
-  min-width: 2.75rem;
-  text-align: center;
+
+/* --- Detailed breakdown: Category -> Area -> item (Team/Backlog) --- */
+.rmv-td { display: flex; flex-direction: column; gap: var(--s-4); margin-top: var(--s-5); }
+.rmv-td-cat {
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--rm-a, var(--line-strong));
+  border-radius: var(--radius);
+  padding: var(--s-4);
+  background: var(--surface);
+}
+.rmv-td-cat > .rm-lane-label { border-inline-start: none; padding-inline-start: 0; }
+.rmv-td-area { margin-top: var(--s-3); }
+.rmv-td-area-name {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 var(--s-2);
+}
+.rmv-td-items { list-style: none; margin: 0; padding: 0; }
+.rmv-td-item { border-top: 1px solid var(--line); padding: var(--s-2) 0; cursor: pointer; }
+.rmv-td-item:first-child { border-top: 0; }
+.rmv-td-item-head { display: flex; align-items: baseline; gap: var(--s-2); flex-wrap: wrap; }
+.rmv-td-title { flex: 1; color: var(--ink); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.rmv-td-item:hover .rmv-td-title { color: var(--accent); }
+.rmv-td-dept {
   font-size: var(--text-xs);
   color: var(--muted);
   background: var(--alt-surface);
   border-radius: var(--radius-pill);
   padding: var(--s-0) var(--s-2);
+}
+.rmv-td-band {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--faint);
+}
+.rmv-td-sum { color: var(--muted); font-size: var(--text-sm); margin: var(--s-1) 0 0; }
+
+/* --- Sub-step checklist (nested under an item) --- */
+.rmv-steps { margin-top: var(--s-2); }
+.rmv-steps-head {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+  margin: 0 0 var(--s-1);
+}
+.rmv-step-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-1); }
+.rmv-step { display: flex; align-items: center; gap: var(--s-2); font-size: var(--text-sm); color: var(--muted); }
+.rmv-step-mark {
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  flex: none;
+}
+.rmv-step--done { color: var(--ink); }
+.rmv-step--done .rmv-step-mark { background: var(--ok); border-color: var(--ok); }
+.rmv-step[data-item-id] { cursor: pointer; }
+.rmv-step[data-item-id]:hover .rmv-step-title { color: var(--accent); }
+
+/* Print: the Executive board is the C-suite one-pager. */
+@media print {
+  .rmv-exec { gap: 6pt; }
+  .rmv-exec-dept, .rmv-td-cat {
+    break-inside: avoid;
+    padding: 6pt 8pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
 /* --- Detail drawer --- */

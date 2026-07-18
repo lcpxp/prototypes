@@ -129,3 +129,62 @@ test("drawerHtml escapes hostile content", () => {
   assert.doesNotMatch(html, /<img src=x/);
   assert.match(html, /&lt;img/);
 });
+
+test("drawerHtml lists an item's sub-steps as a checklist", () => {
+  const App = load();
+  const data = sample();
+  data.items.push({ id: "i2s", parent_id: "i2", area_id: "a3", category_id: "c2",
+    title: "Settlement", status: "planned", horizon: "now", presentation: "sequenced",
+    priority: 30, sort_order: 30, attributes: {} });
+  const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
+  assert.match(html, /Sub-steps/);
+  assert.match(html, /Steps: 0 of 1 done/);
+  assert.match(html, /rmv-step-title">Settlement/);
+});
+
+test("toCsvRoadmap emits a row per product item with resolved labels and attribute columns", () => {
+  const App = load();
+  const data = sample();
+  const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctxOf(App, data));
+  const lines = csv.trim().split("\r\n");
+  assert.match(lines[0], /^id,parent_id,parent_title,title,theme,area,department,band,/);
+  // Attributes are spread as attr_<key> columns, derived dynamically so a
+  // new KPI field would appear with no code change.
+  assert.match(lines[0], /attr_team/);
+  assert.match(lines[0], /attr_pnl_vertical/);
+  // Only i2 is product scope (i6 is portal), so one data row.
+  assert.equal(lines.length, 2);
+  assert.match(lines[1], /Unity integration/);
+  assert.match(lines[1], /Product and Technology/);
+  assert.match(lines[1], /Now to Next/);
+  assert.equal(csv.endsWith("\r\n"), true);
+});
+
+test("toCsvRoadmap includes sub-items as their own rows with parent context and roll-up", () => {
+  const App = load();
+  const data = sample();
+  data.items.push({ id: "i2c", parent_id: "i2", area_id: "a3", category_id: "c2",
+    title: "Settlement", status: "planned", horizon: "now", presentation: "sequenced",
+    priority: 30, sort_order: 30, attributes: {} });
+  const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctxOf(App, data));
+  const lines = csv.trim().split("\r\n");
+  assert.equal(lines.length, 3, "parent and child are both rows");
+  const childLine = lines.find((l) => /Settlement/.test(l));
+  assert.match(childLine, /^i2c,i2,Unity integration,Settlement,/);
+  // Parent reports the sub-step roll-up: 1 total, 0 done (child is planned).
+  const parentLine = lines.find((l) => /,Unity integration,/.test(l));
+  assert.match(parentLine, /,Halfway,1,0,/);
+});
+
+test("csvFromRows unions keys and escapes RFC-4180 special characters", () => {
+  const App = load();
+  const csv = App.csvFromRows([
+    { a: "plain", b: "has, comma" },
+    { a: 'quote "x"', c: "new\nline" },
+  ], ["a"]);
+  const lines = csv.split("\r\n");
+  assert.equal(lines[0], "a,b,c", "preferred column leads, union follows alphabetically");
+  assert.equal(lines[1], 'plain,"has, comma",');
+  assert.equal(lines[2], '"quote ""x""",,"new\nline"');
+  assert.equal(csv.endsWith("\r\n"), true);
+});

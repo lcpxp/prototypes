@@ -43,11 +43,15 @@
     },
     "assets/js/pages/roadmap-views.js": {
       "hard": 500,
-      "note": "Over soft. Exit plan: split the cascade family into roadmap-views-cascade.js, sharing helpers via a private App namespace."
+      "note": "Over soft. The cascade family is already split into roadmap-views-cascade.js; the exec department board and the Category->Area breakdown builders are the next extract-to-a-module seam."
     },
     "assets/js/pages/roadmap.js": {
       "hard": 500,
       "note": "Over soft; the drawer wiring is the extract-to-a-module seam."
+    },
+    "assets/js/pages/backlog.js": {
+      "hard": 500,
+      "note": "Over soft since the CSV export. Exit plan: move the CSV record builder and columns into a backlog-export.js sharing App.csvFromRows."
     },
     "assets/js/pages/reference.js": {
       "hard": 500,
