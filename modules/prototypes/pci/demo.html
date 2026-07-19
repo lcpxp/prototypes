@@ -7,7 +7,7 @@
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://zlmkofbkobmhnslfnqsf.supabase.co" crossorigin>
-  <title>PCI compliance demo - LPio / LaunchPad IO</title>
+  <title>Merchant Prescreen and Quote - PXP replica - LPio</title>
   <script>
     (function() {
       var theme = localStorage.getItem("theme");
@@ -21,7 +21,8 @@
   <link rel="stylesheet" href="../../../assets/css/layout.css">
   <link rel="stylesheet" href="../../../assets/css/components.css">
   <link rel="stylesheet" href="../../../assets/css/pages.css">
-  <link rel="stylesheet" href="../../../assets/css/pci.css">
+  <link rel="stylesheet" href="../../../assets/css/pxp.css">
+  <link rel="stylesheet" href="../../../assets/css/pxp-pci.css">
   <script src="../../../assets/js/core/theme.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
   <script defer src="../../../assets/js/core/supabase.js"></script>
@@ -30,138 +31,58 @@
   <script defer src="../../../assets/js/core/ui.js"></script>
   <script defer src="../../../assets/js/core/search.js"></script>
   <script defer src="../../../assets/js/pages/pci-ixopay.js"></script>
-  <script defer src="../../../assets/js/pages/pci-app.js"></script>
+  <script defer src="../../../assets/js/pages/pci-interstitial.js"></script>
+  <script defer src="../../../assets/js/pages/pci-portal.js"></script>
 </head>
-<body data-root="../../.." data-module="prototypes">
-  <header id="app-nav"></header>
-
-  <main class="page" id="pci-demo">
-    <div class="page-head">
-      <span class="eyebrow">Prototype · Simulation</span>
-      <h1>PCI compliance - IXOPAY demo</h1>
-      <p class="lede">A presenter-driven simulation of the confirmed IXOPAY
-        model inside Launchpad. Every mocked element is labelled; no data
-        leaves the page. Work through the three screens in order.</p>
-    </div>
-
-    <nav class="pci-screens" aria-label="Demo screens">
-      <button type="button" class="button" id="nav-1" data-screen="1">1 · Product selection</button>
-      <button type="button" class="button secondary" id="nav-2" data-screen="2">2 · IXOPAY side</button>
-      <button type="button" class="button secondary" id="nav-3" data-screen="3">3 · Merchant record</button>
-    </nav>
-
-    <div class="pci-layout">
-      <div class="pci-stage">
-
-        <!-- Screen 1: product selection / agent flow -->
-        <section id="screen-1">
-          <div class="pci-grid">
-            <div class="pci-panel">
-              <h3>Products on the application</h3>
-              <ul class="pci-list">
-                <li class="pci-line"><span>ECOM Gateway</span><span class="pci-fee">included</span></li>
-                <li class="pci-line"><span>POS Terminal x2</span><span class="pci-fee">included</span></li>
-                <li class="pci-line"><span>Acquiring - Visa/MC</span><span class="pci-fee">included</span></li>
-              </ul>
-              <p class="page-head-gap">The agent captures normal information as
-                today. The compliance capability adds only the prompt below.</p>
-              <button type="button" class="button" id="pci-add-compliance">Add PCI compliance</button>
-            </div>
-
-            <div class="pci-panel">
-              <h3>Basket</h3>
-              <ul class="pci-list" id="pci-basket"></ul>
-              <div id="pci-basket-note" class="dashboard-activity"></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Screen 2: simulated IXOPAY side -->
-        <section id="screen-2" class="hidden">
-          <div class="pci-panel">
-            <h3>Invitation email</h3>
-            <div class="pci-email">
-              <div class="pci-email-head">
-                <span class="badge tone-warn">Simulation</span>
-                From: compliance@ixopay.example · To: contact@northwind-retail.example.
-                Subject: Complete your PCI compliance.
-              </div>
-              <div class="pci-email-body">
-                <p>Your provider has started your PCI compliance for you. Most of
-                  it is already filled in from the details they hold. It takes
-                  about five minutes and needs no technical knowledge.</p>
-                <button type="button" class="button" id="pci-open-saq">Complete your PCI compliance</button>
-              </div>
-            </div>
-            <p class="page-head-gap">IXOPAY chases merchants who have not
-              completed. Model a reminder from their engine:</p>
-            <button type="button" class="button secondary" id="pci-chase">Simulate chasing</button>
-          </div>
-
-          <div class="pci-panel hidden" id="pci-saq-panel">
-            <h3>Your PCI compliance (pre-filled by IXOPAY)</h3>
-            <div class="pci-progress"><span class="pci-progress-fill" id="pci-saq-fill"></span></div>
-            <p class="eyebrow" id="pci-saq-count"></p>
-            <ul class="pci-saq" id="pci-saq-list"></ul>
-            <button type="button" class="button" id="pci-saq-submit" disabled>Submit</button>
-            <div id="pci-saq-note" class="dashboard-activity"></div>
-          </div>
-        </section>
-
-        <!-- Screen 3: merchant record + monitoring -->
-        <section id="screen-3" class="hidden">
-          <div class="pci-panel">
-            <h3>Merchant record</h3>
-            <dl class="kv">
-              <dt>Business</dt><dd>Northwind Retail Ltd</dd>
-              <dt>MID</dt><dd class="mono">MID-4482119</dd>
-              <dt>Products</dt><dd><ul class="pci-list" id="pci-merchant-products"></ul></dd>
-            </dl>
-            <div class="pci-status">
-              <span id="pci-status"></span>
-              <span class="pci-ref" id="pci-ref"></span>
-              <span class="pci-ref" id="pci-expiry"></span>
-            </div>
-            <p>Launchpad stores only the product/fee flag, reference ID, status
-              and expiry. IXOPAY is the system of record.</p>
-            <button type="button" class="button secondary" id="pci-poll">Run 30-day poll</button>
-            <button type="button" class="button secondary" id="pci-time">Simulate time passing</button>
-          </div>
-
-          <div class="pci-panel">
-            <h3>Reporting</h3>
-            <p>Portfolio totals from the IXOPAY reporting API.</p>
-            <dl class="pci-report" id="pci-report"></dl>
-            <button type="button" class="button secondary page-head-gap" id="pci-report-btn">Refresh reporting</button>
-          </div>
-        </section>
-
+<body class="pxp-app" data-root="../../.." data-module="prototypes">
+  <header class="pxp-header">
+    <div class="pxp-header-inner">
+      <div class="pxp-header-left">
+        <button type="button" class="pxp-menu-trigger" aria-label="Toggle navigation">
+          <svg viewBox="64 64 896 896" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 000 13.8z"/></svg>
+        </button>
+        <span class="pxp-logo">
+          <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="9" r="3" class="pxp-logo-dot"/></svg>
+          <strong>pxp</strong>
+        </span>
       </div>
+      <div class="pxp-header-right">
+        <button type="button" class="pxp-quote-trigger" id="pxp-quote-open">&pound; Quote Tool</button>
+        <span class="pxp-user">Welcome, Luke</span>
+        <span class="pxp-avatar" aria-hidden="true">
+          <svg viewBox="64 64 896 896" width="15" height="15" fill="currentColor"><path d="M858.5 763.6a374 374 0 00-80.6-119.5 375.63 375.63 0 00-119.5-80.6c-.4-.2-.8-.3-1.2-.5C719.5 518 760 444.7 760 362c0-137-111-248-248-248S264 225 264 362c0 82.7 40.5 156 102.8 201.1-.4.2-.8.3-1.2.5-44.8 18.9-85 46-119.5 80.6a375.63 375.63 0 00-80.6 119.5A371.7 371.7 0 00136 901.8a8 8 0 008 8.2h60c4.4 0 7.9-3.5 8-7.8 2-77.2 33-149.5 87.8-204.3 56.7-56.7 132-87.9 212.2-87.9s155.5 31.2 212.2 87.9C779 752.7 810 825 812 902.2c.1 4.4 3.6 7.8 8 7.8h60a8 8 0 008-8.2c-1-47.8-10.9-94.3-29.5-138.2zM512 534c-45.9 0-89.1-17.9-121.6-50.4S340 407.9 340 362c0-45.9 17.9-89.1 50.4-121.6S466.1 190 512 190s89.1 17.9 121.6 50.4S684 316.1 684 362c0 45.9-17.9 89.1-50.4 121.6S557.9 534 512 534z"/></svg>
+        </span>
+      </div>
+    </div>
+  </header>
 
-      <aside class="pci-eventlog">
-        <span class="eyebrow">Event log</span>
-        <ol class="pci-log" id="pci-log"></ol>
-      </aside>
-    </div>
-  </main>
+  <div class="pxp-body">
+    <aside class="pxp-sider">
+      <div class="pxp-sider-title"><span>Navigation</span></div>
+      <ul class="pxp-menu">
+        <li class="pxp-menu-item"><a href="#"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M924.8 385.6a446.7 446.7 0 00-96-142.4 446.7 446.7 0 00-142.4-96C631.1 123.8 572.5 112 512 112s-119.1 11.8-174.4 35.2a446.7 446.7 0 00-142.4 96 446.7 446.7 0 00-96 142.4C75.8 440.9 64 499.5 64 560c0 132.7 58.3 257.7 159.9 343.1l1.7 1.4c5.8 4.8 13.1 7.5 20.6 7.5h531.7c7.5 0 14.8-2.7 20.6-7.5l1.7-1.4C901.7 817.7 960 692.7 960 560c0-60.5-11.9-119.1-35.2-174.4zM761.4 836H262.6A371.12 371.12 0 01140 560c0-99.4 38.7-192.8 109-263 70.3-70.3 163.7-109 263-109 99.4 0 192.8 38.7 263 109 70.3 70.3 109 163.7 109 263 0 105.6-44.5 205.5-122.6 276z"/></svg>Dashboard</a></li>
+        <li class="pxp-menu-item"><a href="reports.html"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M854.6 288.6L639.4 73.4c-6-6-14.1-9.4-22.6-9.4H192c-17.7 0-32 14.3-32 32v832c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V311.3c0-8.5-3.4-16.7-9.4-22.7zM790.2 326H602V137.8L790.2 326zm1.8 562H232V136h302v216a42 42 0 0042 42h216v494z"/></svg>Applications</a></li>
+        <li class="pxp-menu-item pxp-menu-item--active"><a href="#"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M888 680h-54V540H546v-92h238c8.8 0 16-7.2 16-16V168c0-8.8-7.2-16-16-16H240c-8.8 0-16 7.2-16 16v264c0 8.8 7.2 16 16 16h238v92H190v140h-54c-4.4 0-8 3.6-8 8v176c0 4.4 3.6 8 8 8h176c4.4 0 8-3.6 8-8V688c0-4.4-3.6-8-8-8h-54v-72h220v72h-54c-4.4 0-8 3.6-8 8v176c0 4.4 3.6 8 8 8h176c4.4 0 8-3.6 8-8V688c0-4.4-3.6-8-8-8h-54v-72h220v72h-54c-4.4 0-8 3.6-8 8v176c0 4.4 3.6 8 8 8h176c4.4 0 8-3.6 8-8V688c0-4.4-3.6-8-8-8zM288 384V216h448v168H288z"/></svg>Partners</a></li>
+        <li class="pxp-menu-item"><a href="#"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M858.5 763.6a374 374 0 00-80.6-119.5 375.63 375.63 0 00-119.5-80.6c-.4-.2-.8-.3-1.2-.5C719.5 518 760 444.7 760 362c0-137-111-248-248-248S264 225 264 362c0 82.7 40.5 156 102.8 201.1-.4.2-.8.3-1.2.5-44.8 18.9-85 46-119.5 80.6a375.63 375.63 0 00-80.6 119.5A371.7 371.7 0 00136 901.8a8 8 0 008 8.2h60c4.4 0 7.9-3.5 8-7.8 2-77.2 33-149.5 87.8-204.3 56.7-56.7 132-87.9 212.2-87.9s155.5 31.2 212.2 87.9C779 752.7 810 825 812 902.2c.1 4.4 3.6 7.8 8 7.8h60a8 8 0 008-8.2c-1-47.8-10.9-94.3-29.5-138.2z"/></svg>Users</a></li>
+        <li class="pxp-menu-item"><span class="pxp-submenu-title"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M924.8 625.7l-65.5-56c3.1-19 4.7-38.4 4.7-57.8s-1.6-38.8-4.7-57.8l65.5-56a32.03 32.03 0 009.3-35.2l-.9-2.6a443.74 443.74 0 00-79.7-137.9l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.3 28.9c-30-24.6-63.5-44-99.7-57.6l-15.7-85a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52.1-9.4-106.9-9.4-159 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.4a351.86 351.86 0 00-99 57.4l-81.9-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a446.02 446.02 0 00-79.7 137.9l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.3 56.6c-3.1 18.8-4.6 38-4.6 57.1 0 19.2 1.5 38.4 4.6 57.1L99 625.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.4 44.9 96.9 79.7 137.9l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.9-29.1c29.8 24.5 63.1 43.9 99 57.4l15.8 85.4a32.05 32.05 0 0025.8 25.7l2.7.5a449.4 449.4 0 00159 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-85a350 350 0 0099.7-57.6l81.3 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.6-87.5 79.7-137.9l.9-2.6c4.5-12.3.8-26.3-9.3-35zM512 678c-97.2 0-176-78.8-176-176s78.8-176 176-176 176 78.8 176 176-78.8 176-176 176z"/></svg>System Management</span></li>
+      </ul>
+      <div class="pxp-sider-footer">PXP &copy; 2026</div>
+    </aside>
 
-  <dialog class="modal" id="pci-agent">
-    <div class="modal-head">
-      <h2>Compliance prompt</h2>
-      <button type="button" class="button quiet" id="pci-agent-close">Close</button>
-    </div>
-    <div id="pci-step-ask">
-      <p>Is the merchant already PCI compliant?</p>
-      <button type="button" class="button" id="pci-yes">Yes, already compliant</button>
-      <button type="button" class="button secondary" id="pci-no">No, enrol them</button>
-    </div>
-    <div id="pci-step-verify" class="hidden">
-      <p>Check the merchant against IXOPAY records.</p>
-      <button type="button" class="button" id="pci-verify">Verify with IXOPAY</button>
-      <div id="pci-verify-result" class="dashboard-activity"></div>
-      <button type="button" class="button secondary" id="pci-enrol">Enrol merchant</button>
-    </div>
-  </dialog>
+    <main class="pxp-content">
+      <div class="pxp-prescreen">
+        <div class="pxp-page-header">
+          <h2>Merchant Prescreen &amp; Quote</h2>
+          <p>Provide initial merchant information and select products from the available list. An early quote will be provided.</p>
+        </div>
+        <div class="pxp-with-sidebar">
+          <div class="pxp-stepper" id="pxp-stepper"></div>
+          <div class="pxp-step-content" id="pxp-step-content"></div>
+        </div>
+      </div>
+    </main>
+  </div>
 
+  <div id="pxp-modal-root"></div>
 </body>
 </html>

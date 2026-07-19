@@ -22,7 +22,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/roadmap-detail.css | 248 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 233 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 285 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
-| assets/css/tokens.css | 307 | tokens.css - Design tokens for the LPio hub. |
+| assets/css/tokens.css | 339 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
@@ -36,8 +36,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/dashboard.js | 159 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 53 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 114 | integrations.js - Integration overview for modules/integrations/. |
-| assets/js/pages/pci-app.js | 299 | pci-app.js - The PCI compliance prototype: three screens driven by |
-| assets/js/pages/pci-ixopay.js | 134 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
+| assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
 | assets/js/pages/pci-svg.js | 123 | pci-svg.js - Inline SVG diagram viewer for the PCI overview page. |
 | assets/js/pages/platform.js | 202 | platform.js - The platform product-knowledge viewer for |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
@@ -50,7 +49,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 51 | Changelog |
+| docs/CHANGELOG.md | 53 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
@@ -59,7 +58,7 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 32 | Current state |
+| docs/STATE.md | 34 | Current state |
 | docs/WORKFLOW.md | 106 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
@@ -70,8 +69,8 @@ document instead of walking the tree or reading whole files.
 | modules/platform/index.html | 56 | Platform - LPio / LaunchPad IO |
 | modules/prototypes/gdpr/index.html | 49 | GDPR compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 54 | Prototypes - LPio / LaunchPad IO |
-| modules/prototypes/pci/demo.html | 168 | PCI compliance demo - LPio / LaunchPad IO |
-| modules/prototypes/pci/index.html | 131 | PCI compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/pci/demo.html | 89 | Merchant Prescreen and Quote - PXP replica - LPio |
+| modules/prototypes/pci/index.html | 134 | PCI compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/pci/pci-workflow.svg | 62 |  |
 | modules/prototypes/website-screening/index.html | 50 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
@@ -112,7 +111,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/size-budget.json | 70 |  |
-| tests/unit/pci-ixopay.test.js | 85 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
+| tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
 | tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
@@ -204,30 +203,12 @@ document instead of walking the tree or reading whole files.
 | modalHtml() | assets/js/pages/integrations.js:19 |
 | openModal() | assets/js/pages/integrations.js:47 |
 | tableHtml() | assets/js/pages/integrations.js:53 |
-| log() | assets/js/pages/pci-app.js:49 |
-| setNotice() | assets/js/pages/pci-app.js:67 |
-| renderStatus() | assets/js/pages/pci-app.js:77 |
-| renderBasket() | assets/js/pages/pci-app.js:93 |
-| renderMerchantProducts() | assets/js/pages/pci-app.js:106 |
-| enrol() | assets/js/pages/pci-app.js:115 |
-| onEvent() | assets/js/pages/pci-app.js:127 |
-| onWebhook() | assets/js/pages/pci-app.js:139 |
-| runVerify() | assets/js/pages/pci-app.js:146 |
-| renderSaq() | assets/js/pages/pci-app.js:169 |
-| updateSaqProgress() | assets/js/pages/pci-app.js:188 |
-| openSaq() | assets/js/pages/pci-app.js:199 |
-| submitSaq() | assets/js/pages/pci-app.js:209 |
-| runPoll() | assets/js/pages/pci-app.js:217 |
-| runReport() | assets/js/pages/pci-app.js:229 |
-| report() | assets/js/pages/pci-app.js:239 |
-| setScreen() | assets/js/pages/pci-app.js:244 |
-| init() | assets/js/pages/pci-app.js:252 |
 | makeRef() | assets/js/pages/pci-ixopay.js:27 |
-| isoInMonths() | assets/js/pages/pci-ixopay.js:31 |
-| count() | assets/js/pages/pci-ixopay.js:37 |
-| emitWebhook() | assets/js/pages/pci-ixopay.js:41 |
-| emitEvent() | assets/js/pages/pci-ixopay.js:48 |
-| advance() | assets/js/pages/pci-ixopay.js:55 |
+| isoInMonths() | assets/js/pages/pci-ixopay.js:28 |
+| count() | assets/js/pages/pci-ixopay.js:29 |
+| emitWebhook() | assets/js/pages/pci-ixopay.js:31 |
+| emitEvent() | assets/js/pages/pci-ixopay.js:36 |
+| advance() | assets/js/pages/pci-ixopay.js:41 |
 | sanitize() | assets/js/pages/pci-svg.js:22 |
 | fallback() | assets/js/pages/pci-svg.js:51 |
 | openOverlay() | assets/js/pages/pci-svg.js:59 |
