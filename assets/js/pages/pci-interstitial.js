@@ -6,8 +6,10 @@
 // with the data already collected. A Skip failsafe is always available.
 // Self-contained: it never redirects away or blocks the flow.
 //
-// Exposed as App.pciInterstitial.open(ctx), ctx = { merchant, products,
-// sites, addFee(), onProceed() }. Uses the App.pciIxopay mock.
+// When it closes it hands back to the wizard, which STAYS on Product &
+// Pricing and (if enrolled) shows the PCI Compliance fee row. Exposed as
+// App.pciInterstitial.open(ctx), ctx = { merchant, products, sites,
+// addFee(), onDone() }. Uses the App.pciIxopay mock.
 // ------------------------------------------------------------------
 
 (function () {
@@ -22,7 +24,7 @@
       var ixopay = App.pciIxopay;
 
       function close() { root.innerHTML = ""; }
-      function proceed() { close(); if (ctx.onProceed) ctx.onProceed(); }
+      function finish() { close(); if (ctx.onDone) ctx.onDone(); }
       function shell(body) {
         root.innerHTML = '<div class="pxp-modal-scrim"><div class="pxp-inter" role="dialog" aria-label="PCI compliance">' + body + "</div></div>";
       }
@@ -52,7 +54,7 @@
         );
         on("[data-yes]", compliantPath);
         on("[data-no]", enrolReview);
-        on("[data-skip]", proceed);
+        on("[data-skip]", finish);
       }
 
       // ---- Path A: already compliant (light touch) ----
@@ -78,8 +80,8 @@
             : '<div class="pxp-note pxp-note--info pxp-mt16">No record found. You can still enrol them below.</div>';
         });
         on("[data-engage]", enrolEmail);
-        on("[data-justcompliant]", proceed);
-        on("[data-skip]", proceed);
+        on("[data-justcompliant]", finish);
+        on("[data-skip]", finish);
       }
 
       // ---- Path B: enrol - data review ----
@@ -101,7 +103,7 @@
           "</div>" + foot("Skip for now")
         );
         on("[data-continue]", enrolEmail);
-        on("[data-skip]", proceed);
+        on("[data-skip]", finish);
       }
 
       // ---- Enrolment email ----
@@ -118,21 +120,21 @@
           var email = (document.getElementById("pxp-enrol-email") || {}).value || ctx.merchant.email;
           ixopay.createEnrolment({ merchant: ctx.merchant, products: ctx.products, email: email });
           if (ctx.addFee) ctx.addFee();
-          done(email);
+          sent(email);
         });
-        on("[data-skip]", proceed);
+        on("[data-skip]", finish);
       }
 
-      // ---- Done ----
-      function done(email) {
+      // ---- Confirmation ----
+      function sent(email) {
         shell(
           head("Invitation sent",
             "IXOPAY pre-fills the SAQ, chases completion and manages the annual cycle from here.") +
           '<div class="pxp-inter-body"><div class="pxp-note pxp-note--ok">Invitation sent to ' + esc(email) +
-          ". The PCI Compliance Fee (£4.99 / month, per merchant) has been added to the quote - review it in the Quote Tool.</div>" +
-          '<div class="pxp-actions"><button type="button" class="pxp-btn pxp-btn--primary" data-done>Done</button></div></div>'
+          ". The PCI Compliance Fee (£4.99 / month, per merchant) has been added to this quote - you'll see it on the Products &amp; Pricing screen and in the Quote Tool.</div>" +
+          '<div class="pxp-actions"><button type="button" class="pxp-btn pxp-btn--primary" data-done>Back to Products &amp; Pricing</button></div></div>'
         );
-        on("[data-done]", proceed);
+        on("[data-done]", finish);
       }
 
       ask();

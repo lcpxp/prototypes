@@ -15,10 +15,11 @@ is the git history; what is unfinished is docs/STATE.md.
   replica of the PXP Partner Portal onboarding wizard (application, operating
   sites, products and pricing) with a PCI compliance interstitial on proceed -
   confirm compliant, or enrol the merchant with the data already collected -
-  a highlighted PCI Compliance Fee added to the Quote Tool basket on invitation
-  sent, and a compliance reports view (engagement, status, webhooks
-  outstanding, chases performed by IXOPAY). Placeholder gallery entries for
-  website screening and GDPR were added alongside it.
+  after which a highlighted PCI Compliance Fee row appears on the Products &
+  Pricing screen and in the Quote Tool. A Compliance Reports view (its own nav
+  item) shows engagement, status, webhooks outstanding and chases performed by
+  IXOPAY. Placeholder gallery entries for website screening and GDPR were
+  added alongside it.
 - The Executive roadmap view now leads with departments: each owning
   department, the categories it owns and their item counts, drilling to
   the items in Detailed view.

@@ -1,14 +1,10 @@
 // ------------------------------------------------------------------
 // pci-portal.js - The PXP Partner Portal replica: the "Merchant
-// Prescreen & Quote" wizard for the PCI prototype. Renders the 7-step
-// stepper and the step content; steps 1 (Application Information), 2
-// (Operating Sites) and 5 (Products & Pricing) are built out, the rest
-// are faithful pass-through screens. On Continue from Product Selection
-// it hands off to the PCI compliance interstitial (pci-interstitial.js),
-// and it owns the Quote Tool drawer where the PCI fee lands.
-//
-// Data is pre-filled to mirror the screenshots - this is a presenter's
-// demo of the real flow, not a live application. In-memory only.
+// Prescreen & Quote" wizard. Renders the 7-step stepper and content;
+// steps 1, 2 and 5 are built out, the rest are pass-through. On Continue
+// from Product Selection it hands off to the PCI interstitial
+// (pci-interstitial.js) and owns the Quote Tool drawer + PCI fee row.
+// Data is pre-filled to mirror the screenshots; in-memory only.
 // ------------------------------------------------------------------
 
 (function () {
@@ -37,6 +33,7 @@
     products: [{ site: "A Demonstration Website", name: "ECOM - Integrated / Gateway (High Risk)", qty: 1 }],
   };
   var quote = { hasPciFee: false };
+  var pciHandled = false;
   var current = 1;
   var steps = [
     "Application Information", "Operating Sites Setup", "Payment Solution",
@@ -123,6 +120,17 @@
       '<div class="pxp-cluster"><span class="pxp-fee-range">' + esc(range) + '</span>' +
       '<input class="pxp-fee-input" type="text" value="' + (name === "Auth / Processing" ? "0.015" : "0.000") + '"></div></div>';
   }
+  // The PCI Compliance fee, shown at the bottom of Product & Pricing once
+  // the merchant has been enrolled. A non-editable fee line (no input).
+  function pciFeeRow() {
+    if (!quote.hasPciFee) return "";
+    return '<div class="pxp-separator"></div>' +
+      '<div class="pxp-table pxp-pci-table"><div class="pxp-table-head"><span class="pxp-fee-name">PCI Compliance</span>' +
+      '<span class="pxp-tag pxp-tag--teal">Added</span></div>' +
+      '<div class="pxp-table-body"><div class="pxp-row"><div><span class="pxp-fee-name">PCI compliance (managed)</span>' +
+      '<div class="pxp-fee-range">Managed compliance, per merchant - added on enrolment, non-editable.</div></div>' +
+      "<strong>£4.99 / mo</strong></div></div></div>";
+  }
   function stepProducts() {
     var p = app.products[0];
     return '<div class="pxp-panel"><h2 class="pxp-title-wrapper">Products &amp; Pricing</h2>' +
@@ -140,6 +148,7 @@
       '<div class="pxp-table-body">' + feeRow("Auth / Processing", "£0.015 - £10.000") +
       feeRow("Refund", "£0.000 - £10.000") + feeRow("Chargeback", "£0.000 - £50.000") + "</div></div>" +
       '<div class="pxp-fees-toggle" data-fees-toggle><span>Processing Fees - Detailed <span class="pxp-fees-hint">(Click to expand)</span></span>' + CARET + "</div>" +
+      pciFeeRow() +
       nav(true) + "</div>";
   }
 
@@ -198,12 +207,14 @@
   }
 
   function onContinue() {
-    if (current === 5) {
-      // Proceed past the sales screen: engage on PCI compliance first.
+    if (current === 5 && !pciHandled) {
+      // Proceed past the sales screen: engage on PCI compliance first. When
+      // the interstitial closes we stay on Product & Pricing - now showing
+      // the PCI Compliance fee row if enrolled - so the agent can proceed.
       App.pciInterstitial.open({
         merchant: app.merchant, products: app.products, sites: app.sites,
         addFee: addPciFee,
-        onProceed: function () { goTo(6); },
+        onDone: function () { pciHandled = true; renderStep(); },
       });
       return;
     }

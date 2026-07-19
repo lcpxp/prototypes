@@ -47,6 +47,10 @@
 .pxp-fees-chevron { display: inline-block; transition: transform 0.15s ease; color: var(--pxp-hint-mid); }
 .pxp-fees-chevron--open { transform: rotate(90deg); }
 
+/* The PCI Compliance fee row, added to Product & Pricing after enrolment. */
+.pxp-pci-table { border-color: var(--pxp-primary); }
+.pxp-pci-table .pxp-table-head { background: var(--pxp-primary-soft); }
+
 /* ---------- Modal (site + generic) ---------- */
 .pxp-modal-scrim { position: fixed; inset: 0; background: rgba(9, 9, 12, 0.45); z-index: 40; display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto; }
 .pxp-modal { background: var(--pxp-white); border-radius: 12px; inline-size: min(560px, 100%); box-shadow: 0 20px 60px rgba(9, 9, 12, 0.25); }
