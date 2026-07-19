@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://zlmkofbkobmhnslfnqsf.supabase.co" crossorigin>
+  <title>PCI compliance demo - LPio / LaunchPad IO</title>
+  <script>
+    (function() {
+      var theme = localStorage.getItem("theme");
+      if (theme === "dark" || theme === "light") {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../../assets/css/base.css">
+  <link rel="stylesheet" href="../../../assets/css/layout.css">
+  <link rel="stylesheet" href="../../../assets/css/components.css">
+  <link rel="stylesheet" href="../../../assets/css/pages.css">
+  <link rel="stylesheet" href="../../../assets/css/pci.css">
+  <script src="../../../assets/js/core/theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
+  <script defer src="../../../assets/js/core/supabase.js"></script>
+  <script defer src="../../../assets/js/core/registry.js"></script>
+  <script defer src="../../../assets/js/core/guard.js"></script>
+  <script defer src="../../../assets/js/core/ui.js"></script>
+  <script defer src="../../../assets/js/core/search.js"></script>
+  <script defer src="../../../assets/js/pages/pci-ixopay.js"></script>
+  <script defer src="../../../assets/js/pages/pci-app.js"></script>
+</head>
+<body data-root="../../.." data-module="prototypes">
+  <header id="app-nav"></header>
+
+  <main class="page" id="pci-demo">
+    <div class="page-head">
+      <span class="eyebrow">Prototype · Simulation</span>
+      <h1>PCI compliance - IXOPAY demo</h1>
+      <p class="lede">A presenter-driven simulation of the confirmed IXOPAY
+        model inside Launchpad. Every mocked element is labelled; no data
+        leaves the page. Work through the three screens in order.</p>
+    </div>
+
+    <nav class="pci-screens" aria-label="Demo screens">
+      <button type="button" class="button" id="nav-1" data-screen="1">1 · Product selection</button>
+      <button type="button" class="button secondary" id="nav-2" data-screen="2">2 · IXOPAY side</button>
+      <button type="button" class="button secondary" id="nav-3" data-screen="3">3 · Merchant record</button>
+    </nav>
+
+    <div class="pci-layout">
+      <div class="pci-stage">
+
+        <!-- Screen 1: product selection / agent flow -->
+        <section id="screen-1">
+          <div class="pci-grid">
+            <div class="pci-panel">
+              <h3>Products on the application</h3>
+              <ul class="pci-list">
+                <li class="pci-line"><span>ECOM Gateway</span><span class="pci-fee">included</span></li>
+                <li class="pci-line"><span>POS Terminal x2</span><span class="pci-fee">included</span></li>
+                <li class="pci-line"><span>Acquiring - Visa/MC</span><span class="pci-fee">included</span></li>
+              </ul>
+              <p class="page-head-gap">The agent captures normal information as
+                today. The compliance capability adds only the prompt below.</p>
+              <button type="button" class="button" id="pci-add-compliance">Add PCI compliance</button>
+            </div>
+
+            <div class="pci-panel">
+              <h3>Basket</h3>
+              <ul class="pci-list" id="pci-basket"></ul>
+              <div id="pci-basket-note" class="dashboard-activity"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Screen 2: simulated IXOPAY side -->
+        <section id="screen-2" class="hidden">
+          <div class="pci-panel">
+            <h3>Invitation email</h3>
+            <div class="pci-email">
+              <div class="pci-email-head">
+                <span class="badge tone-warn">Simulation</span>
+                From: compliance@ixopay.example · To: contact@northwind-retail.example.
+                Subject: Complete your PCI compliance.
+              </div>
+              <div class="pci-email-body">
+                <p>Your provider has started your PCI compliance for you. Most of
+                  it is already filled in from the details they hold. It takes
+                  about five minutes and needs no technical knowledge.</p>
+                <button type="button" class="button" id="pci-open-saq">Complete your PCI compliance</button>
+              </div>
+            </div>
+            <p class="page-head-gap">IXOPAY chases merchants who have not
+              completed. Model a reminder from their engine:</p>
+            <button type="button" class="button secondary" id="pci-chase">Simulate chasing</button>
+          </div>
+
+          <div class="pci-panel hidden" id="pci-saq-panel">
+            <h3>Your PCI compliance (pre-filled by IXOPAY)</h3>
+            <div class="pci-progress"><span class="pci-progress-fill" id="pci-saq-fill"></span></div>
+            <p class="eyebrow" id="pci-saq-count"></p>
+            <ul class="pci-saq" id="pci-saq-list"></ul>
+            <button type="button" class="button" id="pci-saq-submit" disabled>Submit</button>
+            <div id="pci-saq-note" class="dashboard-activity"></div>
+          </div>
+        </section>
+
+        <!-- Screen 3: merchant record + monitoring -->
+        <section id="screen-3" class="hidden">
+          <div class="pci-panel">
+            <h3>Merchant record</h3>
+            <dl class="kv">
+              <dt>Business</dt><dd>Northwind Retail Ltd</dd>
+              <dt>MID</dt><dd class="mono">MID-4482119</dd>
+              <dt>Products</dt><dd><ul class="pci-list" id="pci-merchant-products"></ul></dd>
+            </dl>
+            <div class="pci-status">
+              <span id="pci-status"></span>
+              <span class="pci-ref" id="pci-ref"></span>
+              <span class="pci-ref" id="pci-expiry"></span>
+            </div>
+            <p>Launchpad stores only the product/fee flag, reference ID, status
+              and expiry. IXOPAY is the system of record.</p>
+            <button type="button" class="button secondary" id="pci-poll">Run 30-day poll</button>
+            <button type="button" class="button secondary" id="pci-time">Simulate time passing</button>
+          </div>
+
+          <div class="pci-panel">
+            <h3>Reporting</h3>
+            <p>Portfolio totals from the IXOPAY reporting API.</p>
+            <dl class="pci-report" id="pci-report"></dl>
+            <button type="button" class="button secondary page-head-gap" id="pci-report-btn">Refresh reporting</button>
+          </div>
+        </section>
+
+      </div>
+
+      <aside class="pci-eventlog">
+        <span class="eyebrow">Event log</span>
+        <ol class="pci-log" id="pci-log"></ol>
+      </aside>
+    </div>
+  </main>
+
+  <dialog class="modal" id="pci-agent">
+    <div class="modal-head">
+      <h2>Compliance prompt</h2>
+      <button type="button" class="button quiet" id="pci-agent-close">Close</button>
+    </div>
+    <div id="pci-step-ask">
+      <p>Is the merchant already PCI compliant?</p>
+      <button type="button" class="button" id="pci-yes">Yes, already compliant</button>
+      <button type="button" class="button secondary" id="pci-no">No, enrol them</button>
+    </div>
+    <div id="pci-step-verify" class="hidden">
+      <p>Check the merchant against IXOPAY records.</p>
+      <button type="button" class="button" id="pci-verify">Verify with IXOPAY</button>
+      <div id="pci-verify-result" class="dashboard-activity"></div>
+      <button type="button" class="button secondary" id="pci-enrol">Enrol merchant</button>
+    </div>
+  </dialog>
+
+</body>
+</html>

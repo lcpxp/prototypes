@@ -1,30 +1,30 @@
 # Current state
 
-Updated: 2026-07-18 (session)
-Branch: claude/ai-portal-backlog-roadmap-59pvcp
+Updated: 2026-07-19 (session)
+Branch: claude/stress-free-compliance-overview-vbyv38
 
 ## In progress
-- none. Roadmap/backlog overhaul complete: department-first Executive
-  view, working Compact/Detailed on Team and Backlog (a Category -> Area
-  -> item breakdown), sub-steps via work_items.parent_id shown as a
-  checklist, progress de-emphasised (no board-level %), and Export CSV on
-  the roadmap and backlog (App.csvFromRows + App.download in ui.js). The
-  cascade family is split into roadmap-views-cascade.js. Schema: the
-  parent_id migration is applied and mirrored in 30_work.sql; departments
-  are backfilled on all product-scope items.
+- PCI compliance prototype (IXOPAY integration) built: gallery rows, a
+  native overview page with the confirmed-model diagram, and a three-screen
+  simulation (agent flow + full-payload enrolment, invitation-sent fee
+  product, pre-filled SAQ, webhook + 15-30 day polling, reporting). Mock
+  client is App.pciIxopay; state is in memory only. Files under
+  modules/prototypes/pci/, assets/js/pages/pci-*.js, assets/css/pci.css.
 
 ## Next steps
-1. Owner: review and merge; the Pages deploy runs on merge to main, then
-   verify the live Executive/Team/Backlog views, the sub-step drawer and
-   both CSV exports there.
-2. Data (Supabase, not the repo): Legal & Compliance owns no work yet;
-   assign it when work lands. Grow the Front end backlog and the Unity
-   sub-steps as they progress.
-3. When next touching them, split the over-soft files with a size-budget
-   exit plan (roadmap-views.js exec/breakdown builders, backlog.js CSV).
+1. Insert the three new prototypes rows into the LIVE Supabase project
+   (seed.sql only seeds fresh setups) so the cards show on the deployed
+   Pages site. Owner: review and merge.
+2. Approve the draft copy marked in pci-app.js (agent modal, invitation
+   email, fee product name/amount, SAQ items) and replace the LP-PCI-*
+   backlog placeholders with real refs.
+3. When IXOPAY returns the enrolment payload schema and a sandbox
+   credential, drop the real shapes in where INTEGRATION POINT is marked.
 
 ## Open decisions
-- none
+- Document upload (PRD .docx / .xlsx via mammoth.js + SheetJS + IndexedDB)
+  is deferred: it would add the first non-Supabase CDN dependencies and an
+  IndexedDB store. Revisit with owner sign-off.
 
 ## Recent history
 Run: git log --oneline -15

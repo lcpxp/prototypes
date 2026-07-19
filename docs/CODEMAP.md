@@ -18,6 +18,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/layout.css | 351 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
+| assets/css/pci.css | 300 | pci.css - Page styles for the PCI compliance prototype (overview |
 | assets/css/roadmap-detail.css | 248 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 233 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 285 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
@@ -35,6 +36,9 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/dashboard.js | 159 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 53 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 114 | integrations.js - Integration overview for modules/integrations/. |
+| assets/js/pages/pci-app.js | 299 | pci-app.js - The PCI compliance prototype: three screens driven by |
+| assets/js/pages/pci-ixopay.js | 134 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
+| assets/js/pages/pci-svg.js | 123 | pci-svg.js - Inline SVG diagram viewer for the PCI overview page. |
 | assets/js/pages/platform.js | 202 | platform.js - The platform product-knowledge viewer for |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
@@ -46,7 +50,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 45 | Changelog |
+| docs/CHANGELOG.md | 51 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
@@ -64,7 +68,12 @@ document instead of walking the tree or reading whole files.
 | modules/backlog/index.html | 93 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 62 | Integrations - LPio / LaunchPad IO |
 | modules/platform/index.html | 56 | Platform - LPio / LaunchPad IO |
+| modules/prototypes/gdpr/index.html | 49 | GDPR compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 54 | Prototypes - LPio / LaunchPad IO |
+| modules/prototypes/pci/demo.html | 168 | PCI compliance demo - LPio / LaunchPad IO |
+| modules/prototypes/pci/index.html | 131 | PCI compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/pci/pci-workflow.svg | 62 |  |
+| modules/prototypes/website-screening/index.html | 50 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
 | modules/roadmap/index.html | 89 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 55 | Users - LPio / LaunchPad IO |
@@ -95,7 +104,7 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/30_work.sql | 336 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
-| supabase/seed.sql | 492 | ------------------------------------------------------------------ |
+| supabase/seed.sql | 495 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
@@ -103,6 +112,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/size-budget.json | 70 |  |
+| tests/unit/pci-ixopay.test.js | 85 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
 | tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
@@ -194,6 +204,33 @@ document instead of walking the tree or reading whole files.
 | modalHtml() | assets/js/pages/integrations.js:19 |
 | openModal() | assets/js/pages/integrations.js:47 |
 | tableHtml() | assets/js/pages/integrations.js:53 |
+| log() | assets/js/pages/pci-app.js:49 |
+| setNotice() | assets/js/pages/pci-app.js:67 |
+| renderStatus() | assets/js/pages/pci-app.js:77 |
+| renderBasket() | assets/js/pages/pci-app.js:93 |
+| renderMerchantProducts() | assets/js/pages/pci-app.js:106 |
+| enrol() | assets/js/pages/pci-app.js:115 |
+| onEvent() | assets/js/pages/pci-app.js:127 |
+| onWebhook() | assets/js/pages/pci-app.js:139 |
+| runVerify() | assets/js/pages/pci-app.js:146 |
+| renderSaq() | assets/js/pages/pci-app.js:169 |
+| updateSaqProgress() | assets/js/pages/pci-app.js:188 |
+| openSaq() | assets/js/pages/pci-app.js:199 |
+| submitSaq() | assets/js/pages/pci-app.js:209 |
+| runPoll() | assets/js/pages/pci-app.js:217 |
+| runReport() | assets/js/pages/pci-app.js:229 |
+| report() | assets/js/pages/pci-app.js:239 |
+| setScreen() | assets/js/pages/pci-app.js:244 |
+| init() | assets/js/pages/pci-app.js:252 |
+| makeRef() | assets/js/pages/pci-ixopay.js:27 |
+| isoInMonths() | assets/js/pages/pci-ixopay.js:31 |
+| count() | assets/js/pages/pci-ixopay.js:37 |
+| emitWebhook() | assets/js/pages/pci-ixopay.js:41 |
+| emitEvent() | assets/js/pages/pci-ixopay.js:48 |
+| advance() | assets/js/pages/pci-ixopay.js:55 |
+| sanitize() | assets/js/pages/pci-svg.js:22 |
+| fallback() | assets/js/pages/pci-svg.js:51 |
+| openOverlay() | assets/js/pages/pci-svg.js:59 |
 | toneClass() | assets/js/pages/platform.js:24 |
 | codeblock() | assets/js/pages/platform.js:28 |
 | tableBlock() | assets/js/pages/platform.js:33 |
@@ -345,6 +382,7 @@ document instead of walking the tree or reading whole files.
 | read() | tests/lib/repo.js:19 |
 | isTextFile() | tests/lib/repo.js:23 |
 | lineOf() | tests/lib/repo.js:28 |
+| load() | tests/unit/pci-ixopay.test.js:16 |
 | loadView() | tests/unit/platform-render.test.js:15 |
 | sampleData() | tests/unit/platform-render.test.js:31 |
 | loadApp() | tests/unit/reference-render.test.js:13 |

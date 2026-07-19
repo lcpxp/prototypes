@@ -11,6 +11,12 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- A PCI compliance prototype (IXOPAY integration) in the prototype gallery:
+  a native overview page with the confirmed-model diagram, and a
+  three-screen simulation of enrolment with the full merchant payload, the
+  fee-product basket line, the pre-filled SAQ and webhook plus 15-30 day
+  polling status monitoring. Placeholder gallery entries for website
+  screening and GDPR were added alongside it.
 - The Executive roadmap view now leads with departments: each owning
   department, the categories it owns and their item counts, drilling to
   the items in Detailed view.

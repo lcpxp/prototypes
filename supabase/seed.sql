@@ -488,4 +488,7 @@ values
   'modules/prototypes/index.html',
   'draft',
   array['onboarding', 'mock']
-);
+),
+('PCI Compliance - IXOPAY integration (confirmed model)', 'One API enrolment call with our existing merchant payload; IXOPAY pre-fills the SAQ, invites the merchant by email, chases them, and runs the annual lifecycle forever; Launchpad adds the fee product on invitation-sent and monitors status via webhook + 15-30 day polling.', 'modules/prototypes/pci/index.html', 'draft', array['compliance', 'ixopay', 'in-build']),
+('Website Screening (IXOPAY)', 'Placeholder for a future entry. Website screening is a candidate to ride the same IXOPAY rails as PCI compliance.', 'modules/prototypes/website-screening/index.html', 'draft', array['ixopay', 'concept', 'screening']),
+('GDPR Compliance (IXOPAY)', 'Placeholder for a future entry. GDPR compliance is a candidate to consolidate onto the same IXOPAY rails as PCI compliance.', 'modules/prototypes/gdpr/index.html', 'draft', array['ixopay', 'concept', 'gdpr']);
