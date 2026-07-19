@@ -42,12 +42,12 @@
       function ask() {
         shell(
           head("Before you finish - is this merchant already PCI compliant?",
-            "One quick step. PCI DSS compliance protects the merchant and is required to take card payments. We can check it, or get them compliant for you - it takes about a minute.") +
+            "PCI DSS compliance is required to take card payments and protects the merchant. We can confirm it, or set it up for you - it takes about a minute, and the merchant doesn't need to be here.") +
           '<div class="pxp-inter-body"><div class="pxp-inter-options">' +
           '<button type="button" class="pxp-inter-card" data-yes><h3>Yes, already compliant</h3>' +
           "<p>Record their status. We can verify it with IXOPAY and, if you like, keep it monitored.</p></button>" +
           '<button type="button" class="pxp-inter-card" data-no><h3>No, or not sure</h3>' +
-          "<p>Enrol them with the details already collected. IXOPAY pre-fills the SAQ, invites the merchant and chases completion.</p></button>" +
+          "<p>We enrol them with the details already on this application. IXOPAY pre-fills the SAQ, emails the merchant and chases it to completion.</p></button>" +
           "</div></div>" + foot("Skip for now")
         );
         on("[data-yes]", compliantPath);
@@ -129,7 +129,7 @@
           head("Invitation sent",
             "IXOPAY pre-fills the SAQ, chases completion and manages the annual cycle from here.") +
           '<div class="pxp-inter-body"><div class="pxp-note pxp-note--ok">Invitation sent to ' + esc(email) +
-          ". The PCI Compliance Fee has been added to the quote.</div>" +
+          ". The PCI Compliance Fee (£4.99 / month, per merchant) has been added to the quote - review it in the Quote Tool.</div>" +
           '<div class="pxp-actions"><button type="button" class="pxp-btn pxp-btn--primary" data-done>Done</button></div></div>'
         );
         on("[data-done]", proceed);

@@ -1,22 +1,9 @@
 /* ------------------------------------------------------------------
-   pci.css - Page styles for the PCI compliance prototype (overview
-   page and the three-screen simulation under modules/prototypes/pci/).
-   The one optional page-specific sheet, loaded after pages.css. Values
-   come from tokens.css only; nothing here branches on theme.
+   pci.css - Styles for the PCI prototype's overview / detail page
+   (modules/prototypes/pci/index.html). The interactive replica has its
+   own sheets (pxp.css, pxp-pci.css). The one optional page-specific
+   sheet, loaded after pages.css. Values come from tokens.css only.
 ------------------------------------------------------------------- */
-
-/* Compliance-lifecycle status chips. Invited and chased are both amber;
-   chased is outlined so the two read as distinct steps. In progress
-   reuses the blue .badge.in_progress from components.css. */
-
-.badge.invited   { color: var(--warn);   background: var(--warn-soft);   border-color: transparent; }
-.badge.chased    { color: var(--warn);   background: transparent;        border-color: var(--warn); }
-.badge.compliant { color: var(--ok);     background: var(--ok-soft);     border-color: transparent; }
-.badge.overdue   { color: var(--danger); background: var(--danger-soft); border-color: transparent; }
-
-/* ---------------------------------------------------------------
-   Overview / detail page
---------------------------------------------------------------- */
 
 .pci-meta {
   display: flex;
@@ -28,6 +15,29 @@
 
 .pci-section {
   margin-block-end: var(--s-6);
+}
+
+/* End-to-end step sequence outlined on the overview. */
+.pci-steps {
+  margin: 0;
+  padding-inline-start: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  max-inline-size: var(--lede-max);
+}
+
+.pci-steps li {
+  padding-inline-start: var(--s-1);
+}
+
+.pci-steps li::marker {
+  color: var(--accent);
+  font-weight: var(--weight-semibold);
+}
+
+.pci-steps strong {
+  color: var(--ink);
 }
 
 .pci-backlog {
@@ -72,228 +82,4 @@
 
 dialog.pci-overlay {
   inline-size: min(60rem, calc(100vw - 2 * var(--gutter)));
-}
-
-/* ---------------------------------------------------------------
-   Demo: screen switcher and two-column stage + event log
---------------------------------------------------------------- */
-
-.pci-screens {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-2);
-  margin-block-end: var(--s-5);
-}
-
-.pci-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--s-5);
-  align-items: start;
-}
-
-.pci-stage > * {
-  min-inline-size: 0;
-}
-
-@media (min-width: 64rem) {
-  .pci-layout {
-    grid-template-columns: 1fr var(--sidebar-width);
-  }
-
-  .pci-eventlog {
-    position: sticky;
-    inset-block-start: calc(var(--nav-height) + var(--s-4));
-  }
-}
-
-.pci-panel {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-rest);
-  padding: var(--s-4);
-  margin-block-end: var(--s-4);
-}
-
-.pci-panel h3 {
-  font-size: var(--text-md);
-  margin-block-end: var(--s-3);
-}
-
-.pci-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--s-4);
-}
-
-@media (min-width: 48rem) {
-  .pci-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* Line items: products, basket rows, key facts */
-.pci-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.pci-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--s-3);
-  padding-block: var(--s-2);
-  border-block-end: 1px solid var(--line);
-}
-
-.pci-line:last-child {
-  border-block-end: none;
-}
-
-.pci-line .pci-fee {
-  font-variant-numeric: tabular-nums;
-  color: var(--muted);
-}
-
-/* The auto-added fee product: a brief accent wash so the moment lands. */
-.pci-basket-item.is-fee {
-  background: var(--accent-soft);
-  border-radius: var(--radius-sm);
-  padding-inline: var(--s-2);
-  animation: pci-flash var(--dur-base) var(--ease);
-}
-
-@keyframes pci-flash {
-  from { background: var(--ok-soft); }
-  to   { background: var(--accent-soft); }
-}
-
-/* Progress bar (SAQ completion) */
-.pci-progress {
-  block-size: 8px;
-  border-radius: var(--radius-pill);
-  background: var(--alt-surface);
-  overflow: hidden;
-  margin-block: var(--s-2);
-}
-
-.pci-progress-fill {
-  display: block;
-  block-size: 100%;
-  background: var(--ok);
-  transition: inline-size var(--dur-base) var(--ease);
-}
-
-/* Simulated invitation email */
-.pci-email {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.pci-email-head {
-  padding: var(--s-3) var(--s-4);
-  background: var(--alt-surface);
-  border-block-end: 1px solid var(--line);
-  font-size: var(--text-sm);
-}
-
-.pci-email-body {
-  padding: var(--s-4);
-}
-
-/* Pre-filled SAQ checklist */
-.pci-saq {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.pci-saq li {
-  display: flex;
-  align-items: baseline;
-  gap: var(--s-2);
-  padding-block: var(--s-2);
-}
-
-.pci-saq .pci-prefilled {
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-
-/* Status chip row */
-.pci-status {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-3);
-  margin-block: var(--s-2) var(--s-4);
-}
-
-.pci-status .pci-ref {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--muted);
-}
-
-/* Reporting totals */
-.pci-report {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
-  gap: var(--s-4);
-}
-
-.pci-report .pci-stat {
-  font-size: var(--text-2xl);
-  font-weight: var(--weight-semibold);
-  font-variant-numeric: tabular-nums;
-}
-
-.pci-report dt {
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-
-.pci-report dd {
-  margin: 0;
-}
-
-/* Event log */
-.pci-eventlog .eyebrow {
-  display: block;
-  margin-block-end: var(--s-2);
-}
-
-.pci-log {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-block-size: 26rem;
-  overflow-y: auto;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-}
-
-.pci-log li {
-  padding-block: var(--s-1);
-  border-block-end: 1px solid var(--line);
-  overflow-wrap: anywhere;
-}
-
-.pci-log li:last-child {
-  border-block-end: none;
-}
-
-.pci-log .pci-log-in  { color: var(--ok); }
-.pci-log .pci-log-out { color: var(--accent); }
-
-.pci-log pre {
-  margin: var(--s-1) 0 0;
-  padding: var(--s-2);
-  background: var(--paper);
-  border-radius: var(--radius-sm);
-  overflow-x: auto;
 }

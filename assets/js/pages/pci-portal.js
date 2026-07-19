@@ -261,15 +261,15 @@
     var d = el("pxp-quote-drawer");
     var p = app.products[0];
     var fee = quote.hasPciFee
-      ? '<div class="pxp-quote-line--fee"><div class="pxp-cluster pxp-between"><strong>PCI Compliance Fee</strong><strong>£4.50 / mo</strong></div>' +
-        '<div class="pxp-quote-sub">Passed through to the merchant; added on invitation sent.</div></div>'
+      ? '<div class="pxp-quote-line--fee"><div class="pxp-cluster pxp-between"><strong>PCI Compliance Fee</strong><strong>£4.99 / mo</strong></div>' +
+        '<div class="pxp-quote-sub">Managed PCI compliance, per merchant. Passed through to the merchant; added on invitation sent.</div></div>'
       : "";
     d.innerHTML =
       '<div class="pxp-drawer-head"><h2>Quote</h2><button type="button" class="pxp-drawer-close" id="pxp-quote-close" aria-label="Close">&times;</button></div>' +
       '<div class="pxp-drawer-body"><div class="pxp-quote-line"><span>' + esc(p.site) + '</span><span class="pxp-quote-sub">' + esc(app.sites[0].status) + "</span></div>" +
       '<div class="pxp-quote-line"><span>' + esc(p.name) + "</span><span>x" + p.qty + "</span></div>" +
       '<div class="pxp-quote-line"><span>Auth / Processing</span><span>£0.015</span></div>' + fee +
-      '<div class="pxp-quote-total"><span>Estimated monthly add-ons</span><span>' + (quote.hasPciFee ? "£4.50" : "£0.00") + "</span></div></div>";
+      '<div class="pxp-quote-total"><span>Estimated monthly add-ons</span><span>' + (quote.hasPciFee ? "£4.99" : "£0.00") + "</span></div></div>";
     el("pxp-quote-close").addEventListener("click", closeQuote);
   }
   function openQuote() { renderQuote(); el("pxp-quote-drawer").classList.add("pxp-drawer--open"); el("pxp-drawer-scrim").style.display = "block"; }

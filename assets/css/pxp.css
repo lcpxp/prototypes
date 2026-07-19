@@ -123,11 +123,11 @@
 .pxp-page-header h2 { font-size: 22px; font-weight: 700; }
 .pxp-page-header p { color: var(--pxp-hint-dark); margin-block: 6px 0; }
 
-.pxp-with-sidebar { display: grid; grid-template-columns: 220px 1fr; gap: 32px; align-items: start; }
+.pxp-with-sidebar { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start; }
 .pxp-with-sidebar > * { min-inline-size: 0; }
 
-@media (max-width: 48rem) {
-  .pxp-with-sidebar { grid-template-columns: 1fr; }
+@media (min-width: 48rem) {
+  .pxp-with-sidebar { grid-template-columns: 220px 1fr; }
 }
 
 .pxp-panel {

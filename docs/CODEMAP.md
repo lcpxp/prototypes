@@ -18,7 +18,9 @@ document instead of walking the tree or reading whole files.
 | assets/css/layout.css | 351 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
-| assets/css/pci.css | 300 | pci.css - Page styles for the PCI compliance prototype (overview |
+| assets/css/pci.css | 86 | pci.css - Styles for the PCI prototype's overview / detail page |
+| assets/css/pxp-pci.css | 120 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
+| assets/css/pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype |
 | assets/css/roadmap-detail.css | 248 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 233 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 285 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
@@ -36,7 +38,10 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/dashboard.js | 159 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 53 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 114 | integrations.js - Integration overview for modules/integrations/. |
+| assets/js/pages/pci-interstitial.js | 142 | pci-interstitial.js - The PCI compliance "checkout interstitial" for |
 | assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
+| assets/js/pages/pci-portal.js | 289 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
+| assets/js/pages/pci-reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
 | assets/js/pages/pci-svg.js | 123 | pci-svg.js - Inline SVG diagram viewer for the PCI overview page. |
 | assets/js/pages/platform.js | 202 | platform.js - The platform product-knowledge viewer for |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
@@ -58,7 +63,7 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 34 | Current state |
+| docs/STATE.md | 30 | Current state |
 | docs/WORKFLOW.md | 106 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
@@ -70,8 +75,9 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/gdpr/index.html | 49 | GDPR compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 54 | Prototypes - LPio / LaunchPad IO |
 | modules/prototypes/pci/demo.html | 89 | Merchant Prescreen and Quote - PXP replica - LPio |
-| modules/prototypes/pci/index.html | 134 | PCI compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/pci/index.html | 156 | PCI compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/pci/pci-workflow.svg | 62 |  |
+| modules/prototypes/pci/reports.html | 77 | Compliance reporting - PXP replica - LPio |
 | modules/prototypes/website-screening/index.html | 50 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
 | modules/roadmap/index.html | 89 | Roadmap - LPio / LaunchPad IO |
@@ -203,12 +209,45 @@ document instead of walking the tree or reading whole files.
 | modalHtml() | assets/js/pages/integrations.js:19 |
 | openModal() | assets/js/pages/integrations.js:47 |
 | tableHtml() | assets/js/pages/integrations.js:53 |
+| close() | assets/js/pages/pci-interstitial.js:24 |
+| proceed() | assets/js/pages/pci-interstitial.js:25 |
+| shell() | assets/js/pages/pci-interstitial.js:26 |
+| q() | assets/js/pages/pci-interstitial.js:29 |
+| on() | assets/js/pages/pci-interstitial.js:30 |
+| head() | assets/js/pages/pci-interstitial.js:32 |
+| foot() | assets/js/pages/pci-interstitial.js:36 |
+| ask() | assets/js/pages/pci-interstitial.js:42 |
+| compliantPath() | assets/js/pages/pci-interstitial.js:59 |
+| enrolReview() | assets/js/pages/pci-interstitial.js:86 |
+| enrolEmail() | assets/js/pages/pci-interstitial.js:108 |
+| done() | assets/js/pages/pci-interstitial.js:127 |
 | makeRef() | assets/js/pages/pci-ixopay.js:27 |
 | isoInMonths() | assets/js/pages/pci-ixopay.js:28 |
 | count() | assets/js/pages/pci-ixopay.js:29 |
 | emitWebhook() | assets/js/pages/pci-ixopay.js:31 |
 | emitEvent() | assets/js/pages/pci-ixopay.js:36 |
 | advance() | assets/js/pages/pci-ixopay.js:41 |
+| el() | assets/js/pages/pci-portal.js:19 |
+| renderStepper() | assets/js/pages/pci-portal.js:47 |
+| nav() | assets/js/pages/pci-portal.js:65 |
+| field() | assets/js/pages/pci-portal.js:72 |
+| stepApplication() | assets/js/pages/pci-portal.js:76 |
+| stepSites() | assets/js/pages/pci-portal.js:105 |
+| feeRow() | assets/js/pages/pci-portal.js:121 |
+| stepProducts() | assets/js/pages/pci-portal.js:126 |
+| stepPass() | assets/js/pages/pci-portal.js:147 |
+| stepSummary() | assets/js/pages/pci-portal.js:152 |
+| renderStep() | assets/js/pages/pci-portal.js:167 |
+| wireStep() | assets/js/pages/pci-portal.js:179 |
+| onContinue() | assets/js/pages/pci-portal.js:200 |
+| goTo() | assets/js/pages/pci-portal.js:213 |
+| openSiteModal() | assets/js/pages/pci-portal.js:223 |
+| buildDrawer() | assets/js/pages/pci-portal.js:247 |
+| renderQuote() | assets/js/pages/pci-portal.js:260 |
+| openQuote() | assets/js/pages/pci-portal.js:275 |
+| closeQuote() | assets/js/pages/pci-portal.js:276 |
+| addPciFee() | assets/js/pages/pci-portal.js:277 |
+| stat() | assets/js/pages/pci-reports.js:16 |
 | sanitize() | assets/js/pages/pci-svg.js:22 |
 | fallback() | assets/js/pages/pci-svg.js:51 |
 | openOverlay() | assets/js/pages/pci-svg.js:59 |
