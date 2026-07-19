@@ -1,20 +1,19 @@
 # Current state
 
 Updated: 2026-07-19 (session)
-Branch: claude/stress-free-compliance-overview-vbyv38
+Branch: main (PCI prototype merged from claude/stress-free-compliance-overview-vbyv38)
 
 ## In progress
-- PCI compliance prototype (IXOPAY integration) built: gallery rows, a
-  native overview page with the confirmed-model diagram, and a three-screen
+- none. PCI compliance prototype (IXOPAY integration) is merged to main and
+  registered in the live Supabase project (5 prototypes rows total). It has
+  a native overview page with the confirmed-model diagram and a three-screen
   simulation (agent flow + full-payload enrolment, invitation-sent fee
   product, pre-filled SAQ, webhook + 15-30 day polling, reporting). Mock
-  client is App.pciIxopay; state is in memory only. Files under
-  modules/prototypes/pci/, assets/js/pages/pci-*.js, assets/css/pci.css.
+  client is App.pciIxopay; state is in memory only.
 
 ## Next steps
-1. Insert the three new prototypes rows into the LIVE Supabase project
-   (seed.sql only seeds fresh setups) so the cards show on the deployed
-   Pages site. Owner: review and merge.
+1. Verify the live Pages deploy shows the three new gallery cards (PCI,
+   website screening, GDPR) and that the PCI overview and demo render.
 2. Approve the draft copy marked in pci-app.js (agent modal, invitation
    email, fee product name/amount, SAQ items) and replace the LP-PCI-*
    backlog placeholders with real refs.
