@@ -32,9 +32,13 @@ only.
   work_items.department check constraint and their labels in
   App.registry.departments (assets/js/core/registry.js). horizon places
   it (someday = an unscheduled candidate; now/next/later = scheduled
-  onto the roadmap). Items are never deleted: closing one means status
-  'done' or 'dropped' plus a resolution sentence; resolved_at is stamped
-  by trigger. Reopening clears it.
+  onto the roadmap). level is workstream for a presentable high-level
+  container (with sub-items linked by parent_id) or item for standalone
+  and nested work - the presentation hierarchy, distinct from the
+  work_areas filing taxonomy (see docs/ROADMAP-PLAYBOOK.md). Items are
+  never deleted: closing one means status 'done' or 'dropped' plus a
+  resolution sentence; resolved_at is stamped by trigger. Reopening
+  clears it.
 - work_notes: atomic distilled records - decision, fact, risk,
   question, action or note - each linked to whatever it concerns
   (an area, a document, a work item).

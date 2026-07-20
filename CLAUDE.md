@@ -141,6 +141,13 @@ half-finished change.
 
 ## Adding common things
 
+- Roadmap work (add or update an item/workstream, review the roadmap):
+  follow docs/ROADMAP-PLAYBOOK.md - the single operating manual (model,
+  every field, copy-paste SQL, quick-capture recipe and the review
+  ritual). When the owner says any of "add this to the roadmap", "update
+  this item", or "let's go through the roadmap", route through the
+  playbook (the /roadmap and /roadmap-add commands wrap it). Database
+  writes only; the repo does not change.
 - New prototype: create the page under modules/prototypes/, follow
   the script include order above, then insert a registry row into the
   prototypes table. Do not hand-edit navigation.

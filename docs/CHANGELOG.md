@@ -11,6 +11,16 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Roadmap workstreams: a high-level item ("Self Service API", "Unity
+  integration") reads as a presentable container that collapses its
+  sub-items to a checklist when Detailed is off, so a workstream can be
+  shown without its granular detail.
+- A Shareholder view toggle on the roadmap that narrows the board to
+  shareholder-ready work, dropping internal themes (Core LaunchPad, fixes)
+  and bugs.
+- A Custom view toggle on the roadmap: a checkbox on each row lets you
+  hand-pick exactly which items a one-off PDF or CSV/JSON export carries,
+  pruned in real time with no change to the underlying data.
 - A PCI compliance prototype in the prototype gallery: a standalone, faithful
   replica of the PXP Partner Portal onboarding wizard (application, operating
   sites, products and pricing) with a PCI compliance interstitial on proceed -

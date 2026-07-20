@@ -11,7 +11,7 @@ document instead of walking the tree or reading whole files.
 | .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 24 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 198 | CLAUDE.md |
+| CLAUDE.md | 205 | CLAUDE.md |
 | README.md | 17 | LPio |
 | assets/css/base.css | 98 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 433 | components.css - Reusable interface components: cards, forms, |
@@ -54,17 +54,17 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 54 | Changelog |
+| docs/CHANGELOG.md | 64 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
-| docs/ROADMAP-PROCESS.md | 143 | Roadmap process |
-| docs/ROADMAP.md | 214 | Roadmap |
+| docs/ROADMAP-PROCESS.md | 153 | Roadmap process |
+| docs/ROADMAP.md | 179 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
 | docs/STATE.md | 32 | Current state |
-| docs/WORKFLOW.md | 106 | Work intake and backlog workflow |
+| docs/WORKFLOW.md | 110 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |

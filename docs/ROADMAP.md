@@ -106,10 +106,11 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   Integrations, Screening/Contracting/Fulfilment, Partners & PFAC,
   Acquiring, APIs, Insights & Reporting, Automation & Approvals,
   Sales & Commercial, Admin & Operations, Products & Pricing). key,
-  label, description, sort_order. Colour per key lives in tokens.css
-  (.rm-cat-<key> plus --rm-<key> tokens); a new theme with no token
-  renders in a neutral tint until one is added. Items with no theme
-  render as standalone cards.
+  label, description, sort_order, and shareholder_visible (false hides a
+  whole theme - Core LaunchPad, fixes - from the Shareholder view). Colour
+  per key lives in tokens.css (.rm-cat-<key> plus --rm-<key> tokens); a new
+  theme with no token renders in a neutral tint until one is added. Items
+  with no theme render as standalone cards.
 - work_items: roadmap and backlog work in one table - every view is a
   projection of these rows. status 'done' is Delivered; horizon 'someday'
   or status 'dropped' is Parked (far-future); the rest is Active, banded
@@ -131,9 +132,12 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   (pnl_vertical, team, region, customer, resources, cost, merchant_value,
   pxp_value, blockers, prd_link, legacy_priority_tags). It also carries an
   optional department (the owning business function, which the Executive
-  view groups by) and an optional parent_id linking a sub-step to its
-  parent item (one level; children nest under the parent, never placed as
-  their own bars).
+  view groups by), a level (workstream = a presentable high-level container
+  such as "Self Service API"; item = a standalone or nested piece) and an
+  optional parent_id linking a sub-step to its workstream (one level;
+  children nest under the parent, never placed as their own bars). A
+  workstream renders as its own bar and collapses its children to a count
+  when Detailed is off. See docs/ROADMAP-PLAYBOOK.md.
 - work_item_phases: optional Discovery / Build / Certification / Launch
   phases per item, each with a quarter, start/end dates and per-date TBC
   flags. Absent for high-level items; surfaced in the detail drawer.
@@ -156,58 +160,19 @@ The format only stays trustworthy if the data is worked this way:
 
 ## Working the roadmap with an AI assistant (Supabase access)
 
-The point of holding the roadmap in Supabase is that any Claude chat
-with Supabase access (project ref zlmkofbkobmhnslfnqsf) can read and
-overhaul it without touching the repo. A cold session should:
+The point of holding the roadmap in Supabase is that any Claude chat with
+Supabase access (project ref zlmkofbkobmhnslfnqsf) can read and overhaul it
+without touching the repo. The operating manual for that - the model, every
+field, the copy-paste operations, the quick-capture recipe and the review
+ritual - is **docs/ROADMAP-PLAYBOOK.md**; the `/roadmap` and `/roadmap-add`
+commands wrap it. A cold session reads the playbook, then
+`select * from roadmap_current;` (the whole roadmap joined and
+human-readable) plus open `work_notes`, and makes changes as ordinary
+`work_items` updates. Writes need the admin role, which the MCP/service
+context has; the browser page is read-only, and after a change the board and
+any snapshot reflect it on reload.
 
-1. Read the current roadmap in one query, in theme + priority order:
-
-       select rc.label as theme, wi.status, wi.horizon, wi.end_horizon,
-              wi.presentation, wi.priority, wi.title, wi.summary
-       from work_items wi
-       join work_areas wa on wa.id = wi.area_id
-       left join roadmap_categories rc on rc.id = wi.category_id
-       where wa.scope = 'product'
-       order by rc.sort_order nulls last, wi.priority, wi.sort_order;
-
-   Then read work_notes (status 'active') for the areas in play, per
-   docs/WORKFLOW.md, before proposing changes.
-
-2. Make changes as ordinary updates. Common edits:
-   - Reprioritise: update work_items set priority = ... . Leave gaps
-     (10, 20, 30) so items can be slotted between.
-   - Mark delivered: set status = 'done'. It moves to the Delivered
-     zone on the next page load.
-   - Schedule onto the roadmap: set horizon = 'now'/'next'/'later' (it
-     leaves the Parked bucket and appears in Team and Executive).
-   - Park (far-future): set horizon = 'someday', or status = 'dropped'
-     with a resolution sentence.
-   - Change the focus item: set presentation = 'current' on the new
-     one and 'ongoing'/'sequenced' on the old.
-   - Add an item: insert with area_id (a work_areas row), an optional
-     category_id (theme), status, horizon, presentation and priority.
-   - Make an activity span columns: set end_horizon (e.g. horizon 'now',
-     end_horizon 'next' shows it running from Now through Next).
-   - Add a theme: insert into roadmap_categories; add matching
-     --rm-<key> tokens and a .rm-cat-<key> rule for a bespoke colour,
-     otherwise it renders neutral.
-   - Set progress: update work_items set progress = ... (coarse 0-100;
-     docs/SPRINTS.md has the nudge conventions).
-   - Schedule by sprint: set start_sprint / end_sprint (e.g. '26-16') and
-     the matching horizon/end_horizon band; the translation ruleset is in
-     docs/SPRINTS.md.
-   - Add delivery phases: insert work_item_phases rows (phase, quarter,
-     dates, TBC flags).
-   - Record PXP detail: set the attributes jsonb (team, vertical, cost,
-     merchant/PXP value, blockers, PRD link) - held for record and the
-     JSON export, never shown on the board.
-
-3. Writes need the admin role under RLS. Editing through the Supabase
-   MCP/service context applies directly; the browser page is
-   read-only. After a change, the board and any snapshot reflect it
-   on reload.
-
-Keep real merchant, partner and staff detail out of the repo: the
-roadmap content lives only in Supabase. seed.sql carries generic
-samples only. Record decisions taken while reworking the roadmap as
-work_notes so the reasoning is durable.
+Keep real merchant, partner and staff detail out of the repo: the roadmap
+content lives only in Supabase. seed.sql carries generic samples only. Record
+decisions taken while reworking the roadmap as work_notes so the reasoning is
+durable.

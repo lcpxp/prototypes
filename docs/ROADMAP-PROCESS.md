@@ -74,16 +74,26 @@ or deliver it (`status='done'`); set each item's `department` so it lands
 under the right owner (an item with none shows under Unassigned). It is
 one dataset projected, never a copy.
 
-## Sub-steps
+## Workstreams and sub-steps
 
-A coarse item can break into ordered **sub-steps** that are themselves
-work items, linked by `parent_id` (e.g. "Unity integration" -> Merchant
-Group, Merchant, Site, Products, Services, Pricing, Settlement). Each
-sub-step carries its own `status`, so "done apart from pricing and
-settlement" reads straight off the data. Sub-steps are never placed as
-their own bars; they surface as a checklist on the parent in Detailed
-view and the drawer, and the parent shows a done/total step count in
-place of a percentage. Keep nesting to one level.
+A **workstream** (`work_items.level='workstream'`) is a presentable
+high-level container - "Self Service API", "Unity integration" - the layer
+you name to a head of product without opening every granular item. It breaks
+into ordered **sub-steps** that are themselves work items, linked by
+`parent_id` (e.g. "Unity integration" -> Merchant Group, Merchant, Site,
+Products, Services, Pricing, Settlement). Each sub-step carries its own
+`status`, so "done apart from pricing and settlement" reads straight off the
+data. Sub-steps are never placed as their own bars; they surface as a
+checklist on the workstream in Detailed view and the drawer, and the
+workstream shows a done/total step count. Keep nesting to one level. A
+standalone item (`level='item'`, no parent) renders as its own bar, exactly
+like a workstream, so work that has no natural container is never hidden.
+
+Do not confuse a workstream with a **filing area** (`work_areas`): the
+workstream is the presentation container, the filing area is the internal
+taxonomy that intake, notes and documents share. An item's `level`/`parent_id`
+place it for presentation; its `area_id` files it. Full field reference and
+the operations that move work between these live in docs/ROADMAP-PLAYBOOK.md.
 
 ## How work enters and moves
 
