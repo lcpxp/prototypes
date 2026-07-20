@@ -1,30 +1,29 @@
 # Current state
 
-Updated: 2026-07-19 (session)
-Branch: main (via claude/stress-free-compliance-overview-vbyv38)
+Updated: 2026-07-20 (session)
+Branch: main (via claude/roadmap-review-process-l3dhpm)
 
 ## In progress
-- none. PCI prototype complete: a standalone PXP Partner Portal replica
-  (modules/prototypes/pci/ demo.html + reports.html + a blank dashboard.html).
-  Nav is Dashboard / Application / Compliance Reports. On Continue from Product
-  Selection the PCI interstitial engages the agent; after enrolment the modal
-  closes, stays on Product & Pricing, and shows a highlighted non-editable PCI
-  Compliance Fee row (£4.99/mo) - also in the Quote drawer. reports.html is the
-  Compliance Reports view. The gallery card opens the overview (index.html),
-  which outlines the flow end to end and offers "Explore prototype". Styles:
-  pxp.css, pxp-pci.css, tokens.css --pxp-* (light-locked); pci.css overview-only.
-  Logic: pci-portal.js, pci-interstitial.js, pci-reports.js, pci-ixopay.js (mock).
+- none. Roadmap review process + workstream model + custom presentation
+  view shipped. work_items.level names a 'workstream' (a presentable
+  high-level container; its sub-items nest via parent_id and collapse
+  when Detailed is off) vs an 'item'; roadmap_categories.shareholder_visible
+  hides internal themes; the roadmap_current view is the one-query snapshot.
+  The board gained Shareholder view, Custom view (per-row PDF/export picker)
+  and a workstream marker. docs/ROADMAP-PLAYBOOK.md is the single operating
+  manual; /roadmap and /roadmap-add wrap it. Migration
+  20260720000000_workstreams_and_visibility applied live.
 
 ## Next steps
-1. Replace the LP-PCI-* backlog placeholders with real refs.
-2. When IXOPAY returns the enrolment payload schema and a sandbox credential,
-   wire the real shapes in where INTEGRATION POINT is marked in pci-ixopay.js.
-3. Future portal prototypes can reuse the pxp.css / pxp-pci.css replica shell.
+1. Use /roadmap for the regular review and /roadmap-add for one-line
+   capture; let the playbook be the entry point for any AI.
+2. As internal themes accrue (bugs/fixes), set their
+   shareholder_visible=false so the Shareholder view stays clean.
+3. Mark further coarse items level='workstream' as they are scoped.
 
 ## Open decisions
-- Document upload (PRD .docx / .xlsx via mammoth.js + SheetJS + IndexedDB)
-  is deferred: it would add the first non-Supabase CDN dependencies and an
-  IndexedDB store. Revisit with owner sign-off.
+- Only 'core' is shareholder_visible=false so far; extend to any future
+  internal/fix theme rather than adding a per-item audience flag.
 
 ## Recent history
 Run: git log --oneline -15
