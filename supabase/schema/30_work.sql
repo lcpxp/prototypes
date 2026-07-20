@@ -55,6 +55,10 @@ create table if not exists public.roadmap_categories (
   key text not null unique,
   label text not null,
   description text,
+  -- Whether this theme appears in the shareholder-facing projection.
+  -- Internal catch-alls (Core LaunchPad, fixes) set this false so they
+  -- drop out of exec/shareholder views without deleting anything.
+  shareholder_visible boolean not null default true,
   sort_order integer not null default 100,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -155,6 +159,13 @@ create table if not exists public.work_items (
   -- nests parent -> children only and never places a child as its own
   -- bar. A child carries its own status/progress.
   parent_id uuid references public.work_items (id) on delete cascade,
+  -- Presentation level. A 'workstream' is a top-level, presentable
+  -- container (e.g. "Self Service API", "Unity integration") whose
+  -- sub-items nest under it via parent_id; an 'item' is a standalone row
+  -- or a nested sub-step. This is the PRESENTATION hierarchy; work_areas
+  -- stays the internal FILING taxonomy. A workstream is always top-level
+  -- (constraint below). See docs/ROADMAP-PLAYBOOK.md.
+  level text not null default 'item' check (level in ('workstream', 'item')),
   title text not null,
   summary text,
   details text,
@@ -218,13 +229,16 @@ create table if not exists public.work_items (
   resolved_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  constraint work_items_parent_not_self check (parent_id is null or parent_id <> id)
+  constraint work_items_parent_not_self check (parent_id is null or parent_id <> id),
+  constraint work_items_workstream_top_level check (level <> 'workstream' or parent_id is null)
 );
 
 create index if not exists work_items_area_idx
   on public.work_items (area_id, horizon, priority, sort_order);
 create index if not exists work_items_parent_idx
   on public.work_items (parent_id, sort_order);
+create index if not exists work_items_level_idx
+  on public.work_items (level, priority, sort_order);
 create index if not exists work_items_category_idx
   on public.work_items (category_id);
 create index if not exists work_items_status_idx
@@ -333,3 +347,45 @@ drop trigger if exists work_notes_updated_at on public.work_notes;
 create trigger work_notes_updated_at
   before update on public.work_notes
   for each row execute function public.set_updated_at();
+
+-- ---------------------------------------------------------------
+-- roadmap_current: the whole roadmap joined and human-readable in one
+-- query, so any assistant with the project ref reads the current state
+-- in a single call (see docs/ROADMAP-PLAYBOOK.md). security_invoker, so
+-- it exposes exactly what the caller's RLS already allows on the base
+-- tables and adds no new surface. Rendering still comes from the page;
+-- this view is the operating/read entry point, not a board dependency.
+-- ---------------------------------------------------------------
+
+drop view if exists public.roadmap_current;
+create view public.roadmap_current
+  with (security_invoker = on) as
+  select
+    wi.id,
+    wi.title,
+    wi.level,
+    (wi.parent_id is not null) as is_child,
+    parent.title              as workstream_title,
+    rc.key                    as theme_key,
+    rc.label                  as theme_label,
+    coalesce(rc.shareholder_visible, false) as shareholder_visible,
+    wa.title                  as filing_area,
+    wa.scope                  as scope,
+    wi.department,
+    wi.type,
+    wi.status,
+    wi.horizon,
+    wi.end_horizon,
+    wi.presentation,
+    wi.priority,
+    wi.progress,
+    wi.start_sprint,
+    wi.end_sprint,
+    wi.updated_at
+  from public.work_items wi
+  left join public.work_items parent    on parent.id = wi.parent_id
+  left join public.roadmap_categories rc on rc.id = wi.category_id
+  left join public.work_areas wa         on wa.id = wi.area_id
+  order by rc.sort_order nulls last, wi.priority, wi.sort_order;
+
+grant select on public.roadmap_current to anon, authenticated;
