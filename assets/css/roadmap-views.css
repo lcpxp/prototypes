@@ -140,6 +140,9 @@
   grid-template-columns: 11rem repeat(var(--tl-cols, 4), minmax(6rem, 1fr));
   gap: var(--s-2);
   align-items: center;
+  /* Shared inline inset: head and rows stay column-aligned, bars clear
+     the row track's edges. */
+  padding-inline: var(--s-2);
   min-inline-size: calc(11rem + var(--tl-cols, 4) * 8rem);
 }
 
@@ -150,6 +153,15 @@
   border-block-end: 1px solid var(--line);
   margin-block-end: var(--s-1);
   background: var(--paper);
+}
+
+/* Each row is a shaded lane: the coloured bar rides a quiet recessed
+   track, so empty horizon columns stop reading as blank white - depth on
+   screen, and a far denser, less washed-out PDF export. */
+.rmv-tl-row {
+  background: var(--alt-surface);
+  border-radius: var(--radius-sm);
+  padding-block: var(--s-1);
 }
 
 .rmv-tl-col {
@@ -171,7 +183,11 @@
 }
 
 .rmv-tl-bar {
-  background: var(--rm-s, var(--alt-surface));
+  /* A touch of the lane accent mixed into its soft tint lifts the bar
+     clear of the recessed track. Falls back to the soft tint, then a
+     plain surface - never the track colour, or the bar would vanish. */
+  background: color-mix(in srgb, var(--rm-a, var(--line-strong)) 10%,
+    var(--rm-s, var(--surface)));
   border-inline-start: 3px solid var(--rm-a, var(--line-strong));
   border-radius: var(--radius-sm);
   padding: var(--s-1) var(--s-2);
@@ -189,9 +205,10 @@
   color: var(--muted);
 }
 
-/* Parked bars read as far-future: quiet fill, dashed edge. */
+/* Parked bars read as far-future: quiet neutral fill (kept off the row
+   track's tone so it stays visible), dashed edge. */
 .rmv-tl-bar--parked {
-  background: var(--alt-surface);
+  background: var(--surface);
   border-inline-start-style: dashed;
   color: var(--muted);
 }
@@ -224,7 +241,7 @@
      item keeps the plain soft tint. Falls back to the soft tint where
      color-mix is unsupported. */
   background: color-mix(in srgb, var(--rm-a, var(--line-strong)) 14%,
-    var(--rm-s, var(--alt-surface)));
+    var(--rm-s, var(--surface)));
 }
 .rm-card--ws { border-inline-start-width: 5px; }
 
@@ -283,9 +300,17 @@ body.rm-custom .rm-card .rmv-pick {
   .rmv-theme-desc { display: none; }
   .rmv-cards { gap: 3pt; margin-block-start: 4pt; }
   .rmv-card-eyebrow { font-size: 7pt; }
+  /* Timeline export: paper drops backgrounds by default, leaving the
+     bars white and the board blank. Force exact colour so the lane track
+     and each coloured bar (progress foot included) carry into the PDF. */
   .rmv-theme,
-  .rmv-bucket {
+  .rmv-bucket,
+  .rmv-tl-row,
+  .rmv-tl-bar {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+
+  /* Don't clip a row's shaded band across a page break. */
+  .rmv-tl-row { break-inside: avoid; }
 }

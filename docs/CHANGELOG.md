@@ -11,6 +11,10 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The roadmap timeline reads better on screen and in the PDF export: each
+  row now sits on a light shaded lane, bars carry a slightly stronger fill,
+  and the bar and lane colours print exact instead of dropping to white -
+  so the export no longer looks washed out with barely visible bars.
 - The roadmap's Backlog level now mirrors the full backlog list: it shows
   every work item regardless of scope, so nothing captured is invisible in
   the roadmap tool. The Workstreams/Exec and Team views stay product-scoped.
