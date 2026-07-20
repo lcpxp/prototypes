@@ -59,6 +59,15 @@ create table if not exists public.roadmap_categories (
   -- Internal catch-alls (Core LaunchPad, fixes) set this false so they
   -- drop out of exec/shareholder views without deleting anything.
   shareholder_visible boolean not null default true,
+  -- Owning department for COLOUR and grouping: drives the theme's base
+  -- hue in the department-keyed palette (each department a hue, each
+  -- workstream a shade, items a modifier - see docs/DESIGN.md). A soft
+  -- classification; a lane may still hold items from other departments.
+  -- Keys mirror work_items.department.
+  owning_department text
+    check (owning_department is null or owning_department in ('sales_commercial',
+      'operations_onboarding', 'product_technology', 'finance_revenue',
+      'legal_compliance', 'risk_underwriting')),
   sort_order integer not null default 100,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -166,6 +175,13 @@ create table if not exists public.work_items (
   -- stays the internal FILING taxonomy. A workstream is always top-level
   -- (constraint below). See docs/ROADMAP-PLAYBOOK.md.
   level text not null default 'item' check (level in ('workstream', 'item')),
+  -- Soft, NON-nesting reference to the workstream (or item) a piece of
+  -- work relates to. The maintenance/fixes track uses it so a one-line
+  -- bug can be attributed to, say, "Acquirer management" for filtering
+  -- and reporting WITHOUT nesting under it - nesting (parent_id) rolls up
+  -- and would light that workstream up on the strategic gantt; this does
+  -- not. See docs/ROADMAP-PLAYBOOK.md.
+  relates_to_id uuid references public.work_items (id) on delete set null,
   title text not null,
   summary text,
   details text,
@@ -230,6 +246,7 @@ create table if not exists public.work_items (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint work_items_parent_not_self check (parent_id is null or parent_id <> id),
+  constraint work_items_relates_not_self check (relates_to_id is null or relates_to_id <> id),
   constraint work_items_workstream_top_level check (level <> 'workstream' or parent_id is null)
 );
 
@@ -237,6 +254,8 @@ create index if not exists work_items_area_idx
   on public.work_items (area_id, horizon, priority, sort_order);
 create index if not exists work_items_parent_idx
   on public.work_items (parent_id, sort_order);
+create index if not exists work_items_relates_to_idx
+  on public.work_items (relates_to_id);
 create index if not exists work_items_level_idx
   on public.work_items (level, priority, sort_order);
 create index if not exists work_items_category_idx
