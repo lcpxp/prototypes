@@ -201,6 +201,25 @@ test("timeline (backlog) mirrors the master list: every top-level item, all scop
   assert.match(html, /rmv-tl-bar--parked[^"]*"[^>]*grid-column:6 \/ 7/);
 });
 
+test("timeline sorts workstreams above standalone items in the same band", () => {
+  const V = loadView();
+  const data = {
+    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
+    areas: [{ id: "a1", key: "core-area", title: "Core", scope: "product", category_id: "c1", sort_order: 10 }],
+    items: [
+      { id: "std", area_id: "a1", category_id: "c1", title: "Standalone fix", level: "item",
+        status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
+        department: "product_technology", priority: 10, sort_order: 10 },
+      { id: "ws", area_id: "a1", category_id: "c1", title: "Big workstream", level: "workstream",
+        status: "in_progress", horizon: "now", end_horizon: null, presentation: "current",
+        department: "product_technology", priority: 20, sort_order: 20 },
+    ],
+  };
+  const html = V.timeline(data, "team");
+  assert.ok(html.indexOf("Big workstream") < html.indexOf("Standalone fix"),
+    "workstream sorts above the standalone item even with a worse priority number");
+});
+
 test("cascade (team) repeats a spanning item under each band it covers", () => {
   const V = loadView();
   const html = V.cascade(sampleData(), "team");

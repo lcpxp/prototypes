@@ -223,11 +223,13 @@
 
   // --- Timeline: the continuous, spanning-bar layout ---------------
 
-  // Order: start band, then span length (longer runs sink lower), then
+  // Order: start band, then workstreams above standalone items (a
+  // standalone item always sinks below the workstreams in its band, even
+  // at equal span), then span length (longer runs sink lower), then
   // priority. Current work floats to the top; long tasks spill right.
   function timelineOrder(a, b) {
-    return (a._s - b._s) || ((a._e - a._s) - (b._e - b._s)) ||
-      (a._pri - b._pri) || (a._so - b._so);
+    return (a._s - b._s) || ((b._ws ? 1 : 0) - (a._ws ? 1 : 0)) ||
+      ((a._e - a._s) - (b._e - b._s)) || (a._pri - b._pri) || (a._so - b._so);
   }
 
   // Shared grid renderer over pre-placed rows. maxBand caps the axis

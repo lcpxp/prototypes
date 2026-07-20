@@ -51,12 +51,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail.js | 262 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-views-cascade.js | 99 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
-| assets/js/pages/roadmap-views.js | 461 | roadmap-views.js - Pure HTML builders for the roadmap home |
+| assets/js/pages/roadmap-views.js | 463 | roadmap-views.js - Pure HTML builders for the roadmap home |
 | assets/js/pages/roadmap.js | 413 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 69 | Changelog |
+| docs/CHANGELOG.md | 72 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
@@ -128,7 +128,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-detail.test.js | 191 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
-| tests/unit/roadmap-views.test.js | 364 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
+| tests/unit/roadmap-views.test.js | 383 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
@@ -350,23 +350,23 @@ document instead of walking the tree or reading whole files.
 | checklistHtml() | assets/js/pages/roadmap-views.js:199 |
 | freshnessHtml() | assets/js/pages/roadmap-views.js:214 |
 | emptyNotice() | assets/js/pages/roadmap-views.js:219 |
-| timelineOrder() | assets/js/pages/roadmap-views.js:228 |
-| timelineGrid() | assets/js/pages/roadmap-views.js:236 |
-| placeItem() | assets/js/pages/roadmap-views.js:261 |
-| execLive() | assets/js/pages/roadmap-views.js:273 |
-| execDeptGroups() | assets/js/pages/roadmap-views.js:283 |
-| countLabel() | assets/js/pages/roadmap-views.js:303 |
-| execItemRow() | assets/js/pages/roadmap-views.js:308 |
-| execCatRow() | assets/js/pages/roadmap-views.js:320 |
-| execDeptSection() | assets/js/pages/roadmap-views.js:331 |
-| execBoard() | assets/js/pages/roadmap-views.js:342 |
-| teamList() | assets/js/pages/roadmap-views.js:355 |
-| breakdownItemRow() | assets/js/pages/roadmap-views.js:361 |
-| breakdown() | assets/js/pages/roadmap-views.js:374 |
-| areaSort() | assets/js/pages/roadmap-views.js:377 |
-| catBlock() | assets/js/pages/roadmap-views.js:381 |
-| visibleDetail() | assets/js/pages/roadmap-views.js:402 |
-| timeline() | assets/js/pages/roadmap-views.js:406 |
+| timelineOrder() | assets/js/pages/roadmap-views.js:230 |
+| timelineGrid() | assets/js/pages/roadmap-views.js:238 |
+| placeItem() | assets/js/pages/roadmap-views.js:263 |
+| execLive() | assets/js/pages/roadmap-views.js:275 |
+| execDeptGroups() | assets/js/pages/roadmap-views.js:285 |
+| countLabel() | assets/js/pages/roadmap-views.js:305 |
+| execItemRow() | assets/js/pages/roadmap-views.js:310 |
+| execCatRow() | assets/js/pages/roadmap-views.js:322 |
+| execDeptSection() | assets/js/pages/roadmap-views.js:333 |
+| execBoard() | assets/js/pages/roadmap-views.js:344 |
+| teamList() | assets/js/pages/roadmap-views.js:357 |
+| breakdownItemRow() | assets/js/pages/roadmap-views.js:363 |
+| breakdown() | assets/js/pages/roadmap-views.js:376 |
+| areaSort() | assets/js/pages/roadmap-views.js:379 |
+| catBlock() | assets/js/pages/roadmap-views.js:383 |
+| visibleDetail() | assets/js/pages/roadmap-views.js:404 |
+| timeline() | assets/js/pages/roadmap-views.js:408 |
 | find() | assets/js/pages/roadmap.js:49 |
 | readState() | assets/js/pages/roadmap.js:52 |
 | stored() | assets/js/pages/roadmap.js:57 |
@@ -434,7 +434,7 @@ document instead of walking the tree or reading whole files.
 | loadView() | tests/unit/roadmap-views.test.js:22 |
 | count() | tests/unit/roadmap-views.test.js:39 |
 | sampleData() | tests/unit/roadmap-views.test.js:45 |
-| shareholderData() | tests/unit/roadmap-views.test.js:286 |
+| shareholderData() | tests/unit/roadmap-views.test.js:305 |
 | load() | tests/unit/search.test.js:15 |
 | loadSprints() | tests/unit/sprints.test.js:13 |
 | loadApp() | tests/unit/ui.test.js:13 |

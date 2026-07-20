@@ -14,6 +14,9 @@ is the git history; what is unfinished is docs/STATE.md.
 - The roadmap's Backlog level now mirrors the full backlog list: it shows
   every work item regardless of scope, so nothing captured is invisible in
   the roadmap tool. The Workstreams/Exec and Team views stay product-scoped.
+- On the timeline, workstreams now sort above standalone items within a
+  band: a standalone item always sits below the workstreams in its band,
+  even when it spans the same duration.
 
 ### Added
 - Roadmap workstreams: a high-level item ("Self Service API", "Unity
