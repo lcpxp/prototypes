@@ -217,7 +217,15 @@
    distinctly from a plain item - a heavier left rule on the timeline bar,
    a tag on the cascade card. Its sub-items collapse to a checklist when
    Detailed is off, so the container can stand alone until it is scoped. */
-.rmv-tl-bar--ws { border-inline-start-width: 5px; font-weight: var(--weight-medium); }
+.rmv-tl-bar--ws {
+  border-inline-start-width: 5px;
+  font-weight: var(--weight-medium);
+  /* A workstream reads as a stronger shade of its lane hue; a standalone
+     item keeps the plain soft tint. Falls back to the soft tint where
+     color-mix is unsupported. */
+  background: color-mix(in srgb, var(--rm-a, var(--line-strong)) 14%,
+    var(--rm-s, var(--alt-surface)));
+}
 .rm-card--ws { border-inline-start-width: 5px; }
 
 .rmv-ws-tag {

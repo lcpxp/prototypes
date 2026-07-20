@@ -77,22 +77,29 @@
   --violet-soft: #f7f0ff;
 
   /* Roadmap board category lanes. Each key mirrors a
-     roadmap_categories.key; the accent draws the bar and pill, the
-     soft tint fills them. Categories without a token here fall back
-     to the neutral --muted / --paper pair in components. */
-  --rm-core: #0b7d70;         --rm-core-soft: #d8f1ec;
+     roadmap_categories.key; the accent draws the bar and pill, the soft
+     tint fills them. Grouped by owning department so a lane's hue signals
+     who owns it (roadmap_categories.owning_department): Product = blues,
+     Operations = greens, Finance = violets, Sales = magentas, Risk =
+     orange. Categories without a token fall back to --muted / --paper. */
+  /* Product & Technology - blues */
+  --rm-core: #15517e;         --rm-core-soft: #e2ebf5;
   --rm-unity: #1f5fa8;        --rm-unity-soft: #e5edf7;
-  --rm-overhaul: #7a4fb5;     --rm-overhaul-soft: #efe8f8;
-  --rm-integrations: #027a99; --rm-integrations-soft: #e0f4fb;
+  --rm-integrations: #2f7fb0; --rm-integrations-soft: #e4f1f8;
+  --rm-apis: #4a58a8;         --rm-apis-soft: #e9eaf6;
+  --rm-overhaul: #5b4fae;     --rm-overhaul-soft: #ebe8f7;
+  /* Operations & Onboarding - greens */
   --rm-pipeline: #3f7a2e;     --rm-pipeline-soft: #e6f1e0;
+  --rm-automation: #2f7a56;   --rm-automation-soft: #e2f1ea;
+  --rm-admin: #5f7a2b;        --rm-admin-soft: #edf1df;
+  /* Finance & Revenue - violets */
+  --rm-insights: #6a4bb0;     --rm-insights-soft: #ece7f7;
+  --rm-products: #8046a8;     --rm-products-soft: #f0e7f6;
+  /* Sales & Commercial - magentas */
   --rm-partners: #b23a86;     --rm-partners-soft: #f8e7f1;
-  --rm-acquiring: #b5561f;    --rm-acquiring-soft: #faeadd;
-  --rm-apis: #64509b;         --rm-apis-soft: #ece8f5;
-  --rm-insights: #0b7793;     --rm-insights-soft: #d7eef6;
-  --rm-automation: #b0272e;   --rm-automation-soft: #f7e6e7;
   --rm-sales: #9a3c66;        --rm-sales-soft: #f7e8ee;
-  --rm-admin: #8f6400;        --rm-admin-soft: #f6efdd;
-  --rm-products: #6f7a1f;     --rm-products-soft: #f0f2df;
+  /* Risk & Underwriting - orange */
+  --rm-acquiring: #b5561f;    --rm-acquiring-soft: #faeadd;
 
   /* HTTP method badge colours (convention-led, muted tints; a
      coloured marker dot beside the label is added in components.css) */
@@ -242,19 +249,24 @@
   --violet: #c79bff;
   --violet-soft: #2b1f45;
 
-  --rm-core: #4db3a7;         --rm-core-soft: #123230;
+  /* Product & Technology - blues */
+  --rm-core: #6aa0d8;         --rm-core-soft: #12233a;
   --rm-unity: #7fabe6;        --rm-unity-soft: #182740;
-  --rm-overhaul: #b79ae0;     --rm-overhaul-soft: #241a3a;
-  --rm-integrations: #58c7e0; --rm-integrations-soft: #0f2a31;
+  --rm-integrations: #6fb0d8; --rm-integrations-soft: #12293a;
+  --rm-apis: #939ce6;         --rm-apis-soft: #1e2140;
+  --rm-overhaul: #9a90e0;     --rm-overhaul-soft: #221f3f;
+  /* Operations & Onboarding - greens */
   --rm-pipeline: #7cc06a;     --rm-pipeline-soft: #16240f;
+  --rm-automation: #5cbf94;   --rm-automation-soft: #0f2419;
+  --rm-admin: #a3c065;        --rm-admin-soft: #1f240f;
+  /* Finance & Revenue - violets */
+  --rm-insights: #a68be0;     --rm-insights-soft: #1e1a38;
+  --rm-products: #b785d6;     --rm-products-soft: #261a32;
+  /* Sales & Commercial - magentas */
   --rm-partners: #e58bc0;     --rm-partners-soft: #331026;
-  --rm-acquiring: #e8a06a;    --rm-acquiring-soft: #331d0f;
-  --rm-apis: #ab97e0;         --rm-apis-soft: #261f3d;
-  --rm-insights: #5bb6cf;     --rm-insights-soft: #102b33;
-  --rm-automation: #e2727a;   --rm-automation-soft: #391f22;
   --rm-sales: #e389ab;        --rm-sales-soft: #33121f;
-  --rm-admin: #d3a648;        --rm-admin-soft: #332a16;
-  --rm-products: #c3ce6f;     --rm-products-soft: #242812;
+  /* Risk & Underwriting - orange */
+  --rm-acquiring: #e8a06a;    --rm-acquiring-soft: #331d0f;
 
   --m-get: #4db3a7;
   --m-get-bg: #123230;

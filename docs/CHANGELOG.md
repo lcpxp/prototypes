@@ -21,6 +21,10 @@ is the git history; what is unfinished is docs/STATE.md.
 - The roadmap view switch is now Workstreams / Categories / Work Items /
   Backlog (was Executive / Team / Backlog), with the Department dropdown as
   a filter across all of them.
+- Roadmap lane colours are now keyed to the owning department: Product
+  themes read as blues, Operations as greens, Finance as violets, Sales as
+  magentas, Risk as orange, so a lane's hue signals who owns it. Workstream
+  bars render as a stronger shade of their lane than standalone items.
 
 ### Added
 - A Workstreams level on the roadmap (now the default view): a strategic

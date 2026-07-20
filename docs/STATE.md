@@ -1,35 +1,33 @@
 # Current state
 
 Updated: 2026-07-20 (session)
-Branch: claude/person-modal-upload-delay-yu0sl7
+Branch: claude/person-modal-upload-delay-yu0sl7 (merged to main as it went)
 
 ## In progress
-Work-model redesign, signed off by owner. Bands stay Done/Now/Next/Later/
-Parked-Backlog (dates later). Switcher becomes Workstreams (default) /
-Categories / Work Items + a Department filter dropdown + Detailed toggle
-(replaces Team/Exec). Workstream span = own band range else roll up from
-items. Standalone items hidden from exec, sorted below workstreams
-elsewhere. Small fixes = standalone "maintenance" track, tagged + soft
-relates_to a workstream, kept off the strategic gantt. Roadmap Backlog
-level mirrors the full backlog module (option A). Colour = department hue
--> workstream shade -> item modifier; fixes desaturated. Capture: single
-item -> Parked/Backlog; PRD -> workstream + child items.
-
-DONE this session: data backfill of area_id on 14 owner-added items;
-migration 20260720130000 (roadmap_categories.owning_department seeded for
-all 13 themes; work_items.relates_to_id soft link) applied live.
+None. The signed-off work-model redesign shipped end to end and is live on
+main. Bands stay Done/Now/Next/Later/Parked-Backlog (dates are a later
+phase). Delivered this session, each a green commit merged to main:
+- Foundation: roadmap_categories.owning_department (seeded) and
+  work_items.relates_to_id (soft fix link). Migration 20260720130000.
+- Backlog level mirrors the full backlog master list (nothing captured is
+  invisible in the roadmap).
+- Timeline sorts workstreams above standalone items.
+- Playbook capture rules: every item gets an area; fixes are a standalone
+  maintenance item soft-linked via relates_to_id; PRD -> workstream+items.
+- Data: promoted the owner narrative initiatives to workstreams and
+  scheduled them Now/Next/Later (work_notes decision recorded).
+- View switch reworked to Workstreams (default) / Categories / Work Items /
+  Backlog + Department filter; new Workstreams level (workstreams only,
+  standalone hidden).
+- Hide fixes toggle (drops standalone bug/task/improvement items).
+- Department-keyed lane colours (Product blues, Ops greens, Finance
+  violets, Sales magentas, Risk orange); workstream bars a stronger shade.
 
 ## Next steps
-1. Colour system in assets/css/tokens.css: department base hues, category
-   shades keyed off owning_department, item/fix modifiers.
-2. Views (roadmap-views.js, -cascade.js, roadmap.js): switcher rename +
-   department filter; ordering (workstreams above standalone); backlog
-   level = all items; Fixes section; standalone hidden from exec.
-3. Capture flow: /roadmap-add + playbook always set area_id + track;
-   PRD breakdown -> workstream + items. Extend roadmap_current with
-   owning_department / relates_to when the capture logic needs it.
-4. Tests in tests/unit, CHANGELOG Unreleased line, CODEMAP regen.
+1. Real dates/quarters as a later phase (owner deferred; bands for now).
+2. As new themes are added, set owning_department so the palette resolves.
+3. Refine which items are workstreams vs standalone as the team reviews.
 
 ## Open decisions
-- Fixes grouping is derived (standalone + type bug/task/improvement); no
-  explicit `track` column unless it proves fragile.
+- Fixes are derived (standalone + type bug/task/improvement); revisit an
+  explicit `track` field only if the derivation proves fragile.
