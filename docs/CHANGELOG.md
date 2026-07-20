@@ -26,6 +26,9 @@ is the git history; what is unfinished is docs/STATE.md.
 - A Workstreams level on the roadmap (now the default view): a strategic
   gantt of workstreams only, with standalone items hidden, so the top-level
   narrative reads cleanly for stakeholders.
+- A Hide fixes toggle on the roadmap: drops standalone maintenance items
+  (bugs, tasks, small improvements) from the Work Items and Backlog levels
+  so you can focus on strategic work, without touching the data.
 - Roadmap workstreams: a high-level item ("Self Service API", "Unity
   integration") reads as a presentable container that collapses its
   sub-items to a checklist when Detailed is off, so a workstream can be

@@ -83,6 +83,7 @@
     var pool = level === "backlog" ? (data.items || [])
       : R.productItems(data.items || [], ctx.scopeByArea);
     var all = R.filterShareholder(pool, ctx, !!(opts && opts.shareholder));
+    if (opts && opts.hideFixes) all = all.filter(function (i) { return !R.isFix(i); });
     if (!all.length) return R.emptyNotice();
     if (level === "exec") {
       return R.execBoard(all, ctx, show, expanded) + R.freshnessHtml(all);

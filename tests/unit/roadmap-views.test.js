@@ -242,6 +242,27 @@ test("workstreams level shows only workstreams, hiding standalone items", () => 
   assert.doesNotMatch(cas, /Loose fix/, "standalone item hidden from Workstreams cascade");
 });
 
+test("hideFixes drops standalone fix items but keeps workstreams and features", () => {
+  const V = loadView();
+  const data = {
+    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
+    areas: [{ id: "a1", key: "core-area", title: "Core", scope: "product", category_id: "c1", sort_order: 10 }],
+    items: [
+      { id: "bug", area_id: "a1", category_id: "c1", title: "Loose bug", level: "item", type: "bug",
+        status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
+        department: "product_technology", priority: 10, sort_order: 10 },
+      { id: "feat", area_id: "a1", category_id: "c1", title: "Feature item", level: "item", type: "feature",
+        status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
+        department: "product_technology", priority: 20, sort_order: 20 },
+    ],
+  };
+  assert.match(V.timeline(data, "team"), /Loose bug/, "fix shown by default");
+  const hidden = V.timeline(data, "team", { hideFixes: true });
+  assert.doesNotMatch(hidden, /Loose bug/, "fix hidden when hideFixes is on");
+  assert.match(hidden, /Feature item/, "non-fix item still shown when hideFixes is on");
+  assert.doesNotMatch(V.cascade(data, "team", { hideFixes: true }), /Loose bug/, "cascade also hides fixes");
+});
+
 test("cascade (team) repeats a spanning item under each band it covers", () => {
   const V = loadView();
   const html = V.cascade(sampleData(), "team");

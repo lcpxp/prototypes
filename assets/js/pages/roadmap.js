@@ -37,6 +37,7 @@
   var SHARE_STORE = "roadmap-shareholder";
   var CUSTOM_STORE = "roadmap-custom";
   var PICK_STORE = "roadmap-unpicked";
+  var HIDEFIXES_STORE = "roadmap-hidefixes";
 
   var data = { categories: [], areas: [], items: [] };
   var current = "workstreams";
@@ -47,6 +48,7 @@
   var shareholder = false;
   var customOn = false;
   var unpicked = {};
+  var hideFixes = false;
   var ctx = null;
   var itemsById = {};
 
@@ -125,7 +127,8 @@
 
   function render(host) {
     var opts = { showDelivered: showDelivered, expanded: expanded,
-      shareholder: shareholder, custom: customOn, unpicked: unpicked };
+      shareholder: shareholder, custom: customOn, unpicked: unpicked,
+      hideFixes: hideFixes };
     var vd = viewData();
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(vd, current, opts)
@@ -202,6 +205,8 @@
     shareholder = readShareholder();
     customOn = readCustom();
     unpicked = readUnpicked();
+    try { hideFixes = window.localStorage.getItem(HIDEFIXES_STORE) === "on"; }
+    catch (e) { hideFixes = false; }
     syncCustomBody();
 
     var deptSelect = document.getElementById("roadmap-department");
@@ -269,6 +274,18 @@
         catch (e) { /* ignore */ }
         renderToggle(customBtn, customOn, "Custom view", "Exit custom view");
         syncCustomBody();
+        render(host);
+      });
+    }
+
+    var fixesBtn = document.getElementById("roadmap-hidefixes");
+    if (fixesBtn) {
+      renderToggle(fixesBtn, hideFixes, "Hide fixes", "Show fixes");
+      fixesBtn.addEventListener("click", function () {
+        hideFixes = !hideFixes;
+        try { window.localStorage.setItem(HIDEFIXES_STORE, hideFixes ? "on" : "off"); }
+        catch (e) { /* ignore */ }
+        renderToggle(fixesBtn, hideFixes, "Hide fixes", "Show fixes");
         render(host);
       });
     }

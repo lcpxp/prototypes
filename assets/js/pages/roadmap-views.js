@@ -74,6 +74,15 @@
     return items.filter(function (i) { return scopeByArea[i.area_id] === "product"; });
   }
 
+  // A maintenance "fix": a standalone item (no workstream parent, not a
+  // workstream itself) of a fix-flavoured type. Fixes carry their domain
+  // tags and a soft relates_to link but stay off the strategic gantt; the
+  // Hide fixes toggle drops them from the Work Items and Backlog levels.
+  function isFix(i) {
+    return !i.parent_id && i.level !== "workstream" &&
+      (i.type === "bug" || i.type === "task" || i.type === "improvement");
+  }
+
   // Only items without a parent are placed on the board; sub-items
   // surface nested under their parent, never as their own bars.
   function topLevel(items) {
@@ -417,6 +426,7 @@
     var pool = level === "backlog" ? (data.items || [])
       : productItems(data.items || [], ctx.scopeByArea);
     var all = filterShareholder(pool, ctx, !!(opts && opts.shareholder));
+    if (opts && opts.hideFixes) all = all.filter(function (i) { return !isFix(i); });
     if (!all.length) return emptyNotice();
     if (level === "exec") {
       return execBoard(all, ctx, show, expanded) + freshnessHtml(all);
@@ -450,7 +460,7 @@
   App._rmv = {
     BANDS: BANDS, ACTIVE_MAX: ACTIVE_MAX, PARKED: PARKED,
     presentationLabel: presentationLabel, colStart: colStart, colEnd: colEnd,
-    productItems: productItems, byOrder: byOrder, context: context,
+    productItems: productItems, isFix: isFix, byOrder: byOrder, context: context,
     themeIdOf: themeIdOf, groupBy: groupBy, catClass: catClass, progressOf: progressOf,
     topLevel: topLevel, teamList: teamList, freshnessHtml: freshnessHtml,
     emptyNotice: emptyNotice, breakdown: breakdown, execBoard: execBoard,
@@ -460,7 +470,7 @@
 
   App.roadmapView = {
     colStart: colStart, colEnd: colEnd, isParked: isParked, isActive: isActive,
-    productItems: productItems, byDepartment: byDepartment, byOrder: byOrder, context: context,
+    productItems: productItems, isFix: isFix, byDepartment: byDepartment, byOrder: byOrder, context: context,
     themeLabel: themeLabel, bandLabel: bandLabel, endBandLabel: endBandLabel,
     areaTitleOf: areaTitleOf, progressOf: progressOf,
     childItems: childItems, childStats: childStats, checklistHtml: checklistHtml,
