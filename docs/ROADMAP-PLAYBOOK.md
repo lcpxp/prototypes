@@ -109,6 +109,36 @@ Items are never deleted. Close with `status='done'` or `'dropped'` plus a
     values ('decision', 'Promoted Inbound API to Now: partner deadline confirmed',
             (select id from work_items where title='Inbound API'));
 
+## Capture rules that keep work visible and classed
+
+- **Every item needs a product area.** The board and exports show only
+  items whose area scope is 'product'; an item with no area (or a 'portal'
+  area) shows only in the Backlog master list. Always set `area_id`,
+  resolved by key, to the product area whose theme matches the item's
+  category: `(select id from work_areas where key='insights-analytics')`.
+- **Small fixes are the maintenance track.** A one-line bug or task is a
+  STANDALONE item - never a child of a workstream, since nesting rolls up
+  and lights that workstream up on the strategic gantt. Tag its
+  department, category and area, and soft-link the workstream it relates
+  to via `relates_to_id` so it is attributable without appearing under it:
+
+      insert into work_items (title, type, level, category_id, area_id,
+        department, relates_to_id, horizon, status)
+      values ('Acquirer selection screen renders empty', 'bug', 'item',
+        (select id from roadmap_categories where key='acquiring'),
+        (select id from work_areas where key='screening-workflow-automation'),
+        'product_technology',
+        (select id from work_items where title='Acquirer management' and level='workstream'),
+        'someday', 'idea');
+
+  Standalone fixes stay off the Workstreams/Exec view and never promote
+  their related workstream; they surface in Work Items, the Backlog and
+  the Fixes filter.
+- **A PRD becomes a workstream + child items.** Create one workstream and
+  nest its steps under it (parent_id), parked ('someday') until scheduled.
+- **owning_department on a theme** sets its colour family (department hue
+  -> workstream shade -> item); set it when you add a theme.
+
 Add a theme only for a genuinely new workstream lane: insert a
 `roadmap_categories` row, then a `--rm-<key>` token pair and a `.rm-cat-<key>`
 rule in assets/css/tokens.css (else it renders neutral). Set
