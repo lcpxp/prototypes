@@ -88,6 +88,11 @@
       return R.execBoard(all, ctx, show, expanded) + R.freshnessHtml(all);
     }
     var tops = R.topLevel(all);
+    if (level === "workstreams") {
+      var wsList = R.teamList(tops).filter(function (i) { return i.level === "workstream"; });
+      return bandsCascade(wsList, ctx, R.ACTIVE_MAX, show, pick) +
+        (expanded ? R.breakdown(R.visibleDetail(wsList, show), ctx) : "") + R.freshnessHtml(all);
+    }
     var list = level === "backlog" ? tops : R.teamList(tops);
     var maxBand = level === "backlog" ? R.PARKED : R.ACTIVE_MAX;
     return bandsCascade(list, ctx, maxBand, show, pick) +

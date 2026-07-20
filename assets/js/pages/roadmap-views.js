@@ -422,6 +422,16 @@
       return execBoard(all, ctx, show, expanded) + freshnessHtml(all);
     }
     var tops = topLevel(all);
+    if (level === "workstreams") {
+      // The strategic gantt: workstreams only, standalone items hidden.
+      var wsList = teamList(tops).filter(function (i) { return i.level === "workstream"; });
+      var wsGrid = timelineGrid(wsList.map(function (i) { return placeItem(i, ctx); }),
+        ACTIVE_MAX, show,
+        '<p class="notice">No active workstreams. Mark a top-level item as a ' +
+        "workstream to show it here.</p>", pick);
+      return wsGrid + (expanded ? breakdown(visibleDetail(wsList, show), ctx) : "") +
+        freshnessHtml(all);
+    }
     if (level === "backlog") {
       var grid = timelineGrid(tops.map(function (i) { return placeItem(i, ctx); }),
         PARKED, show, emptyNotice(), pick);

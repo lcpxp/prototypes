@@ -16,9 +16,13 @@
 
   window.App = window.App || {};
 
+  // The grouping switch. Department is a separate dropdown filter, not a
+  // level. Internal keys stay exec/team for the render branches they drive;
+  // the labels are what the switch shows.
   var LEVELS = [
-    { key: "exec", label: "Executive" },
-    { key: "team", label: "Team" },
+    { key: "workstreams", label: "Workstreams" },
+    { key: "exec", label: "Categories" },
+    { key: "team", label: "Work Items" },
     { key: "backlog", label: "Backlog" },
   ];
   var LAYOUTS = [
@@ -35,7 +39,7 @@
   var PICK_STORE = "roadmap-unpicked";
 
   var data = { categories: [], areas: [], items: [] };
-  var current = "exec";
+  var current = "workstreams";
   var layout = "timeline";
   var showDelivered = true;
   var expanded = false;
@@ -51,7 +55,7 @@
   // The hash carries both: "#team/cascade". Layout defaults to Timeline.
   function readState() {
     var parts = (window.location.hash || "").replace(/^#/, "").split("/");
-    current = find(LEVELS, parts[0]) ? parts[0] : stored(LEVEL_STORE, LEVELS, "exec");
+    current = find(LEVELS, parts[0]) ? parts[0] : stored(LEVEL_STORE, LEVELS, "workstreams");
     layout = find(LAYOUTS, parts[1]) ? parts[1] : stored(LAYOUT_STORE, LAYOUTS, "timeline");
   }
   function stored(key, list, fallback) {

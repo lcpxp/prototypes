@@ -50,17 +50,17 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail.js | 262 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
-| assets/js/pages/roadmap-views-cascade.js | 99 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
-| assets/js/pages/roadmap-views.js | 463 | roadmap-views.js - Pure HTML builders for the roadmap home |
-| assets/js/pages/roadmap.js | 413 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
+| assets/js/pages/roadmap-views-cascade.js | 104 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
+| assets/js/pages/roadmap-views.js | 473 | roadmap-views.js - Pure HTML builders for the roadmap home |
+| assets/js/pages/roadmap.js | 417 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 72 | Changelog |
+| docs/CHANGELOG.md | 79 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
-| docs/ROADMAP-PLAYBOOK.md | 162 | Roadmap playbook |
+| docs/ROADMAP-PLAYBOOK.md | 192 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 153 | Roadmap process |
 | docs/ROADMAP.md | 179 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
@@ -84,7 +84,7 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/pci/reports.html | 77 | Compliance reporting - PXP replica - LPio |
 | modules/prototypes/website-screening/index.html | 50 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 93 | Roadmap - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 94 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 55 | Users - LPio / LaunchPad IO |
 | package.json | 13 |  |
 | scripts/audit.js | 123 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
@@ -128,7 +128,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-detail.test.js | 191 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
-| tests/unit/roadmap-views.test.js | 383 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
+| tests/unit/roadmap-views.test.js | 405 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
@@ -367,32 +367,32 @@ document instead of walking the tree or reading whole files.
 | catBlock() | assets/js/pages/roadmap-views.js:383 |
 | visibleDetail() | assets/js/pages/roadmap-views.js:404 |
 | timeline() | assets/js/pages/roadmap-views.js:408 |
-| find() | assets/js/pages/roadmap.js:49 |
-| readState() | assets/js/pages/roadmap.js:52 |
-| stored() | assets/js/pages/roadmap.js:57 |
-| hashFor() | assets/js/pages/roadmap.js:62 |
-| readDelivered() | assets/js/pages/roadmap.js:66 |
-| readExpanded() | assets/js/pages/roadmap.js:74 |
-| readDepartment() | assets/js/pages/roadmap.js:82 |
-| readShareholder() | assets/js/pages/roadmap.js:93 |
-| readCustom() | assets/js/pages/roadmap.js:96 |
-| readUnpicked() | assets/js/pages/roadmap.js:99 |
-| persistUnpicked() | assets/js/pages/roadmap.js:103 |
-| syncCustomBody() | assets/js/pages/roadmap.js:109 |
-| viewData() | assets/js/pages/roadmap.js:113 |
-| exportRows() | assets/js/pages/roadmap.js:117 |
-| render() | assets/js/pages/roadmap.js:122 |
-| renderDelivered() | assets/js/pages/roadmap.js:131 |
-| renderExpanded() | assets/js/pages/roadmap.js:136 |
-| renderToggle() | assets/js/pages/roadmap.js:143 |
-| downloadJson() | assets/js/pages/roadmap.js:150 |
-| safeName() | assets/js/pages/roadmap.js:153 |
-| tabs() | assets/js/pages/roadmap.js:158 |
-| renderControls() | assets/js/pages/roadmap.js:167 |
-| set() | assets/js/pages/roadmap.js:181 |
-| setItemParam() | assets/js/pages/roadmap.js:293 |
-| openDrawer() | assets/js/pages/roadmap.js:301 |
-| closeDrawer() | assets/js/pages/roadmap.js:316 |
+| find() | assets/js/pages/roadmap.js:53 |
+| readState() | assets/js/pages/roadmap.js:56 |
+| stored() | assets/js/pages/roadmap.js:61 |
+| hashFor() | assets/js/pages/roadmap.js:66 |
+| readDelivered() | assets/js/pages/roadmap.js:70 |
+| readExpanded() | assets/js/pages/roadmap.js:78 |
+| readDepartment() | assets/js/pages/roadmap.js:86 |
+| readShareholder() | assets/js/pages/roadmap.js:97 |
+| readCustom() | assets/js/pages/roadmap.js:100 |
+| readUnpicked() | assets/js/pages/roadmap.js:103 |
+| persistUnpicked() | assets/js/pages/roadmap.js:107 |
+| syncCustomBody() | assets/js/pages/roadmap.js:113 |
+| viewData() | assets/js/pages/roadmap.js:117 |
+| exportRows() | assets/js/pages/roadmap.js:121 |
+| render() | assets/js/pages/roadmap.js:126 |
+| renderDelivered() | assets/js/pages/roadmap.js:135 |
+| renderExpanded() | assets/js/pages/roadmap.js:140 |
+| renderToggle() | assets/js/pages/roadmap.js:147 |
+| downloadJson() | assets/js/pages/roadmap.js:154 |
+| safeName() | assets/js/pages/roadmap.js:157 |
+| tabs() | assets/js/pages/roadmap.js:162 |
+| renderControls() | assets/js/pages/roadmap.js:171 |
+| set() | assets/js/pages/roadmap.js:185 |
+| setItemParam() | assets/js/pages/roadmap.js:297 |
+| openDrawer() | assets/js/pages/roadmap.js:305 |
+| closeDrawer() | assets/js/pages/roadmap.js:320 |
 | notice() | assets/js/pages/users.js:15 |
 | roleBadge() | assets/js/pages/users.js:24 |
 | roleCell() | assets/js/pages/users.js:30 |
@@ -434,7 +434,7 @@ document instead of walking the tree or reading whole files.
 | loadView() | tests/unit/roadmap-views.test.js:22 |
 | count() | tests/unit/roadmap-views.test.js:39 |
 | sampleData() | tests/unit/roadmap-views.test.js:45 |
-| shareholderData() | tests/unit/roadmap-views.test.js:305 |
+| shareholderData() | tests/unit/roadmap-views.test.js:327 |
 | load() | tests/unit/search.test.js:15 |
 | loadSprints() | tests/unit/sprints.test.js:13 |
 | loadApp() | tests/unit/ui.test.js:13 |

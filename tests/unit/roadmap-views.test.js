@@ -220,6 +220,28 @@ test("timeline sorts workstreams above standalone items in the same band", () =>
     "workstream sorts above the standalone item even with a worse priority number");
 });
 
+test("workstreams level shows only workstreams, hiding standalone items", () => {
+  const V = loadView();
+  const data = {
+    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
+    areas: [{ id: "a1", key: "core-area", title: "Core", scope: "product", category_id: "c1", sort_order: 10 }],
+    items: [
+      { id: "std", area_id: "a1", category_id: "c1", title: "Loose fix", level: "item",
+        status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
+        department: "product_technology", priority: 10, sort_order: 10 },
+      { id: "ws", area_id: "a1", category_id: "c1", title: "Real workstream", level: "workstream",
+        status: "in_progress", horizon: "now", end_horizon: null, presentation: "current",
+        department: "product_technology", priority: 20, sort_order: 20 },
+    ],
+  };
+  const tl = V.timeline(data, "workstreams");
+  assert.match(tl, /Real workstream/);
+  assert.doesNotMatch(tl, /Loose fix/, "standalone item hidden from Workstreams timeline");
+  const cas = V.cascade(data, "workstreams");
+  assert.match(cas, /Real workstream/);
+  assert.doesNotMatch(cas, /Loose fix/, "standalone item hidden from Workstreams cascade");
+});
+
 test("cascade (team) repeats a spanning item under each band it covers", () => {
   const V = loadView();
   const html = V.cascade(sampleData(), "team");
