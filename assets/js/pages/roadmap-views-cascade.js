@@ -78,8 +78,11 @@
     var expanded = !!(opts && opts.expanded);
     var pick = opts && opts.custom ? { custom: true, unpicked: opts.unpicked || {} } : null;
     var ctx = R.context(data);
-    var all = R.filterShareholder(R.productItems(data.items || [], ctx.scopeByArea),
-      ctx, !!(opts && opts.shareholder));
+    // Backlog mirrors the master list (all scopes); Exec/Team stay
+    // product-scoped. See timeline() in roadmap-views.js.
+    var pool = level === "backlog" ? (data.items || [])
+      : R.productItems(data.items || [], ctx.scopeByArea);
+    var all = R.filterShareholder(pool, ctx, !!(opts && opts.shareholder));
     if (!all.length) return R.emptyNotice();
     if (level === "exec") {
       return R.execBoard(all, ctx, show, expanded) + R.freshnessHtml(all);

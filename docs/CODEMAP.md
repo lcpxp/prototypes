@@ -6,6 +6,8 @@ document instead of walking the tree or reading whole files.
 
 | File | Lines | Purpose |
 |---|---:|---|
+| .claude/commands/roadmap-add.md | 30 |  |
+| .claude/commands/roadmap.md | 40 |  |
 | .claude/settings.json | 49 |  |
 | .githooks/pre-commit | 29 |  |
 | .github/workflows/deploy.yml | 53 |  |
@@ -48,22 +50,23 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail.js | 262 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
-| assets/js/pages/roadmap-views-cascade.js | 96 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
-| assets/js/pages/roadmap-views.js | 456 | roadmap-views.js - Pure HTML builders for the roadmap home |
+| assets/js/pages/roadmap-views-cascade.js | 99 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
+| assets/js/pages/roadmap-views.js | 461 | roadmap-views.js - Pure HTML builders for the roadmap home |
 | assets/js/pages/roadmap.js | 413 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 64 | Changelog |
+| docs/CHANGELOG.md | 69 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
+| docs/ROADMAP-PLAYBOOK.md | 162 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 153 | Roadmap process |
 | docs/ROADMAP.md | 179 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 32 | Current state |
+| docs/STATE.md | 36 | Current state |
 | docs/WORKFLOW.md | 110 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
@@ -104,11 +107,12 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260717120000_work_item_department.sql | 25 | ------------------------------------------------------------------ |
 | supabase/migrations/20260718120000_work_item_parent.sql | 36 | ------------------------------------------------------------------ |
 | supabase/migrations/20260720000000_workstreams_and_visibility.sql | 98 | ------------------------------------------------------------------ |
+| supabase/migrations/20260720130000_category_department_and_fix_relates.sql | 74 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 245 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 57 | ------------------------------------------------------------------ |
-| supabase/schema/30_work.sql | 392 | ------------------------------------------------------------------ |
+| supabase/schema/30_work.sql | 411 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 495 | ------------------------------------------------------------------ |
@@ -124,7 +128,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-detail.test.js | 191 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
-| tests/unit/roadmap-views.test.js | 360 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
+| tests/unit/roadmap-views.test.js | 364 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
@@ -427,10 +431,10 @@ document instead of walking the tree or reading whole files.
 | sample() | tests/unit/roadmap-detail.test.js:31 |
 | ctxOf() | tests/unit/roadmap-detail.test.js:57 |
 | plain() | tests/unit/roadmap-detail.test.js:58 |
-| loadView() | tests/unit/roadmap-views.test.js:21 |
-| count() | tests/unit/roadmap-views.test.js:38 |
-| sampleData() | tests/unit/roadmap-views.test.js:43 |
-| shareholderData() | tests/unit/roadmap-views.test.js:282 |
+| loadView() | tests/unit/roadmap-views.test.js:22 |
+| count() | tests/unit/roadmap-views.test.js:39 |
+| sampleData() | tests/unit/roadmap-views.test.js:45 |
+| shareholderData() | tests/unit/roadmap-views.test.js:286 |
 | load() | tests/unit/search.test.js:15 |
 | loadSprints() | tests/unit/sprints.test.js:13 |
 | loadApp() | tests/unit/ui.test.js:13 |

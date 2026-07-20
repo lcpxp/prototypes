@@ -8,7 +8,8 @@
 //               it owns and their item counts. Layout-independent.
 //   Team      - active work at item level; Detailed adds a
 //               Category -> Area -> item breakdown with sub-step lists.
-//   Backlog   - every item: active + parked + delivered.
+//   Backlog   - the master list: every item, all scopes (mirrors the
+//               backlog module), active + parked + delivered.
 // Placement derives from an item's own fields; sub-items (parent_id set)
 // are never placed as their own bars.
 // ------------------------------------------------------------------
@@ -38,7 +39,8 @@ function loadView() {
 function count(html, re) { return (html.match(re) || []).length; }
 
 // Themes: Core, Unity, Growth. Areas carry a title and map to themes; a2
-// is portal scope and must never reach the product roadmap. Items
+// is portal scope: excluded from the product Exec/Team views but present
+// in the Backlog master list. Items
 // exercise every band, carry departments, and i2 owns two sub-steps.
 function sampleData() {
   return {
@@ -187,13 +189,14 @@ test("team detailed adds a Category -> Area breakdown with department tags and s
   assert.match(html, /rmv-step-title">Settlement/);
 });
 
-test("timeline (backlog) shows every top-level item and the Parked column, not sub-items", () => {
+test("timeline (backlog) mirrors the master list: every top-level item, all scopes, not sub-items", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "backlog");
   assert.match(html, />Parked</, "Backlog carries the Parked column");
-  ["Core onboarding", "Unity integration", "Portal overhaul", "US market", "Whitelist blacklist", "Growth bet"]
+  ["Core onboarding", "Unity integration", "Portal overhaul", "US market", "Whitelist blacklist",
+    "Growth bet", "Portal tooling"]
     .forEach((t) => assert.match(html, new RegExp(t), `${t} present in Backlog`));
-  assert.doesNotMatch(html, /Portal tooling/, "portal item still excluded");
+  assert.match(html, /Portal tooling/, "portal-scope item now surfaces in the Backlog master list");
   assert.doesNotMatch(html, /rmv-tl-bar[^>]*>Merchant Group/, "a sub-step is not a backlog bar");
   assert.match(html, /rmv-tl-bar--parked[^"]*"[^>]*grid-column:6 \/ 7/);
 });
@@ -215,6 +218,7 @@ test("cascade (backlog) surfaces parked items under the Parked band with reasoni
   assert.match(html, /rmv-band-head--parked/);
   assert.match(html, /US market/);
   assert.match(html, /Whitelist blacklist/);
+  assert.match(html, /Portal tooling/, "portal-scope item surfaces in the Backlog master list");
 });
 
 test("showDelivered=false hides delivered work across timeline and cascade", () => {

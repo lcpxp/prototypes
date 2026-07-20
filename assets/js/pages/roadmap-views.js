@@ -408,8 +408,13 @@
     var expanded = !!(opts && opts.expanded);
     var pick = opts && opts.custom ? { custom: true, unpicked: opts.unpicked || {} } : null;
     var ctx = context(data);
-    var all = filterShareholder(productItems(data.items || [], ctx.scopeByArea),
-      ctx, !!(opts && opts.shareholder));
+    // The Backlog level is the master list: it mirrors the backlog module
+    // and carries every work_item (all scopes, including portal and unfiled
+    // work), so nothing captured is ever invisible in the roadmap tool.
+    // Exec and Team stay product-scoped. See docs/ROADMAP-PLAYBOOK.md.
+    var pool = level === "backlog" ? (data.items || [])
+      : productItems(data.items || [], ctx.scopeByArea);
+    var all = filterShareholder(pool, ctx, !!(opts && opts.shareholder));
     if (!all.length) return emptyNotice();
     if (level === "exec") {
       return execBoard(all, ctx, show, expanded) + freshnessHtml(all);
