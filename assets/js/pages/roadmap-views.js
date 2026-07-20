@@ -126,6 +126,36 @@
   }
   function catClass(cat) { return cat ? " rm-cat-" + App.escape(cat.key) : ""; }
 
+  // Shareholder projection: keep only items whose theme is
+  // shareholder-visible, dropping bugs and Core/untethered work, so an
+  // exec/shareholder view is clean by construction rather than by hand
+  // (see docs/ROADMAP-PLAYBOOK.md). An item with no theme is treated as
+  // not shareholder-ready; give it a visible theme to surface it.
+  function shareholderVisible(i, ctx) {
+    if (i.type === "bug") return false;
+    var id = themeIdOf(i, ctx), cat = id ? ctx.catById[id] : null;
+    return !!(cat && cat.shareholder_visible !== false);
+  }
+  function filterShareholder(items, ctx, on) {
+    return on ? items.filter(function (i) { return shareholderVisible(i, ctx); }) : items;
+  }
+
+  // Custom view: a per-row checkbox for hand-picking what a one-off PDF or
+  // export carries, without any database change. pick = { custom, unpicked }
+  // comes from roadmap.js; unpicked is a map of the ids the owner has
+  // deselected. No pick object means the feature is off and nothing renders.
+  function pickOn(pick) { return !!(pick && pick.custom); }
+  function isUnpicked(id, pick) {
+    return pickOn(pick) && !!(pick.unpicked && pick.unpicked[id]);
+  }
+  function pickCls(id, pick) { return isUnpicked(id, pick) ? " rmv-unpicked" : ""; }
+  function pickBox(id, pick) {
+    if (!pickOn(pick)) return "";
+    return '<label class="rmv-pick"><input type="checkbox" data-pick-id="' +
+      App.escape(id) + '"' + (isUnpicked(id, pick) ? "" : " checked") +
+      ' aria-label="Include this item in the custom PDF and export"></label>';
+  }
+
   // Coarse progress: a stored 0-100 snapped to checkpoints for a subtle
   // bar. Delivered work reads as complete regardless of the stored value.
   // The number itself is never shown at board level - progress is a
@@ -203,7 +233,7 @@
   // Shared grid renderer over pre-placed rows. maxBand caps the axis
   // (ACTIVE_MAX for Team/Executive, PARKED for Backlog); hiding
   // delivered drops the Delivered column and clamps spans into it.
-  function timelineGrid(placed, maxBand, showDelivered, emptyMsg) {
+  function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick) {
     var visible = showDelivered ? placed
       : placed.filter(function (p) { return p._e >= 1; });
     if (!visible.length) return emptyMsg;
@@ -216,11 +246,12 @@
       var progCls = p._prog ? " rmv-prog-" + p._prog.bucket : "";
       var idAttr = p._id ? ' data-item-id="' + App.escape(p._id) + '"' : "";
       var bar = '<span class="rmv-tl-bar' + (p.done ? " rmv-tl-bar--done" : "") +
-        (p._s === PARKED ? " rmv-tl-bar--parked" : "") + catClass(p._cat) + progCls +
+        (p._s === PARKED ? " rmv-tl-bar--parked" : "") + (p._ws ? " rmv-tl-bar--ws" : "") +
+        catClass(p._cat) + progCls +
         '"' + idAttr + ' style="grid-column:' + (s - first + 2) + " / " + (e - first + 3) + '">' +
         App.escape(p.label) + "</span>";
-      return '<div class="rmv-tl-row"><span class="rmv-tl-label">' +
-        App.escape(p._catLabel) + "</span>" + bar + "</div>";
+      return '<div class="rmv-tl-row' + pickCls(p._id, pick) + '"><span class="rmv-tl-label">' +
+        App.escape(p._catLabel) + "</span>" + bar + pickBox(p._id, pick) + "</div>";
     }).join("");
     return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") +
       '" style="--tl-cols:' + (maxBand - first + 1) + '">' + head + body + "</div>";
@@ -231,7 +262,8 @@
     var catId = themeIdOf(i, ctx), cat = catId ? ctx.catById[catId] : null;
     return { _s: colStart(i), _e: colEnd(i), _cat: cat,
       _catLabel: cat ? cat.label : "General", _pri: i.priority, _so: i.sort_order,
-      label: i.title, done: i.status === "done", _id: i.id, _prog: progressOf(i) };
+      label: i.title, done: i.status === "done", _id: i.id, _prog: progressOf(i),
+      _ws: i.level === "workstream" };
   }
 
   // --- Executive: department-first rollup ---------------------------
@@ -374,8 +406,10 @@
   function timeline(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
     var expanded = !!(opts && opts.expanded);
+    var pick = opts && opts.custom ? { custom: true, unpicked: opts.unpicked || {} } : null;
     var ctx = context(data);
-    var all = productItems(data.items || [], ctx.scopeByArea);
+    var all = filterShareholder(productItems(data.items || [], ctx.scopeByArea),
+      ctx, !!(opts && opts.shareholder));
     if (!all.length) return emptyNotice();
     if (level === "exec") {
       return execBoard(all, ctx, show, expanded) + freshnessHtml(all);
@@ -383,14 +417,14 @@
     var tops = topLevel(all);
     if (level === "backlog") {
       var grid = timelineGrid(tops.map(function (i) { return placeItem(i, ctx); }),
-        PARKED, show, emptyNotice());
+        PARKED, show, emptyNotice(), pick);
       return grid + (expanded ? breakdown(visibleDetail(tops, show), ctx) : "") + freshnessHtml(all);
     }
     var teamTops = teamList(tops);
     var teamGrid = timelineGrid(teamTops.map(function (i) { return placeItem(i, ctx); }),
       ACTIVE_MAX, show,
       '<p class="notice">No active roadmap work. Items wait in the Backlog ' +
-      "until scheduled (set a horizon of now, next or later).</p>");
+      "until scheduled (set a horizon of now, next or later).</p>", pick);
     return teamGrid + (expanded ? breakdown(visibleDetail(teamTops, show), ctx) : "") +
       freshnessHtml(all);
   }
@@ -404,6 +438,7 @@
     topLevel: topLevel, teamList: teamList, freshnessHtml: freshnessHtml,
     emptyNotice: emptyNotice, breakdown: breakdown, execBoard: execBoard,
     visibleDetail: visibleDetail,
+    filterShareholder: filterShareholder, pickCls: pickCls, pickBox: pickBox,
   };
 
   App.roadmapView = {
@@ -414,6 +449,7 @@
     childItems: childItems, childStats: childStats, checklistHtml: checklistHtml,
     presentationLabel: presentationLabel, freshnessHtml: freshnessHtml,
     topLevel: topLevel, execBoard: execBoard, breakdown: breakdown,
+    shareholderVisible: shareholderVisible, filterShareholder: filterShareholder,
     timeline: timeline,
   };
 })();

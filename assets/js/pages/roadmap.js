@@ -30,6 +30,9 @@
   var DELIVERED_STORE = "roadmap-delivered";
   var EXPAND_STORE = "roadmap-expanded";
   var DEPT_STORE = "roadmap-department";
+  var SHARE_STORE = "roadmap-shareholder";
+  var CUSTOM_STORE = "roadmap-custom";
+  var PICK_STORE = "roadmap-unpicked";
 
   var data = { categories: [], areas: [], items: [] };
   var current = "exec";
@@ -37,6 +40,9 @@
   var showDelivered = true;
   var expanded = false;
   var department = "";
+  var shareholder = false;
+  var customOn = false;
+  var unpicked = {};
   var ctx = null;
   var itemsById = {};
 
@@ -80,12 +86,42 @@
     return known ? v : "";
   }
 
+  // Shareholder view and Custom view are view-only preferences
+  // (localStorage), not part of the shareable hash. Shareholder narrows
+  // to the shareholder-clean projection; Custom turns on the per-row
+  // picker whose deselections live in unpicked (an id -> true map).
+  function readShareholder() {
+    try { return window.localStorage.getItem(SHARE_STORE) === "on"; } catch (e) { return false; }
+  }
+  function readCustom() {
+    try { return window.localStorage.getItem(CUSTOM_STORE) === "on"; } catch (e) { return false; }
+  }
+  function readUnpicked() {
+    try { return JSON.parse(window.localStorage.getItem(PICK_STORE) || "{}") || {}; }
+    catch (e) { return {}; }
+  }
+  function persistUnpicked() {
+    try { window.localStorage.setItem(PICK_STORE, JSON.stringify(unpicked)); }
+    catch (e) { /* ignore */ }
+  }
+  // The body flag drives the custom-view CSS (the trailing checkbox column
+  // and the print pruning); the markup itself comes from the builders.
+  function syncCustomBody() { document.body.classList.toggle("rm-custom", customOn); }
+
   // The dataset the board and the export both draw, narrowed to the
   // selected department (categories and areas stay intact).
   function viewData() { return App.roadmapView.byDepartment(data, department); }
 
+  // The rows an export carries: the department-filtered set, narrowed to
+  // the custom-view selection when it is active (unpicked rows drop out).
+  function exportRows() {
+    var items = viewData().items;
+    return customOn ? items.filter(function (i) { return !unpicked[i.id]; }) : items;
+  }
+
   function render(host) {
-    var opts = { showDelivered: showDelivered, expanded: expanded };
+    var opts = { showDelivered: showDelivered, expanded: expanded,
+      shareholder: shareholder, custom: customOn, unpicked: unpicked };
     var vd = viewData();
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(vd, current, opts)
@@ -100,6 +136,13 @@
   function renderExpanded(btn) {
     btn.setAttribute("aria-pressed", String(expanded));
     btn.textContent = expanded ? "Compact view" : "Detailed view";
+  }
+
+  // Generic on/off toolbar toggle: aria state plus a label naming the
+  // action it now performs (matching Hide delivered / Detailed view).
+  function renderToggle(btn, active, offLabel, onLabel) {
+    btn.setAttribute("aria-pressed", String(active));
+    btn.textContent = active ? onLabel : offLabel;
   }
 
   // Download a JSON object as a file (the KPI-ready export), via the
@@ -152,6 +195,10 @@
     showDelivered = readDelivered();
     expanded = readExpanded();
     department = readDepartment();
+    shareholder = readShareholder();
+    customOn = readCustom();
+    unpicked = readUnpicked();
+    syncCustomBody();
 
     var deptSelect = document.getElementById("roadmap-department");
     if (deptSelect) {
@@ -197,15 +244,40 @@
       });
     }
 
+    var shareBtn = document.getElementById("roadmap-shareholder");
+    if (shareBtn) {
+      renderToggle(shareBtn, shareholder, "Shareholder view", "Full roadmap");
+      shareBtn.addEventListener("click", function () {
+        shareholder = !shareholder;
+        try { window.localStorage.setItem(SHARE_STORE, shareholder ? "on" : "off"); }
+        catch (e) { /* ignore */ }
+        renderToggle(shareBtn, shareholder, "Shareholder view", "Full roadmap");
+        render(host);
+      });
+    }
+
+    var customBtn = document.getElementById("roadmap-custom");
+    if (customBtn) {
+      renderToggle(customBtn, customOn, "Custom view", "Exit custom view");
+      customBtn.addEventListener("click", function () {
+        customOn = !customOn;
+        try { window.localStorage.setItem(CUSTOM_STORE, customOn ? "on" : "off"); }
+        catch (e) { /* ignore */ }
+        renderToggle(customBtn, customOn, "Custom view", "Exit custom view");
+        syncCustomBody();
+        render(host);
+      });
+    }
+
     var exportBtn = document.getElementById("roadmap-export-json");
     if (exportBtn) exportBtn.addEventListener("click", function () {
-      downloadJson("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(viewData().items, ctx));
+      downloadJson("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(exportRows(), ctx));
     });
 
     var csvBtn = document.getElementById("roadmap-export-csv");
     if (csvBtn) csvBtn.addEventListener("click", function () {
       App.download("roadmap-export.csv",
-        App.roadmapDetail.toCsvRoadmap(viewData().items, ctx), "text/csv");
+        App.roadmapDetail.toCsvRoadmap(exportRows(), ctx), "text/csv");
     });
 
     // Detail drawer: any element carrying a data-item-id opens the item.
@@ -255,10 +327,25 @@
       if (e.key === "Escape" && drawer && !drawer.hidden) closeDrawer();
     });
     host.addEventListener("click", function (e) {
+      // A custom-view checkbox click must not open the drawer beneath it.
+      if (e.target.closest && e.target.closest(".rmv-pick")) return;
       var el = e.target.closest ? e.target.closest("[data-item-id]") : null;
       if (!el) return;
       var item = itemsById[el.getAttribute("data-item-id")];
       if (item) openDrawer(item);
+    });
+
+    // Custom view: a row's checkbox toggles whether it rides the PDF and
+    // the JSON/CSV export. Selection is a view preference (localStorage);
+    // it changes nothing in the database. Re-render to keep every copy of
+    // a spanning item (cascade) and its dim state in sync.
+    host.addEventListener("change", function (e) {
+      var box = e.target;
+      if (!box || !box.getAttribute || box.getAttribute("data-pick-id") === null) return;
+      var id = box.getAttribute("data-pick-id");
+      if (box.checked) delete unpicked[id]; else unpicked[id] = true;
+      persistUnpicked();
+      render(host);
     });
 
     // A closed <details> renders no content on paper; expand any first.
@@ -276,13 +363,13 @@
     // The three lists are independent, so fetch them in parallel.
     var results = await Promise.all([
       App.db.from(App.registry.tables.roadmapCategories)
-        .select("id, key, label, description, sort_order")
+        .select("id, key, label, description, shareholder_visible, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workAreas)
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
-        .select("id, parent_id, area_id, category_id, title, summary, status, horizon, end_horizon, " +
+        .select("id, parent_id, area_id, category_id, title, summary, type, level, status, horizon, end_horizon, " +
           "presentation, priority, effort, impact, department, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
           "sort_order, updated_at, tags")

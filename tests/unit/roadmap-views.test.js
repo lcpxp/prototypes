@@ -276,3 +276,84 @@ test("byDepartment feeds the board so a filter narrows the render", () => {
   assert.match(html, /Growth bet/, "sales work shows");
   assert.doesNotMatch(html, /Unity integration/, "other departments drop out");
 });
+
+// A small dataset exercising the shareholder projection: one visible-theme
+// item, one under a shareholder-hidden theme, one bug, one with no theme.
+function shareholderData() {
+  return {
+    categories: [
+      { id: "c1", key: "core", label: "Core", shareholder_visible: false, sort_order: 10 },
+      { id: "c2", key: "apis", label: "APIs", shareholder_visible: true, sort_order: 20 },
+    ],
+    areas: [{ id: "a1", key: "svc", title: "Service", scope: "product", category_id: null, sort_order: 10 }],
+    items: [
+      { id: "v", area_id: "a1", category_id: "c2", title: "Self Service API",
+        status: "planned", horizon: "now", presentation: "sequenced", priority: 10, sort_order: 10 },
+      { id: "h", area_id: "a1", category_id: "c1", title: "Hidden core item",
+        status: "planned", horizon: "now", presentation: "sequenced", priority: 20, sort_order: 20 },
+      { id: "b", area_id: "a1", category_id: "c2", type: "bug", title: "A bug",
+        status: "planned", horizon: "now", presentation: "sequenced", priority: 30, sort_order: 30 },
+      { id: "u", area_id: "a1", category_id: null, title: "Untethered item",
+        status: "planned", horizon: "now", presentation: "sequenced", priority: 40, sort_order: 40 },
+    ],
+  };
+}
+
+test("filterShareholder keeps visible themes, drops bugs and untethered work", () => {
+  const V = loadView();
+  const data = shareholderData();
+  const ctx = V.context(data);
+  assert.equal(V.shareholderVisible(data.items[0], ctx), true, "visible theme, not a bug");
+  assert.equal(V.shareholderVisible(data.items[1], ctx), false, "theme is shareholder-hidden");
+  assert.equal(V.shareholderVisible(data.items[2], ctx), false, "bugs never show shareholders");
+  assert.equal(V.shareholderVisible(data.items[3], ctx), false, "no theme is not shareholder-ready");
+  const kept = V.filterShareholder(data.items, ctx, true).map((i) => i.id);
+  assert.deepEqual(kept, ["v"]);
+  assert.equal(V.filterShareholder(data.items, ctx, false).length, 4, "off keeps everything");
+});
+
+test("shareholder view narrows the rendered board; full view keeps all", () => {
+  const V = loadView();
+  const data = shareholderData();
+  const shown = V.timeline(data, "team", { shareholder: true });
+  assert.match(shown, /Self Service API/);
+  ["Hidden core item", "A bug", "Untethered item"].forEach(
+    (t) => assert.doesNotMatch(shown, new RegExp(t), `${t} hidden from shareholders`));
+  const full = V.timeline(data, "team");
+  ["Self Service API", "Hidden core item", "A bug", "Untethered item"].forEach(
+    (t) => assert.match(full, new RegExp(t), `${t} present in the full view`));
+});
+
+test("custom view rides a checkbox on each row; unpicked rows drop their check", () => {
+  const V = loadView();
+  const data = sampleData();
+  const plain = V.timeline(data, "backlog");
+  assert.doesNotMatch(plain, /data-pick-id/, "no checkbox when custom is off");
+  const custom = V.timeline(data, "backlog", { custom: true });
+  assert.match(custom, /data-pick-id="i2"/, "each row carries a pick checkbox");
+  assert.match(custom, /data-pick-id="i2"[^>]*checked/, "picked by default");
+  const pruned = V.timeline(data, "backlog", { custom: true, unpicked: { i2: true } });
+  assert.match(pruned, /rmv-unpicked/, "the unpicked row is marked");
+  assert.doesNotMatch(pruned, /data-pick-id="i2"[^>]*checked/, "i2's box is cleared");
+  assert.match(pruned, /data-pick-id="i1"[^>]*checked/, "other rows stay picked");
+  // Cascade carries the same affordance.
+  assert.match(V.cascade(data, "backlog", { custom: true }), /data-pick-id="i2"/);
+});
+
+test("a workstream renders as a container even with no children", () => {
+  const V = loadView();
+  const data = {
+    categories: [{ id: "c1", key: "apis", label: "APIs", shareholder_visible: true, sort_order: 10 }],
+    areas: [{ id: "a1", key: "svc", title: "Service", scope: "product", category_id: "c1", sort_order: 10 }],
+    items: [
+      { id: "w", area_id: "a1", category_id: "c1", level: "workstream", title: "Self Service API",
+        status: "in_progress", horizon: "now", presentation: "current", priority: 10, sort_order: 10 },
+    ],
+  };
+  const tl = V.timeline(data, "team");
+  assert.match(tl, /rmv-tl-bar--ws/, "the timeline bar reads as a workstream");
+  assert.match(tl, /Self Service API/);
+  const cas = V.cascade(data, "team");
+  assert.match(cas, /rm-card--ws/);
+  assert.match(cas, /rmv-ws-tag">Workstream/, "the cascade card is tagged a workstream");
+});

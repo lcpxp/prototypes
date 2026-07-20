@@ -14,19 +14,22 @@
   window.App = window.App || {};
   var R = App._rmv;
 
-  function itemCard(item, cat) {
+  function itemCard(item, cat, pick) {
     var band = R.colStart(item);
     var label = band === 1 ? R.presentationLabel(item.presentation) : "";
     var prog = R.progressOf(item);
-    return '<li class="rm-card rm-card--' + R.BANDS[band].key + R.catClass(cat) +
+    var ws = item.level === "workstream";
+    return '<li class="rm-card rm-card--' + R.BANDS[band].key + (ws ? " rm-card--ws" : "") +
+      R.catClass(cat) + R.pickCls(item.id, pick) +
       '" data-item-id="' + App.escape(item.id) + '">' +
+      (ws ? '<p class="rmv-ws-tag">Workstream</p>' : "") +
       (label ? '<p class="rm-state rm-state--' + App.escape(item.presentation) + '">' +
         App.escape(label) + "</p>" : "") +
       "<h3>" + App.escape(item.title) + "</h3>" +
       (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") +
       '<div class="rm-card-progress rmv-prog-' + prog.bucket +
       '" role="img" aria-label="Progress: ' + App.escape(prog.label) + '"><span></span></div>' +
-      "</li>";
+      R.pickBox(item.id, pick) + "</li>";
   }
 
   function themeBlock(cat, items, cardFn) {
@@ -54,7 +57,7 @@
   // Stack items into the bands they span, grouped by theme, item cards
   // per theme. maxBand caps the axis (Team up to Later, Backlog adds
   // Parked). Executive no longer routes here - it uses execBoard.
-  function bandsCascade(list, ctx, maxBand, show) {
+  function bandsCascade(list, ctx, maxBand, show, pick) {
     var html = "";
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx === 0 && !show) continue;
@@ -62,7 +65,7 @@
       if (!inBand.length) continue;
       var byCat = R.groupBy(inBand, function (i) { return R.themeIdOf(i, ctx); });
       var body = themeBlocks(ctx, byCat, function (i) {
-        return itemCard(i, ctx.catById[R.themeIdOf(i, ctx)] || null);
+        return itemCard(i, ctx.catById[R.themeIdOf(i, ctx)] || null, pick);
       });
       html += '<section class="rmv-band">' + bandHead(R.BANDS[idx].label, R.BANDS[idx].key) +
         body + "</section>";
@@ -73,8 +76,10 @@
   function cascade(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
     var expanded = !!(opts && opts.expanded);
+    var pick = opts && opts.custom ? { custom: true, unpicked: opts.unpicked || {} } : null;
     var ctx = R.context(data);
-    var all = R.productItems(data.items || [], ctx.scopeByArea);
+    var all = R.filterShareholder(R.productItems(data.items || [], ctx.scopeByArea),
+      ctx, !!(opts && opts.shareholder));
     if (!all.length) return R.emptyNotice();
     if (level === "exec") {
       return R.execBoard(all, ctx, show, expanded) + R.freshnessHtml(all);
@@ -82,7 +87,7 @@
     var tops = R.topLevel(all);
     var list = level === "backlog" ? tops : R.teamList(tops);
     var maxBand = level === "backlog" ? R.PARKED : R.ACTIVE_MAX;
-    return bandsCascade(list, ctx, maxBand, show) +
+    return bandsCascade(list, ctx, maxBand, show, pick) +
       (expanded ? R.breakdown(R.visibleDetail(list, show), ctx) : "") + R.freshnessHtml(all);
   }
 

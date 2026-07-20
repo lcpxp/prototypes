@@ -213,10 +213,61 @@
   margin-block: var(--s-2) 0;
 }
 
+/* Workstream marker: a top-level container ("Self Service API") reads
+   distinctly from a plain item - a heavier left rule on the timeline bar,
+   a tag on the cascade card. Its sub-items collapse to a checklist when
+   Detailed is off, so the container can stand alone until it is scoped. */
+.rmv-tl-bar--ws { border-inline-start-width: 5px; font-weight: var(--weight-medium); }
+.rm-card--ws { border-inline-start-width: 5px; }
+
+.rmv-ws-tag {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--rm-a, var(--muted));
+  margin: 0 0 var(--s-1);
+}
+
+/* Custom view: a per-row checkbox for hand-picking what a one-off PDF or
+   export carries, with no database change. Toggled by body.rm-custom (set
+   in roadmap.js). Unpicked rows dim on screen and drop out of print. */
+.rmv-pick { display: inline-flex; align-items: center; justify-content: center; }
+.rmv-pick input {
+  inline-size: 1rem;
+  block-size: 1rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.rmv-unpicked { opacity: 0.4; }
+
+/* Timeline: a trailing column parks the checkbox at the far right without
+   disturbing the bar's placement; the head gains the same empty column so
+   the horizon axis stays aligned. */
+body.rm-custom .rmv-tl-head,
+body.rm-custom .rmv-tl-row {
+  grid-template-columns: 11rem repeat(var(--tl-cols, 4), minmax(6rem, 1fr)) 1.5rem;
+}
+body.rm-custom .rmv-tl-row .rmv-pick { grid-column: -2 / -1; }
+
+/* Cascade: pin the checkbox to the card's top-right, clearing the title. */
+body.rm-custom .rm-card { position: relative; padding-inline-end: var(--s-6); }
+body.rm-custom .rm-card .rmv-pick {
+  position: absolute;
+  inset-block-start: var(--s-2);
+  inset-inline-end: var(--s-2);
+}
+
 /* Print: the Executive view is the C-suite one-pager. The switcher and
    toolbar are already hidden by roadmap.css; tighten the tiles and drop
    theme descriptions so it condenses onto the page. */
 @media print {
+  /* Custom view: the export carries only the picked rows; the checkboxes
+     themselves never print. */
+  body.rm-custom .rmv-unpicked { display: none; }
+  body.rm-custom .rmv-pick { display: none; }
+
   .rmv-band { margin-block-end: 8pt; }
   .rmv-band-head { font-size: 8pt; margin-block: 6pt 4pt; padding-block-end: 2pt; }
   .rmv-themes, .rmv-delivered { gap: 6pt; }

@@ -57,6 +57,10 @@
       "hard": 500,
       "note": "Over soft; loadSpec/hydrate could move to a reference-data.js."
     },
+    "tests/unit/roadmap-views.test.js": {
+      "hard": 500,
+      "note": "Over soft: one dataset drives the level/layout/shareholder/custom-view benchmarks together. Exit plan: split the shareholder and custom-view cases into roadmap-views-custom.test.js sharing loadView."
+    },
     "docs/ARCHITECTURE.md": {
       "hard": 300,
       "note": "Architecture reference, read on demand rather than every session."
