@@ -220,6 +220,54 @@ test("timeline sorts workstreams above standalone items in the same band", () =>
     "workstream sorts above the standalone item even with a worse priority number");
 });
 
+test("a bug sinks below other work in its band, whatever its priority", () => {
+  const V = loadView();
+  const data = {
+    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
+    areas: [{ id: "a1", key: "core-area", title: "Core", scope: "product", category_id: "c1", sort_order: 10 }],
+    items: [
+      { id: "bug", area_id: "a1", category_id: "c1", title: "Urgent-looking bug", level: "item", type: "bug",
+        status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
+        department: "product_technology", priority: 10, sort_order: 10 },
+      { id: "feat", area_id: "a1", category_id: "c1", title: "Planned feature", level: "item", type: "feature",
+        status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
+        department: "product_technology", priority: 90, sort_order: 20 },
+    ],
+  };
+  const tl = V.timeline(data, "team");
+  assert.ok(tl.indexOf("Planned feature") < tl.indexOf("Urgent-looking bug"),
+    "the timeline sinks the bug below the feature despite its better priority number");
+  const cas = V.cascade(data, "team");
+  assert.ok(cas.indexOf("Planned feature") < cas.indexOf("Urgent-looking bug"),
+    "the cascade sinks the bug too");
+});
+
+test("parked rows with tied priority cluster by theme lane", () => {
+  const V = loadView();
+  const data = {
+    categories: [
+      { id: "c1", key: "core", label: "Core", sort_order: 10 },
+      { id: "c2", key: "unity", label: "Unity", sort_order: 20 },
+    ],
+    areas: [
+      { id: "a1", key: "core-area", title: "Core", scope: "product", category_id: "c1", sort_order: 10 },
+      { id: "a2", key: "unity-area", title: "Unity", scope: "product", category_id: "c2", sort_order: 20 },
+    ],
+    items: [
+      { id: "p1", area_id: "a2", category_id: "c2", title: "Unity parked one", level: "item",
+        status: "idea", horizon: "someday", priority: 100, sort_order: 10 },
+      { id: "p2", area_id: "a1", category_id: "c1", title: "Core parked bet", level: "item",
+        status: "idea", horizon: "someday", priority: 100, sort_order: 20 },
+      { id: "p3", area_id: "a2", category_id: "c2", title: "Unity parked two", level: "item",
+        status: "idea", horizon: "someday", priority: 100, sort_order: 30 },
+    ],
+  };
+  const html = V.timeline(data, "backlog");
+  const pos = ["Core parked bet", "Unity parked one", "Unity parked two"].map((t) => html.indexOf(t));
+  assert.deepEqual(pos, [...pos].sort((a, b) => a - b),
+    "equal-priority parked rows group by theme lane instead of scattering");
+});
+
 test("workstreams level shows only workstreams, hiding standalone items", () => {
   const V = loadView();
   const data = {

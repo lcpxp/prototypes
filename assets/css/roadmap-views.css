@@ -205,10 +205,13 @@
   color: var(--muted);
 }
 
-/* Parked bars read as far-future: quiet neutral fill (kept off the row
-   track's tone so it stays visible), dashed edge. */
+/* Parked bars read as far-future: a whisper of the lane hue over the
+   surface (so a parked row still reads as owned by its theme rather
+   than detached), dashed edge. Falls back to the plain surface where
+   color-mix is unsupported. */
 .rmv-tl-bar--parked {
   background: var(--surface);
+  background: color-mix(in srgb, var(--rm-a, var(--line-strong)) 5%, var(--surface));
   border-inline-start-style: dashed;
   color: var(--muted);
 }

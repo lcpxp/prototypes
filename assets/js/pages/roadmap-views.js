@@ -101,8 +101,12 @@
       items: (data.items || []).filter(function (i) { return i.department === dept; }),
     };
   }
+  // Bugs always sink below other work at the same level, whatever their
+  // stored priority number; ties then fall to priority and sort_order.
+  function bugRank(i) { return i.type === "bug" ? 1 : 0; }
   function byOrder(a, b) {
-    return (a.priority - b.priority) || (a.sort_order - b.sort_order);
+    return (bugRank(a) - bugRank(b)) ||
+      (a.priority - b.priority) || (a.sort_order - b.sort_order);
   }
 
   function context(data) {
@@ -220,11 +224,15 @@
 
   // Order: start band, then workstreams above standalone items (a
   // standalone item always sinks below the workstreams in its band, even
-  // at equal span), then span length (longer runs sink lower), then
-  // priority. Current work floats to the top; long tasks spill right.
+  // at equal span), then bugs sink below everything else in the band,
+  // then span length (a run that extends into the next band sinks below
+  // work that finishes in this one), then priority. Equal-priority rows
+  // cluster by theme lane so the Parked stack reads grouped, not
+  // scattered. Current work floats to the top; long tasks spill right.
   function timelineOrder(a, b) {
     return (a._s - b._s) || ((b._ws ? 1 : 0) - (a._ws ? 1 : 0)) ||
-      ((a._e - a._s) - (b._e - b._s)) || (a._pri - b._pri) || (a._so - b._so);
+      (a._bug - b._bug) || ((a._e - a._s) - (b._e - b._s)) ||
+      (a._pri - b._pri) || (a._catSo - b._catSo) || (a._so - b._so);
   }
 
   // Shared grid renderer over pre-placed rows. maxBand caps the axis
@@ -259,6 +267,7 @@
     var catId = themeIdOf(i, ctx), cat = catId ? ctx.catById[catId] : null;
     return { _s: colStart(i), _e: colEnd(i), _cat: cat,
       _catLabel: cat ? cat.label : "General", _pri: i.priority, _so: i.sort_order,
+      _bug: bugRank(i), _catSo: cat ? cat.sort_order : 1e9,
       label: i.title, done: i.status === "done", _id: i.id, _prog: progressOf(i),
       _ws: i.level === "workstream" };
   }

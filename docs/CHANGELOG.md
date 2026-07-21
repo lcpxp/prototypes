@@ -11,6 +11,9 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The roadmap stack now sinks bugs below other work in their band, groups
+  equal-priority parked rows by theme lane, and tints parked bars with
+  their lane hue so backlog items no longer read as detached.
 - The roadmap toolbar now has a single Export button that opens a menu of
   JSON, CSV and PDF, replacing three separate export/download buttons.
 - The roadmap's Hide fixes control is now an icon-only bug toggle (selected
