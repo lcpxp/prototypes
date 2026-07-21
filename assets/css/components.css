@@ -39,6 +39,20 @@ a.card:hover {
   box-shadow: var(--shadow-raised);
 }
 
+/* Muted card grid: draft entries read as secondary but stay clickable.
+   Hover lifts the card back to full strength to signal it is live. */
+.card-grid.is-muted .card {
+  opacity: 0.6;
+  transition: opacity var(--dur-base) var(--ease),
+    border-color var(--dur-base) var(--ease),
+    box-shadow var(--dur-base) var(--ease);
+}
+
+.card-grid.is-muted .card:hover,
+.card-grid.is-muted .card:focus-visible {
+  opacity: 1;
+}
+
 .stat {
   font-size: var(--text-2xl);
   font-weight: var(--weight-semibold);

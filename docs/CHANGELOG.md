@@ -11,6 +11,9 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The prototypes gallery now groups entries under two headings: the PCI
+  compliance prototype sits on its own row under "Live", and every other
+  prototype groups under "Drafts", slightly greyed but still clickable.
 - The roadmap timeline reads better on screen and in the PDF export: each
   row now sits on a light shaded lane, bars carry a slightly stronger fill,
   and the bar and lane colours print exact instead of dropping to white -
