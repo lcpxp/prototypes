@@ -16,7 +16,7 @@
 
   function itemCard(item, cat, pick) {
     var band = R.colStart(item);
-    var label = band === 1 ? R.presentationLabel(item.presentation) : "";
+    var label = band === 2 ? R.presentationLabel(item.presentation) : "";
     var prog = R.progressOf(item);
     var ws = item.level === "workstream";
     return '<li class="rm-card rm-card--' + R.BANDS[band].key + (ws ? " rm-card--ws" : "") +
@@ -60,7 +60,7 @@
   function bandsCascade(list, ctx, maxBand, show, pick) {
     var html = "";
     for (var idx = 0; idx <= maxBand; idx++) {
-      if (idx === 0 && !show) continue;
+      if (idx <= 1 && !show) continue;
       var inBand = list.filter(function (i) { return R.colStart(i) <= idx && R.colEnd(i) >= idx; });
       if (!inBand.length) continue;
       var byCat = R.groupBy(inBand, function (i) { return R.themeIdOf(i, ctx); });

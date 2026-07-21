@@ -11,6 +11,10 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The roadmap's Delivered work now splits into two columns: Recently
+  completed (shipped in the last four weeks, a rolling list) and Previously
+  completed (the older, historic record), so recent wins stand apart from
+  the long tail.
 - The roadmap stack now sinks bugs below other work in their band, groups
   equal-priority parked rows by theme lane, and tints parked bars with
   their lane hue so backlog items no longer read as detached.

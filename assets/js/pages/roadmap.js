@@ -409,7 +409,7 @@
         .select("id, parent_id, area_id, category_id, title, summary, type, level, status, horizon, end_horizon, " +
           "presentation, priority, effort, impact, department, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
-          "sort_order, updated_at, tags")
+          "sort_order, updated_at, resolved_at, tags")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItemPhases)
@@ -437,6 +437,9 @@
       i.phases = phasesByItem[i.id] || [];
       itemsById[i.id] = i;
     });
+    // Split delivered work into Recently/Previously completed by stamping
+    // each done item against the current clock, once, before any render.
+    App.roadmapView.markRecency(data.items);
     ctx = App.roadmapView.context(data);
 
     renderControls(nav, layoutNav, host);

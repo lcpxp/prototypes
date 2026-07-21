@@ -91,12 +91,29 @@ function sampleData() {
 
 test("colStart/colEnd map horizon, span, done and dropped to the axis", () => {
   const V = loadView();
+  // Done work splits by recency: historic lands in Previously (0), recent
+  // in Recently (1). An unmarked done item defaults to Previously.
   assert.deepEqual([V.colStart({ status: "done", horizon: "now" }), V.colEnd({ status: "done", horizon: "now" })], [0, 0]);
-  assert.deepEqual([V.colStart({ status: "in_progress", horizon: "now" }), V.colEnd({ status: "in_progress", horizon: "now" })], [1, 1]);
-  assert.deepEqual([V.colStart({ status: "in_progress", horizon: "now", end_horizon: "next" }), V.colEnd({ status: "in_progress", horizon: "now", end_horizon: "next" })], [1, 2]);
-  assert.deepEqual([V.colStart({ status: "idea", horizon: "someday" }), V.colEnd({ status: "idea", horizon: "someday" })], [4, 4]);
-  assert.deepEqual([V.colStart({ status: "dropped", horizon: "later" }), V.colEnd({ status: "dropped", horizon: "later" })], [4, 4]);
-  assert.equal(V.colEnd({ status: "planned", horizon: "next", end_horizon: "now" }), 2);
+  assert.deepEqual([V.colStart({ status: "done", _recentDone: true }), V.colEnd({ status: "done", _recentDone: true })], [1, 1]);
+  assert.deepEqual([V.colStart({ status: "in_progress", horizon: "now" }), V.colEnd({ status: "in_progress", horizon: "now" })], [2, 2]);
+  assert.deepEqual([V.colStart({ status: "in_progress", horizon: "now", end_horizon: "next" }), V.colEnd({ status: "in_progress", horizon: "now", end_horizon: "next" })], [2, 3]);
+  assert.deepEqual([V.colStart({ status: "idea", horizon: "someday" }), V.colEnd({ status: "idea", horizon: "someday" })], [5, 5]);
+  assert.deepEqual([V.colStart({ status: "dropped", horizon: "later" }), V.colEnd({ status: "dropped", horizon: "later" })], [5, 5]);
+  assert.equal(V.colEnd({ status: "planned", horizon: "next", end_horizon: "now" }), 3);
+});
+
+test("markRecency tags done work within the four-week window", () => {
+  const V = loadView();
+  const now = Date.parse("2026-07-21T00:00:00Z");
+  const items = [
+    { status: "done", resolved_at: "2026-07-14T00:00:00Z" },      // 7 days: recent
+    { status: "done", resolved_at: "2026-06-01T00:00:00Z" },      // >4 weeks: historic
+    { status: "done", updated_at: "2026-07-20T00:00:00Z" },       // no resolved_at, falls back
+    { status: "done" },                                           // no timestamp: historic
+    { status: "in_progress", updated_at: "2026-07-20T00:00:00Z" },// not done
+  ];
+  V.markRecency(items, now);
+  assert.deepEqual(items.map((i) => i._recentDone), [true, false, true, false, false]);
 });
 
 test("isActive and isParked classify by the item's own fields", () => {
@@ -122,10 +139,11 @@ test("productItems keeps product scope; topLevel drops sub-items", () => {
 test("timeline (team) spans active bars, hides parked/portal and sub-items", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team");
-  assert.match(html, /Delivered<\/span>.*Now<\/span>.*Next<\/span>.*Later<\/span>/s);
+  assert.match(html, /Previously completed<\/span>.*Recently completed<\/span>.*Now<\/span>.*Next<\/span>.*Later<\/span>/s);
   assert.doesNotMatch(html, />Parked</, "Team has no Parked column");
+  // i1 is delivered but unmarked here, so it lands in Previously (band 0).
   assert.match(html, /rmv-tl-bar--done[^"]*"[^>]*grid-column:2 \/ 3/);
-  assert.match(html, /grid-column:3 \/ 5">[^<]*Portal overhaul/);
+  assert.match(html, /grid-column:4 \/ 6">[^<]*Portal overhaul/);
   assert.doesNotMatch(html, /US market/, "parked item hidden from Team");
   assert.doesNotMatch(html, /Whitelist blacklist/, "dropped item hidden from Team");
   assert.doesNotMatch(html, /Portal tooling/, "portal item hidden from Team");
@@ -198,7 +216,7 @@ test("timeline (backlog) mirrors the master list: every top-level item, all scop
     .forEach((t) => assert.match(html, new RegExp(t), `${t} present in Backlog`));
   assert.match(html, /Portal tooling/, "portal-scope item now surfaces in the Backlog master list");
   assert.doesNotMatch(html, /rmv-tl-bar[^>]*>Merchant Group/, "a sub-step is not a backlog bar");
-  assert.match(html, /rmv-tl-bar--parked[^"]*"[^>]*grid-column:6 \/ 7/);
+  assert.match(html, /rmv-tl-bar--parked[^"]*"[^>]*grid-column:7 \/ 8/);
 });
 
 test("timeline sorts workstreams above standalone items in the same band", () => {
@@ -336,11 +354,11 @@ test("showDelivered=false hides delivered work across timeline and cascade", () 
   const data = sampleData();
   const tl = V.timeline(data, "team", { showDelivered: false });
   assert.doesNotMatch(tl, /Core onboarding/, "delivered item hidden on the timeline");
-  assert.match(tl, /rmv-tl--nodelivered/, "the Delivered column drops off");
-  assert.doesNotMatch(tl, /Delivered<\/span>/, "no Delivered column header");
+  assert.match(tl, /rmv-tl--nodelivered/, "the delivered columns drop off");
+  assert.doesNotMatch(tl, /completed<\/span>/, "no delivered column headers");
   assert.match(tl, /Unity integration/, "live work still shows");
   const cas = V.cascade(data, "team", { showDelivered: false });
-  assert.doesNotMatch(cas, /rmv-band-head--delivered/);
+  assert.doesNotMatch(cas, /rmv-band-head--(previously|recently)/);
   assert.match(cas, /rmv-band-head--now/);
   // Executive drops delivered too: Core now has only its one active item.
   assert.match(V.timeline(data, "exec", { showDelivered: false }),

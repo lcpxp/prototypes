@@ -36,39 +36,58 @@
     wind: "Wrapping up", bridge: "Next horizon", sequenced: "",
   };
 
-  // The continuous axis: delivered(0) | now(1) | next(2) | later(3) |
-  // parked(4). Team and Executive show the active bands (up to Later);
-  // Backlog adds the Parked column.
+  // The continuous axis: previously(0) | recently(1) | now(2) | next(3) |
+  // later(4) | parked(5). Delivered work splits by recency - shipped
+  // within RECENT_DAYS is Recently completed (a rolling list), older work
+  // Previously completed. Team/Executive show up to Later; Backlog adds
+  // Parked.
   var BANDS = [
-    { key: "delivered", label: "Delivered" },
+    { key: "previously", label: "Previously completed" },
+    { key: "recently", label: "Recently completed" },
     { key: "now", label: "Now" },
     { key: "next", label: "Next" },
     { key: "later", label: "Later" },
     { key: "parked", label: "Parked" },
   ];
-  var ACTIVE_MAX = 3;
-  var PARKED = 4;
+  var ACTIVE_MAX = 4;
+  var PARKED = 5;
+  var RECENT_DAYS = 28;
+
+  // Tag each done item as recently completed (within RECENT_DAYS) or not,
+  // reading resolved_at (falling back to updated_at for rows closed before
+  // the stamp existed). "now" is injected once here so the pure placement
+  // builders stay deterministic; unmarked items default to Previously.
+  function markRecency(items, now) {
+    var cutoff = (now || Date.now()) - RECENT_DAYS * 864e5;
+    (items || []).forEach(function (i) {
+      var t = i.status === "done" ? (i.resolved_at || i.updated_at) : null;
+      i._recentDone = !!t && Date.parse(t) >= cutoff;
+    });
+    return items;
+  }
 
   function presentationLabel(p) { return PRESENTATION[p] || ""; }
 
   // Column index for a horizon; someday folds into the Parked band.
   function hzIdx(h) {
-    return h === "now" ? 1 : h === "next" ? 2 : h === "later" ? 3 : PARKED;
+    return h === "now" ? 2 : h === "next" ? 3 : h === "later" ? 4 : PARKED;
   }
+  // The delivered column an item lands in: recent (1) vs historic (0).
+  function doneCol(i) { return i._recentDone ? 1 : 0; }
   // An item's start and end columns, from its own fields.
   function colStart(i) {
-    if (i.status === "done") return 0;
+    if (i.status === "done") return doneCol(i);
     if (i.status === "dropped") return PARKED;
     return hzIdx(i.horizon);
   }
   function colEnd(i) {
-    if (i.status === "done") return 0;
+    if (i.status === "done") return doneCol(i);
     if (i.status === "dropped") return PARKED;
     var s = hzIdx(i.horizon), e = hzIdx(i.end_horizon || i.horizon);
     return e < s ? s : e;
   }
   function isParked(i) { return colStart(i) === PARKED; }
-  function isActive(i) { var s = colStart(i); return s >= 1 && s <= ACTIVE_MAX; }
+  function isActive(i) { var s = colStart(i); return s >= 2 && s <= ACTIVE_MAX; }
 
   function productItems(items, scopeByArea) {
     return items.filter(function (i) { return scopeByArea[i.area_id] === "product"; });
@@ -240,9 +259,9 @@
   // delivered drops the Delivered column and clamps spans into it.
   function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick) {
     var visible = showDelivered ? placed
-      : placed.filter(function (p) { return p._e >= 1; });
+      : placed.filter(function (p) { return p._e >= 2; });
     if (!visible.length) return emptyMsg;
-    var first = showDelivered ? 0 : 1;
+    var first = showDelivered ? 0 : 2;
     var head = '<div class="rmv-tl-head"><span class="rmv-tl-label"></span>' +
       BANDS.slice(first, maxBand + 1).map(function (b) {
         return '<span class="rmv-tl-col">' + b.label + "</span>"; }).join("") + "</div>";
@@ -465,6 +484,7 @@
   App.roadmapView = {
     colStart: colStart, colEnd: colEnd, isParked: isParked, isActive: isActive,
     productItems: productItems, isFix: isFix, byDepartment: byDepartment, byOrder: byOrder, context: context,
+    markRecency: markRecency,
     themeLabel: themeLabel, bandLabel: bandLabel, endBandLabel: endBandLabel,
     areaTitleOf: areaTitleOf, progressOf: progressOf,
     childItems: childItems, childStats: childStats, checklistHtml: checklistHtml,

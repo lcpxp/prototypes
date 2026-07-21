@@ -58,7 +58,8 @@
   margin-block: var(--s-5) var(--s-4);
 }
 
-.rmv-band-head--delivered { color: var(--ok); }
+.rmv-band-head--recently { color: var(--ok); }
+.rmv-band-head--previously { color: var(--muted); }
 .rmv-band-head--now { color: var(--accent); }
 .rmv-band-head--later { color: var(--faint); }
 .rmv-band-head--parked { color: var(--faint); }
