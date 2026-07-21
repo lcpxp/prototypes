@@ -80,9 +80,8 @@
     var ctx = R.context(data);
     // Backlog mirrors the master list (all scopes); Exec/Team stay
     // product-scoped. See timeline() in roadmap-views.js.
-    var pool = level === "backlog" ? (data.items || [])
+    var all = level === "backlog" ? (data.items || [])
       : R.productItems(data.items || [], ctx.scopeByArea);
-    var all = R.filterShareholder(pool, ctx, !!(opts && opts.shareholder));
     if (opts && opts.hideFixes) all = all.filter(function (i) { return !R.isFix(i); });
     if (!all.length) return R.emptyNotice();
     if (level === "exec") {

@@ -106,8 +106,9 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   Integrations, Screening/Contracting/Fulfilment, Partners & PFAC,
   Acquiring, APIs, Insights & Reporting, Automation & Approvals,
   Sales & Commercial, Admin & Operations, Products & Pricing). key,
-  label, description, sort_order, and shareholder_visible (false hides a
-  whole theme - Core LaunchPad, fixes - from the Shareholder view). Colour
+  label, description, sort_order, and shareholder_visible (false marks a
+  whole theme - Core LaunchPad, fixes - as internal-only for the
+  shareholder-facing `roadmap_current` query below). Colour
   per key lives in tokens.css (.rm-cat-<key> plus --rm-<key> tokens); a new
   theme with no token renders in a neutral tint until one is added. Items
   with no theme render as standalone cards.

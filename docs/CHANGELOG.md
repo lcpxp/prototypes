@@ -11,6 +11,10 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The roadmap toolbar now has a single Export button that opens a menu of
+  JSON, CSV and PDF, replacing three separate export/download buttons.
+- The roadmap's Hide fixes control is now an icon-only bug toggle (selected
+  means fixes are shown; press it to hide them), replacing the text button.
 - The prototypes gallery now groups entries under two headings: the PCI
   compliance prototype sits on its own row under "Live", and every other
   prototype groups under "Drafts", slightly greyed but still clickable.
@@ -44,9 +48,6 @@ is the git history; what is unfinished is docs/STATE.md.
   integration") reads as a presentable container that collapses its
   sub-items to a checklist when Detailed is off, so a workstream can be
   shown without its granular detail.
-- A Shareholder view toggle on the roadmap that narrows the board to
-  shareholder-ready work, dropping internal themes (Core LaunchPad, fixes)
-  and bugs.
 - A Custom view toggle on the roadmap: a checkbox on each row lets you
   hand-pick exactly which items a one-off PDF or CSV/JSON export carries,
   pruned in real time with no change to the underlying data.

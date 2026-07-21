@@ -135,20 +135,6 @@
   }
   function catClass(cat) { return cat ? " rm-cat-" + App.escape(cat.key) : ""; }
 
-  // Shareholder projection: keep only items whose theme is
-  // shareholder-visible, dropping bugs and Core/untethered work, so an
-  // exec/shareholder view is clean by construction rather than by hand
-  // (see docs/ROADMAP-PLAYBOOK.md). An item with no theme is treated as
-  // not shareholder-ready; give it a visible theme to surface it.
-  function shareholderVisible(i, ctx) {
-    if (i.type === "bug") return false;
-    var id = themeIdOf(i, ctx), cat = id ? ctx.catById[id] : null;
-    return !!(cat && cat.shareholder_visible !== false);
-  }
-  function filterShareholder(items, ctx, on) {
-    return on ? items.filter(function (i) { return shareholderVisible(i, ctx); }) : items;
-  }
-
   // Custom view: a per-row checkbox for hand-picking what a one-off PDF or
   // export carries, without any database change. pick = { custom, unpicked }
   // comes from roadmap.js; unpicked is a map of the ids the owner has
@@ -423,9 +409,8 @@
     // and carries every work_item (all scopes, including portal and unfiled
     // work), so nothing captured is ever invisible in the roadmap tool.
     // Exec and Team stay product-scoped. See docs/ROADMAP-PLAYBOOK.md.
-    var pool = level === "backlog" ? (data.items || [])
+    var all = level === "backlog" ? (data.items || [])
       : productItems(data.items || [], ctx.scopeByArea);
-    var all = filterShareholder(pool, ctx, !!(opts && opts.shareholder));
     if (opts && opts.hideFixes) all = all.filter(function (i) { return !isFix(i); });
     if (!all.length) return emptyNotice();
     if (level === "exec") {
@@ -465,7 +450,7 @@
     topLevel: topLevel, teamList: teamList, freshnessHtml: freshnessHtml,
     emptyNotice: emptyNotice, breakdown: breakdown, execBoard: execBoard,
     visibleDetail: visibleDetail,
-    filterShareholder: filterShareholder, pickCls: pickCls, pickBox: pickBox,
+    pickCls: pickCls, pickBox: pickBox,
   };
 
   App.roadmapView = {
@@ -476,7 +461,6 @@
     childItems: childItems, childStats: childStats, checklistHtml: checklistHtml,
     presentationLabel: presentationLabel, freshnessHtml: freshnessHtml,
     topLevel: topLevel, execBoard: execBoard, breakdown: breakdown,
-    shareholderVisible: shareholderVisible, filterShareholder: filterShareholder,
     timeline: timeline,
   };
 })();

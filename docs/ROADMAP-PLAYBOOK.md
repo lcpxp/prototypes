@@ -177,7 +177,7 @@ pre-compute from the data; each answer maps to a specific write above.
 Only after the core, offer deeper waves as further clickable options:
 reprioritise within a theme; review Later bets; revive parked/someday; scope
 a workstream into items; rebalance departments; delivered cleanup; and
-shareholder-view prep before a meeting.
+shareholder-ready export prep before a meeting.
 
 ## Rules that keep it trustworthy
 

@@ -28,7 +28,7 @@ maps to a specific `work_items` write from the playbook's operations.
 Only after the core, offer the deeper waves from the playbook as further
 clickable options (reprioritise within a theme, review Later bets, revive
 parked, scope a workstream into items, rebalance departments, delivered
-cleanup, shareholder-view prep).
+cleanup, shareholder-ready export prep).
 
 If `$ARGUMENTS` names a deeper wave (for example `shareholder`, `later`,
 `parked`, `workstream`), do Wave 0 to orient and then jump straight to that

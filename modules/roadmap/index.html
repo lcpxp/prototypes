@@ -68,15 +68,37 @@
         aria-pressed="true">Hide delivered</button>
       <button class="button secondary" type="button" id="roadmap-detail-toggle"
         aria-pressed="false">Detailed view</button>
-      <button class="button secondary" type="button" id="roadmap-shareholder"
-        aria-pressed="false">Shareholder view</button>
       <button class="button secondary" type="button" id="roadmap-custom"
         aria-pressed="false">Custom view</button>
-      <button class="button secondary" type="button" id="roadmap-hidefixes"
-        aria-pressed="false">Hide fixes</button>
-      <button class="button secondary" type="button" id="roadmap-export-json">Export JSON</button>
-      <button class="button secondary" type="button" id="roadmap-export-csv">Export CSV</button>
-      <button class="button secondary" type="button" id="roadmap-download">Download PDF</button>
+      <button class="rm-bug-toggle" type="button" id="roadmap-hidefixes" aria-pressed="true"
+        aria-label="Hide fixes" title="Hide fixes">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="8" y="6" width="8" height="12" rx="4"></rect>
+          <path d="M12 6V4"></path>
+          <path d="M10 4L8.5 2.5"></path>
+          <path d="M14 4l1.5-1.5"></path>
+          <path d="M8 9H4"></path>
+          <path d="M8 12H3"></path>
+          <path d="M8 15H4"></path>
+          <path d="M16 9h4"></path>
+          <path d="M16 12h5"></path>
+          <path d="M16 15h4"></path>
+          <path d="M12 6v12"></path>
+        </svg>
+      </button>
+      <div class="rm-export">
+        <button class="button secondary" type="button" id="roadmap-export-trigger"
+          aria-haspopup="true" aria-expanded="false" aria-controls="roadmap-export-menu">Export</button>
+        <div class="rm-export-menu" id="roadmap-export-menu" role="menu" hidden>
+          <button class="button quiet" type="button" id="roadmap-export-json"
+            role="menuitem">Export as JSON</button>
+          <button class="button quiet" type="button" id="roadmap-export-csv"
+            role="menuitem">Export as CSV</button>
+          <button class="button quiet" type="button" id="roadmap-download"
+            role="menuitem">Export as PDF</button>
+        </div>
+      </div>
     </div>
 
     <section id="roadmap-content">

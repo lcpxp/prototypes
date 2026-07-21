@@ -34,7 +34,6 @@
   var DELIVERED_STORE = "roadmap-delivered";
   var EXPAND_STORE = "roadmap-expanded";
   var DEPT_STORE = "roadmap-department";
-  var SHARE_STORE = "roadmap-shareholder";
   var CUSTOM_STORE = "roadmap-custom";
   var PICK_STORE = "roadmap-unpicked";
   var HIDEFIXES_STORE = "roadmap-hidefixes";
@@ -45,7 +44,6 @@
   var showDelivered = true;
   var expanded = false;
   var department = "";
-  var shareholder = false;
   var customOn = false;
   var unpicked = {};
   var hideFixes = false;
@@ -92,13 +90,9 @@
     return known ? v : "";
   }
 
-  // Shareholder view and Custom view are view-only preferences
-  // (localStorage), not part of the shareable hash. Shareholder narrows
-  // to the shareholder-clean projection; Custom turns on the per-row
-  // picker whose deselections live in unpicked (an id -> true map).
-  function readShareholder() {
-    try { return window.localStorage.getItem(SHARE_STORE) === "on"; } catch (e) { return false; }
-  }
+  // Custom view is a view-only preference (localStorage), not part of the
+  // shareable hash: it turns on the per-row picker whose deselections
+  // live in unpicked (an id -> true map).
   function readCustom() {
     try { return window.localStorage.getItem(CUSTOM_STORE) === "on"; } catch (e) { return false; }
   }
@@ -127,8 +121,7 @@
 
   function render(host) {
     var opts = { showDelivered: showDelivered, expanded: expanded,
-      shareholder: shareholder, custom: customOn, unpicked: unpicked,
-      hideFixes: hideFixes };
+      custom: customOn, unpicked: unpicked, hideFixes: hideFixes };
     var vd = viewData();
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(vd, current, opts)
@@ -150,6 +143,16 @@
   function renderToggle(btn, active, offLabel, onLabel) {
     btn.setAttribute("aria-pressed", String(active));
     btn.textContent = active ? onLabel : offLabel;
+  }
+
+  // The Hide fixes control is icon-only (a bug), so its state reads through
+  // aria-pressed plus an aria-label/title rather than a text swap. Pressed
+  // (selected) means fixes are currently shown; pressing it hides them.
+  function renderBugToggle(btn) {
+    var label = hideFixes ? "Show fixes" : "Hide fixes";
+    btn.setAttribute("aria-pressed", String(!hideFixes));
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("title", label);
   }
 
   // Download a JSON object as a file (the KPI-ready export), via the
@@ -202,7 +205,6 @@
     showDelivered = readDelivered();
     expanded = readExpanded();
     department = readDepartment();
-    shareholder = readShareholder();
     customOn = readCustom();
     unpicked = readUnpicked();
     try { hideFixes = window.localStorage.getItem(HIDEFIXES_STORE) === "on"; }
@@ -238,9 +240,6 @@
       });
     }
 
-    var dlBtn = document.getElementById("roadmap-download");
-    if (dlBtn) dlBtn.addEventListener("click", function () { window.print(); });
-
     var expandBtn = document.getElementById("roadmap-detail-toggle");
     if (expandBtn) {
       renderExpanded(expandBtn);
@@ -249,18 +248,6 @@
         try { window.localStorage.setItem(EXPAND_STORE, expanded ? "expanded" : "compact"); }
         catch (e) { /* ignore */ }
         renderExpanded(expandBtn);
-        render(host);
-      });
-    }
-
-    var shareBtn = document.getElementById("roadmap-shareholder");
-    if (shareBtn) {
-      renderToggle(shareBtn, shareholder, "Shareholder view", "Full roadmap");
-      shareBtn.addEventListener("click", function () {
-        shareholder = !shareholder;
-        try { window.localStorage.setItem(SHARE_STORE, shareholder ? "on" : "off"); }
-        catch (e) { /* ignore */ }
-        renderToggle(shareBtn, shareholder, "Shareholder view", "Full roadmap");
         render(host);
       });
     }
@@ -280,13 +267,39 @@
 
     var fixesBtn = document.getElementById("roadmap-hidefixes");
     if (fixesBtn) {
-      renderToggle(fixesBtn, hideFixes, "Hide fixes", "Show fixes");
+      renderBugToggle(fixesBtn);
       fixesBtn.addEventListener("click", function () {
         hideFixes = !hideFixes;
         try { window.localStorage.setItem(HIDEFIXES_STORE, hideFixes ? "on" : "off"); }
         catch (e) { /* ignore */ }
-        renderToggle(fixesBtn, hideFixes, "Hide fixes", "Show fixes");
+        renderBugToggle(fixesBtn);
         render(host);
+      });
+    }
+
+    // Export: a single trigger opens a menu of the three formats, mirroring
+    // the account menu's dropdown pattern (toggle on the trigger, dismiss on
+    // an outside click or Escape). Picking a format then lets the click
+    // bubble to the document listener, which closes the menu.
+    var exportTrigger = document.getElementById("roadmap-export-trigger");
+    var exportMenu = document.getElementById("roadmap-export-menu");
+    function setExportOpen(open) {
+      exportMenu.hidden = !open;
+      exportTrigger.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    if (exportTrigger && exportMenu) {
+      exportTrigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        setExportOpen(exportMenu.hidden);
+      });
+      document.addEventListener("click", function () {
+        if (!exportMenu.hidden) setExportOpen(false);
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !exportMenu.hidden) {
+          setExportOpen(false);
+          exportTrigger.focus();
+        }
       });
     }
 
@@ -300,6 +313,9 @@
       App.download("roadmap-export.csv",
         App.roadmapDetail.toCsvRoadmap(exportRows(), ctx), "text/csv");
     });
+
+    var dlBtn = document.getElementById("roadmap-download");
+    if (dlBtn) dlBtn.addEventListener("click", function () { window.print(); });
 
     // Detail drawer: any element carrying a data-item-id opens the item.
     var drawer = document.getElementById("roadmap-drawer");
@@ -384,7 +400,7 @@
     // The three lists are independent, so fetch them in parallel.
     var results = await Promise.all([
       App.db.from(App.registry.tables.roadmapCategories)
-        .select("id, key, label, description, shareholder_visible, sort_order")
+        .select("id, key, label, description, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workAreas)
         .select("id, key, title, scope, category_id, sort_order")
