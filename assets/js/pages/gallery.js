@@ -7,7 +7,30 @@
 (function () {
   "use strict";
 
+  // Pure builder for the future-prototypes table: rows in, table
+  // string out, so it is unit-testable without Supabase or the DOM.
+  // Returns "" when there is nothing to show, letting the caller keep
+  // the section hidden.
+  App.futurePrototypesTable = function (rows) {
+    if (!rows || !rows.length) return "";
+    var body = rows
+      .map(function (row) {
+        return (
+          "<tr><td>" + App.escape(row.name || "") + "</td>" +
+          "<td>" + App.escape(row.note || "") + "</td></tr>"
+        );
+      })
+      .join("");
+    return (
+      '<div class="table-wrap"><table>' +
+      "<thead><tr><th>Prototype</th><th>Note</th></tr></thead>" +
+      "<tbody>" + body + "</tbody>" +
+      "</table></div>"
+    );
+  };
+
   App.onAuthed(async function () {
+    renderFuture();
     var host = document.getElementById("prototype-list");
 
     var result = await App.db
@@ -77,4 +100,24 @@
     }
     host.innerHTML = html;
   });
+
+  // Load the pre-draft shortlist and render it as a plain table. A
+  // failure or an empty list leaves the section hidden rather than
+  // showing an error: it is reference material, not core content.
+  async function renderFuture() {
+    var section = document.getElementById("future-prototypes");
+    var list = document.getElementById("future-prototype-list");
+    if (!section || !list) return;
+
+    var result = await App.db
+      .from(App.registry.tables.futurePrototypes)
+      .select("name, note, sort_order")
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+
+    if (result.error || !result.data || !result.data.length) return;
+
+    list.innerHTML = App.futurePrototypesTable(result.data);
+    section.hidden = false;
+  }
 })();

@@ -30,7 +30,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 190 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 191 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
@@ -38,7 +38,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/ui.js | 285 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/backlog.js | 324 | backlog.js - The master work list for modules/backlog/. |
 | assets/js/pages/dashboard.js | 159 | dashboard.js - Renders module cards, counts and recent activity |
-| assets/js/pages/gallery.js | 81 | gallery.js - Prototype registry for modules/prototypes/. |
+| assets/js/pages/gallery.js | 124 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 114 | integrations.js - Integration overview for modules/integrations/. |
 | assets/js/pages/pci-interstitial.js | 144 | pci-interstitial.js - The PCI compliance "checkout interstitial" for |
 | assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
@@ -56,7 +56,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 101 | Changelog |
+| docs/CHANGELOG.md | 106 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
@@ -76,7 +76,7 @@ document instead of walking the tree or reading whole files.
 | modules/integrations/index.html | 62 | Integrations - LPio / LaunchPad IO |
 | modules/platform/index.html | 56 | Platform - LPio / LaunchPad IO |
 | modules/prototypes/gdpr/index.html | 49 | GDPR compliance prototype - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 54 | Prototypes - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 61 | Prototypes - LPio / LaunchPad IO |
 | modules/prototypes/pci/dashboard.html | 67 | Dashboard - PXP replica - LPio |
 | modules/prototypes/pci/demo.html | 87 | Merchant Prescreen and Quote - PXP replica - LPio |
 | modules/prototypes/pci/index.html | 156 | PCI compliance prototype - LPio / LaunchPad IO |
@@ -108,14 +108,14 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260718120000_work_item_parent.sql | 36 | ------------------------------------------------------------------ |
 | supabase/migrations/20260720000000_workstreams_and_visibility.sql | 98 | ------------------------------------------------------------------ |
 | supabase/migrations/20260720130000_category_department_and_fix_relates.sql | 74 | ------------------------------------------------------------------ |
-| supabase/policies.sql | 245 | ------------------------------------------------------------------ |
+| supabase/policies.sql | 247 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
-| supabase/schema/20_portal.sql | 57 | ------------------------------------------------------------------ |
+| supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 411 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
-| supabase/seed.sql | 495 | ------------------------------------------------------------------ |
+| supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
@@ -143,9 +143,9 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:88 |
 | App.onAuthed | assets/js/core/guard.js:116 |
 | enforceModule() | assets/js/core/guard.js:124 |
-| App.moduleHref | assets/js/core/registry.js:143 |
-| App.itemHref | assets/js/core/registry.js:153 |
-| App.departmentLabel | assets/js/core/registry.js:183 |
+| App.moduleHref | assets/js/core/registry.js:144 |
+| App.itemHref | assets/js/core/registry.js:154 |
+| App.departmentLabel | assets/js/core/registry.js:184 |
 | sources() | assets/js/core/search.js:24 |
 | canReach() | assets/js/core/search.js:47 |
 | moduleByKey() | assets/js/core/search.js:51 |
@@ -211,8 +211,10 @@ document instead of walking the tree or reading whole files.
 | canReach() | assets/js/pages/dashboard.js:98 |
 | loadActivity() | assets/js/pages/dashboard.js:103 |
 | showDeniedNotice() | assets/js/pages/dashboard.js:143 |
-| isPci() | assets/js/pages/gallery.js:33 |
-| card() | assets/js/pages/gallery.js:39 |
+| App.futurePrototypesTable | assets/js/pages/gallery.js:14 |
+| isPci() | assets/js/pages/gallery.js:56 |
+| card() | assets/js/pages/gallery.js:62 |
+| renderFuture() | assets/js/pages/gallery.js:107 |
 | safeUrl() | assets/js/pages/integrations.js:15 |
 | modalHtml() | assets/js/pages/integrations.js:19 |
 | openModal() | assets/js/pages/integrations.js:47 |

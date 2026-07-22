@@ -92,6 +92,7 @@ alter table public.api_tags                enable row level security;
 alter table public.api_topics              enable row level security;
 alter table public.integrations            enable row level security;
 alter table public.prototypes              enable row level security;
+alter table public.future_prototypes       enable row level security;
 alter table public.work_areas              enable row level security;
 alter table public.roadmap_categories      enable row level security;
 alter table public.roadmap_milestones      enable row level security;
@@ -114,6 +115,7 @@ begin
       ('api_topics',           '(select public.has_module_access(''reference''))'),
       ('integrations',         '(select public.has_module_access(''integrations''))'),
       ('prototypes',           '(select public.has_module_access(''prototypes''))'),
+      ('future_prototypes',    '(select public.has_module_access(''prototypes''))'),
       -- work_areas and work_items are shared: readable behind either
       -- the roadmap or the backlog grant, since both modules read them
       -- (the roadmap board and the backlog table are two views of the
