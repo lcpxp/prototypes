@@ -10,6 +10,11 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Added
+- The prototypes gallery now shows a Future prototypes table below the
+  Live and Drafts grids: a pre-draft shortlist of ideas held for future
+  reference, backed by a new future_prototypes table.
+
 ### Changed
 - The roadmap's Delivered work now splits into two columns: Recently
   completed (shipped in the last four weeks, a rolling list) and Previously

@@ -492,3 +492,22 @@ values
 ('PCI Compliance - IXOPAY integration (confirmed model)', 'One API enrolment call with our existing merchant payload; IXOPAY pre-fills the SAQ, invites the merchant by email, chases them, and runs the annual lifecycle forever; Launchpad adds the fee product on invitation-sent and monitors status via webhook + 15-30 day polling.', 'modules/prototypes/pci/index.html', 'draft', array['compliance', 'ixopay', 'in-build']),
 ('Website Screening (IXOPAY)', 'Placeholder for a future entry. Website screening is a candidate to ride the same IXOPAY rails as PCI compliance.', 'modules/prototypes/website-screening/index.html', 'draft', array['ixopay', 'concept', 'screening']),
 ('GDPR Compliance (IXOPAY)', 'Placeholder for a future entry. GDPR compliance is a candidate to consolidate onto the same IXOPAY rails as PCI compliance.', 'modules/prototypes/gdpr/index.html', 'draft', array['ixopay', 'concept', 'gdpr']);
+
+-- Future prototypes: pre-draft shortlist, no pages yet ------------
+
+insert into public.future_prototypes (name, sort_order)
+values
+  ('PCI', 10),
+  ('Self Service', 20),
+  ('Inbound API Lead Start', 30),
+  ('Admin tools: Front ends', 40),
+  ('Merchant Contributor', 50),
+  ('Pre-Screening', 60),
+  ('AI Generated Summaries of screening checks', 70),
+  ('MCC Lookup AI tool', 80),
+  ('Insights and Dashboards', 90),
+  ('Pricing Quote Tool', 100),
+  ('Pricing Engine', 110),
+  ('PFAC Management', 120),
+  ('Acquirer Selection', 130),
+  ('Multi-Acquirer Selection', 140);

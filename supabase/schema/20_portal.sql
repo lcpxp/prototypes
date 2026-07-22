@@ -54,3 +54,25 @@ drop trigger if exists prototypes_updated_at on public.prototypes;
 create trigger prototypes_updated_at
   before update on public.prototypes
   for each row execute function public.set_updated_at();
+
+-- ---------------------------------------------------------------
+-- future_prototypes: a pre-draft shortlist of prototype ideas held
+-- for future reference. Unlike prototypes these have no page yet, so
+-- the row carries only a name and an optional note. The gallery lists
+-- them in a plain table below the Live and Drafts card grids. Promote
+-- one by adding a prototypes row (and a page) and deleting it here.
+-- ---------------------------------------------------------------
+
+create table if not exists public.future_prototypes (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  note text,
+  sort_order integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists future_prototypes_updated_at on public.future_prototypes;
+create trigger future_prototypes_updated_at
+  before update on public.future_prototypes
+  for each row execute function public.set_updated_at();

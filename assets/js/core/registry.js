@@ -79,6 +79,7 @@
       apiTags: "api_tags",
       apiTopics: "api_topics",
       prototypes: "prototypes",
+      futurePrototypes: "future_prototypes",
       integrations: "integrations",
       workAreas: "work_areas",
       workItemPhases: "work_item_phases",

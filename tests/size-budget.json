@@ -18,8 +18,8 @@
       "note": "Process reference, read on demand rather than every session."
     },
     "supabase/seed.sql": {
-      "hard": 500,
-      "note": "Sample data, not logic; length tracks the number of seeded rows."
+      "hard": 550,
+      "note": "Sample data, not logic; length tracks the number of seeded rows. Exit plan: split per domain (seed/ directory, one file per schema domain) if it nears this cap."
     },
     "supabase/schema/30_work.sql": {
       "hard": 500,

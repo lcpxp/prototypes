@@ -1,26 +1,22 @@
 # Current state
 
-Updated: 2026-07-21 (session)
-Branch: claude/roadmap-items-reorganize-i3o88g
+Updated: 2026-07-22 (session)
+Branch: claude/future-prototypes-table-gwi04m
 
 ## In progress
-None. Roadmap reorganisation applied end to end:
-- Supabase: Oracle enablement and Portal overhaul end within Now;
-  Self-service spans Now-Next; Operations insights merged into Insights;
-  alerting renamed and reowned; new Inbound LaunchPad API workstream
-  (Next-Later) holds the seven inbound API items; Terminal financing is
-  its own low-priority workstream; pricing items nested under Acquirer
-  and product fees; date/azure/service-fees items promoted to Now;
-  duplicates dropped; parked long-tail deprioritised. Decisions are in
-  work_notes.
-- Repo (this branch): timeline order sinks bugs per band and clusters
-  equal-priority parked rows by theme; byOrder sinks bugs everywhere;
-  parked bars keep a light lane tint. Tests cover both rules; suite
-  green (108).
+None. Future prototypes shortlist added end to end:
+- Supabase: new future_prototypes table (name, note, sort_order) with
+  RLS behind the prototypes module grant, admin-only writes; migration
+  20260722000000 applied to the live project and 14 rows seeded.
+- Repo: schema in 20_portal.sql, policy in the content-table loop,
+  registry.tables.futurePrototypes, seed rows, and a Future prototypes
+  table on the gallery below Live/Drafts (App.futurePrototypesTable,
+  rendered from the table). Test suite green (115).
 
 ## Next steps
-1. Owner reviews the reorganised board; adjust any placement made under
-   "recommended defaults" (clickable prompts were dismissed in-session).
+1. Owner reviews the shortlist on the gallery; promote any item to a
+   draft prototype (add a prototypes row + page, delete it here) when
+   work begins.
 2. Merge this branch to main once reviewed; deploy is automatic.
 
 ## Open decisions
