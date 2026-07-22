@@ -108,16 +108,20 @@
     return items.filter(function (i) { return !i.parent_id; });
   }
 
-  // Narrow a dataset to one owning department (work_items.department key),
-  // leaving categories and areas intact so every level still resolves
-  // themes. A falsy dept returns the data unchanged, so "all departments"
-  // is the natural default and costs nothing.
+  // Narrow a dataset to one department, matching either the build owner
+  // (work_items.department) or a business area association
+  // (associated_departments - a department that wants visibility without
+  // owning), so an Operations view surfaces everything Operations cares
+  // about. A falsy dept returns the data unchanged (the "all" default).
   function byDepartment(data, dept) {
     if (!dept) return data;
     return {
       categories: data.categories,
       areas: data.areas,
-      items: (data.items || []).filter(function (i) { return i.department === dept; }),
+      items: (data.items || []).filter(function (i) {
+        return i.department === dept ||
+          (!!i.associated_departments && i.associated_departments.indexOf(dept) !== -1);
+      }),
     };
   }
   // Bugs always sink below other work at the same level, whatever their

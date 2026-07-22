@@ -11,6 +11,12 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Roadmap items can now carry business area associations: departments
+  that want visibility of an item without owning it. Filtering the
+  roadmap by a department now surfaces both the work it owns and the work
+  it is associated with, so (for example) an Operations view covers
+  everything Operations cares about whatever the item's primary theme.
+  The associations show in the item drawer and in CSV/JSON exports.
 - The prototypes gallery now shows a Future prototypes table below the
   Live and Drafts grids: a pre-draft shortlist of ideas held for future
   reference, backed by a new future_prototypes table.

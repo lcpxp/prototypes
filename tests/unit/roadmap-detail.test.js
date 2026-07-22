@@ -147,7 +147,7 @@ test("toCsvRoadmap emits a row per product item with resolved labels and attribu
   const data = sample();
   const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctxOf(App, data));
   const lines = csv.trim().split("\r\n");
-  assert.match(lines[0], /^id,parent_id,parent_title,title,theme,area,department,band,/);
+  assert.match(lines[0], /^id,parent_id,parent_title,title,theme,area,department,business_areas,band,/);
   // Attributes are spread as attr_<key> columns, derived dynamically so a
   // new KPI field would appear with no code change.
   assert.match(lines[0], /attr_team/);

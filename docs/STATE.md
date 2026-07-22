@@ -1,23 +1,32 @@
 # Current state
 
 Updated: 2026-07-22 (session)
-Branch: claude/future-prototypes-table-gwi04m
+Branch: claude/coo-priority-scoping-bwpjua
 
 ## In progress
-None. Future prototypes shortlist added end to end:
-- Supabase: new future_prototypes table (name, note, sort_order) with
-  RLS behind the prototypes module grant, admin-only writes; migration
-  20260722000000 applied to the live project and 14 rows seeded.
-- Repo: schema in 20_portal.sql, policy in the content-table loop,
-  registry.tables.futurePrototypes, seed rows, and a Future prototypes
-  table on the gallery below Live/Drafts (App.futurePrototypesTable,
-  rendered from the table). Test suite green (115).
+None. COO priority scoping written to the roadmap, plus a new business
+area associations capability:
+- Schema: work_items.associated_departments text[] (constrained to the
+  department keys, GIN indexed); roadmap_current recreated with the new
+  column and security_invoker restated. Migration 20260722160000 in the
+  repo; applied live. Front-end: department filter now matches owner OR
+  association (roadmap-views.byDepartment); drawer shows Business areas;
+  CSV/JSON exports carry business_areas. Tests green (113).
+- Roadmap content: 26 COO-sourced work_items (requested_by='COO'), key
+  clash decisions recorded in work_notes (PS fees Next->Later, terminal
+  financing kept parked at 75%, PCI kept Later, blacklist revived,
+  onboarding API left unchanged pending Luke's session).
 
 ## Next steps
-1. Owner reviews the shortlist on the gallery; promote any item to a
-   draft prototype (add a prototypes row + page, delete it here) when
-   work begins.
-2. Merge this branch to main once reviewed; deploy is automatic.
+1. Working session with the COO to turn this into delivery waves;
+   resolve the two held items: onboarding API pull-vs-push model, and
+   the "State launches" placeholder scope.
+2. Owner reviews the 26 new items on the board and prunes/repriorities;
+   promote Payment Service fee configuration when a team is assigned.
+3. Merge this branch to main once reviewed; deploy is automatic.
 
 ## Open decisions
-None outstanding.
+- Onboarding API: pull model (COO) vs existing push/static-submission
+  scoping. Held, no change applied yet.
+- State launches: US state-by-state vs broader region rollout. Captured
+  as a placeholder to confirm.

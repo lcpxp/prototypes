@@ -407,7 +407,7 @@
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
         .select("id, parent_id, area_id, category_id, title, summary, type, level, status, horizon, end_horizon, " +
-          "presentation, priority, effort, impact, department, starts_on, ends_on, progress, " +
+          "presentation, priority, effort, impact, department, associated_departments, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
           "sort_order, updated_at, resolved_at, tags")
         .order("priority", { ascending: true })

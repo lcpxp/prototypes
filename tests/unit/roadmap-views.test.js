@@ -401,6 +401,32 @@ test("byDepartment narrows items and passes areas/categories through", () => {
   assert.equal(V.byDepartment(data, null), data);
 });
 
+test("byDepartment matches business area associations, not just the owner", () => {
+  const V = loadView();
+  const data = {
+    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
+    areas: [{ id: "a1", scope: "product", category_id: "c1", sort_order: 10 }],
+    items: [
+      // Owned by Product, but Operations is an associated business area.
+      { id: "i1", area_id: "a1", department: "product_technology",
+        associated_departments: ["operations_onboarding"], title: "Owned by Product, ops cares" },
+      // Owned by Operations directly.
+      { id: "i2", area_id: "a1", department: "operations_onboarding",
+        associated_departments: [], title: "Owned by Operations" },
+      // Neither owner nor association is Operations.
+      { id: "i3", area_id: "a1", department: "risk_underwriting",
+        associated_departments: ["finance_revenue"], title: "Unrelated" },
+    ],
+  };
+  const ops = V.byDepartment(data, "operations_onboarding");
+  assert.equal(ops.items.length, 2, "owner OR association both count");
+  assert.deepEqual(ops.items.map((i) => i.id).sort(), ["i1", "i2"]);
+  // A missing associated_departments array must not throw.
+  const risk = V.byDepartment({ ...data, items: [{ id: "i4", department: "risk_underwriting" }] },
+    "risk_underwriting");
+  assert.equal(risk.items.length, 1);
+});
+
 test("byDepartment feeds the board so a filter narrows the render", () => {
   const V = loadView();
   const data = sampleData();

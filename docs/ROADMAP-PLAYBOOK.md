@@ -60,7 +60,8 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `level` | workstream, item | item | container vs item |
 | `parent_id` | a workstream's id | null | nests under it |
 | `category_id` | a `roadmap_categories` id (theme) | null | theme lane |
-| `department` | sales_commercial, operations_onboarding, product_technology, finance_revenue, legal_compliance, risk_underwriting | null | exec grouping |
+| `department` | sales_commercial, operations_onboarding, product_technology, finance_revenue, legal_compliance, risk_underwriting | null | exec grouping (single build owner) |
+| `associated_departments` | text[] of the same department keys | `{}` | business area associations: extra departments that want visibility without owning; the department filter matches owner OR association |
 | `horizon` | now, next, later, someday | someday | start band |
 | `end_horizon` | now, next, later, someday | null | spans to this band |
 | `status` | idea, planned, in_progress, blocked, done, dropped | idea | done=Delivered |
@@ -103,6 +104,8 @@ Items are never deleted. Close with `status='done'` or `'dropped'` plus a
     update work_items set horizon='someday', resolution='Deferred: no capacity'
       where title='Returns handling';                                    -- park (keep the reason)
     update work_items set progress=50 where title='Self Service API';     -- nudge progress
+    update work_items set associated_departments='{operations_onboarding}'
+      where title='Unity integration';                                   -- add a business area association
 
     -- Record the reasoning so a move is never informal drift
     insert into work_notes (kind, body, work_item_id)

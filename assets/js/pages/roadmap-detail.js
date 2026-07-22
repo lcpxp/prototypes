@@ -72,6 +72,13 @@
   function row(label, value) {
     return value ? '<div class="rmd-row"><dt>' + esc(label) + "</dt><dd>" + value + "</dd></div>" : "";
   }
+  // Business area associations resolved to their display labels (owner
+  // department excluded; that is the separate Department field).
+  function businessAreaLabels(item) {
+    return (item.associated_departments || []).map(function (d) {
+      return App.departmentLabel(d) || d;
+    });
+  }
   function note(label, text) {
     return text ? '<section class="rmd-note"><h3>' + esc(label) + "</h3><p>" +
       esc(text) + "</p></section>" : "";
@@ -99,6 +106,7 @@
     var facts =
       row("Theme", esc(V.themeLabel(item, ctx))) +
       row("Department", esc(App.departmentLabel(item.department))) +
+      row("Business areas", businessAreaLabels(item).map(esc).join(", ")) +
       row("Band", esc(bandText(item))) +
       row("Status", esc(STATUS[item.status] || item.status)) +
       row("PRD status", esc(PRD_STATUS[item.prd_status] || "")) +
@@ -152,6 +160,7 @@
       title: item.title,
       theme: V.themeLabel(item, ctx),
       department: App.departmentLabel(item.department) || null,
+      business_areas: businessAreaLabels(item).length ? businessAreaLabels(item) : null,
       band: bandText(item),
       status: STATUS[item.status] || item.status,
       prd_status: PRD_STATUS[item.prd_status] || null,
@@ -197,6 +206,7 @@
   // KPI field flows into the CSV with no code change (future-proof).
   var CSV_COLUMNS = [
     "id", "parent_id", "parent_title", "title", "theme", "area", "department",
+    "business_areas",
     "band", "status", "horizon", "end_horizon", "prd_status", "project_status",
     "progress", "progress_label", "sub_steps_total", "sub_steps_done", "priority",
     "start_date", "end_date", "start_sprint", "end_sprint", "tags", "updated_at",
@@ -219,6 +229,7 @@
       theme: V.themeLabel(item, ctx),
       area: V.areaTitleOf(item, ctx),
       department: App.departmentLabel(item.department) || "",
+      business_areas: businessAreaLabels(item).join("; "),
       band: bandText(item),
       status: STATUS[item.status] || item.status,
       horizon: item.horizon || "",

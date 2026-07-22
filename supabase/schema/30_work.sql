@@ -198,6 +198,16 @@ create table if not exists public.work_items (
     check (department in ('sales_commercial', 'operations_onboarding',
       'product_technology', 'finance_revenue', 'legal_compliance',
       'risk_underwriting')),
+  -- Business area associations: additional departments that want
+  -- visibility of the item without owning it. `department` is the single
+  -- build owner; this set widens who the board surfaces the item to, so
+  -- filtering by a department matches owner OR association (an
+  -- Operations view shows everything Operations cares about, whatever
+  -- the item's primary categorisation). Keys mirror `department`.
+  associated_departments text[] not null default '{}'
+    check (associated_departments <@ array['sales_commercial', 'operations_onboarding',
+      'product_technology', 'finance_revenue', 'legal_compliance',
+      'risk_underwriting']::text[]),
   status text not null default 'idea'
     check (status in ('idea', 'planned', 'in_progress', 'blocked', 'done', 'dropped')),
   -- Start band on the continuous axis. 'someday' is the Parked
@@ -266,6 +276,8 @@ create index if not exists work_items_milestone_idx
   on public.work_items (milestone_id);
 create index if not exists work_items_source_document_idx
   on public.work_items (source_document_id);
+create index if not exists work_items_associated_departments_idx
+  on public.work_items using gin (associated_departments);
 
 -- Closing an item (status done/dropped) stamps resolved_at so the
 -- historic record needs no manual bookkeeping; reopening clears it.
@@ -391,6 +403,7 @@ create view public.roadmap_current
     wa.title                  as filing_area,
     wa.scope                  as scope,
     wi.department,
+    wi.associated_departments,
     wi.type,
     wi.status,
     wi.horizon,
