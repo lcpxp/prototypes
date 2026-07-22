@@ -22,6 +22,11 @@ is the git history; what is unfinished is docs/STATE.md.
   reference, backed by a new future_prototypes table.
 
 ### Changed
+- The roadmap's Work Items view now shows each workstream's nested items
+  under its bar (and on its cascade card) by default, so it reads as the
+  granular expansion of the Workstreams view, and loose items now
+  interleave with workstreams by priority - workstreams win ties, so
+  they still lead their band unless an item is deliberately promoted.
 - The roadmap's Delivered work now splits into two columns: Recently
   completed (shipped in the last four weeks, a rolling list) and Previously
   completed (the older, historic record), so recent wins stand apart from

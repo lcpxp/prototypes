@@ -22,12 +22,16 @@ Four concepts, two of them just labels:
   the work. A classifier. Both are just tags on an item; neither is a container.
 - **Workstream** (`work_items` with `level='workstream'`) - a presentable
   high-level container ("Self Service API", "Unity integration"). Renders as
-  its own bar; its sub-items nest under it and collapse to a checklist/count
-  when Detailed is off. A workstream is always top-level (never nested).
+  its own bar; needs no children to count as a big-ticket item. On the
+  Workstreams gantt its sub-items stay collapsed until Detailed; the Work
+  Items level lists them under the bar by default. Always top-level (never
+  nested).
 - **Item** (`work_items` with `level='item'`) - the granular work. Either
   **standalone** (no parent - renders as its own bar, just like a workstream)
   or **nested** (its `parent_id` is a workstream - shows in that workstream's
-  checklist, never as its own bar).
+  checklist, never as its own bar). Standalone items interleave with
+  workstreams by `priority`; workstreams win ties, so at default priorities
+  they lead their band unless an item is deliberately promoted.
 
 `work_areas` is a separate, internal **filing** taxonomy (intake, notes,
 documents). It is NOT the presentation hierarchy - do not confuse a filing

@@ -236,8 +236,9 @@
 
 /* Workstream marker: a top-level container ("Self Service API") reads
    distinctly from a plain item - a heavier left rule on the timeline bar,
-   a tag on the cascade card. Its sub-items collapse to a checklist when
-   Detailed is off, so the container can stand alone until it is scoped. */
+   a tag on the cascade card. On the Workstreams gantt its sub-items stay
+   collapsed until Detailed; the Work Items level lists them under the
+   bar (.rmv-tl-steps) and on the card by default. */
 .rmv-tl-bar--ws {
   border-inline-start-width: 5px;
   font-weight: var(--weight-medium);
@@ -248,6 +249,12 @@
     var(--rm-s, var(--surface)));
 }
 .rm-card--ws { border-inline-start-width: 5px; }
+
+/* Work Items: a parent's nested items ride under its bar in a second
+   grid row, spanning the same horizon columns as the bar itself. The
+   checklist internals (.rmv-steps) are styled in roadmap-detail.css. */
+.rmv-tl-steps { min-inline-size: 0; padding-inline: var(--s-2); }
+.rmv-tl-steps .rmv-steps { margin-top: var(--s-1); }
 
 .rmv-ws-tag {
   font-family: var(--font-mono);

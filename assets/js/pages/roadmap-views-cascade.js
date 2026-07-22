@@ -14,7 +14,9 @@
   window.App = window.App || {};
   var R = App._rmv;
 
-  function itemCard(item, cat, pick) {
+  // steps is optional pre-built HTML (the nested-item checklist): the
+  // Work Items level lists a parent's sub-items on the card by default.
+  function itemCard(item, cat, pick, steps) {
     var band = R.colStart(item);
     var label = band === 2 ? R.presentationLabel(item.presentation) : "";
     var prog = R.progressOf(item);
@@ -27,6 +29,7 @@
         App.escape(label) + "</p>" : "") +
       "<h3>" + App.escape(item.title) + "</h3>" +
       (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") +
+      (steps || "") +
       '<div class="rm-card-progress rmv-prog-' + prog.bucket +
       '" role="img" aria-label="Progress: ' + App.escape(prog.label) + '"><span></span></div>' +
       R.pickBox(item.id, pick) + "</li>";
@@ -56,8 +59,9 @@
 
   // Stack items into the bands they span, grouped by theme, item cards
   // per theme. maxBand caps the axis (Team up to Later, Backlog adds
-  // Parked). Executive no longer routes here - it uses execBoard.
-  function bandsCascade(list, ctx, maxBand, show, pick) {
+  // Parked). withSteps lists each parent's nested items on its card.
+  // Executive no longer routes here - it uses execBoard.
+  function bandsCascade(list, ctx, maxBand, show, pick, withSteps) {
     var html = "";
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx <= 1 && !show) continue;
@@ -65,7 +69,8 @@
       if (!inBand.length) continue;
       var byCat = R.groupBy(inBand, function (i) { return R.themeIdOf(i, ctx); });
       var body = themeBlocks(ctx, byCat, function (i) {
-        return itemCard(i, ctx.catById[R.themeIdOf(i, ctx)] || null, pick);
+        return itemCard(i, ctx.catById[R.themeIdOf(i, ctx)] || null, pick,
+          withSteps ? R.checklistHtml(i, ctx) : "");
       });
       html += '<section class="rmv-band">' + bandHead(R.BANDS[idx].label, R.BANDS[idx].key) +
         body + "</section>";
@@ -93,9 +98,11 @@
       return bandsCascade(wsList, ctx, R.ACTIVE_MAX, show, pick) +
         (expanded ? R.breakdown(R.visibleDetail(wsList, show), ctx) : "") + R.freshnessHtml(all);
     }
+    // Work Items expands each parent's nested items on its card by
+    // default; Backlog stays compact.
     var list = level === "backlog" ? tops : R.teamList(tops);
     var maxBand = level === "backlog" ? R.PARKED : R.ACTIVE_MAX;
-    return bandsCascade(list, ctx, maxBand, show, pick) +
+    return bandsCascade(list, ctx, maxBand, show, pick, level !== "backlog") +
       (expanded ? R.breakdown(R.visibleDetail(list, show), ctx) : "") + R.freshnessHtml(all);
   }
 

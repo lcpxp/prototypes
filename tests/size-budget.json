@@ -47,7 +47,7 @@
     },
     "assets/js/pages/roadmap-views.js": {
       "hard": 500,
-      "note": "Over soft. The cascade family is already split into roadmap-views-cascade.js; the exec department board and the Category->Area breakdown builders are the next extract-to-a-module seam."
+      "note": "Over soft. The cascade family (roadmap-views-cascade.js) and exec board (roadmap-views-exec.js) are already split out; the Category->Area breakdown builders are the next extract-to-a-module seam."
     },
     "assets/js/pages/roadmap.js": {
       "hard": 500,
@@ -63,7 +63,7 @@
     },
     "tests/unit/roadmap-views.test.js": {
       "hard": 500,
-      "note": "Over soft: one dataset drives the level/layout/custom-view benchmarks together. Exit plan: split the custom-view cases into roadmap-views-custom.test.js sharing loadView."
+      "note": "Over soft: one dataset (tests/lib/roadmap.js) drives the level/layout benchmarks together. The custom-view and department-filter cases are already split into roadmap-views-custom.test.js; the exec-board cases are the next split seam."
     },
     "docs/ARCHITECTURE.md": {
       "hard": 300,

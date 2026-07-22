@@ -36,13 +36,16 @@ two independent controls: a **level** (altitude/content) and a **layout**
 item's own fields, so moving or extending an item is a plain field edit.
 The process and taxonomy rules live in docs/ROADMAP-PROCESS.md.
 
-Levels:
+Levels (switch labels in brackets where they differ):
 
-- **Executive** - a theme rollup of active work: one lane per theme, no
-  item titles. Every theme with active work appears automatically, so it
-  is always complete and cannot drift. Prints as the C-suite one-pager.
-- **Team** - the same active work item by item (every product item on
-  the now/next/later horizons, plus delivered when shown).
+- **Workstreams** - the strategic gantt: workstream bars only, nested
+  items collapsed until Detailed, loose items and fixes never shown.
+- **Executive [Categories]** - a department-first rollup of active work:
+  each department, the categories it owns and their item counts. Always
+  complete, cannot drift. Prints as the C-suite one-pager.
+- **Team [Work Items]** - the granular expansion: every product item on
+  the now/next/later horizons (plus delivered when shown), with each
+  workstream's nested items listed under its bar by default.
 - **Backlog** - the full list: active, parked (far-future) and
   delivered, with the Parked column shown.
 
@@ -51,9 +54,11 @@ Layouts:
 - **Timeline** (default) - a continuous **Delivered | Now | Next | Later |
   Parked** axis. Each item's bar spans from `horizon` (its start band)
   through `end_horizon` (the band it runs through), so a long activity
-  visibly spills across columns. Rows order by start band, then span
-  length (longer runs sink lower), then priority - current work floats to
-  the top. Team and Executive show up to Later; Backlog adds the Parked
+  visibly spills across columns. Rows order by start band, then priority
+  (bugs sink first; workstreams win priority ties, so at default
+  priorities they and their items lead the band unless a loose item is
+  deliberately promoted), then span length (longer runs sink lower).
+  Team and Executive show up to Later; Backlog adds the Parked
   column, so the whole list from idea to delivered sits on one axis.
 - **Cascade** - the same work as stacked stage bands; an item that spans
   Now -> Next appears under both the Now and the Next band.
@@ -137,8 +142,9 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   such as "Self Service API"; item = a standalone or nested piece) and an
   optional parent_id linking a sub-step to its workstream (one level;
   children nest under the parent, never placed as their own bars). A
-  workstream renders as its own bar and collapses its children to a count
-  when Detailed is off. See docs/ROADMAP-PLAYBOOK.md.
+  workstream renders as its own bar; the Work Items level lists its
+  children beneath the bar by default, while the Workstreams gantt keeps
+  them collapsed until Detailed. See docs/ROADMAP-PLAYBOOK.md.
 - work_item_phases: optional Discovery / Build / Certification / Launch
   phases per item, each with a quarter, start/end dates and per-date TBC
   flags. Absent for high-level items; surfaced in the detail drawer.

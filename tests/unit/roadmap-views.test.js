@@ -1,93 +1,26 @@
 // ------------------------------------------------------------------
 // tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's
-// pure builders (App.roadmapView in roadmap-views.js + the cascade half
-// in roadmap-views-cascade.js). Loaded in a Node vm alongside
-// registry.js (departments) and ui.js (App.escape). One dataset drives
-// three levels:
-//   Executive - department-first rollup: each department, the categories
-//               it owns and their item counts. Layout-independent.
-//   Team      - active work at item level; Detailed adds a
-//               Category -> Area -> item breakdown with sub-step lists.
-//   Backlog   - the master list: every item, all scopes (mirrors the
-//               backlog module), active + parked + delivered.
+// pure builders (App.roadmapView in roadmap-views.js + the exec board in
+// roadmap-views-exec.js + the cascade half in roadmap-views-cascade.js).
+// Loaded in a Node vm alongside registry.js (departments) and ui.js
+// (App.escape). One dataset drives the levels:
+//   Workstreams - the strategic gantt: workstream bars only.
+//   Executive   - department-first rollup: each department, the
+//                 categories it owns and their item counts.
+//   Team        - active work at item level; a parent's nested items
+//                 list under its bar/card by default; Detailed adds a
+//                 Category -> Area -> item breakdown.
+//   Backlog     - the master list: every item, all scopes (mirrors the
+//                 backlog module), active + parked + delivered.
 // Placement derives from an item's own fields; sub-items (parent_id set)
 // are never placed as their own bars.
 // ------------------------------------------------------------------
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
-
-function loadView() {
-  const sandbox = {
-    location: { pathname: "/modules/roadmap/index.html", hash: "" },
-    navigator: {}, setTimeout,
-    document: { addEventListener() {}, getElementById() { return null; } },
-  };
-  sandbox.window = sandbox;
-  vm.createContext(sandbox);
-  for (const f of [
-    "assets/js/core/registry.js",
-    "assets/js/core/ui.js",
-    "assets/js/pages/roadmap-views.js",
-    "assets/js/pages/roadmap-views-cascade.js",
-  ]) vm.runInContext(read(f), sandbox, { filename: f });
-  return sandbox.App.roadmapView;
-}
+const { loadView, sampleData } = require("../lib/roadmap.js");
 
 function count(html, re) { return (html.match(re) || []).length; }
-
-// Themes: Core, Unity, Growth. Areas carry a title and map to themes; a2
-// is portal scope: excluded from the product Exec/Team views but present
-// in the Backlog master list. Items
-// exercise every band, carry departments, and i2 owns two sub-steps.
-function sampleData() {
-  return {
-    categories: [
-      { id: "c1", key: "core", label: "Core", description: "Base", sort_order: 10 },
-      { id: "c2", key: "unity", label: "Unity", description: "Unity work", sort_order: 20 },
-      { id: "c3", key: "growth", label: "Growth", description: "Growth bets", sort_order: 30 },
-    ],
-    areas: [
-      { id: "a1", key: "core-area", title: "Core service", scope: "product", category_id: "c1", sort_order: 10 },
-      { id: "a2", key: "portal", title: "Portal", scope: "portal", category_id: null, sort_order: 20 },
-      { id: "a3", key: "unity-area", title: "Unity area", scope: "product", category_id: "c2", sort_order: 30 },
-      { id: "a4", key: "growth-area", title: "Growth area", scope: "product", category_id: "c3", sort_order: 40 },
-    ],
-    items: [
-      { id: "i1", area_id: "a1", category_id: "c1", title: "Core onboarding", summary: "Shipped",
-        status: "done", horizon: "now", end_horizon: null, presentation: "sequenced",
-        department: "product_technology", priority: 10, sort_order: 10, updated_at: "2026-07-14T09:00:00Z" },
-      { id: "i2", area_id: "a3", category_id: "c2", title: "Unity integration", summary: "Focus",
-        status: "in_progress", horizon: "now", end_horizon: null, presentation: "current",
-        department: "product_technology", priority: 20, sort_order: 20, updated_at: "2026-07-15T09:00:00Z" },
-      { id: "i3", area_id: "a1", category_id: "c1", title: "Portal overhaul", summary: "Spans",
-        status: "in_progress", horizon: "now", end_horizon: "next", presentation: "ongoing",
-        department: "product_technology", priority: 30, sort_order: 30, updated_at: "2026-07-10T09:00:00Z" },
-      { id: "i4", area_id: "a1", category_id: null, title: "US market", summary: "Bet",
-        status: "idea", horizon: "someday", end_horizon: null, presentation: "sequenced",
-        department: "sales_commercial", priority: 40, sort_order: 40, updated_at: "2026-07-01T09:00:00Z" },
-      { id: "i5", area_id: "a3", category_id: "c2", title: "Whitelist blacklist", summary: "Gone",
-        status: "dropped", horizon: "later", end_horizon: null, resolution: "Not needed",
-        department: "product_technology", priority: 50, sort_order: 50, updated_at: "2026-07-02T09:00:00Z" },
-      { id: "i6", area_id: "a2", category_id: null, title: "Portal tooling", summary: "Portal",
-        status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
-        priority: 10, sort_order: 10, updated_at: "2026-07-16T09:00:00Z" },
-      { id: "i7", area_id: "a4", category_id: "c3", title: "Growth bet", summary: "Later",
-        status: "planned", horizon: "later", end_horizon: null, presentation: "sequenced",
-        department: "sales_commercial", priority: 60, sort_order: 60, updated_at: "2026-07-03T09:00:00Z" },
-      // Sub-steps of i2 (Unity integration): first-class items with a
-      // parent, never placed as their own bars.
-      { id: "i2a", parent_id: "i2", area_id: "a3", category_id: "c2", title: "Merchant Group",
-        status: "done", horizon: "now", presentation: "sequenced",
-        department: "product_technology", priority: 10, sort_order: 10, updated_at: "2026-07-15T09:00:00Z" },
-      { id: "i2b", parent_id: "i2", area_id: "a3", category_id: "c2", title: "Settlement",
-        status: "planned", horizon: "now", presentation: "sequenced",
-        department: "product_technology", priority: 20, sort_order: 20, updated_at: "2026-07-15T09:00:00Z" },
-    ],
-  };
-}
 
 test("colStart/colEnd map horizon, span, done and dropped to the axis", () => {
   const V = loadView();
@@ -136,7 +69,7 @@ test("productItems keeps product scope; topLevel drops sub-items", () => {
   assert.ok(!tops.some((i) => i.parent_id), "no sub-item survives topLevel");
 });
 
-test("timeline (team) spans active bars, hides parked/portal and sub-items", () => {
+test("timeline (team) spans active bars, hides parked/portal, nests sub-items under their parent", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team");
   assert.match(html, /Previously completed<\/span>.*Recently completed<\/span>.*Now<\/span>.*Next<\/span>.*Later<\/span>/s);
@@ -147,7 +80,11 @@ test("timeline (team) spans active bars, hides parked/portal and sub-items", () 
   assert.doesNotMatch(html, /US market/, "parked item hidden from Team");
   assert.doesNotMatch(html, /Whitelist blacklist/, "dropped item hidden from Team");
   assert.doesNotMatch(html, /Portal tooling/, "portal item hidden from Team");
-  assert.doesNotMatch(html, /Merchant Group/, "a sub-step is never a bar in the compact Team view");
+  // Sub-steps list under their parent's bar by default - never as bars.
+  assert.doesNotMatch(html, /rmv-tl-bar[^>]*>[^<]*Merchant Group/, "a sub-step is never its own bar");
+  assert.match(html, /rmv-tl-steps[^>]*>.*rmv-step-title">Merchant Group/s,
+    "the sub-step lists under its parent's bar without the Detailed toggle");
+  assert.match(html, /Steps: 1 of 2 done/);
 });
 
 test("timeline (team) orders by start band, then span length, then priority", () => {
@@ -219,23 +156,29 @@ test("timeline (backlog) mirrors the master list: every top-level item, all scop
   assert.match(html, /rmv-tl-bar--parked[^"]*"[^>]*grid-column:7 \/ 8/);
 });
 
-test("timeline sorts workstreams above standalone items in the same band", () => {
+test("loose items interleave by priority; workstreams win ties so they lead by default", () => {
   const V = loadView();
   const data = {
     categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
     areas: [{ id: "a1", key: "core-area", title: "Core", scope: "product", category_id: "c1", sort_order: 10 }],
     items: [
-      { id: "std", area_id: "a1", category_id: "c1", title: "Standalone fix", level: "item",
+      { id: "std", area_id: "a1", category_id: "c1", title: "Standalone piece", level: "item",
         status: "planned", horizon: "now", end_horizon: null, presentation: "sequenced",
-        department: "product_technology", priority: 10, sort_order: 10 },
+        department: "product_technology", priority: 100, sort_order: 10 },
       { id: "ws", area_id: "a1", category_id: "c1", title: "Big workstream", level: "workstream",
         status: "in_progress", horizon: "now", end_horizon: null, presentation: "current",
-        department: "product_technology", priority: 20, sort_order: 20 },
+        department: "product_technology", priority: 100, sort_order: 20 },
     ],
   };
-  const html = V.timeline(data, "team");
-  assert.ok(html.indexOf("Big workstream") < html.indexOf("Standalone fix"),
-    "workstream sorts above the standalone item even with a worse priority number");
+  // At equal (default) priority the workstream naturally leads its band.
+  const tied = V.timeline(data, "team");
+  assert.ok(tied.indexOf("Big workstream") < tied.indexOf("Standalone piece"),
+    "the workstream outranks the loose item on a priority tie");
+  // A deliberately promoted loose item rises above the workstream.
+  data.items[0].priority = 10;
+  const promoted = V.timeline(data, "team");
+  assert.ok(promoted.indexOf("Standalone piece") < promoted.indexOf("Big workstream"),
+    "an explicitly better priority number lifts the loose item over the workstream");
 });
 
 test("a bug sinks below other work in its band, whatever its priority", () => {
@@ -308,6 +251,20 @@ test("workstreams level shows only workstreams, hiding standalone items", () => 
   assert.doesNotMatch(cas, /Loose fix/, "standalone item hidden from Workstreams cascade");
 });
 
+test("workstreams level keeps nested items collapsed until Detailed", () => {
+  const V = loadView();
+  const compact = V.timeline(sampleData(), "workstreams");
+  assert.doesNotMatch(compact, /rmv-step-title/,
+    "the strategic gantt stays bars-only by default");
+  // sampleData has no workstream parents, so give i2 the level.
+  const data = sampleData();
+  data.items[1].level = "workstream";
+  assert.doesNotMatch(V.timeline(data, "workstreams"), /rmv-step-title/,
+    "still collapsed with a real workstream parent");
+  assert.match(V.timeline(data, "workstreams", { expanded: true }), /rmv-step-title">Merchant Group/,
+    "Detailed surfaces the checklist in the breakdown");
+});
+
 test("hideFixes drops standalone fix items but keeps workstreams and features", () => {
   const V = loadView();
   const data = {
@@ -336,8 +293,12 @@ test("cascade (team) repeats a spanning item under each band it covers", () => {
   assert.match(html, /rmv-band-head--next/);
   assert.doesNotMatch(html, /rmv-band-head--parked/, "Team has no Parked band");
   assert.equal(count(html, /Portal overhaul/g), 2, "spans Now and Next");
-  assert.equal(count(html, /Unity integration/g), 1);
-  assert.doesNotMatch(html, /Merchant Group/, "a sub-step is not a cascade card");
+  assert.equal(count(html, /<h3>Unity integration/g), 1);
+  // Sub-steps list on their parent's card by default - never as cards.
+  assert.doesNotMatch(html, /<h3>Merchant Group/, "a sub-step is not a cascade card");
+  assert.match(html, /rmv-step-title">Merchant Group/, "the sub-step lists on its parent's card");
+  assert.doesNotMatch(V.cascade(sampleData(), "backlog"), /rmv-step-title/,
+    "Backlog cards stay compact");
 });
 
 test("cascade (backlog) surfaces parked items under the Parked band with reasoning kept", () => {
@@ -382,74 +343,8 @@ test("builders escape hostile content", () => {
   assert.doesNotMatch(V.timeline(data, "team", { expanded: true }), /<img src=x/);
 });
 
-test("byDepartment narrows items and passes areas/categories through", () => {
-  const V = loadView();
-  const data = {
-    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
-    areas: [{ id: "a1", scope: "product", category_id: "c1", sort_order: 10 }],
-    items: [
-      { id: "i1", area_id: "a1", department: "sales_commercial", title: "A" },
-      { id: "i2", area_id: "a1", department: "risk_underwriting", title: "B" },
-      { id: "i3", area_id: "a1", department: null, title: "C" },
-    ],
-  };
-  const filtered = V.byDepartment(data, "sales_commercial");
-  assert.equal(filtered.items.length, 1);
-  assert.equal(filtered.items[0].id, "i1");
-  assert.equal(filtered.areas, data.areas, "areas pass through unchanged");
-  assert.equal(V.byDepartment(data, ""), data);
-  assert.equal(V.byDepartment(data, null), data);
-});
-
-test("byDepartment matches business area associations, not just the owner", () => {
-  const V = loadView();
-  const data = {
-    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
-    areas: [{ id: "a1", scope: "product", category_id: "c1", sort_order: 10 }],
-    items: [
-      // Owned by Product, but Operations is an associated business area.
-      { id: "i1", area_id: "a1", department: "product_technology",
-        associated_departments: ["operations_onboarding"], title: "Owned by Product, ops cares" },
-      // Owned by Operations directly.
-      { id: "i2", area_id: "a1", department: "operations_onboarding",
-        associated_departments: [], title: "Owned by Operations" },
-      // Neither owner nor association is Operations.
-      { id: "i3", area_id: "a1", department: "risk_underwriting",
-        associated_departments: ["finance_revenue"], title: "Unrelated" },
-    ],
-  };
-  const ops = V.byDepartment(data, "operations_onboarding");
-  assert.equal(ops.items.length, 2, "owner OR association both count");
-  assert.deepEqual(ops.items.map((i) => i.id).sort(), ["i1", "i2"]);
-  // A missing associated_departments array must not throw.
-  const risk = V.byDepartment({ ...data, items: [{ id: "i4", department: "risk_underwriting" }] },
-    "risk_underwriting");
-  assert.equal(risk.items.length, 1);
-});
-
-test("byDepartment feeds the board so a filter narrows the render", () => {
-  const V = loadView();
-  const data = sampleData();
-  const html = V.timeline(V.byDepartment(data, "sales_commercial"), "backlog");
-  assert.match(html, /Growth bet/, "sales work shows");
-  assert.doesNotMatch(html, /Unity integration/, "other departments drop out");
-});
-
-test("custom view rides a checkbox on each row; unpicked rows drop their check", () => {
-  const V = loadView();
-  const data = sampleData();
-  const plain = V.timeline(data, "backlog");
-  assert.doesNotMatch(plain, /data-pick-id/, "no checkbox when custom is off");
-  const custom = V.timeline(data, "backlog", { custom: true });
-  assert.match(custom, /data-pick-id="i2"/, "each row carries a pick checkbox");
-  assert.match(custom, /data-pick-id="i2"[^>]*checked/, "picked by default");
-  const pruned = V.timeline(data, "backlog", { custom: true, unpicked: { i2: true } });
-  assert.match(pruned, /rmv-unpicked/, "the unpicked row is marked");
-  assert.doesNotMatch(pruned, /data-pick-id="i2"[^>]*checked/, "i2's box is cleared");
-  assert.match(pruned, /data-pick-id="i1"[^>]*checked/, "other rows stay picked");
-  // Cascade carries the same affordance.
-  assert.match(V.cascade(data, "backlog", { custom: true }), /data-pick-id="i2"/);
-});
+// The Department filter (byDepartment) and Custom view benchmarks live
+// in roadmap-views-custom.test.js, sharing tests/lib/roadmap.js.
 
 test("a workstream renders as a container even with no children", () => {
   const V = loadView();
