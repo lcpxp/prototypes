@@ -207,6 +207,13 @@
 .rmd-head { margin: 0 0 var(--s-4); padding-right: var(--s-6); }
 .rmd-head h2 { margin: var(--s-1) 0 var(--s-3); }
 .rmd-summary { color: var(--muted); margin: 0 0 var(--s-4); }
+/* The long-form details text keeps its authored line breaks. */
+.rmd-details {
+  color: var(--ink);
+  font-size: var(--text-sm);
+  white-space: pre-line;
+  margin: 0 0 var(--s-4);
+}
 .rmd-facts { margin: 0 0 var(--s-4); }
 .rmd-row {
   display: grid;
@@ -243,5 +250,14 @@
   padding: 0 var(--s-1);
 }
 .rmd-note p { margin: 0; color: var(--ink); font-size: var(--text-sm); }
+/* Notes and decisions: one row per work_notes entry, kind + date above
+   the body, mirroring the fact-row divider rhythm. */
+.rmd-note-row { padding: var(--s-2) 0; border-top: 1px solid var(--line); }
+.rmd-note-row p { margin: var(--s-1) 0 0; color: var(--ink); font-size: var(--text-sm); white-space: pre-line; }
+.rmd-note-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
 .rmd-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-5); }
 body.rmd-open { overflow: hidden; }

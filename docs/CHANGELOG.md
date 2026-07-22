@@ -22,6 +22,12 @@ is the git history; what is unfinished is docs/STATE.md.
   reference, backed by a new future_prototypes table.
 
 ### Changed
+- The roadmap item drawer now shows everything stored against an item:
+  long-form details, type, effort, impact, priority, its workstream and
+  related items by name, requested-by, external reference, tags, the
+  closing resolution with its date, recorded decisions and notes, and
+  any extra attribute fields - and the JSON/CSV exports carry the same
+  context, so nothing captured in the database stays invisible.
 - The roadmap's Work Items view now shows each workstream's nested items
   under its bar (and on its cascade card) by default, so it reads as the
   granular expansion of the Workstreams view, and loose items now

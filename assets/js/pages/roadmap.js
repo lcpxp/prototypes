@@ -397,7 +397,9 @@
       if (hashFor() !== before) { renderControls(nav, layoutNav, host); render(host); }
     });
 
-    // The three lists are independent, so fetch them in parallel.
+    // The lists are independent, so fetch them in parallel. Notes are
+    // extra context for the drawer; their read is gated on backlog
+    // access, so a denied fetch just leaves the section empty.
     var results = await Promise.all([
       App.db.from(App.registry.tables.roadmapCategories)
         .select("id, key, label, description, sort_order")
@@ -406,15 +408,21 @@
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
-        .select("id, parent_id, area_id, category_id, title, summary, type, level, status, horizon, end_horizon, " +
+        .select("id, parent_id, relates_to_id, area_id, category_id, title, summary, details, type, level, " +
+          "status, horizon, end_horizon, " +
           "presentation, priority, effort, impact, department, associated_departments, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
-          "sort_order, updated_at, resolved_at, tags")
+          "sort_order, updated_at, resolution, resolved_at, requested_by, external_ref, tags")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItemPhases)
         .select("work_item_id, phase, quarter, starts_on, ends_on, start_tbc, end_tbc, sort_order")
         .order("sort_order", { ascending: true }),
+      App.db.from(App.registry.tables.workNotes)
+        .select("work_item_id, kind, body, created_at")
+        .eq("status", "active")
+        .not("work_item_id", "is", null)
+        .order("created_at", { ascending: false }),
     ]);
 
     var itemsResult = results[2];
@@ -426,15 +434,22 @@
     data.areas = results[1].error ? [] : results[1].data || [];
     data.items = itemsResult.data || [];
 
-    // Attach phases to their items (the phases table may be empty).
+    // Attach phases and notes to their items (either table may be empty
+    // or, for notes, unreadable without backlog access).
     var phases = results[3] && !results[3].error ? results[3].data || [] : [];
     var phasesByItem = {};
     phases.forEach(function (p) {
       (phasesByItem[p.work_item_id] = phasesByItem[p.work_item_id] || []).push(p);
     });
+    var notes = results[4] && !results[4].error ? results[4].data || [] : [];
+    var notesByItem = {};
+    notes.forEach(function (n) {
+      (notesByItem[n.work_item_id] = notesByItem[n.work_item_id] || []).push(n);
+    });
     itemsById = {};
     data.items.forEach(function (i) {
       i.phases = phasesByItem[i.id] || [];
+      i.notes = notesByItem[i.id] || [];
       itemsById[i.id] = i;
     });
     // Split delivered work into Recently/Previously completed by stamping

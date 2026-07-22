@@ -53,6 +53,10 @@
       "hard": 500,
       "note": "Over soft; the drawer wiring is the extract-to-a-module seam."
     },
+    "assets/js/pages/roadmap-detail.js": {
+      "hard": 500,
+      "note": "Over soft since the drawer began surfacing the full stored context. Exit plan: move the JSON/CSV export builders into a roadmap-detail-export.js sharing the drawer helpers."
+    },
     "assets/js/pages/backlog.js": {
       "hard": 500,
       "note": "Over soft since the CSV export. Exit plan: move the CSV record builder and columns into a backlog-export.js sharing App.csvFromRows."

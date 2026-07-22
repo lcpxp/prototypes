@@ -146,16 +146,19 @@
       areaById[a.id] = a;
     });
     // Map each parent to its ordered sub-items so the detail and drawer
-    // can nest them without another pass over the dataset.
-    var childrenByParent = {};
+    // can nest them without another pass over the dataset; itemById lets
+    // the drawer resolve parent_id/relates_to_id back to titles.
+    var childrenByParent = {}, itemById = {};
     (data.items || []).forEach(function (i) {
+      itemById[i.id] = i;
       if (i.parent_id) (childrenByParent[i.parent_id] = childrenByParent[i.parent_id] || []).push(i);
     });
     Object.keys(childrenByParent).forEach(function (pid) { childrenByParent[pid].sort(byOrder); });
     var catSorted = (data.categories || []).slice()
       .sort(function (a, b) { return a.sort_order - b.sort_order; });
     return { catById: catById, catSorted: catSorted, scopeByArea: scopeByArea,
-      themeOfArea: themeOfArea, areaById: areaById, childrenByParent: childrenByParent };
+      themeOfArea: themeOfArea, areaById: areaById,
+      childrenByParent: childrenByParent, itemById: itemById };
   }
 
   // An item's theme: its own category, else the theme of its area.

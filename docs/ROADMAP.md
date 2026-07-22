@@ -81,9 +81,14 @@ size hint, so a print-only line reminds the reader to pick it by hand.
 ### Item detail, progress and export
 
 - Every item is clickable and opens a right-hand **detail drawer** with
-  its full context - statuses, real dates, sprints, delivery phases (with
-  any TBC dates) and the light-touch `attributes` - plus an **Export
-  JSON** action for that one item.
+  everything stored against the row: summary and long-form details,
+  statuses, type/effort/impact/priority, its workstream and any
+  soft-linked (relates_to) item resolved to titles, real dates, sprints,
+  delivery phases (with any TBC dates), the `attributes` (unrecognised
+  keys still render as generic rows, so nothing is stored-but-invisible),
+  business value notes, the closing resolution, and the item's
+  work_notes decisions (when the viewer has backlog access) - plus an
+  **Export JSON** action for that one item carrying the same context.
 - A **Detailed view** toggle drills every level down: the Executive
   rollup lists each category's items under its owning department, and Team
   and Backlog expand into a Category -> Area -> item breakdown with each

@@ -45,6 +45,15 @@
     var r = App.sprints && App.sprints.sprintToRange(code);
     return r ? code + " (" + r.start + " to " + r.end + ")" : code;
   }
+  // Single-word enum values (type, effort, impact, note kinds) read as
+  // sentence case; underscores in attribute keys become spaces.
+  function cap(v) { return v ? String(v).charAt(0).toUpperCase() + String(v).slice(1) : ""; }
+  function keyLabel(k) { return cap(String(k).replace(/_/g, " ")); }
+  function titleOf(id, ctx) {
+    var it = id && ctx.itemById ? ctx.itemById[id] : null;
+    return it ? it.title : "";
+  }
+  function listText(v) { return Array.isArray(v) ? v.join(", ") : (v == null ? "" : String(v)); }
 
   // Drop null/undefined/blank/empty so the export stays lean for an AI
   // reader: only fields that carry information survive.
@@ -84,6 +93,29 @@
       esc(text) + "</p></section>" : "";
   }
 
+  // Attribute keys the drawer renders by hand; anything else in the
+  // attributes bag still surfaces as a generic fact row, so a new (or
+  // legacy) key is never stored-but-invisible.
+  var KNOWN_ATTRS = ["pnl_vertical", "team", "region", "customer", "resources",
+    "cost", "merchant_value", "pxp_value", "blockers", "prd_link"];
+  function extraAttrRows(a) {
+    return Object.keys(a).filter(function (k) { return KNOWN_ATTRS.indexOf(k) === -1; })
+      .sort().map(function (k) { return row(keyLabel(k), esc(listText(a[k]))); }).join("");
+  }
+
+  // Decisions and notes recorded against the item (work_notes rows,
+  // attached by roadmap.js; absent when the viewer lacks backlog access).
+  function notesHtml(item) {
+    var notes = item.notes || [];
+    if (!notes.length) return "";
+    var rows = notes.map(function (n) {
+      return '<div class="rmd-note-row"><span class="rmd-note-meta">' + esc(cap(n.kind || "note")) +
+        (n.created_at ? " &middot; " + esc(day(n.created_at)) : "") + "</span><p>" +
+        esc(n.body) + "</p></div>";
+    }).join("");
+    return '<section class="rmd-section"><h3>Notes and decisions</h3>' + rows + "</section>";
+  }
+
   function phasesHtml(item) {
     var phases = (item.phases || []).slice().sort(byPhase);
     if (!phases.length) return "";
@@ -105,10 +137,17 @@
     var region = Array.isArray(a.region) ? a.region.map(esc).join(", ") : esc(a.region || "");
     var facts =
       row("Theme", esc(V.themeLabel(item, ctx))) +
+      row("Area", esc(V.areaTitleOf(item, ctx))) +
+      row("Workstream", esc(titleOf(item.parent_id, ctx))) +
+      row("Related to", esc(titleOf(item.relates_to_id, ctx))) +
       row("Department", esc(App.departmentLabel(item.department))) +
       row("Business areas", businessAreaLabels(item).map(esc).join(", ")) +
       row("Band", esc(bandText(item))) +
       row("Status", esc(STATUS[item.status] || item.status)) +
+      row("Type", esc(cap(item.type))) +
+      row("Effort", esc(cap(item.effort))) +
+      row("Impact", esc(cap(item.impact))) +
+      row("Priority", item.priority != null ? esc(String(item.priority)) : "") +
       row("PRD status", esc(PRD_STATUS[item.prd_status] || "")) +
       row("Project status", esc(PROJECT_STATUS[item.project_status] || "")) +
       row("Progress", esc(prog.label)) +
@@ -121,23 +160,34 @@
       row("Region", region) +
       row("Customer", esc(a.customer || "")) +
       row("Resources", a.resources != null ? esc(String(a.resources)) : "") +
-      row("Cost", a.cost != null ? esc(String(a.cost)) : "");
+      row("Cost", a.cost != null ? esc(String(a.cost)) : "") +
+      extraAttrRows(a) +
+      row("Requested by", esc(item.requested_by || "")) +
+      row("External ref", esc(item.external_ref || "")) +
+      row("Tags", (item.tags || []).map(esc).join(", ")) +
+      row("Updated", esc(day(item.updated_at)));
     var prd = a.prd_link
       ? '<a class="button secondary" href="' + esc(a.prd_link) +
         '" target="_blank" rel="noopener">Open PRD</a>' : "";
     var steps = V.checklistHtml(item, ctx);
     var stepsSection = steps ? '<section class="rmd-section"><h3>Sub-steps</h3>' + steps + "</section>" : "";
+    var resolvedOn = day(item.resolved_at);
     return '<div class="rmd-head"><span class="eyebrow">' + esc(V.themeLabel(item, ctx)) +
-        "</span><h2>" + esc(item.title) + "</h2>" +
+        "</span>" +
+        (item.level === "workstream" ? '<p class="rmv-ws-tag">Workstream</p>' : "") +
+        "<h2>" + esc(item.title) + "</h2>" +
         '<div class="rm-card-progress rmv-prog-' + prog.bucket +
         '" role="img" aria-label="Progress: ' + esc(prog.label) + '"><span></span></div></div>' +
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
+      (item.details ? '<p class="rmd-details">' + esc(item.details) + "</p>" : "") +
       '<dl class="rmd-facts">' + facts + "</dl>" +
       stepsSection +
       phasesHtml(item) +
       note("Merchant value", a.merchant_value) +
       note("PXP value", a.pxp_value) +
       note("Blockers and dependencies", a.blockers) +
+      note("Resolution" + (resolvedOn ? " (" + resolvedOn + ")" : ""), item.resolution) +
+      notesHtml(item) +
       '<div class="rmd-actions">' + prd +
       '<button class="button" type="button" id="rmd-export">Export JSON</button></div>';
   }
@@ -155,18 +205,32 @@
         start_tbc: p.start_tbc || undefined, end_tbc: p.end_tbc || undefined,
       });
     });
+    var extra = {};
+    Object.keys(a).forEach(function (k) {
+      if (KNOWN_ATTRS.indexOf(k) === -1) extra[k] = a[k];
+    });
     return clean({
       id: item.id,
       title: item.title,
+      level: item.level === "workstream" ? "workstream" : null,
+      workstream: titleOf(item.parent_id, ctx) || null,
+      related_to: titleOf(item.relates_to_id, ctx) || null,
       theme: V.themeLabel(item, ctx),
+      area: V.areaTitleOf(item, ctx) || null,
       department: App.departmentLabel(item.department) || null,
       business_areas: businessAreaLabels(item).length ? businessAreaLabels(item) : null,
       band: bandText(item),
       status: STATUS[item.status] || item.status,
+      type: item.type || null,
+      effort: item.effort || null,
+      impact: item.impact || null,
+      priority: item.priority != null ? item.priority : null,
       prd_status: PRD_STATUS[item.prd_status] || null,
       project_status: PROJECT_STATUS[item.project_status] || null,
       progress: prog.pct,
       progress_label: prog.label,
+      summary: item.summary || null,
+      details: item.details || null,
       start_date: item.starts_on || null,
       end_date: item.ends_on || null,
       start_sprint: item.start_sprint || null,
@@ -182,6 +246,15 @@
       pxp_value: a.pxp_value || null,
       blockers: a.blockers || null,
       prd_link: a.prd_link || null,
+      attributes: extra,
+      tags: item.tags && item.tags.length ? item.tags : null,
+      requested_by: item.requested_by || null,
+      external_ref: item.external_ref || null,
+      resolution: item.resolution || null,
+      resolved_at: item.resolved_at || null,
+      notes: (item.notes || []).map(function (n) {
+        return clean({ kind: n.kind || "note", date: day(n.created_at) || null, body: n.body });
+      }),
       updated_at: item.updated_at || null,
     });
   }
@@ -209,7 +282,10 @@
     "business_areas",
     "band", "status", "horizon", "end_horizon", "prd_status", "project_status",
     "progress", "progress_label", "sub_steps_total", "sub_steps_done", "priority",
-    "start_date", "end_date", "start_sprint", "end_sprint", "tags", "updated_at",
+    "level", "type", "effort", "impact",
+    "start_date", "end_date", "start_sprint", "end_sprint",
+    "related_to", "requested_by", "external_ref", "resolution", "details",
+    "tags", "updated_at",
   ];
 
   // One flat record per work item: the resolved, board-accurate values
@@ -241,10 +317,19 @@
       sub_steps_total: st.total,
       sub_steps_done: st.done,
       priority: item.priority,
+      level: item.level || "item",
+      type: item.type || "",
+      effort: item.effort || "",
+      impact: item.impact || "",
       start_date: item.starts_on || "",
       end_date: item.ends_on || "",
       start_sprint: item.start_sprint || "",
       end_sprint: item.end_sprint || "",
+      related_to: titleOf(item.relates_to_id, ctx),
+      requested_by: item.requested_by || "",
+      external_ref: item.external_ref || "",
+      resolution: item.resolution || "",
+      details: item.details || "",
       tags: item.tags || [],
       updated_at: item.updated_at || "",
     };

@@ -121,6 +121,88 @@ test("drawerHtml renders the facts, phases and an export button", () => {
   assert.match(html, /id="rmd-export"[^>]*>Export JSON</);
 });
 
+test("drawerHtml surfaces the full stored context: details, classifiers, links, resolution and notes", () => {
+  const App = load();
+  const data = sample();
+  data.items.push({ id: "ws1", area_id: "a3", category_id: "c2", level: "workstream",
+    title: "Unity programme", status: "in_progress", horizon: "now", presentation: "current",
+    priority: 10, sort_order: 5, attributes: {} });
+  const item = data.items[0];
+  item.parent_id = "ws1";
+  item.relates_to_id = "ws1";
+  item.type = "feature";
+  item.effort = "large";
+  item.impact = "high";
+  item.details = "Long-form context\nwith a second line.";
+  item.tags = ["priority", "q3"];
+  item.requested_by = "COO";
+  item.external_ref = "DEVOPS-123";
+  item.resolution = "Descoped after review";
+  item.resolved_at = "2026-07-20T10:00:00Z";
+  item.attributes.legacy_priority_tags = ["P1", "board"];
+  item.notes = [{ kind: "decision", body: "Promoted on partner deadline", created_at: "2026-07-18T09:00:00Z" }];
+  const html = App.roadmapDetail.drawerHtml(item, ctxOf(App, data));
+  assert.match(html, /Long-form context/, "details text renders");
+  assert.match(html, /<dt>Type<\/dt><dd>Feature/);
+  assert.match(html, /<dt>Effort<\/dt><dd>Large/);
+  assert.match(html, /<dt>Impact<\/dt><dd>High/);
+  assert.match(html, /<dt>Priority<\/dt><dd>20/);
+  assert.match(html, /<dt>Workstream<\/dt><dd>Unity programme/, "parent resolves to its title");
+  assert.match(html, /<dt>Related to<\/dt><dd>Unity programme/, "soft link resolves to its title");
+  assert.match(html, /<dt>Requested by<\/dt><dd>COO/);
+  assert.match(html, /<dt>External ref<\/dt><dd>DEVOPS-123/);
+  assert.match(html, /<dt>Tags<\/dt><dd>priority, q3/);
+  assert.match(html, /<dt>Legacy priority tags<\/dt><dd>P1, board/,
+    "an unhandled attributes key still renders as a fact row");
+  assert.match(html, /Resolution \(2026-07-20\)/, "the closing reason and date show");
+  assert.match(html, /Descoped after review/);
+  assert.match(html, /Notes and decisions/);
+  assert.match(html, /Promoted on partner deadline/);
+});
+
+test("drawerHtml tags a workstream and stays lean on a bare item", () => {
+  const App = load();
+  const data = sample();
+  data.items[1].level = "workstream";
+  const ws = App.roadmapDetail.drawerHtml(data.items[1], ctxOf(App, data));
+  assert.match(ws, /rmv-ws-tag">Workstream/, "the head carries the workstream tag");
+  assert.doesNotMatch(ws, /<dt>Type</, "unset fields add no rows");
+  assert.doesNotMatch(ws, /Notes and decisions/, "no notes section without notes");
+  assert.doesNotMatch(ws, /Resolution/, "no resolution section without one");
+});
+
+test("toKpiItem and toCsvRoadmap carry the extended context", () => {
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  item.type = "feature";
+  item.effort = "large";
+  item.impact = "high";
+  item.details = "Context";
+  item.resolution = "Kept";
+  item.requested_by = "COO";
+  item.external_ref = "DEVOPS-123";
+  item.tags = ["q3"];
+  item.attributes.legacy_priority_tags = ["P1"];
+  item.notes = [{ kind: "decision", body: "Why", created_at: "2026-07-18T09:00:00Z" }];
+  const ctx = ctxOf(App, data);
+  const kpi = plain(App.roadmapDetail.toKpiItem(item, ctx));
+  assert.equal(kpi.type, "feature");
+  assert.equal(kpi.effort, "large");
+  assert.equal(kpi.impact, "high");
+  assert.equal(kpi.priority, 20);
+  assert.equal(kpi.details, "Context");
+  assert.equal(kpi.resolution, "Kept");
+  assert.equal(kpi.requested_by, "COO");
+  assert.deepEqual(kpi.attributes, { legacy_priority_tags: ["P1"] }, "unknown attrs survive in the export");
+  assert.deepEqual(kpi.notes, [{ kind: "decision", date: "2026-07-18", body: "Why" }]);
+  const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctx);
+  const lines = csv.trim().split("\r\n");
+  assert.match(lines[0], /,level,type,effort,impact,/, "the CSV names the new columns");
+  assert.match(lines[0], /,related_to,requested_by,external_ref,resolution,details,/);
+  assert.match(lines[1], /DEVOPS-123/);
+});
+
 test("drawerHtml escapes hostile content", () => {
   const App = load();
   const data = sample();

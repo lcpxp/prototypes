@@ -1,30 +1,29 @@
 # Current state
 
 Updated: 2026-07-22 (session)
-Branch: claude/coo-priority-scoping-bwpjua
+Branch: claude/roadmap-model-logic-2l2ukm (merged to main continuously)
 
 ## In progress
-None. COO priority scoping is written to the roadmap, plus two system
-capabilities:
-- Business area associations: work_items.associated_departments text[];
-  the department filter matches owner OR association; drawer + exports
-  carry it. Migration 20260722160000.
-- Workstream reschedule cascade: roadmap_move_workstream(id, horizon)
-  shifts a workstream and its direct children by the same band delta,
-  preserving offsets/span (soft-linked items stay put). Migration
-  20260722170000; canonical op in the playbook.
-
-Granular re-filing done: Partner onboarding flows is now a workstream
-with Xolvis/VFS as low-priority Later children; the provisioning trio are
-un-nested Later items soft-linked to Unity integration.
+None. This session confirmed the roadmap model with the owner (12
+clickable answers) and applied the two deltas:
+- Work Items view now expands each workstream's nested items under its
+  bar/card by default; loose items interleave by priority, workstreams
+  win ties. Workstreams/Categories/Backlog unchanged by design.
+- Item drawer and JSON/CSV exports now surface the full stored context:
+  details, type/effort/impact/priority, workstream + relates_to titles,
+  requested_by, external_ref, tags, resolution (+date), work_notes
+  decisions, and a generic row for any unhandled attributes key.
+Also: exec board extracted to roadmap-views-exec.js and custom-view
+benchmarks split out, per the size-budget exit plans.
 
 ## Next steps
-1. Working session with the COO to turn this into delivery waves; resolve
-   the held items: onboarding API pull-vs-push, and the State launches
-   placeholder scope.
-2. Owner reviews the ~26 new items and repriorities; promote Payment
-   Service fee configuration when a team is assigned.
-3. Merge this branch to main once reviewed; deploy is automatic.
+1. Owner eyeballs the live board: Work Items expansion, drawer depth,
+   and the priority-interleave ordering reading correctly.
+2. Working session with the COO to turn the scoped work into delivery
+   waves; resolve the held items below; owner repriorities the ~26 new
+   items and promotes Payment Service fee configuration when teamed.
+3. Consider the roadmap-detail.js split (exports to their own module)
+   next time the drawer grows.
 
 ## Open decisions
 - Onboarding API: pull (COO) vs existing push/static-submission. Held.
