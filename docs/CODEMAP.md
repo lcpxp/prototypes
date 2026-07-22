@@ -60,13 +60,13 @@ document instead of walking the tree or reading whole files.
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
-| docs/ROADMAP-PLAYBOOK.md | 195 | Roadmap playbook |
+| docs/ROADMAP-PLAYBOOK.md | 204 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 153 | Roadmap process |
 | docs/ROADMAP.md | 180 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 24 | Current state |
+| docs/STATE.md | 32 | Current state |
 | docs/WORKFLOW.md | 110 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
@@ -109,11 +109,12 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260720000000_workstreams_and_visibility.sql | 98 | ------------------------------------------------------------------ |
 | supabase/migrations/20260720130000_category_department_and_fix_relates.sql | 74 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722000000_future_prototypes.sql | 68 | --------------------------------------------------------------- |
+| supabase/migrations/20260722160000_work_item_associated_departments.sql | 68 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 247 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
-| supabase/schema/30_work.sql | 424 | ------------------------------------------------------------------ |
+| supabase/schema/30_work.sql | 483 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |

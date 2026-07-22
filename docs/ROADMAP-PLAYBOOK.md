@@ -100,6 +100,15 @@ Items are never deleted. Close with `status='done'` or `'dropped'` plus a
     update work_items set priority=15 where title='Inbound API';         -- reprioritise
     update work_items set horizon='now' where title='Inbound API';       -- schedule
     update work_items set horizon='now', end_horizon='next' where ...;   -- span columns
+
+    -- Reschedule a WHOLE workstream and cascade to its child items in one
+    -- call: shifts the workstream and every direct child by the same band
+    -- delta, keeping their relative offsets and the workstream's span
+    -- (Next->Later with 2 Next + 2 Later children -> Now->Next with 2 Now
+    -- + 2 Next). Soft-linked (relates_to_id) items stay put. Use this for
+    -- "move workstream X to now/next/later" instead of editing each row.
+    select roadmap_move_workstream(
+      (select id from work_items where title='Insights' and level='workstream'), 'now');
     update work_items set status='done' where title='Add site endpoint'; -- deliver
     update work_items set horizon='someday', resolution='Deferred: no capacity'
       where title='Returns handling';                                    -- park (keep the reason)
