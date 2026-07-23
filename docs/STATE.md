@@ -16,14 +16,16 @@ deliverable model landed (migration + code + docs, all merged):
   leave a slim continuation strip (A4). shareholder_visible retired in
   guidance (B4); tasks may nest or stand alone (B3).
 
+Deliverable audit done (owner waves): Insights' 10 nested metrics and the
+Oracle "organise builds" step became deliverables; Terminal financing
+workstream moved to Later; other suspects kept as work items. Live-DB only,
+recorded in work_notes.
+
 ## Next steps
 1. VALUE-CAPTURE session (docs/VALUE-CAPTURE.md) - owner asked to resume
    this; merchant_value/pxp_value are empty across the roadmap. Run the
    ranked queue, fill workstreams first in clickable waves.
-2. Data audit (owner request): find rows Claude created that are really
-   deliverables mis-filed as items/streams; resolve in clickable waves,
-   apply level/parent fixes, one work_notes decision. NOT yet done.
-3. Owner eyeballs the live bars-only board and drawer sections.
+2. Owner eyeballs the live bars-only board and drawer sections.
 
 ## Open decisions
 - Onboarding API: pull (COO) vs existing push/static-submission. Held.
