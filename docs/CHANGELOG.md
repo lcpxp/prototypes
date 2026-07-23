@@ -11,6 +11,11 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Nested work items now stack in stage order under their workstream (Now
+  above Next above Later; within a stage, spans finishing sooner sit
+  higher), inherit the workstream's theme colour, and carry a small faint
+  dot in their own theme when it differs - an at-a-glance flag for
+  misaligned tagging.
 - The Now, Next and Later stage headers on the roadmap are now clickable.
   Clicking one strikes the label through and takes that stage off the
   board - the work that begins in it disappears - so you can, say, hide

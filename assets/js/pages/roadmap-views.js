@@ -2,8 +2,9 @@
 // roadmap-views.js - Pure HTML builders for the roadmap home
 // (modules/roadmap/). Data-in / string-out, no DOM, so they load in a
 // Node vm for unit testing (tests/unit/roadmap-views.test.js). The DOM
-// wiring, data fetch and switcher live in roadmap.js. The cascade family
-// lives in roadmap-views-cascade.js and the Executive board in
+// wiring, data fetch and switcher live in roadmap.js. The Timeline layout
+// lives in roadmap-views-timeline.js, the cascade family in
+// roadmap-views-cascade.js and the Executive board in
 // roadmap-views-exec.js, sharing these helpers via the private App._rmv
 // namespace.
 //
@@ -201,6 +202,14 @@
       (wsRank(a) - wsRank(b)) || (a.sort_order - b.sort_order);
   }
 
+  // Nested bars under a workstream stack in stage order: start band first
+  // (Now above Next above Later), then end band (a run finishing sooner
+  // sits above one running longer, so now-to-next beats now-to-later),
+  // then byOrder for the remaining ties.
+  function childOrder(a, b) {
+    return (colStart(a) - colStart(b)) || (colEnd(a) - colEnd(b)) || byOrder(a, b);
+  }
+
   function context(data) {
     var catById = {}, scopeByArea = {}, themeOfArea = {}, areaById = {};
     (data.categories || []).forEach(function (c) { catById[c.id] = c; });
@@ -333,99 +342,10 @@
       "work_items table in Supabase (see docs/ROADMAP.md).</p>";
   }
 
-  // --- Timeline: the continuous, spanning-bar layout ---------------
+  // --- Team / Backlog membership -----------------------------------
+  // The Timeline layout itself lives in roadmap-views-timeline.js
+  // (App.roadmapView.timeline), split out per the size budget.
 
-  // Order: start band, then bugs sink below everything else in the band,
-  // then priority - loose items interleave with workstreams by priority
-  // number, with workstreams winning ties so at default priorities they
-  // naturally lead their band unless an item is deliberately promoted.
-  // Remaining ties: span length (a run that extends into the next band
-  // sinks below work that finishes in this one), then theme lane so the
-  // Parked stack reads grouped, not scattered. Current work floats to
-  // the top; long tasks spill right.
-  function timelineOrder(a, b) {
-    return (a._s - b._s) || (a._bug - b._bug) || (a._pri - b._pri) ||
-      ((a._ws ? 0 : 1) - (b._ws ? 0 : 1)) ||
-      ((a._e - a._s) - (b._e - b._s)) ||
-      (a._catSo - b._catSo) || (a._so - b._so);
-  }
-
-  // Now, Next and Later are the stages the reader can toggle off by
-  // clicking their header; Delivered and Parked are structural and stay.
-  function isHideable(key) { return key === "now" || key === "next" || key === "later"; }
-
-  // One timeline header cell for band index b. A hideable stage renders as
-  // a button (data-band drives the toggle in roadmap.js); a hidden stage
-  // keeps its struck-through header so a second click brings it back.
-  function bandHeadCell(b, hidden) {
-    var band = BANDS[b];
-    if (!isHideable(band.key)) return '<span class="rmv-tl-col">' + App.escape(band.label) + "</span>";
-    var off = !!(hidden && hidden[band.key]);
-    return '<button type="button" class="rmv-tl-col rmv-band-toggle' +
-      (off ? " rmv-band-toggle--off" : "") + '" data-band="' + band.key +
-      '" aria-pressed="' + (off ? "true" : "false") + '">' + App.escape(band.label) + "</button>";
-  }
-
-  // Shared grid renderer over pre-placed rows. maxBand caps the axis
-  // (ACTIVE_MAX for Team/Executive, PARKED for Backlog); hiding delivered
-  // drops the Delivered column and clamps spans into it. A stage toggled
-  // off keeps its column and struck header, but the work that begins in it
-  // has been filtered out upstream (bandVisible), so the column reads empty.
-  // preordered keeps the caller's order (used to group child bars under
-  // their parent); otherwise rows sort by timelineOrder.
-  function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick, preordered, hidden) {
-    var visible = showDelivered ? placed
-      : placed.filter(function (p) { return p._e >= 2; });
-    if (!visible.length) return emptyMsg;
-    var first = showDelivered ? 0 : 2;
-    var head = '<div class="rmv-tl-head"><span class="rmv-tl-label"></span>' +
-      BANDS.slice(first, maxBand + 1).map(function (b, k) {
-        return bandHeadCell(first + k, hidden); }).join("") + "</div>";
-    var ordered = preordered ? visible : visible.slice().sort(timelineOrder);
-    var body = ordered.map(function (p) {
-      var s = p._s < first ? first : p._s, e = p._e > maxBand ? maxBand : p._e;
-      var progCls = p._prog ? " rmv-prog-" + p._prog.bucket : "";
-      var idAttr = p._id ? ' data-item-id="' + App.escape(p._id) + '"' : "";
-      var colStyle = "grid-column:" + (s - first + 2) + " / " + (e - first + 3);
-      var bar = '<span class="rmv-tl-bar' + (p.done ? " rmv-tl-bar--done" : "") +
-        (p._s === PARKED ? " rmv-tl-bar--parked" : "") + (p._ws ? " rmv-tl-bar--ws" : "") +
-        catClass(p._cat) + progCls +
-        '"' + idAttr + ' style="' + colStyle + '">' + App.escape(p.label) + "</span>";
-      var rowCls = "rmv-tl-row" + (p._child ? " rmv-tl-row--child" : "") + pickCls(p._id, pick);
-      return '<div class="' + rowCls + '"><span class="rmv-tl-label">' +
-        App.escape(p._catLabel) + "</span>" + bar + pickBox(p._id, pick) + "</div>";
-    }).join("");
-    return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") +
-      '" style="--tl-cols:' + (maxBand - first + 1) + '">' + head + body + "</div>";
-  }
-
-  // Place one item as a timeline row (bar = title). child marks an
-  // indented nested work item so it renders under its parent.
-  function placeItem(i, ctx, child) {
-    var catId = themeIdOf(i, ctx), cat = catId ? ctx.catById[catId] : null;
-    return { _s: colStart(i), _e: colEnd(i), _cat: cat,
-      _catLabel: cat ? cat.label : "General", _pri: i.priority, _so: i.sort_order,
-      _bug: bugRank(i), _catSo: cat ? cat.sort_order : 1e9,
-      label: i.title, done: i.status === "done", _id: i.id, _prog: progressOf(i),
-      _ws: i.level === "workstream", _child: !!child };
-  }
-
-  // Pre-order rows for a bars-with-children view: sort top-level rows by
-  // timelineOrder, then drop each workstream's nested work items (indented,
-  // in byOrder) immediately after it so a child groups under its parent.
-  // keepChild (optional) filters children to the level's membership.
-  function placedWithChildren(tops, ctx, keepChild) {
-    var placedTops = tops.map(function (i) { return { p: placeItem(i, ctx), item: i }; });
-    placedTops.sort(function (a, b) { return timelineOrder(a.p, b.p); });
-    var out = [];
-    placedTops.forEach(function (entry) {
-      out.push(entry.p);
-      barKids(entry.item, ctx).forEach(function (k) {
-        if (!keepChild || keepChild(k)) out.push(placeItem(k, ctx, true));
-      });
-    });
-    return out;
-  }
   // Team membership: active work plus delivered (parked children drop off
   // the Work Items board just like parked top-level rows do).
   function teamMember(i) { return i.status === "done" || isActive(i); }
@@ -449,63 +369,14 @@
   // attached to App._rmv at load; call it at render time.
   function breakdown(list, ctx) { return App._rmv.breakdown(list, ctx); }
 
-  function timeline(data, level, opts) {
-    var show = !opts || opts.showDelivered !== false;
-    var expanded = !!(opts && opts.expanded);
-    var hidden = (opts && opts.hiddenBands) || null;
-    var pick = opts && opts.custom
-      ? { custom: true, unpicked: opts.unpicked || {}, excluded: opts.excluded || {} } : null;
-    var ctx = context(data);
-    // The Backlog level is the master list: it mirrors the backlog module
-    // and carries every work_item (all scopes, including portal and unfiled
-    // work), so nothing captured is ever invisible in the roadmap tool.
-    // Exec and Team stay product-scoped. See docs/ROADMAP-PLAYBOOK.md.
-    var all = level === "backlog" ? (data.items || [])
-      : productItems(data.items || [], ctx.scopeByArea);
-    if (opts && opts.hideFixes) all = all.filter(function (i) { return !isFix(i); });
-    all = all.filter(function (i) { return bandVisible(i, hidden); });
-    if (!all.length) return emptyNotice();
-    if (level === "exec") {
-      return App._rmv.execBoard(all, ctx, show, expanded) + freshnessHtml(all);
-    }
-    var tops = topLevel(all);
-    if (level === "workstreams") {
-      // The strategic gantt: workstreams only, standalone items hidden,
-      // nested items collapsed until the Detailed breakdown.
-      var wsList = teamList(tops).filter(function (i) { return i.level === "workstream"; });
-      var wsGrid = timelineGrid(wsList.map(function (i) { return placeItem(i, ctx); }),
-        ACTIVE_MAX, show,
-        '<p class="notice">No active workstreams. Mark a top-level item as a ' +
-        "workstream to show it here.</p>", pick, false, hidden);
-      return wsGrid + (expanded ? breakdown(visibleDetail(wsList, show), ctx) : "") +
-        freshnessHtml(all);
-    }
-    if (level === "backlog") {
-      // The master list as bars: every top-level row, each workstream's
-      // nested work items indented beneath it.
-      var grid = timelineGrid(
-        placedWithChildren(tops, ctx, function (k) { return bandVisible(k, hidden); }),
-        PARKED, show, emptyNotice(), pick, true, hidden);
-      return grid + (expanded ? breakdown(visibleDetail(tops, show), ctx) : "") + freshnessHtml(all);
-    }
-    // Work Items: workstreams (bold) with their nested work items indented
-    // beneath, plus standalone items - all bars. Deliverables never appear.
-    var teamTops = teamList(tops);
-    var teamGrid = timelineGrid(placedWithChildren(teamTops, ctx,
-      function (k) { return teamMember(k) && bandVisible(k, hidden); }), ACTIVE_MAX, show,
-      '<p class="notice">No active roadmap work. Items wait in the Backlog ' +
-      "until scheduled (set a horizon of now, next or later).</p>", pick, true, hidden);
-    return teamGrid + (expanded ? breakdown(visibleDetail(teamTops, show), ctx) : "") +
-      freshnessHtml(all);
-  }
-
-  // Shared internals for the cascade family (roadmap-views-cascade.js)
-  // and the Executive board (roadmap-views-exec.js, which attaches
-  // execBoard onto this namespace).
+  // Shared internals for the layout family (roadmap-views-timeline.js,
+  // roadmap-views-cascade.js) and the Executive board
+  // (roadmap-views-exec.js, which attaches execBoard onto this namespace).
   App._rmv = {
     BANDS: BANDS, ACTIVE_MAX: ACTIVE_MAX, PARKED: PARKED,
     presentationLabel: presentationLabel, colStart: colStart, colEnd: colEnd,
-    productItems: productItems, isFix: isFix, byOrder: byOrder, context: context,
+    productItems: productItems, isFix: isFix, byOrder: byOrder,
+    childOrder: childOrder, bugRank: bugRank, context: context,
     themeIdOf: themeIdOf, groupBy: groupBy, catClass: catClass, progressOf: progressOf,
     topLevel: topLevel, teamList: teamList, freshnessHtml: freshnessHtml,
     emptyNotice: emptyNotice, bandLabel: bandLabel,
@@ -527,6 +398,5 @@
     expandUnpicked: expandUnpicked,
     presentationLabel: presentationLabel, freshnessHtml: freshnessHtml,
     topLevel: topLevel, breakdown: breakdown,
-    timeline: timeline,
   };
 })();

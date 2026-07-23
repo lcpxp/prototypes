@@ -1,31 +1,27 @@
 # Current state
 
 Updated: 2026-07-23 (session)
-Branch: claude/roadmap-model-logic-2l2ukm (merged to main continuously)
+Branch: claude/acquirer-services-roadmap-0867ue (task branch; merge to
+main when the owner is happy with the board)
 
 ## In progress
-None committed in flight. The roadmap board is now bars-only with the
-deliverable model landed (migration + code + docs, all merged):
-- level=deliverable added; task/improvement children of workstreams
-  auto-triaged to deliverables (migration 20260722190000, applied live).
-- Board shows workstreams (bold) + nested/standalone work items as bars;
-  deliverables are drawer-only (Work items vs Deliverables sections).
-- Sweep fixes shipped: dept filter keeps a workstream via matching child
-  (A1); custom-view unpick drops the subtree from exports + dims children
-  (A2); print/PDF prints the current view, bars only (A3); cascade spans
-  leave a slim continuation strip (A4). shareholder_visible retired in
-  guidance (B4); tasks may nest or stand alone (B3).
-
-Deliverable audit done (owner waves): Insights' 10 nested metrics and the
-Oracle "organise builds" step became deliverables; Terminal financing
-workstream moved to Later; other suspects kept as work items. Live-DB only,
-recorded in work_notes.
+Nothing in flight. This session shipped (code on the branch above, data
+live in Supabase):
+- Nested items stack in stage order under a workstream (Now/Next/Later,
+  shorter spans first) in both Timeline and Cascade; new comparator
+  childOrder; benchmarks in tests/unit/roadmap-child-order.test.js.
+- Child bars/cards inherit the workstream's theme colour; a faint
+  .rmv-theme-dot in the child's own theme flags a mismatch.
+- Timeline layout split into roadmap-views-timeline.js (size budget).
+- Data: workstream renamed "Acquirer Services and Fees" and retagged
+  Acquiring; "Optional pricing lines" toggle made standalone under
+  Products & Pricing; dropped duplicate per-line-default item deleted.
 
 ## Next steps
-1. VALUE-CAPTURE session (docs/VALUE-CAPTURE.md) - owner asked to resume
-   this; merchant_value/pxp_value are empty across the roadmap. Run the
-   ranked queue, fill workstreams first in clickable waves.
-2. Owner eyeballs the live bars-only board and drawer sections.
+1. Owner eyeballs the board: family colour blocks, mismatch dots, child
+   stacking; then merge the branch to main.
+2. VALUE-CAPTURE session (docs/VALUE-CAPTURE.md) still pending -
+   merchant_value/pxp_value empty across the roadmap.
 
 ## Open decisions
 - Onboarding API: pull (COO) vs existing push/static-submission. Held.

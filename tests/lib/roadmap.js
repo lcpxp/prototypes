@@ -21,6 +21,7 @@ function loadView() {
     "assets/js/core/registry.js",
     "assets/js/core/ui.js",
     "assets/js/pages/roadmap-views.js",
+    "assets/js/pages/roadmap-views-timeline.js",
     "assets/js/pages/roadmap-views-breakdown.js",
     "assets/js/pages/roadmap-views-exec.js",
     "assets/js/pages/roadmap-views-cascade.js",

@@ -186,7 +186,9 @@
 .rmv-tl-bar {
   /* A touch of the lane accent mixed into its soft tint lifts the bar
      clear of the recessed track. Falls back to the soft tint, then a
-     plain surface - never the track colour, or the bar would vanish. */
+     plain surface - never the track colour, or the bar would vanish.
+     position anchors the theme-mismatch dot at the bar's right end. */
+  position: relative;
   background: color-mix(in srgb, var(--rm-a, var(--line-strong)) 10%,
     var(--rm-s, var(--surface)));
   border-inline-start: 3px solid var(--rm-a, var(--line-strong));
@@ -253,7 +255,7 @@
 
 /* Cascade: a nested work item's card is inset from its workstream and
    carries a "Part of ..." eyebrow. */
-.rm-card--child { margin-inline-start: var(--s-4); }
+.rm-card--child { margin-inline-start: var(--s-4); position: relative; }
 .rmv-part-of {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -280,6 +282,24 @@
 .rmv-tl-row--child .rmv-tl-bar {
   margin-inline-start: var(--s-4);
 }
+
+/* Theme-mismatch dot: a nested bar/card inherits its workstream's lane
+   colour, so its OWN theme surfaces only as a small, faint dot at the
+   right end - just enough to spot an item whose theme disagrees with its
+   parent's. The dot carries its own .rm-cat-* class, so --rm-a here is
+   the child's theme accent, not the inherited lane colour. */
+.rmv-theme-dot {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  inset-inline-end: var(--s-2);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rm-a, var(--line-strong));
+  opacity: 0.3;
+}
+.rm-card--child .rmv-theme-dot { top: var(--s-2); transform: none; }
 
 .rmv-ws-tag {
   font-family: var(--font-mono);

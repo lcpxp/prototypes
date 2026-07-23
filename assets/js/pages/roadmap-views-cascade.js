@@ -19,18 +19,18 @@
   // A slim continuation strip: a spanning card's appearance in a band
   // after its start - title and (for a workstream) its tag only, no
   // summary, progress or pick box (picks live on the start-band card).
-  function contCard(item, cat, isChild) {
+  function contCard(item, cat, isChild, dot) {
     var ws = item.level === "workstream";
     return '<li class="rm-card rm-card--cont' + (ws ? " rm-card--ws" : "") +
       (isChild ? " rm-card--child" : "") + R.catClass(cat) +
       '" data-item-id="' + App.escape(item.id) + '">' +
       (ws ? '<p class="rmv-ws-tag">Workstream</p>' : "") +
-      "<h3>" + App.escape(item.title) + "</h3></li>";
+      "<h3>" + App.escape(item.title) + "</h3>" + (dot || "") + "</li>";
   }
 
   // The full card in its start band. isChild insets it and adds a
   // "Part of <workstream>" eyebrow so a nested work item reads as owned.
-  function fullCard(item, cat, pick, isChild, parentTitle) {
+  function fullCard(item, cat, pick, isChild, parentTitle, dot) {
     var band = R.colStart(item);
     var label = band === 2 ? R.presentationLabel(item.presentation) : "";
     var prog = R.progressOf(item);
@@ -47,16 +47,28 @@
       (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") +
       '<div class="rm-card-progress rmv-prog-' + prog.bucket +
       '" role="img" aria-label="Progress: ' + App.escape(prog.label) + '"><span></span></div>' +
-      R.pickBox(item.id, pick) + "</li>";
+      R.pickBox(item.id, pick) + (dot || "") + "</li>";
   }
 
   // A card for `item` in band `idx`: full at its start band, continuation
-  // strip in the later bands it spans.
-  function cardIn(item, ctx, pick, idx, isChild, parentTitle) {
-    var cat = ctx.catById[R.themeIdOf(item, ctx)] || null;
+  // strip in the later bands it spans. A child card inherits its PARENT's
+  // theme colour; when its own theme disagrees, that theme shows only as a
+  // faint dot - a quiet flag for spotting misaligned tagging (mirrors
+  // placeItem in roadmap-views.js).
+  function cardIn(item, ctx, pick, idx, isChild, parentTitle, parent) {
+    var own = ctx.catById[R.themeIdOf(item, ctx)] || null;
+    var cat = own, dot = "";
+    if (isChild && parent) {
+      var pCat = ctx.catById[R.themeIdOf(parent, ctx)] || null;
+      cat = pCat;
+      if (own && (!pCat || pCat.id !== own.id)) {
+        dot = '<span class="rmv-theme-dot rm-cat-' + App.escape(own.key) +
+          '" aria-hidden="true"></span>';
+      }
+    }
     return R.colStart(item) === idx
-      ? fullCard(item, cat, pick, isChild, parentTitle)
-      : contCard(item, cat, isChild);
+      ? fullCard(item, cat, pick, isChild, parentTitle, dot)
+      : contCard(item, cat, isChild, dot);
   }
 
   // Now/Next/Later render as clickable toggles (data-band drives the toggle
@@ -127,19 +139,21 @@
       sortedTops.forEach(function (top) {
         var kids = R.barKids(top, ctx).filter(function (k) { return !keepChild || keepChild(k); });
         var topIn = inBand(top);
-        var kidsIn = kids.filter(inBand);
+        var kidsIn = kids.filter(inBand).sort(R.childOrder);
         if (!topIn && !kidsIn.length) return;
         var key = R.themeIdOf(top, ctx) || "none";
         var bucket = perTheme[key] = perTheme[key] || [];
         if (topIn) bucket.push({ item: top });
-        kidsIn.forEach(function (k) { bucket.push({ item: k, child: true, parentTitle: top.title }); });
+        kidsIn.forEach(function (k) {
+          bucket.push({ item: k, child: true, parentTitle: top.title, parent: top });
+        });
       });
       var keys = Object.keys(perTheme);
       if (!keys.length) continue;
       var i2 = idx;
       function block(cat, entries) {
         return themeSection(cat, entries.map(function (e) {
-          return cardIn(e.item, ctx, pick, i2, e.child, e.parentTitle);
+          return cardIn(e.item, ctx, pick, i2, e.child, e.parentTitle, e.parent);
         }).join(""));
       }
       var blocks = ctx.catSorted.filter(function (c) { return perTheme[c.id]; })
