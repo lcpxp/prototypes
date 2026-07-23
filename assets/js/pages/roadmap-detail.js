@@ -169,8 +169,15 @@
     var prd = a.prd_link
       ? '<a class="button secondary" href="' + esc(a.prd_link) +
         '" target="_blank" rel="noopener">Open PRD</a>' : "";
-    var steps = V.checklistHtml(item, ctx);
-    var stepsSection = steps ? '<section class="rmd-section"><h3>Sub-steps</h3>' + steps + "</section>" : "";
+    // A workstream lists its nested work items (each a board bar, clickable
+    // through to its own drawer); every level lists its deliverables (the
+    // drawer-only detail beneath it).
+    var itemsList = V.itemListHtml ? V.itemListHtml(item, ctx) : "";
+    var itemsSection = itemsList
+      ? '<section class="rmd-section"><h3>Work items</h3>' + itemsList + "</section>" : "";
+    var deliverables = V.checklistHtml(item, ctx);
+    var deliverablesSection = deliverables
+      ? '<section class="rmd-section"><h3>Deliverables</h3>' + deliverables + "</section>" : "";
     var resolvedOn = day(item.resolved_at);
     return '<div class="rmd-head"><span class="eyebrow">' + esc(V.themeLabel(item, ctx)) +
         "</span>" +
@@ -181,7 +188,8 @@
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
       (item.details ? '<p class="rmd-details">' + esc(item.details) + "</p>" : "") +
       '<dl class="rmd-facts">' + facts + "</dl>" +
-      stepsSection +
+      itemsSection +
+      deliverablesSection +
       phasesHtml(item) +
       note("Merchant value", a.merchant_value) +
       note("PXP value", a.pxp_value) +
@@ -209,10 +217,19 @@
     Object.keys(a).forEach(function (k) {
       if (KNOWN_ATTRS.indexOf(k) === -1) extra[k] = a[k];
     });
+    // Nested work items (bars) and deliverables (drawer-only detail), each
+    // resolved to a title + done flag so the export carries the structure.
+    var workItems = (V.barKids ? V.barKids(item, ctx) : []).map(function (k) {
+      return clean({ title: k.title, done: k.status === "done" || undefined });
+    });
+    var deliverables = (V.deliverablesOf ? V.deliverablesOf(item, ctx) : []).map(function (k) {
+      return clean({ title: k.title, done: k.status === "done" || undefined });
+    });
     return clean({
       id: item.id,
       title: item.title,
-      level: item.level === "workstream" ? "workstream" : null,
+      level: item.level === "workstream" ? "workstream"
+        : (item.level === "deliverable" ? "deliverable" : null),
       workstream: titleOf(item.parent_id, ctx) || null,
       related_to: titleOf(item.relates_to_id, ctx) || null,
       theme: V.themeLabel(item, ctx),
@@ -252,6 +269,8 @@
       external_ref: item.external_ref || null,
       resolution: item.resolution || null,
       resolved_at: item.resolved_at || null,
+      work_items: workItems.length ? workItems : null,
+      deliverables: deliverables.length ? deliverables : null,
       notes: (item.notes || []).map(function (n) {
         return clean({ kind: n.kind || "note", date: day(n.created_at) || null, body: n.body });
       }),

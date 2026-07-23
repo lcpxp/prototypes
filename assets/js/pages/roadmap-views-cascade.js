@@ -1,11 +1,13 @@
 // ------------------------------------------------------------------
 // roadmap-views-cascade.js - The Cascade layout for the roadmap home:
 // the same work as stacked stage bands (Now/Next/Later, plus Parked for
-// Backlog), an item repeating under each band it spans. Split out of
-// roadmap-views.js to keep both files within budget; shares its helpers
-// via the private App._rmv namespace and extends App.roadmapView with
-// cascade(). Executive is layout-independent, so it defers to the shared
-// department-first execBoard. Data-in / string-out, no DOM.
+// Backlog). A card sits in full in its START band; a span it runs into
+// renders as a slim continuation strip (A4). On Work Items and Backlog a
+// workstream's nested work items render as inset child cards right after
+// it; deliverables never appear (drawer only). Split out of
+// roadmap-views.js to stay within budget; shares helpers via App._rmv and
+// extends App.roadmapView with cascade(). Executive is layout-independent
+// (defers to execBoard). Data-in / string-out, no DOM.
 // ------------------------------------------------------------------
 
 (function () {
@@ -14,42 +16,47 @@
   window.App = window.App || {};
   var R = App._rmv;
 
-  // steps is optional pre-built HTML (the nested-item checklist): the
-  // Work Items level lists a parent's sub-items on the card by default.
-  function itemCard(item, cat, pick, steps) {
+  // A slim continuation strip: a spanning card's appearance in a band
+  // after its start - title and (for a workstream) its tag only, no
+  // summary, progress or pick box (picks live on the start-band card).
+  function contCard(item, cat, isChild) {
+    var ws = item.level === "workstream";
+    return '<li class="rm-card rm-card--cont' + (ws ? " rm-card--ws" : "") +
+      (isChild ? " rm-card--child" : "") + R.catClass(cat) +
+      '" data-item-id="' + App.escape(item.id) + '">' +
+      (ws ? '<p class="rmv-ws-tag">Workstream</p>' : "") +
+      "<h3>" + App.escape(item.title) + "</h3></li>";
+  }
+
+  // The full card in its start band. isChild insets it and adds a
+  // "Part of <workstream>" eyebrow so a nested work item reads as owned.
+  function fullCard(item, cat, pick, isChild, parentTitle) {
     var band = R.colStart(item);
     var label = band === 2 ? R.presentationLabel(item.presentation) : "";
     var prog = R.progressOf(item);
     var ws = item.level === "workstream";
+    var eyebrow = isChild && parentTitle
+      ? '<p class="rmv-part-of">Part of ' + App.escape(parentTitle) + "</p>" : "";
     return '<li class="rm-card rm-card--' + R.BANDS[band].key + (ws ? " rm-card--ws" : "") +
-      R.catClass(cat) + R.pickCls(item.id, pick) +
+      (isChild ? " rm-card--child" : "") + R.catClass(cat) + R.pickCls(item.id, pick) +
       '" data-item-id="' + App.escape(item.id) + '">' +
-      (ws ? '<p class="rmv-ws-tag">Workstream</p>' : "") +
+      (ws ? '<p class="rmv-ws-tag">Workstream</p>' : "") + eyebrow +
       (label ? '<p class="rm-state rm-state--' + App.escape(item.presentation) + '">' +
         App.escape(label) + "</p>" : "") +
       "<h3>" + App.escape(item.title) + "</h3>" +
       (item.summary ? '<p class="rm-card-sum">' + App.escape(item.summary) + "</p>" : "") +
-      (steps || "") +
       '<div class="rm-card-progress rmv-prog-' + prog.bucket +
       '" role="img" aria-label="Progress: ' + App.escape(prog.label) + '"><span></span></div>' +
       R.pickBox(item.id, pick) + "</li>";
   }
 
-  function themeBlock(cat, items, cardFn) {
-    var desc = cat && cat.description
-      ? '<p class="rmv-theme-desc">' + App.escape(cat.description) + "</p>" : "";
-    var cards = items.length ? '<ul class="rmv-cards">' +
-      items.map(cardFn).join("") + "</ul>" : "";
-    return '<section class="rmv-theme' + R.catClass(cat) + '">' +
-      '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
-      desc + cards + "</section>";
-  }
-
-  function themeBlocks(ctx, byCat, cardFn) {
-    var blocks = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
-      .map(function (c) { return themeBlock(c, byCat[c.id].slice().sort(R.byOrder), cardFn); });
-    if (byCat.none) blocks.push(themeBlock(null, byCat.none.slice().sort(R.byOrder), cardFn));
-    return '<div class="rmv-themes">' + blocks.join("") + "</div>";
+  // A card for `item` in band `idx`: full at its start band, continuation
+  // strip in the later bands it spans.
+  function cardIn(item, ctx, pick, idx, isChild, parentTitle) {
+    var cat = ctx.catById[R.themeIdOf(item, ctx)] || null;
+    return R.colStart(item) === idx
+      ? fullCard(item, cat, pick, isChild, parentTitle)
+      : contCard(item, cat, isChild);
   }
 
   function bandHead(label, key) {
@@ -57,23 +64,74 @@
       App.escape(label) + "</h2>";
   }
 
-  // Stack items into the bands they span, grouped by theme, item cards
-  // per theme. maxBand caps the axis (Team up to Later, Backlog adds
-  // Parked). withSteps lists each parent's nested items on its card.
-  // Executive no longer routes here - it uses execBoard.
-  function bandsCascade(list, ctx, maxBand, show, pick, withSteps) {
+  function themeSection(cat, cardsHtml) {
+    var desc = cat && cat.description
+      ? '<p class="rmv-theme-desc">' + App.escape(cat.description) + "</p>" : "";
+    return '<section class="rmv-theme' + R.catClass(cat) + '">' +
+      '<h3 class="rm-lane-label">' + App.escape(cat ? cat.label : "General") + "</h3>" +
+      desc + '<ul class="rmv-cards">' + cardsHtml + "</ul></section>";
+  }
+
+  function inBandFn(idx) {
+    return function (i) { return R.colStart(i) <= idx && R.colEnd(i) >= idx; };
+  }
+
+  // Simple bands (Workstreams level): one card per in-band item, grouped
+  // by theme and ordered by byOrder. No children.
+  function bandsSimple(list, ctx, maxBand, show, pick) {
     var html = "";
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx <= 1 && !show) continue;
-      var inBand = list.filter(function (i) { return R.colStart(i) <= idx && R.colEnd(i) >= idx; });
+      var inBand = list.filter(inBandFn(idx));
       if (!inBand.length) continue;
       var byCat = R.groupBy(inBand, function (i) { return R.themeIdOf(i, ctx); });
-      var body = themeBlocks(ctx, byCat, function (i) {
-        return itemCard(i, ctx.catById[R.themeIdOf(i, ctx)] || null, pick,
-          withSteps ? R.checklistHtml(i, ctx) : "");
-      });
+      var i2 = idx;
+      var blocks = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
+        .map(function (c) {
+          return themeSection(c, byCat[c.id].slice().sort(R.byOrder)
+            .map(function (i) { return cardIn(i, ctx, pick, i2); }).join(""));
+        });
+      if (byCat.none) blocks.push(themeSection(null, byCat.none.slice().sort(R.byOrder)
+        .map(function (i) { return cardIn(i, ctx, pick, i2); }).join("")));
       html += '<section class="rmv-band">' + bandHead(R.BANDS[idx].label, R.BANDS[idx].key) +
-        body + "</section>";
+        '<div class="rmv-themes">' + blocks.join("") + "</div></section>";
+    }
+    return html;
+  }
+
+  // Grouped bands (Work Items / Backlog): each in-band top-level row, then
+  // its in-band nested work items right after it, kept in the parent's
+  // theme block. keepChild narrows children to the level's membership.
+  function bandsGrouped(tops, ctx, maxBand, show, pick, keepChild) {
+    var html = "";
+    var sortedTops = tops.slice().sort(R.byOrder);
+    for (var idx = 0; idx <= maxBand; idx++) {
+      if (idx <= 1 && !show) continue;
+      var inBand = inBandFn(idx);
+      var perTheme = {};
+      sortedTops.forEach(function (top) {
+        var kids = R.barKids(top, ctx).filter(function (k) { return !keepChild || keepChild(k); });
+        var topIn = inBand(top);
+        var kidsIn = kids.filter(inBand);
+        if (!topIn && !kidsIn.length) return;
+        var key = R.themeIdOf(top, ctx) || "none";
+        var bucket = perTheme[key] = perTheme[key] || [];
+        if (topIn) bucket.push({ item: top });
+        kidsIn.forEach(function (k) { bucket.push({ item: k, child: true, parentTitle: top.title }); });
+      });
+      var keys = Object.keys(perTheme);
+      if (!keys.length) continue;
+      var i2 = idx;
+      function block(cat, entries) {
+        return themeSection(cat, entries.map(function (e) {
+          return cardIn(e.item, ctx, pick, i2, e.child, e.parentTitle);
+        }).join(""));
+      }
+      var blocks = ctx.catSorted.filter(function (c) { return perTheme[c.id]; })
+        .map(function (c) { return block(c, perTheme[c.id]); });
+      if (perTheme.none) blocks.push(block(null, perTheme.none));
+      html += '<section class="rmv-band">' + bandHead(R.BANDS[idx].label, R.BANDS[idx].key) +
+        '<div class="rmv-themes">' + blocks.join("") + "</div></section>";
     }
     return html;
   }
@@ -81,7 +139,8 @@
   function cascade(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
     var expanded = !!(opts && opts.expanded);
-    var pick = opts && opts.custom ? { custom: true, unpicked: opts.unpicked || {} } : null;
+    var pick = opts && opts.custom
+      ? { custom: true, unpicked: opts.unpicked || {}, excluded: opts.excluded || {} } : null;
     var ctx = R.context(data);
     // Backlog mirrors the master list (all scopes); Exec/Team stay
     // product-scoped. See timeline() in roadmap-views.js.
@@ -95,14 +154,13 @@
     var tops = R.topLevel(all);
     if (level === "workstreams") {
       var wsList = R.teamList(tops).filter(function (i) { return i.level === "workstream"; });
-      return bandsCascade(wsList, ctx, R.ACTIVE_MAX, show, pick) +
+      return bandsSimple(wsList, ctx, R.ACTIVE_MAX, show, pick) +
         (expanded ? R.breakdown(R.visibleDetail(wsList, show), ctx) : "") + R.freshnessHtml(all);
     }
-    // Work Items expands each parent's nested items on its card by
-    // default; Backlog stays compact.
     var list = level === "backlog" ? tops : R.teamList(tops);
     var maxBand = level === "backlog" ? R.PARKED : R.ACTIVE_MAX;
-    return bandsCascade(list, ctx, maxBand, show, pick, level !== "backlog") +
+    var keepChild = level === "backlog" ? null : R.teamMember;
+    return bandsGrouped(list, ctx, maxBand, show, pick, keepChild) +
       (expanded ? R.breakdown(R.visibleDetail(list, show), ctx) : "") + R.freshnessHtml(all);
   }
 

@@ -21,6 +21,7 @@ function loadView() {
     "assets/js/core/registry.js",
     "assets/js/core/ui.js",
     "assets/js/pages/roadmap-views.js",
+    "assets/js/pages/roadmap-views-breakdown.js",
     "assets/js/pages/roadmap-views-exec.js",
     "assets/js/pages/roadmap-views-cascade.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
@@ -66,13 +67,16 @@ function sampleData() {
       { id: "i7", area_id: "a4", category_id: "c3", title: "Growth bet", summary: "Later",
         status: "planned", horizon: "later", end_horizon: null, presentation: "sequenced",
         department: "sales_commercial", priority: 60, sort_order: 60, updated_at: "2026-07-03T09:00:00Z" },
-      // Sub-steps of i2 (Unity integration): first-class items with a
-      // parent, never placed as their own bars.
+      // Children of i2 (Unity integration, a top-level work item): by
+      // position both are drawer-only deliverables, whatever their stored
+      // level. i2a is explicitly a deliverable; i2b is stored level='item'
+      // so that when a test promotes i2 to a workstream, i2b becomes a
+      // nested work-item bar while i2a stays a deliverable.
       { id: "i2a", parent_id: "i2", area_id: "a3", category_id: "c2", title: "Merchant Group",
-        status: "done", horizon: "now", presentation: "sequenced",
+        level: "deliverable", status: "done", horizon: "now", presentation: "sequenced",
         department: "product_technology", priority: 10, sort_order: 10, updated_at: "2026-07-15T09:00:00Z" },
       { id: "i2b", parent_id: "i2", area_id: "a3", category_id: "c2", title: "Settlement",
-        status: "planned", horizon: "now", presentation: "sequenced",
+        level: "item", status: "planned", horizon: "now", presentation: "sequenced",
         department: "product_technology", priority: 20, sort_order: 20, updated_at: "2026-07-15T09:00:00Z" },
     ],
   };

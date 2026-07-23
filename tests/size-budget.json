@@ -47,7 +47,7 @@
     },
     "assets/js/pages/roadmap-views.js": {
       "hard": 500,
-      "note": "Over soft. The cascade family (roadmap-views-cascade.js) and exec board (roadmap-views-exec.js) are already split out; the Category->Area breakdown builders are the next extract-to-a-module seam."
+      "note": "Over soft. The cascade family (roadmap-views-cascade.js), exec board (roadmap-views-exec.js) and Detailed breakdown (roadmap-views-breakdown.js) are split out; the timeline grid builders are the next seam if it grows."
     },
     "assets/js/pages/roadmap.js": {
       "hard": 500,

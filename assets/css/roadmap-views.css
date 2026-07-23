@@ -235,13 +235,13 @@
 }
 
 /* Workstream marker: a top-level container ("Self Service API") reads
-   distinctly from a plain item - a heavier left rule on the timeline bar,
-   a tag on the cascade card. On the Workstreams gantt its sub-items stay
-   collapsed until Detailed; the Work Items level lists them under the
-   bar (.rmv-tl-steps) and on the card by default. */
+   distinctly from a plain item - a heavier left rule and BOLD label on the
+   timeline bar, a tag and bold title on the cascade card. Its nested work
+   items render as their own indented bars/cards (.rmv-tl-row--child /
+   .rm-card--child); its deliverables live only in the drawer. */
 .rmv-tl-bar--ws {
   border-inline-start-width: 5px;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   /* A workstream reads as a stronger shade of its lane hue; a standalone
      item keeps the plain soft tint. Falls back to the soft tint where
      color-mix is unsupported. */
@@ -249,12 +249,43 @@
     var(--rm-s, var(--surface)));
 }
 .rm-card--ws { border-inline-start-width: 5px; }
+.rm-card--ws h3 { font-weight: var(--weight-bold); }
 
-/* Work Items: a parent's nested items ride under its bar in a second
-   grid row, spanning the same horizon columns as the bar itself. The
-   checklist internals (.rmv-steps) are styled in roadmap-detail.css. */
-.rmv-tl-steps { min-inline-size: 0; padding-inline: var(--s-2); }
-.rmv-tl-steps .rmv-steps { margin-top: var(--s-1); }
+/* Cascade: a nested work item's card is inset from its workstream and
+   carries a "Part of ..." eyebrow. */
+.rm-card--child { margin-inline-start: var(--s-4); }
+.rmv-part-of {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  margin: 0 0 var(--s-1);
+}
+
+/* A4: a spanning card's continuation in a later band - a slim title-only
+   strip so the span stays visible without repeating summary or progress. */
+.rm-card--cont {
+  padding-block: var(--s-1);
+  opacity: 0.85;
+  border-inline-start-style: dashed;
+}
+.rm-card--cont h3 { font-size: var(--text-sm); margin: 0; }
+
+/* A nested work item: its label cell is inset with a quiet CSS-drawn rule
+   so the child reads as owned by the workstream above it, without shifting
+   the bar off its horizon columns (indentation lives in the label gutter
+   only, never the time axis). */
+.rmv-tl-row--child .rmv-tl-label {
+  padding-inline-start: var(--s-3);
+  position: relative;
+}
+.rmv-tl-row--child .rmv-tl-label::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--s-1);
+  inline-size: 2px;
+  background: var(--line);
+}
 
 .rmv-ws-tag {
   font-family: var(--font-mono);
@@ -311,6 +342,12 @@ body.rm-custom .rm-card .rmv-pick {
   .rmv-theme-desc { display: none; }
   .rmv-cards { gap: 3pt; margin-block-start: 4pt; }
   .rmv-card-eyebrow { font-size: 7pt; }
+  /* Nested work items stay compact and clearly inset on paper; a
+     continuation strip prints as a thin line. */
+  .rmv-tl-row--child { padding-block: 1pt; }
+  .rm-card--child { margin-inline-start: 8pt; }
+  .rm-card--cont { padding-block: 1pt; }
+  .rm-card--cont h3 { font-size: 8pt; }
   /* Timeline export: paper drops backgrounds by default, leaving the
      bars white and the board blank. Force exact colour so the lane track
      and each coloured bar (progress foot included) carry into the PDF. */

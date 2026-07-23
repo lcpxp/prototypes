@@ -23,6 +23,7 @@ function load() {
     "assets/js/core/ui.js",
     "assets/js/core/sprints.js",
     "assets/js/pages/roadmap-views.js",
+    "assets/js/pages/roadmap-views-breakdown.js",
     "assets/js/pages/roadmap-detail.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App;
@@ -212,16 +213,39 @@ test("drawerHtml escapes hostile content", () => {
   assert.match(html, /&lt;img/);
 });
 
-test("drawerHtml lists an item's sub-steps as a checklist", () => {
+test("drawerHtml lists an item's children as deliverables (drawer only)", () => {
   const App = load();
   const data = sample();
+  // A child of a work item is a deliverable by position.
   data.items.push({ id: "i2s", parent_id: "i2", area_id: "a3", category_id: "c2",
     title: "Settlement", status: "planned", horizon: "now", presentation: "sequenced",
     priority: 30, sort_order: 30, attributes: {} });
   const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
-  assert.match(html, /Sub-steps/);
-  assert.match(html, /Steps: 0 of 1 done/);
+  assert.match(html, /<h3>Deliverables<\/h3>/);
+  assert.match(html, /Deliverables: 0 of 1 done/);
   assert.match(html, /rmv-step-title">Settlement/);
+  assert.doesNotMatch(html, /<h3>Work items<\/h3>/, "a plain item has no work-items section");
+});
+
+test("drawerHtml splits a workstream's work items from its deliverables", () => {
+  const App = load();
+  const data = sample();
+  data.items[0].level = "workstream"; // i2 becomes a workstream
+  data.items.push({ id: "wi", parent_id: "i2", area_id: "a3", category_id: "c2",
+    title: "Rollout", level: "item", status: "planned", horizon: "now",
+    presentation: "sequenced", priority: 10, sort_order: 10, attributes: {} });
+  data.items.push({ id: "dv", parent_id: "i2", area_id: "a3", category_id: "c2",
+    title: "Spec doc", level: "deliverable", status: "done", horizon: "now",
+    presentation: "sequenced", priority: 20, sort_order: 20, attributes: {} });
+  const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
+  assert.match(html, /<h3>Work items<\/h3>[\s\S]*?rmv-step-title">Rollout/,
+    "the nested work item lists under Work items");
+  assert.match(html, /<h3>Deliverables<\/h3>[\s\S]*?rmv-step-title">Spec doc/,
+    "the deliverable lists under Deliverables");
+  // The work-items list itself carries only the work item, not the deliverable.
+  const itemUl = html.match(/rmv-item-list">([\s\S]*?)<\/ul>/)[1];
+  assert.match(itemUl, /Rollout/);
+  assert.doesNotMatch(itemUl, /Spec doc/, "the deliverable is not in the work-items list");
 });
 
 test("toCsvRoadmap emits a row per product item with resolved labels and attribute columns", () => {

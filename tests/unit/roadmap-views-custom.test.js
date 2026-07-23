@@ -79,3 +79,61 @@ test("custom view rides a checkbox on each row; unpicked rows drop their check",
   // Cascade carries the same affordance.
   assert.match(V.cascade(data, "backlog", { custom: true }), /data-pick-id="i2"/);
 });
+
+// A workstream family for the department-visibility and export rules.
+function familyData() {
+  return {
+    categories: [{ id: "c1", key: "core", label: "Core", sort_order: 10 }],
+    areas: [{ id: "a1", key: "core-area", title: "Core", scope: "product", category_id: "c1", sort_order: 10 }],
+    items: [
+      { id: "ws", area_id: "a1", category_id: "c1", title: "Platform workstream", level: "workstream",
+        status: "in_progress", horizon: "now", presentation: "current",
+        department: "product_technology", priority: 10, sort_order: 10 },
+      { id: "kOps", parent_id: "ws", area_id: "a1", category_id: "c1", title: "Ops child", level: "item",
+        status: "planned", horizon: "now", presentation: "sequenced",
+        department: "operations_onboarding", priority: 20, sort_order: 20 },
+      { id: "kProd", parent_id: "ws", area_id: "a1", category_id: "c1", title: "Prod child", level: "item",
+        status: "planned", horizon: "now", presentation: "sequenced",
+        department: "product_technology", priority: 30, sort_order: 30 },
+      { id: "dv", parent_id: "ws", area_id: "a1", category_id: "c1", title: "A deliverable", level: "deliverable",
+        status: "planned", horizon: "now", presentation: "sequenced",
+        department: "product_technology", priority: 40, sort_order: 40 },
+    ],
+  };
+}
+
+test("byDepartment: a directly-matched workstream keeps its whole family", () => {
+  const V = loadView();
+  const kept = V.byDepartment(familyData(), "product_technology").items.map((i) => i.id).sort();
+  assert.deepEqual(kept, ["dv", "kOps", "kProd", "ws"], "owner match keeps every child");
+});
+
+test("byDepartment: a workstream kept via an associated child keeps only the matching children", () => {
+  const V = loadView();
+  const kept = V.byDepartment(familyData(), "operations_onboarding").items.map((i) => i.id).sort();
+  assert.deepEqual(kept, ["kOps", "ws"], "the workstream shows as context with just the ops child");
+});
+
+test("expandUnpicked drops a whole subtree so an export never orphans a child", () => {
+  const V = loadView();
+  const data = familyData();
+  const ctx = V.context(data);
+  const drop = V.expandUnpicked({ ws: true }, ctx);
+  assert.deepEqual(Object.keys(drop).sort(), ["dv", "kOps", "kProd", "ws"],
+    "unpicking the workstream drops its children and deliverable");
+  assert.deepEqual(Object.keys(V.expandUnpicked({ kOps: true }, ctx)), ["kOps"],
+    "unpicking a leaf drops only itself");
+});
+
+test("custom view: a child of an unpicked parent dims and loses its own box", () => {
+  const V = loadView();
+  const data = familyData();
+  // roadmap.js passes unpicked (the parent) and excluded (its descendants).
+  const html = V.timeline(data, "backlog",
+    { custom: true, unpicked: { ws: true }, excluded: { kOps: true, kProd: true } });
+  assert.match(html, /data-pick-id="ws"/, "the unpicked parent keeps a (clickable) box");
+  assert.doesNotMatch(html, /data-pick-id="kProd"/, "an excluded child has no box");
+  // The excluded child row still renders, dimmed.
+  assert.match(html, /rmv-tl-row rmv-tl-row--child rmv-unpicked[\s\S]*?Prod child/,
+    "the excluded child dims with its family");
+});

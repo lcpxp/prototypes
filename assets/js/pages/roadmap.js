@@ -113,15 +113,27 @@
   function viewData() { return App.roadmapView.byDepartment(data, department); }
 
   // The rows an export carries: the department-filtered set, narrowed to
-  // the custom-view selection when it is active (unpicked rows drop out).
+  // the custom-view selection when active. Unpicking a parent drops its
+  // whole subtree (expandUnpicked), so an export never carries a child
+  // whose parent was deselected.
   function exportRows() {
     var items = viewData().items;
-    return customOn ? items.filter(function (i) { return !unpicked[i.id]; }) : items;
+    if (!customOn) return items;
+    var drop = App.roadmapView.expandUnpicked(unpicked, ctx);
+    return items.filter(function (i) { return !drop[i.id]; });
   }
 
   function render(host) {
-    var opts = { showDelivered: showDelivered, expanded: expanded,
-      custom: customOn, unpicked: unpicked, hideFixes: hideFixes };
+    // excluded = the descendants of unpicked rows: they dim and lose their
+    // own checkbox on screen (re-picking the parent restores them), and
+    // exportRows drops them too.
+    var excluded = {};
+    if (customOn && ctx) {
+      var drop = App.roadmapView.expandUnpicked(unpicked, ctx);
+      Object.keys(drop).forEach(function (id) { if (!unpicked[id]) excluded[id] = true; });
+    }
+    var opts = { showDelivered: showDelivered, expanded: expanded, custom: customOn,
+      unpicked: unpicked, excluded: excluded, hideFixes: hideFixes };
     var vd = viewData();
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(vd, current, opts)
