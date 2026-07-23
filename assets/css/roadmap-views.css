@@ -270,21 +270,15 @@
 }
 .rm-card--cont h3 { font-size: var(--text-sm); margin: 0; }
 
-/* A nested work item: its label cell is inset with a quiet CSS-drawn rule
-   so the child reads as owned by the workstream above it, without shifting
-   the bar off its horizon columns (indentation lives in the label gutter
-   only, never the time axis). */
-.rmv-tl-row--child .rmv-tl-label {
-  padding-inline-start: var(--s-3);
-  position: relative;
-}
-.rmv-tl-row--child .rmv-tl-label::before {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: var(--s-1);
-  inline-size: 2px;
-  background: var(--line);
+/* A nested work item: its BAR is slightly inset from its workstream's bar
+   so the child reads as owned by the workstream above it (matching the
+   cascade card's .rm-card--child inset). The inset sits inside the bar's
+   own start cell, so the bar still lines up on its horizon columns - the
+   nesting is a small visual step, not a shift off the time axis. The theme
+   label stays flush so the left gutter reads as a clean lane column, not a
+   second nesting cue. */
+.rmv-tl-row--child .rmv-tl-bar {
+  margin-inline-start: var(--s-4);
 }
 
 .rmv-ws-tag {

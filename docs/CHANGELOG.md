@@ -39,6 +39,9 @@ is the git history; what is unfinished is docs/STATE.md.
   live in the drawer. Loose items interleave with workstreams by priority -
   workstreams win ties, so they lead their band unless an item is
   deliberately promoted.
+- On the Timeline board, a workstream's nested work items now sit slightly
+  inset on the bar itself, so the nesting reads on the bars rather than only
+  in the left theme-label gutter. The theme label stays flush.
 - The department filter now keeps a workstream visible when a nested item
   under it matches the chosen department, showing just the matching
   children so the association reads at a glance.
