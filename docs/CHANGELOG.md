@@ -11,13 +11,15 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
-- The roadmap toolbar has a Hide control: a Now/Next/Later checklist that
-  drops a whole stage from the board. Unchecking a stage removes the work
-  that begins in it - and that stage's column or section - across every
-  level (Workstreams, Categories, Work Items, Backlog) and both layouts
-  (Timeline and Cascade), so you can, say, hide everything happening now
-  and read only what is Next and Later. It is a view-only preference held
-  in the browser; it changes nothing in the data and touches nothing else.
+- The Now, Next and Later stage headers on the roadmap are now clickable.
+  Clicking one strikes the label through and takes that stage off the
+  board - the work that begins in it disappears - so you can, say, hide
+  everything happening now and read only what is Next and Later. Clicking
+  the struck header again brings the stage back. It works on the Timeline
+  column headers and the Cascade band headings, across every level
+  (Workstreams, Work Items, Backlog). The choice is a view-only preference
+  held in the browser; it changes nothing in the data and touches nothing
+  else.
 - The roadmap now distinguishes work items from deliverables. A
   deliverable is drawer-only detail beneath a workstream or a work item -
   the things that piece of work produces - and never appears on the board.

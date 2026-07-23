@@ -59,9 +59,22 @@
       : contCard(item, cat, isChild);
   }
 
-  function bandHead(label, key) {
-    return '<h2 class="rmv-band-head rmv-band-head--' + App.escape(key) + '">' +
-      App.escape(label) + "</h2>";
+  // Now/Next/Later render as clickable toggles (data-band drives the toggle
+  // in roadmap.js); Delivered/Recently/Parked stay plain headings. A hidden
+  // stage keeps its struck header so a second click restores it.
+  function isHideable(key) { return key === "now" || key === "next" || key === "later"; }
+  function bandHead(label, key, off) {
+    var cls = "rmv-band-head rmv-band-head--" + App.escape(key);
+    if (!isHideable(key)) return '<h2 class="' + cls + '">' + App.escape(label) + "</h2>";
+    return '<button type="button" class="' + cls + " rmv-band-toggle" +
+      (off ? " rmv-band-toggle--off" : "") + '" data-band="' + App.escape(key) +
+      '" aria-pressed="' + (off ? "true" : "false") + '">' + App.escape(label) + "</button>";
+  }
+
+  // A hidden stage collapses to just its (clickable, struck) header.
+  function offBand(idx) {
+    return '<section class="rmv-band rmv-band--off">' +
+      bandHead(R.BANDS[idx].label, R.BANDS[idx].key, true) + "</section>";
   }
 
   function themeSection(cat, cardsHtml) {
@@ -82,7 +95,7 @@
     var html = "";
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx <= 1 && !show) continue;
-      if (hidden && hidden[R.BANDS[idx].key]) continue;
+      if (hidden && hidden[R.BANDS[idx].key]) { html += offBand(idx); continue; }
       var inBand = list.filter(inBandFn(idx));
       if (!inBand.length) continue;
       var byCat = R.groupBy(inBand, function (i) { return R.themeIdOf(i, ctx); });
@@ -108,7 +121,7 @@
     var sortedTops = tops.slice().sort(R.byOrder);
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx <= 1 && !show) continue;
-      if (hidden && hidden[R.BANDS[idx].key]) continue;
+      if (hidden && hidden[R.BANDS[idx].key]) { html += offBand(idx); continue; }
       var inBand = inBandFn(idx);
       var perTheme = {};
       sortedTops.forEach(function (top) {

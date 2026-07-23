@@ -350,34 +350,43 @@
       (a._catSo - b._catSo) || (a._so - b._so);
   }
 
+  // Now, Next and Later are the stages the reader can toggle off by
+  // clicking their header; Delivered and Parked are structural and stay.
+  function isHideable(key) { return key === "now" || key === "next" || key === "later"; }
+
+  // One timeline header cell for band index b. A hideable stage renders as
+  // a button (data-band drives the toggle in roadmap.js); a hidden stage
+  // keeps its struck-through header so a second click brings it back.
+  function bandHeadCell(b, hidden) {
+    var band = BANDS[b];
+    if (!isHideable(band.key)) return '<span class="rmv-tl-col">' + App.escape(band.label) + "</span>";
+    var off = !!(hidden && hidden[band.key]);
+    return '<button type="button" class="rmv-tl-col rmv-band-toggle' +
+      (off ? " rmv-band-toggle--off" : "") + '" data-band="' + band.key +
+      '" aria-pressed="' + (off ? "true" : "false") + '">' + App.escape(band.label) + "</button>";
+  }
+
   // Shared grid renderer over pre-placed rows. maxBand caps the axis
-  // (ACTIVE_MAX for Team/Executive, PARKED for Backlog); hiding
-  // delivered drops the Delivered column and clamps spans into it.
+  // (ACTIVE_MAX for Team/Executive, PARKED for Backlog); hiding delivered
+  // drops the Delivered column and clamps spans into it. A stage toggled
+  // off keeps its column and struck header, but the work that begins in it
+  // has been filtered out upstream (bandVisible), so the column reads empty.
   // preordered keeps the caller's order (used to group child bars under
   // their parent); otherwise rows sort by timelineOrder.
   function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick, preordered, hidden) {
     var visible = showDelivered ? placed
       : placed.filter(function (p) { return p._e >= 2; });
+    if (!visible.length) return emptyMsg;
     var first = showDelivered ? 0 : 2;
-    // The band indices to render as columns: the axis range minus any band
-    // the Hide control dropped (Now/Next/Later). Bars index into this list,
-    // so a gap a hidden middle band leaves closes up rather than showing a
-    // dead column, and a span running into a hidden band clips to it.
-    var cols = [];
-    for (var b = first; b <= maxBand; b++) if (!hidden || !hidden[BANDS[b].key]) cols.push(b);
-    if (!visible.length || !cols.length) return emptyMsg;
     var head = '<div class="rmv-tl-head"><span class="rmv-tl-label"></span>' +
-      cols.map(function (b) {
-        return '<span class="rmv-tl-col">' + BANDS[b].label + "</span>"; }).join("") + "</div>";
+      BANDS.slice(first, maxBand + 1).map(function (b, k) {
+        return bandHeadCell(first + k, hidden); }).join("") + "</div>";
     var ordered = preordered ? visible : visible.slice().sort(timelineOrder);
     var body = ordered.map(function (p) {
       var s = p._s < first ? first : p._s, e = p._e > maxBand ? maxBand : p._e;
-      var sp = -1, ep = -1, k;
-      for (k = 0; k < cols.length; k++) { if (sp < 0 && cols[k] >= s) sp = k; if (cols[k] <= e) ep = k; }
-      if (sp < 0 || ep < sp) return "";
       var progCls = p._prog ? " rmv-prog-" + p._prog.bucket : "";
       var idAttr = p._id ? ' data-item-id="' + App.escape(p._id) + '"' : "";
-      var colStyle = "grid-column:" + (sp + 2) + " / " + (ep + 3);
+      var colStyle = "grid-column:" + (s - first + 2) + " / " + (e - first + 3);
       var bar = '<span class="rmv-tl-bar' + (p.done ? " rmv-tl-bar--done" : "") +
         (p._s === PARKED ? " rmv-tl-bar--parked" : "") + (p._ws ? " rmv-tl-bar--ws" : "") +
         catClass(p._cat) + progCls +
@@ -386,9 +395,8 @@
       return '<div class="' + rowCls + '"><span class="rmv-tl-label">' +
         App.escape(p._catLabel) + "</span>" + bar + pickBox(p._id, pick) + "</div>";
     }).join("");
-    if (!body) return emptyMsg;
     return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") +
-      '" style="--tl-cols:' + cols.length + '">' + head + body + "</div>";
+      '" style="--tl-cols:' + (maxBand - first + 1) + '">' + head + body + "</div>";
   }
 
   // Place one item as a timeline row (bar = title). child marks an

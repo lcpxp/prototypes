@@ -72,7 +72,8 @@ test("productItems keeps product scope; topLevel drops sub-items", () => {
 test("timeline (team) spans active bars, hides parked/portal, nests sub-items under their parent", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team");
-  assert.match(html, /Previously completed<\/span>.*Recently completed<\/span>.*Now<\/span>.*Next<\/span>.*Later<\/span>/s);
+  // Delivered heads are plain spans; Now/Next/Later are toggle buttons.
+  assert.match(html, />Previously completed<.*>Recently completed<.*>Now<.*>Next<.*>Later</s);
   assert.doesNotMatch(html, />Parked</, "Team has no Parked column");
   // i1 is delivered but unmarked here, so it lands in Previously (band 0).
   assert.match(html, /rmv-tl-bar--done[^"]*"[^>]*grid-column:2 \/ 3/);
@@ -407,73 +408,9 @@ test("builders escape hostile content", () => {
   assert.doesNotMatch(V.timeline(data, "team", { expanded: true }), /<img src=x/);
 });
 
-// The Department filter (byDepartment) and Custom view benchmarks live
-// in roadmap-views-custom.test.js, sharing tests/lib/roadmap.js.
-
-// --- Hide stages: the Now/Next/Later band-visibility filter ---------
-
-test("Hide stages drops a band's items and its column from timeline and cascade", () => {
-  const V = loadView();
-  const data = sampleData();
-  const shown = V.timeline(data, "team");
-  assert.match(shown, /Unity integration/, "a now item shows by default");
-  assert.match(shown, /rmv-tl-col">Now</, "the Now column header is present by default");
-
-  const hidden = V.timeline(data, "team", { hiddenBands: { now: true } });
-  assert.doesNotMatch(hidden, /Unity integration/, "a now item drops when Now is hidden");
-  assert.doesNotMatch(hidden, /Portal overhaul/, "a now-starting span leaves with its start band");
-  assert.doesNotMatch(hidden, /rmv-tl-col">Now</, "the Now column is removed, not left empty");
-  assert.match(hidden, /Growth bet/, "Later work still shows");
-  assert.match(hidden, /rmv-tl-col">Later</, "the Later column stays");
-
-  const cas = V.cascade(data, "team", { hiddenBands: { now: true } });
-  assert.doesNotMatch(cas, /rmv-band-head--now/, "the Now band section is gone from cascade");
-  assert.doesNotMatch(cas, /Unity integration/);
-  assert.match(cas, /Growth bet/, "Later work still shows in cascade");
-});
-
-test("hiding a middle stage removes just that column and keeps the others", () => {
-  const V = loadView();
-  const data = sampleData();
-  const html = V.timeline(data, "team", { hiddenBands: { next: true } });
-  assert.doesNotMatch(html, /rmv-tl-col">Next</, "the Next column is removed");
-  assert.match(html, /rmv-tl-col">Now</, "Now stays");
-  assert.match(html, /rmv-tl-col">Later</, "Later stays");
-  assert.match(html, /Unity integration/, "a Now item is unaffected");
-});
-
-test("Hide stages also drops a nested child that starts in the hidden band", () => {
-  const V = loadView();
-  const data = {
-    categories: [{ id: "c1", key: "apis", label: "APIs", sort_order: 10 }],
-    areas: [{ id: "a1", key: "svc", title: "Service", scope: "product", category_id: "c1", sort_order: 10 }],
-    items: [
-      { id: "w", area_id: "a1", category_id: "c1", level: "workstream", title: "Platform",
-        status: "in_progress", horizon: "next", presentation: "current", priority: 10, sort_order: 10 },
-      { id: "kn", parent_id: "w", area_id: "a1", category_id: "c1", level: "item", title: "Now child",
-        status: "planned", horizon: "now", priority: 20, sort_order: 20 },
-      { id: "kl", parent_id: "w", area_id: "a1", category_id: "c1", level: "item", title: "Later child",
-        status: "planned", horizon: "later", priority: 30, sort_order: 30 },
-    ],
-  };
-  const html = V.timeline(data, "team", { hiddenBands: { now: true } });
-  assert.match(html, /Platform/, "the workstream (starts Next) stays");
-  assert.doesNotMatch(html, /Now child/, "a nested child that starts in Now drops");
-  assert.match(html, /Later child/, "a Later child stays");
-  // Cascade prunes the same child.
-  const cas = V.cascade(data, "team", { hiddenBands: { now: true } });
-  assert.doesNotMatch(cas, /Now child/);
-  assert.match(cas, /Later child/);
-});
-
-test("Hide stages never touches Delivered or Parked work", () => {
-  const V = loadView();
-  const data = sampleData();
-  // Hiding all three active bands on Backlog leaves parked/delivered rows.
-  const html = V.timeline(data, "backlog", { hiddenBands: { now: true, next: true, later: true } });
-  assert.match(html, /US market/, "a parked item survives - it starts in no hideable band");
-  assert.match(html, /rmv-tl-col">Parked</, "the Parked column stays");
-});
+// The Department filter (byDepartment), Custom view and the Now/Next/Later
+// stage toggles live in roadmap-views-custom.test.js, sharing
+// tests/lib/roadmap.js.
 
 test("a workstream renders as a container even with no children", () => {
   const V = loadView();

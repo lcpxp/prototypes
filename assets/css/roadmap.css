@@ -81,65 +81,53 @@ body[data-module="roadmap"] .page { max-inline-size: min(96rem, 100%); }
   text-align: start;
 }
 
-/* Hide stages: a Now/Next/Later checklist in the same dropdown-panel style
-   as the export menu. Unchecking a stage drops it - and the work that
-   begins in it - from every level and layout; a view-only filter, no
-   database change. */
-.rm-hide {
-  position: relative;
-  display: inline-flex;
+/* Clickable stage headers: the Now/Next/Later labels at the top of each
+   Timeline column (.rmv-tl-col) and the Cascade band headings
+   (.rmv-band-head) are toggle buttons. Clicking one strikes the label
+   through and takes that stage off the board; clicking it again restores
+   it. A view-only filter - it changes nothing in the data. The reset keeps
+   the button visually identical to the label it replaces. */
+.rmv-band-toggle {
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
-.rm-hide-menu {
-  position: absolute;
-  inset-block-start: calc(100% + var(--s-1));
-  inset-inline-start: 0;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-1);
-  min-inline-size: 9rem;
-  padding: var(--s-2);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-raised);
+/* The Timeline header cell spans its column so the whole width is clickable
+   and the label stays centred like the plain column heads. */
+button.rmv-tl-col { inline-size: 100%; }
+
+/* The Cascade heading button keeps the block, full-width, ruled-underline
+   look of the <h2> it stands in for. */
+button.rmv-band-head {
+  display: block;
+  inline-size: 100%;
+  text-align: start;
 }
 
-.rm-hide-menu[hidden] { display: none; }
+.rmv-band-toggle:not(.rmv-band-toggle--off):hover { color: var(--ink); }
 
-.rm-hide-head {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+.rmv-band-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* A hidden stage: struck through and dimmed, still clickable to restore.
+   The compound selectors outrank the per-column (.rmv-tl-col) and per-band
+   (.rmv-band-head--now, which is accent) colour rules in the other sheet. */
+.rmv-tl-col.rmv-band-toggle--off,
+.rmv-band-head.rmv-band-toggle--off {
   color: var(--faint);
-  margin: 0 0 var(--s-1);
+  text-decoration: line-through;
 }
 
-.rm-hide-opt {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  font-size: var(--text-sm);
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.rm-hide-opt input {
-  inline-size: 1rem;
-  block-size: 1rem;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
-
-/* An active filter (any stage hidden) tints the trigger so the state reads
-   without opening the menu. */
-.rm-hide .button.secondary.is-active {
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-color: var(--accent);
-}
+/* Cascade: a stage toggled off collapses to just its (struck) heading. */
+.rmv-band--off { margin-block-end: var(--s-4); }
 
 /* Screen: the orientation hint exists only for the export. */
 .rm-print-hint { display: none; }

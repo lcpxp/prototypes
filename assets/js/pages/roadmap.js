@@ -130,14 +130,6 @@
     try { window.localStorage.setItem(HIDDEN_STORE, JSON.stringify(hiddenBands)); }
     catch (e) { /* ignore */ }
   }
-  // Tint the trigger and name the hidden stages in its title when the filter
-  // is active, so a hidden stage never reads as missing data.
-  function renderHideTrigger(btn) {
-    var names = HIDEABLE.filter(function (b) { return hiddenBands[b.key]; })
-      .map(function (b) { return b.label; });
-    btn.classList.toggle("is-active", names.length > 0);
-    btn.setAttribute("title", names.length ? "Hidden stages: " + names.join(", ") : "Hide stages");
-  }
 
   // The dataset the board and the export both draw, narrowed to the
   // selected department (categories and areas stay intact).
@@ -321,46 +313,6 @@
       });
     }
 
-    // Hide stages: a Now/Next/Later checklist in the same dropdown pattern
-    // as Export (toggle on the trigger, dismiss on an outside click or
-    // Escape). Each unchecked stage drops from the board and stays dropped
-    // across levels and layouts; the selection is a view preference only.
-    var hideTrigger = document.getElementById("roadmap-hide-trigger");
-    var hideMenu = document.getElementById("roadmap-hide-menu");
-    function setHideOpen(open) {
-      hideMenu.hidden = !open;
-      hideTrigger.setAttribute("aria-expanded", open ? "true" : "false");
-    }
-    if (hideTrigger && hideMenu) {
-      renderHideTrigger(hideTrigger);
-      // Keep the menu open while several stages are toggled: a click inside
-      // must not reach the document dismiss handler below.
-      hideMenu.addEventListener("click", function (event) { event.stopPropagation(); });
-      hideMenu.querySelectorAll("input[data-band]").forEach(function (box) {
-        box.checked = !hiddenBands[box.getAttribute("data-band")];
-        box.addEventListener("change", function () {
-          var key = box.getAttribute("data-band");
-          if (box.checked) delete hiddenBands[key]; else hiddenBands[key] = true;
-          persistHidden();
-          renderHideTrigger(hideTrigger);
-          render(host);
-        });
-      });
-      hideTrigger.addEventListener("click", function (event) {
-        event.stopPropagation();
-        setHideOpen(hideMenu.hidden);
-      });
-      document.addEventListener("click", function () {
-        if (!hideMenu.hidden) setHideOpen(false);
-      });
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && !hideMenu.hidden) {
-          setHideOpen(false);
-          hideTrigger.focus();
-        }
-      });
-    }
-
     // Export: a single trigger opens a menu of the three formats, mirroring
     // the account menu's dropdown pattern (toggle on the trigger, dismiss on
     // an outside click or Escape). Picking a format then lets the click
@@ -448,6 +400,16 @@
       if (e.key === "Escape" && drawer && !drawer.hidden) closeDrawer();
     });
     host.addEventListener("click", function (e) {
+      // A stage header (Now/Next/Later) toggles that stage off, then on:
+      // the header stays put with a strike-through so it can be clicked back.
+      var toggle = e.target.closest ? e.target.closest("[data-band]") : null;
+      if (toggle) {
+        var key = toggle.getAttribute("data-band");
+        if (hiddenBands[key]) delete hiddenBands[key]; else hiddenBands[key] = true;
+        persistHidden();
+        render(host);
+        return;
+      }
       // A custom-view checkbox click must not open the drawer beneath it.
       if (e.target.closest && e.target.closest(".rmv-pick")) return;
       var el = e.target.closest ? e.target.closest("[data-item-id]") : null;
