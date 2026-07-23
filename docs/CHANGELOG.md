@@ -10,6 +10,11 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Changed
+- Top-level roadmap rows now sort by span length before priority: work
+  that finishes in its starting stage sits above work that runs on into
+  the next stage.
+
 ### Added
 - Nested work items now stack in stage order under their workstream (Now
   above Next above Later; within a stage, spans finishing sooner sit
