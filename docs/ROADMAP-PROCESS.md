@@ -106,7 +106,8 @@ the operations that move work between these live in docs/ROADMAP-PLAYBOOK.md.
    theme it should inherit) so it lands in the right lane. No copy.
 3. **Prioritise** by editing `priority` (leave gaps of 10 so items slot
    between) and moving `horizon` (someday -> later -> next -> now) on
-   evidence. Now stays sacred: three to five items.
+   evidence. Now reflects what is genuinely in flight - there is no fixed
+   cap on how many items or workstreams sit there.
 4. **Deliver** by setting `status='done'`; it joins the Delivered zone.
    **Park** by setting `horizon='someday'` (or `status='dropped'`) with a
    `resolution` sentence, so a decision is never lost.

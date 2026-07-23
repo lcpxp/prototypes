@@ -167,9 +167,10 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
 
 The format only stays trustworthy if the data is worked this way:
 
-- Now stays sacred: three to five items maximum. Now represents
-  actual capacity, not aspiration; a long Now column is weak
-  prioritisation, and the whole board should read in a scroll or two.
+- Now reflects genuine capacity, not aspiration: it holds whatever
+  work is actually in flight, with no cap on the number of items or
+  workstreams. Size Now to what is really being worked, not a fixed
+  count.
 - Detail decays by column: Now items are spec'd solutions with
   summaries, Next items are validated problems, Later items are
   one-line bets. Do not write Now-grade summaries for Later rows.

@@ -213,8 +213,9 @@ pre-compute from the data; each answer maps to a specific write above.
   Next, what changed since last review (max `updated_at`), and the counts.
 - **Wave 1 - Now integrity**: for each Now item, on track / done / slipping /
   drop -> `status`, `progress`, `horizon`.
-- **Wave 2 - Capacity**: keep Now sacred (3-5 items). Offer Next items to
-  promote -> `horizon='now'`; demote when confidence drops.
+- **Wave 2 - Capacity**: Now holds whatever is genuinely in flight - there
+  is no cap on how many items or workstreams sit there. Promote Next items
+  on evidence -> `horizon='now'`; demote when confidence drops.
 - **Wave 3 - New capture**: "anything new?" -> the quick-capture recipe.
 - **Wave 4 - Confirm**: summarise the edits, write one `work_notes` decision,
   stop. This is the 2-5 minute core.
@@ -226,7 +227,9 @@ shareholder-ready export prep before a meeting.
 
 ## Rules that keep it trustworthy
 
-- **Now stays sacred**: 3-5 items. A long Now is weak prioritisation.
+- **Now reflects what is genuinely in flight**: size it to real capacity,
+  not a fixed count - there is no cap on the number of items or workstreams
+  in Now.
 - **Detail decays by column**: Now items are spec'd (summaries), Next are
   validated problems, Later are one-line bets. Do not over-write Later rows.
 - **Never lose a decision**: every move gets a `resolution` and/or a
