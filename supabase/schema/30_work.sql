@@ -169,12 +169,16 @@ create table if not exists public.work_items (
   -- bar. A child carries its own status/progress.
   parent_id uuid references public.work_items (id) on delete cascade,
   -- Presentation level. A 'workstream' is a top-level, presentable
-  -- container (e.g. "Self Service API", "Unity integration") whose
-  -- sub-items nest under it via parent_id; an 'item' is a standalone row
-  -- or a nested sub-step. This is the PRESENTATION hierarchy; work_areas
-  -- stays the internal FILING taxonomy. A workstream is always top-level
+  -- container (e.g. "Self Service API", "Unity integration"); an 'item'
+  -- is a work item - standalone, or nested under a workstream where it
+  -- renders as an indented bar; a 'deliverable' is drawer-only detail
+  -- under a workstream or an item and never renders as a bar. Children
+  -- of an item are treated as deliverables by position regardless of
+  -- level. This is the PRESENTATION hierarchy; work_areas stays the
+  -- internal FILING taxonomy. A workstream is always top-level
   -- (constraint below). See docs/ROADMAP-PLAYBOOK.md.
-  level text not null default 'item' check (level in ('workstream', 'item')),
+  level text not null default 'item'
+    check (level in ('workstream', 'item', 'deliverable')),
   -- Soft, NON-nesting reference to the workstream (or item) a piece of
   -- work relates to. The maintenance/fixes track uses it so a one-line
   -- bug can be attributed to, say, "Acquirer management" for filtering
