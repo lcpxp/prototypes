@@ -1,7 +1,8 @@
 # Current state
 
 Updated: 2026-07-23 (session)
-Branch: main (all task branches merged or superseded; remote cleaned)
+Branch: main (all 33 task branches verified merged or superseded,
+2026-07-23; deletion blocked from the session - owner to prune them)
 
 ## In progress
 Roadmap context enrichment (protocol in work_notes, 2026-07-22): fixed
