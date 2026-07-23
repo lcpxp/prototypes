@@ -50,6 +50,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail.js | 377 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
+| assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
 | assets/js/pages/roadmap-views-cascade.js | 169 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
 | assets/js/pages/roadmap-views.js | 500 | roadmap-views.js - Pure HTML builders for the roadmap home |
@@ -57,13 +58,13 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 123 | Changelog |
+| docs/CHANGELOG.md | 137 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
-| docs/ROADMAP-PLAYBOOK.md | 208 | Roadmap playbook |
+| docs/ROADMAP-PLAYBOOK.md | 237 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 153 | Roadmap process |
-| docs/ROADMAP.md | 191 | Roadmap |
+| docs/ROADMAP.md | 198 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
@@ -85,7 +86,7 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/pci/reports.html | 77 | Compliance reporting - PXP replica - LPio |
 | modules/prototypes/website-screening/index.html | 50 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 121 | Roadmap - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 123 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 55 | Users - LPio / LaunchPad IO |
 | package.json | 13 |  |
 | scripts/audit.js | 123 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
@@ -333,6 +334,10 @@ document instead of walking the tree or reading whole files.
 | toKpiRoadmap() | assets/js/pages/roadmap-detail.js:281 |
 | flattenItem() | assets/js/pages/roadmap-detail.js:314 |
 | toCsvRoadmap() | assets/js/pages/roadmap-detail.js:361 |
+| breakdownItemRow() | assets/js/pages/roadmap-views-breakdown.js:18 |
+| breakdown() | assets/js/pages/roadmap-views-breakdown.js:31 |
+| areaSort() | assets/js/pages/roadmap-views-breakdown.js:34 |
+| catBlock() | assets/js/pages/roadmap-views-breakdown.js:38 |
 | contCard() | assets/js/pages/roadmap-views-cascade.js:22 |
 | fullCard() | assets/js/pages/roadmap-views-cascade.js:33 |
 | cardIn() | assets/js/pages/roadmap-views-cascade.js:55 |

@@ -11,6 +11,11 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- The roadmap now distinguishes work items from deliverables. A
+  deliverable is drawer-only detail beneath a workstream or a work item -
+  the things that piece of work produces - and never appears on the board.
+  A workstream's drawer lists its nested work items and its deliverables in
+  separate sections; a work item's drawer lists its deliverables.
 - Roadmap items can now carry business area associations: departments
   that want visibility of an item without owning it. Filtering the
   roadmap by a department now surfaces both the work it owns and the work
@@ -28,11 +33,20 @@ is the git history; what is unfinished is docs/STATE.md.
   closing resolution with its date, recorded decisions and notes, and
   any extra attribute fields - and the JSON/CSV exports carry the same
   context, so nothing captured in the database stays invisible.
-- The roadmap's Work Items view now shows each workstream's nested items
-  under its bar (and on its cascade card) by default, so it reads as the
-  granular expansion of the Workstreams view, and loose items now
-  interleave with workstreams by priority - workstreams win ties, so
-  they still lead their band unless an item is deliberately promoted.
+- The roadmap board is now bars only. Work Items and Backlog show
+  workstreams (bold) with their nested work items indented beneath them,
+  plus standalone items - deliverables no longer clutter the board, they
+  live in the drawer. Loose items interleave with workstreams by priority -
+  workstreams win ties, so they lead their band unless an item is
+  deliberately promoted.
+- The department filter now keeps a workstream visible when a nested item
+  under it matches the chosen department, showing just the matching
+  children so the association reads at a glance.
+- In Custom view, deselecting a workstream now also drops its nested work
+  items and deliverables from the PDF, JSON and CSV exports, so an export
+  never carries a child whose parent was removed.
+- Export as PDF now prints whichever view is on screen (Categories remains
+  the recommended C-suite one-pager); the printed board is bars only.
 - The roadmap's Delivered work now splits into two columns: Recently
   completed (shipped in the last four weeks, a rolling list) and Previously
   completed (the older, historic record), so recent wins stand apart from

@@ -43,10 +43,11 @@ Levels (switch labels in brackets where they differ):
 - **Executive [Categories]** - a department-first rollup of active work:
   each department, the categories it owns and their item counts. Always
   complete, cannot drift. Prints as the C-suite one-pager.
-- **Team [Work Items]** - the granular expansion: every product item on
-  the now/next/later horizons (plus delivered when shown), with each
-  workstream's nested items listed under its bar by default.
-- **Backlog** - the full list: active, parked (far-future) and
+- **Team [Work Items]** - the granular view: every product work item on
+  the now/next/later horizons (plus delivered when shown), as bars, with a
+  workstream's nested work items indented beneath it. Deliverables never
+  appear here - they live in the drawer.
+- **Backlog** - the full list as bars: active, parked (far-future) and
   delivered, with the Parked column shown.
 
 Layouts:
@@ -72,11 +73,13 @@ localStorage, so a shared link opens the same view. The roadmap renders
 product scope only; portal work (`work_areas.scope='portal'`) stays in
 the backlog module.
 
-Download PDF (or Ctrl+P) prints the Executive view as a condensed A4
-landscape one-pager: theme descriptions drop, tiles tighten, theme
-colour survives. A "Data as of <date>" line (max updated_at) dates every
-export. Chrome, Edge and Firefox preselect landscape; Safari ignores the
-size hint, so a print-only line reminds the reader to pick it by hand.
+Download PDF (or Ctrl+P) prints the view currently on screen, condensed to
+A4 landscape: theme descriptions drop, tiles tighten, theme colour
+survives, checklists never print (bars only). The Categories view is the
+recommended C-suite one-pager to print. A "Data as of <date>" line (max
+updated_at) dates every export. Chrome, Edge and Firefox preselect
+landscape; Safari ignores the size hint, so a print-only line reminds the
+reader to pick it by hand.
 
 ### Item detail, progress and export
 
@@ -87,8 +90,11 @@ size hint, so a print-only line reminds the reader to pick it by hand.
   delivery phases (with any TBC dates), the `attributes` (unrecognised
   keys still render as generic rows, so nothing is stored-but-invisible),
   business value notes, the closing resolution, and the item's
-  work_notes decisions (when the viewer has backlog access) - plus an
-  **Export JSON** action for that one item carrying the same context.
+  work_notes decisions (when the viewer has backlog access). A workstream
+  also lists its nested **work items** (each clickable through to its own
+  drawer) and its **deliverables** in separate sections; a work item lists
+  its deliverables. Plus an **Export JSON** action for that one item
+  carrying the same context (work items and deliverables included).
 - A **Detailed view** toggle drills every level down: the Executive
   rollup lists each category's items under its owning department, and Team
   and Backlog expand into a Category -> Area -> item breakdown with each
@@ -145,11 +151,12 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   optional department (the owning business function, which the Executive
   view groups by), a level (workstream = a presentable high-level container
   such as "Self Service API"; item = a standalone or nested piece) and an
-  optional parent_id linking a sub-step to its workstream (one level;
-  children nest under the parent, never placed as their own bars). A
-  workstream renders as its own bar; the Work Items level lists its
-  children beneath the bar by default, while the Workstreams gantt keeps
-  them collapsed until Detailed. See docs/ROADMAP-PLAYBOOK.md.
+  optional parent_id linking a child to its parent (one bar level:
+  workstream -> work item). level is workstream (a bold container bar),
+  item (a work item bar, indented when nested under a workstream) or
+  deliverable (drawer-only detail, never a bar). By position, any child of
+  a work item is a deliverable whatever its stored level. See
+  docs/ROADMAP-PLAYBOOK.md.
 - work_item_phases: optional Discovery / Build / Certification / Launch
   phases per item, each with a quarter, start/end dates and per-date TBC
   flags. Absent for high-level items; surfaced in the detail drawer.

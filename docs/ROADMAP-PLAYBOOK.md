@@ -14,7 +14,8 @@ the admin role under RLS; the browser page is read-only.
 
 ## The model in one screen
 
-Four concepts, two of them just labels:
+Five concepts, two of them just labels. The board shows only BARS -
+workstreams and work items; everything finer lives in the drawer.
 
 - **Theme** (`roadmap_categories`, 13 of them) - the top workstream lane the
   C-suite reads (Unity, Acquiring, APIs, Insights ...). A classifier.
@@ -22,16 +23,25 @@ Four concepts, two of them just labels:
   the work. A classifier. Both are just tags on an item; neither is a container.
 - **Workstream** (`work_items` with `level='workstream'`) - a presentable
   high-level container ("Self Service API", "Unity integration"). Renders as
-  its own bar; needs no children to count as a big-ticket item. On the
-  Workstreams gantt its sub-items stay collapsed until Detailed; the Work
-  Items level lists them under the bar by default. Always top-level (never
-  nested).
-- **Item** (`work_items` with `level='item'`) - the granular work. Either
-  **standalone** (no parent - renders as its own bar, just like a workstream)
-  or **nested** (its `parent_id` is a workstream - shows in that workstream's
-  checklist, never as its own bar). Standalone items interleave with
+  its own bar (bold); needs no children to count as a big-ticket item.
+  Always top-level (never nested). Can carry both work items and
+  deliverables.
+- **Work item** (`work_items` with `level='item'`) - legitimate,
+  roadmap-visible work. Either **standalone** (no parent - its own bar) or
+  **nested** (its `parent_id` is a workstream - a bar indented under it, on
+  the Work Items and Backlog levels). Standalone items interleave with
   workstreams by `priority`; workstreams win ties, so at default priorities
   they lead their band unless an item is deliberately promoted.
+- **Deliverable** (`work_items` with `level='deliverable'`) - drawer-only
+  detail: the things a piece of work produces. NEVER a bar. It lists in its
+  parent's drawer under "Deliverables". Its parent may be a workstream or a
+  work item. By POSITION, any child of a work item is treated as a
+  deliverable whatever its stored level, so a work item's children never
+  clutter the board.
+
+One bar level of nesting only: workstream -> work item. A large standalone
+workstream can hold deliverables directly with no sub-items - none of that
+appears on the board, only when the workstream is clicked.
 
 `work_areas` is a separate, internal **filing** taxonomy (intake, notes,
 documents). It is NOT the presentation hierarchy - do not confuse a filing
@@ -48,11 +58,15 @@ Delivered = `status='done'`; Parked = `horizon='someday'` or
     select * from roadmap_current;                       -- everything, human-readable
     select * from roadmap_current where scope='product'  -- the product board
       and horizon in ('now','next','later') and status not in ('done','dropped');
-    select * from roadmap_current where shareholder_visible and coalesce(type,'')<>'bug';
 
 `roadmap_current` joins theme, workstream (parent) title, filing area and
 department for you. Read it first, every session, before proposing changes.
 Then read open `work_notes` (status='active') for the areas in play.
+
+`shareholder_visible` is LEGACY: the Workstreams view is now the
+shareholder-facing surface (workstreams only, fixes and loose items
+excluded), so there is no need to set the flag on new work. It still exists
+on `roadmap_categories` and in `roadmap_current`; leave it alone.
 
 ## Field reference (work_items)
 
@@ -90,11 +104,20 @@ Items are never deleted. Close with `status='done'` or `'dropped'` plus a
             (select id from roadmap_categories where key='apis'),
             'product_technology', 'now', 'in_progress', 25);
 
-    -- Add an item under a workstream (a sub-step)
+    -- Add a nested work item under a workstream (an indented bar on the
+    -- Work Items and Backlog levels)
     insert into work_items (title, level, parent_id, category_id, horizon, status, priority)
     values ('Add site endpoint', 'item',
             (select id from work_items where title='Self Service API' and level='workstream'),
             (select id from roadmap_categories where key='apis'), 'now', 'planned', 10);
+
+    -- Add a deliverable (drawer-only detail; NEVER a bar). Parent may be a
+    -- workstream or a work item; children of a work item are deliverables by
+    -- position, so the level is belt-and-braces there.
+    insert into work_items (title, level, parent_id, category_id, status)
+    values ('Publish OpenAPI spec', 'deliverable',
+            (select id from work_items where title='Self Service API' and level='workstream'),
+            (select id from roadmap_categories where key='apis'), 'planned');
 
     -- Add a standalone item (candidate; sits in Backlog until scheduled)
     insert into work_items (title, category_id, horizon, status, priority)
@@ -132,11 +155,14 @@ Items are never deleted. Close with `status='done'` or `'dropped'` plus a
   area) shows only in the Backlog master list. Always set `area_id`,
   resolved by key, to the product area whose theme matches the item's
   category: `(select id from work_areas where key='insights-analytics')`.
-- **Small fixes are the maintenance track.** A one-line bug or task is a
-  STANDALONE item - never a child of a workstream, since nesting rolls up
-  and lights that workstream up on the strategic gantt. Tag its
-  department, category and area, and soft-link the workstream it relates
-  to via `relates_to_id` so it is attributable without appearing under it:
+- **A task or fix can nest or stand alone - your judgement.** It may be a
+  nested work item under a workstream (a real step of that work), a
+  standalone item, or a deliverable (drawer-only detail). Nothing forbids a
+  task nesting. What follows is the pattern for the MAINTENANCE track only:
+  a one-line bug that you want visible but attributed without lighting up a
+  strategic workstream. There, keep it STANDALONE and soft-link the
+  workstream it relates to via `relates_to_id` (nesting would roll up onto
+  the gantt; the soft link does not). Tag its department, category and area:
 
       insert into work_items (title, type, level, category_id, area_id,
         department, relates_to_id, horizon, status)
@@ -157,8 +183,7 @@ Items are never deleted. Close with `status='done'` or `'dropped'` plus a
 
 Add a theme only for a genuinely new workstream lane: insert a
 `roadmap_categories` row, then a `--rm-<key>` token pair and a `.rm-cat-<key>`
-rule in assets/css/tokens.css (else it renders neutral). Set
-`shareholder_visible=false` for internal lanes (Core, fixes).
+rule in assets/css/tokens.css (else it renders neutral).
 
 ## Quick capture / quick edit ("add X" / "update Y")
 
@@ -168,7 +193,11 @@ A one-line request in chat should apply in one pass, not a research project:
 2. Decide add vs update. Infer `category_id` (theme), `parent_id` (does it
    belong under a named workstream?), `department` and `horizon` from the
    words. Default `horizon='someday'` unless a scheduling word ("now",
-   "this sprint", "next", "urgent") is present.
+   "this sprint", "next", "urgent") is present. Judge the `level`: a
+   headline area is a `workstream`; real roadmap-visible work is an `item`;
+   a step-grade line inside a bigger piece ("publish the spec", "write the
+   migration") is a `deliverable` (drawer-only). When a captured line is
+   clearly step-grade under a named parent, file it as a deliverable.
 3. If exactly one critical field is genuinely ambiguous (which workstream? or
    now vs someday?), ask ONE clickable question (AskUserQuestion). Otherwise
    apply silently.
