@@ -37,6 +37,11 @@
   var CUSTOM_STORE = "roadmap-custom";
   var PICK_STORE = "roadmap-unpicked";
   var HIDEFIXES_STORE = "roadmap-hidefixes";
+  var HIDDEN_STORE = "roadmap-hidden-bands";
+  // The stages the Hide control can drop from the board. Keys match the
+  // Now/Next/Later bands in roadmap-views.js (BANDS); delivered and parked
+  // are never hideable here.
+  var HIDEABLE = [{ key: "now", label: "Now" }, { key: "next", label: "Next" }, { key: "later", label: "Later" }];
 
   var data = { categories: [], areas: [], items: [] };
   var current = "workstreams";
@@ -47,6 +52,7 @@
   var customOn = false;
   var unpicked = {};
   var hideFixes = false;
+  var hiddenBands = {};
   var ctx = null;
   var itemsById = {};
 
@@ -108,6 +114,31 @@
   // and the print pruning); the markup itself comes from the builders.
   function syncCustomBody() { document.body.classList.toggle("rm-custom", customOn); }
 
+  // Hidden stages are a view-only preference (localStorage), not part of the
+  // shareable hash: a map of band key -> true for each stage the owner took
+  // off the board. Only known Now/Next/Later keys are honoured, so a stale
+  // or hand-edited value can never hide anything unexpected.
+  function readHiddenBands() {
+    var out = {};
+    try {
+      var raw = JSON.parse(window.localStorage.getItem(HIDDEN_STORE) || "{}") || {};
+      HIDEABLE.forEach(function (b) { if (raw[b.key]) out[b.key] = true; });
+    } catch (e) { /* ignore */ }
+    return out;
+  }
+  function persistHidden() {
+    try { window.localStorage.setItem(HIDDEN_STORE, JSON.stringify(hiddenBands)); }
+    catch (e) { /* ignore */ }
+  }
+  // Tint the trigger and name the hidden stages in its title when the filter
+  // is active, so a hidden stage never reads as missing data.
+  function renderHideTrigger(btn) {
+    var names = HIDEABLE.filter(function (b) { return hiddenBands[b.key]; })
+      .map(function (b) { return b.label; });
+    btn.classList.toggle("is-active", names.length > 0);
+    btn.setAttribute("title", names.length ? "Hidden stages: " + names.join(", ") : "Hide stages");
+  }
+
   // The dataset the board and the export both draw, narrowed to the
   // selected department (categories and areas stay intact).
   function viewData() { return App.roadmapView.byDepartment(data, department); }
@@ -133,7 +164,7 @@
       Object.keys(drop).forEach(function (id) { if (!unpicked[id]) excluded[id] = true; });
     }
     var opts = { showDelivered: showDelivered, expanded: expanded, custom: customOn,
-      unpicked: unpicked, excluded: excluded, hideFixes: hideFixes };
+      unpicked: unpicked, excluded: excluded, hideFixes: hideFixes, hiddenBands: hiddenBands };
     var vd = viewData();
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(vd, current, opts)
@@ -221,6 +252,7 @@
     unpicked = readUnpicked();
     try { hideFixes = window.localStorage.getItem(HIDEFIXES_STORE) === "on"; }
     catch (e) { hideFixes = false; }
+    hiddenBands = readHiddenBands();
     syncCustomBody();
 
     var deptSelect = document.getElementById("roadmap-department");
@@ -286,6 +318,46 @@
         catch (e) { /* ignore */ }
         renderBugToggle(fixesBtn);
         render(host);
+      });
+    }
+
+    // Hide stages: a Now/Next/Later checklist in the same dropdown pattern
+    // as Export (toggle on the trigger, dismiss on an outside click or
+    // Escape). Each unchecked stage drops from the board and stays dropped
+    // across levels and layouts; the selection is a view preference only.
+    var hideTrigger = document.getElementById("roadmap-hide-trigger");
+    var hideMenu = document.getElementById("roadmap-hide-menu");
+    function setHideOpen(open) {
+      hideMenu.hidden = !open;
+      hideTrigger.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    if (hideTrigger && hideMenu) {
+      renderHideTrigger(hideTrigger);
+      // Keep the menu open while several stages are toggled: a click inside
+      // must not reach the document dismiss handler below.
+      hideMenu.addEventListener("click", function (event) { event.stopPropagation(); });
+      hideMenu.querySelectorAll("input[data-band]").forEach(function (box) {
+        box.checked = !hiddenBands[box.getAttribute("data-band")];
+        box.addEventListener("change", function () {
+          var key = box.getAttribute("data-band");
+          if (box.checked) delete hiddenBands[key]; else hiddenBands[key] = true;
+          persistHidden();
+          renderHideTrigger(hideTrigger);
+          render(host);
+        });
+      });
+      hideTrigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        setHideOpen(hideMenu.hidden);
+      });
+      document.addEventListener("click", function () {
+        if (!hideMenu.hidden) setHideOpen(false);
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !hideMenu.hidden) {
+          setHideOpen(false);
+          hideTrigger.focus();
+        }
       });
     }
 

@@ -78,10 +78,11 @@
 
   // Simple bands (Workstreams level): one card per in-band item, grouped
   // by theme and ordered by byOrder. No children.
-  function bandsSimple(list, ctx, maxBand, show, pick) {
+  function bandsSimple(list, ctx, maxBand, show, pick, hidden) {
     var html = "";
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx <= 1 && !show) continue;
+      if (hidden && hidden[R.BANDS[idx].key]) continue;
       var inBand = list.filter(inBandFn(idx));
       if (!inBand.length) continue;
       var byCat = R.groupBy(inBand, function (i) { return R.themeIdOf(i, ctx); });
@@ -102,11 +103,12 @@
   // Grouped bands (Work Items / Backlog): each in-band top-level row, then
   // its in-band nested work items right after it, kept in the parent's
   // theme block. keepChild narrows children to the level's membership.
-  function bandsGrouped(tops, ctx, maxBand, show, pick, keepChild) {
+  function bandsGrouped(tops, ctx, maxBand, show, pick, keepChild, hidden) {
     var html = "";
     var sortedTops = tops.slice().sort(R.byOrder);
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx <= 1 && !show) continue;
+      if (hidden && hidden[R.BANDS[idx].key]) continue;
       var inBand = inBandFn(idx);
       var perTheme = {};
       sortedTops.forEach(function (top) {
@@ -139,6 +141,7 @@
   function cascade(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
     var expanded = !!(opts && opts.expanded);
+    var hidden = (opts && opts.hiddenBands) || null;
     var pick = opts && opts.custom
       ? { custom: true, unpicked: opts.unpicked || {}, excluded: opts.excluded || {} } : null;
     var ctx = R.context(data);
@@ -147,6 +150,7 @@
     var all = level === "backlog" ? (data.items || [])
       : R.productItems(data.items || [], ctx.scopeByArea);
     if (opts && opts.hideFixes) all = all.filter(function (i) { return !R.isFix(i); });
+    all = all.filter(function (i) { return R.bandVisible(i, hidden); });
     if (!all.length) return R.emptyNotice();
     if (level === "exec") {
       return R.execBoard(all, ctx, show, expanded) + R.freshnessHtml(all);
@@ -154,13 +158,14 @@
     var tops = R.topLevel(all);
     if (level === "workstreams") {
       var wsList = R.teamList(tops).filter(function (i) { return i.level === "workstream"; });
-      return bandsSimple(wsList, ctx, R.ACTIVE_MAX, show, pick) +
+      return bandsSimple(wsList, ctx, R.ACTIVE_MAX, show, pick, hidden) +
         (expanded ? R.breakdown(R.visibleDetail(wsList, show), ctx) : "") + R.freshnessHtml(all);
     }
     var list = level === "backlog" ? tops : R.teamList(tops);
     var maxBand = level === "backlog" ? R.PARKED : R.ACTIVE_MAX;
-    var keepChild = level === "backlog" ? null : R.teamMember;
-    return bandsGrouped(list, ctx, maxBand, show, pick, keepChild) +
+    var base = level === "backlog" ? null : R.teamMember;
+    var keepChild = function (k) { return (base ? base(k) : true) && R.bandVisible(k, hidden); };
+    return bandsGrouped(list, ctx, maxBand, show, pick, keepChild, hidden) +
       (expanded ? R.breakdown(R.visibleDetail(list, show), ctx) : "") + R.freshnessHtml(all);
   }
 

@@ -81,6 +81,66 @@ body[data-module="roadmap"] .page { max-inline-size: min(96rem, 100%); }
   text-align: start;
 }
 
+/* Hide stages: a Now/Next/Later checklist in the same dropdown-panel style
+   as the export menu. Unchecking a stage drops it - and the work that
+   begins in it - from every level and layout; a view-only filter, no
+   database change. */
+.rm-hide {
+  position: relative;
+  display: inline-flex;
+}
+
+.rm-hide-menu {
+  position: absolute;
+  inset-block-start: calc(100% + var(--s-1));
+  inset-inline-start: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-inline-size: 9rem;
+  padding: var(--s-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-raised);
+}
+
+.rm-hide-menu[hidden] { display: none; }
+
+.rm-hide-head {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 var(--s-1);
+}
+
+.rm-hide-opt {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.rm-hide-opt input {
+  inline-size: 1rem;
+  block-size: 1rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* An active filter (any stage hidden) tints the trigger so the state reads
+   without opening the menu. */
+.rm-hide .button.secondary.is-active {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
 /* Screen: the orientation hint exists only for the export. */
 .rm-print-hint { display: none; }
 

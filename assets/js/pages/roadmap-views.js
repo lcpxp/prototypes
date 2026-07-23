@@ -87,6 +87,16 @@
   function isParked(i) { return colStart(i) === PARKED; }
   function isActive(i) { var s = colStart(i); return s >= 2 && s <= ACTIVE_MAX; }
 
+  // The Hide stages control removes a whole period (Now, Next or Later)
+  // from the board. An item belongs to its START band, so hiding a band
+  // drops every item that begins in it (a now-starting span leaves with
+  // Now); the layouts also drop that band's column/section. hidden is a
+  // map of band key -> true; only now/next/later ever appear in it, and a
+  // falsy map hides nothing.
+  function bandVisible(i, hidden) {
+    return !hidden || !hidden[BANDS[colStart(i)].key];
+  }
+
   function productItems(items, scopeByArea) {
     return items.filter(function (i) { return scopeByArea[i.area_id] === "product"; });
   }
@@ -345,30 +355,40 @@
   // delivered drops the Delivered column and clamps spans into it.
   // preordered keeps the caller's order (used to group child bars under
   // their parent); otherwise rows sort by timelineOrder.
-  function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick, preordered) {
+  function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick, preordered, hidden) {
     var visible = showDelivered ? placed
       : placed.filter(function (p) { return p._e >= 2; });
-    if (!visible.length) return emptyMsg;
     var first = showDelivered ? 0 : 2;
+    // The band indices to render as columns: the axis range minus any band
+    // the Hide control dropped (Now/Next/Later). Bars index into this list,
+    // so a gap a hidden middle band leaves closes up rather than showing a
+    // dead column, and a span running into a hidden band clips to it.
+    var cols = [];
+    for (var b = first; b <= maxBand; b++) if (!hidden || !hidden[BANDS[b].key]) cols.push(b);
+    if (!visible.length || !cols.length) return emptyMsg;
     var head = '<div class="rmv-tl-head"><span class="rmv-tl-label"></span>' +
-      BANDS.slice(first, maxBand + 1).map(function (b) {
-        return '<span class="rmv-tl-col">' + b.label + "</span>"; }).join("") + "</div>";
+      cols.map(function (b) {
+        return '<span class="rmv-tl-col">' + BANDS[b].label + "</span>"; }).join("") + "</div>";
     var ordered = preordered ? visible : visible.slice().sort(timelineOrder);
     var body = ordered.map(function (p) {
       var s = p._s < first ? first : p._s, e = p._e > maxBand ? maxBand : p._e;
+      var sp = -1, ep = -1, k;
+      for (k = 0; k < cols.length; k++) { if (sp < 0 && cols[k] >= s) sp = k; if (cols[k] <= e) ep = k; }
+      if (sp < 0 || ep < sp) return "";
       var progCls = p._prog ? " rmv-prog-" + p._prog.bucket : "";
       var idAttr = p._id ? ' data-item-id="' + App.escape(p._id) + '"' : "";
-      var cols = "grid-column:" + (s - first + 2) + " / " + (e - first + 3);
+      var colStyle = "grid-column:" + (sp + 2) + " / " + (ep + 3);
       var bar = '<span class="rmv-tl-bar' + (p.done ? " rmv-tl-bar--done" : "") +
         (p._s === PARKED ? " rmv-tl-bar--parked" : "") + (p._ws ? " rmv-tl-bar--ws" : "") +
         catClass(p._cat) + progCls +
-        '"' + idAttr + ' style="' + cols + '">' + App.escape(p.label) + "</span>";
+        '"' + idAttr + ' style="' + colStyle + '">' + App.escape(p.label) + "</span>";
       var rowCls = "rmv-tl-row" + (p._child ? " rmv-tl-row--child" : "") + pickCls(p._id, pick);
       return '<div class="' + rowCls + '"><span class="rmv-tl-label">' +
         App.escape(p._catLabel) + "</span>" + bar + pickBox(p._id, pick) + "</div>";
     }).join("");
+    if (!body) return emptyMsg;
     return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") +
-      '" style="--tl-cols:' + (maxBand - first + 1) + '">' + head + body + "</div>";
+      '" style="--tl-cols:' + cols.length + '">' + head + body + "</div>";
   }
 
   // Place one item as a timeline row (bar = title). child marks an
@@ -424,6 +444,7 @@
   function timeline(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
     var expanded = !!(opts && opts.expanded);
+    var hidden = (opts && opts.hiddenBands) || null;
     var pick = opts && opts.custom
       ? { custom: true, unpicked: opts.unpicked || {}, excluded: opts.excluded || {} } : null;
     var ctx = context(data);
@@ -434,6 +455,7 @@
     var all = level === "backlog" ? (data.items || [])
       : productItems(data.items || [], ctx.scopeByArea);
     if (opts && opts.hideFixes) all = all.filter(function (i) { return !isFix(i); });
+    all = all.filter(function (i) { return bandVisible(i, hidden); });
     if (!all.length) return emptyNotice();
     if (level === "exec") {
       return App._rmv.execBoard(all, ctx, show, expanded) + freshnessHtml(all);
@@ -446,23 +468,25 @@
       var wsGrid = timelineGrid(wsList.map(function (i) { return placeItem(i, ctx); }),
         ACTIVE_MAX, show,
         '<p class="notice">No active workstreams. Mark a top-level item as a ' +
-        "workstream to show it here.</p>", pick);
+        "workstream to show it here.</p>", pick, false, hidden);
       return wsGrid + (expanded ? breakdown(visibleDetail(wsList, show), ctx) : "") +
         freshnessHtml(all);
     }
     if (level === "backlog") {
       // The master list as bars: every top-level row, each workstream's
       // nested work items indented beneath it.
-      var grid = timelineGrid(placedWithChildren(tops, ctx),
-        PARKED, show, emptyNotice(), pick, true);
+      var grid = timelineGrid(
+        placedWithChildren(tops, ctx, function (k) { return bandVisible(k, hidden); }),
+        PARKED, show, emptyNotice(), pick, true, hidden);
       return grid + (expanded ? breakdown(visibleDetail(tops, show), ctx) : "") + freshnessHtml(all);
     }
     // Work Items: workstreams (bold) with their nested work items indented
     // beneath, plus standalone items - all bars. Deliverables never appear.
     var teamTops = teamList(tops);
-    var teamGrid = timelineGrid(placedWithChildren(teamTops, ctx, teamMember), ACTIVE_MAX, show,
+    var teamGrid = timelineGrid(placedWithChildren(teamTops, ctx,
+      function (k) { return teamMember(k) && bandVisible(k, hidden); }), ACTIVE_MAX, show,
       '<p class="notice">No active roadmap work. Items wait in the Backlog ' +
-      "until scheduled (set a horizon of now, next or later).</p>", pick, true);
+      "until scheduled (set a horizon of now, next or later).</p>", pick, true, hidden);
     return teamGrid + (expanded ? breakdown(visibleDetail(teamTops, show), ctx) : "") +
       freshnessHtml(all);
   }
@@ -479,12 +503,13 @@
     emptyNotice: emptyNotice, bandLabel: bandLabel,
     childStats: childStats, checklistHtml: checklistHtml,
     barKids: barKids, deliverablesOf: deliverablesOf, teamMember: teamMember,
-    visibleDetail: visibleDetail,
+    visibleDetail: visibleDetail, bandVisible: bandVisible,
     pickCls: pickCls, pickBox: pickBox,
   };
 
   App.roadmapView = {
     colStart: colStart, colEnd: colEnd, isParked: isParked, isActive: isActive,
+    bandVisible: bandVisible,
     productItems: productItems, isFix: isFix, byDepartment: byDepartment, byOrder: byOrder, context: context,
     markRecency: markRecency,
     themeLabel: themeLabel, bandLabel: bandLabel, endBandLabel: endBandLabel,

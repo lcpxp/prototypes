@@ -46,12 +46,12 @@
       "note": "Over soft since the bug-icon toggle and the export dropdown. Exit plan: shed the print @media block into a roadmap-print.css."
     },
     "assets/js/pages/roadmap-views.js": {
-      "hard": 500,
-      "note": "Over soft. The cascade family (roadmap-views-cascade.js), exec board (roadmap-views-exec.js) and Detailed breakdown (roadmap-views-breakdown.js) are split out; the timeline grid builders are the next seam if it grows."
+      "hard": 540,
+      "note": "Over soft since the Hide-stages band filter (bandVisible + the timeline column drop). The cascade family (roadmap-views-cascade.js), exec board (roadmap-views-exec.js) and Detailed breakdown (roadmap-views-breakdown.js) are split out; the timeline grid builders are the next seam - split them into roadmap-views-timeline.js before extending further."
     },
     "assets/js/pages/roadmap.js": {
-      "hard": 500,
-      "note": "Over soft; the drawer wiring is the extract-to-a-module seam."
+      "hard": 560,
+      "note": "Over soft since the Hide-stages control wiring. The drawer wiring is the extract-to-a-module seam - pull it into roadmap-drawer.js before extending further."
     },
     "assets/js/pages/roadmap-detail.js": {
       "hard": 500,
