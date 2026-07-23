@@ -13,17 +13,17 @@
   var R = App._rmv;
 
   // Order: start band, then bugs sink below everything else in the band,
-  // then priority - loose items interleave with workstreams by priority
-  // number, with workstreams winning ties so at default priorities they
-  // naturally lead their band unless an item is deliberately promoted.
-  // Remaining ties: span length (a run that extends into the next band
-  // sinks below work that finishes in this one), then theme lane so the
-  // Parked stack reads grouped, not scattered. Current work floats to
-  // the top; long tasks spill right.
+  // then span length - a run that extends into the next band sinks below
+  // work that finishes in this one - then priority, with workstreams
+  // winning ties so at default priorities they naturally lead their band
+  // unless an item is deliberately promoted. Remaining ties: theme lane
+  // so the Parked stack reads grouped, not scattered. Current work
+  // floats to the top; long tasks spill right.
   function timelineOrder(a, b) {
-    return (a._s - b._s) || (a._bug - b._bug) || (a._pri - b._pri) ||
-      ((a._ws ? 0 : 1) - (b._ws ? 0 : 1)) ||
+    return (a._s - b._s) || (a._bug - b._bug) ||
       ((a._e - a._s) - (b._e - b._s)) ||
+      (a._pri - b._pri) ||
+      ((a._ws ? 0 : 1) - (b._ws ? 0 : 1)) ||
       (a._catSo - b._catSo) || (a._so - b._so);
   }
 
