@@ -53,12 +53,13 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
 | assets/js/pages/roadmap-views-cascade.js | 201 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
+| assets/js/pages/roadmap-views-timeline.js | 175 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
 | assets/js/pages/roadmap-views.js | 403 | roadmap-views.js - Pure HTML builders for the roadmap home |
 | assets/js/pages/roadmap.js | 514 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 149 | Changelog |
+| docs/CHANGELOG.md | 159 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
@@ -115,7 +116,7 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260722160000_work_item_associated_departments.sql | 68 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722170000_roadmap_move_workstream_cascade.sql | 65 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722190000_work_item_deliverable_level.sql | 23 | Deliverables: a third presentation level for work_items. A deliverable |
-| supabase/policies.sql | 247 | ------------------------------------------------------------------ |
+| supabase/policies.sql | 251 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
@@ -136,6 +137,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
+| tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
 | tests/unit/roadmap-detail.test.js | 297 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views-custom.test.js | 220 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
 | tests/unit/roadmap-views.test.js | 432 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
@@ -358,6 +360,13 @@ document instead of walking the tree or reading whole files.
 | execCatRow() | assets/js/pages/roadmap-views-exec.js:68 |
 | execDeptSection() | assets/js/pages/roadmap-views-exec.js:79 |
 | execBoard() | assets/js/pages/roadmap-views-exec.js:89 |
+| timelineOrder() | assets/js/pages/roadmap-views-timeline.js:22 |
+| isHideable() | assets/js/pages/roadmap-views-timeline.js:32 |
+| bandHeadCell() | assets/js/pages/roadmap-views-timeline.js:37 |
+| timelineGrid() | assets/js/pages/roadmap-views-timeline.js:53 |
+| placeItem() | assets/js/pages/roadmap-views-timeline.js:87 |
+| placedWithChildren() | assets/js/pages/roadmap-views-timeline.js:107 |
+| timeline() | assets/js/pages/roadmap-views-timeline.js:122 |
 | markRecency() | assets/js/pages/roadmap-views.js:59 |
 | presentationLabel() | assets/js/pages/roadmap-views.js:68 |
 | hzIdx() | assets/js/pages/roadmap-views.js:71 |
@@ -470,6 +479,8 @@ document instead of walking the tree or reading whole files.
 | sampleData() | tests/unit/platform-render.test.js:31 |
 | loadApp() | tests/unit/reference-render.test.js:13 |
 | loadApp() | tests/unit/registry.test.js:12 |
+| familyData() | tests/unit/roadmap-child-order.test.js:20 |
+| order() | tests/unit/roadmap-child-order.test.js:41 |
 | load() | tests/unit/roadmap-detail.test.js:13 |
 | sample() | tests/unit/roadmap-detail.test.js:32 |
 | ctxOf() | tests/unit/roadmap-detail.test.js:58 |

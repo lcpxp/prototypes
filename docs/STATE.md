@@ -1,35 +1,32 @@
 # Current state
 
-Updated: 2026-07-23 (session)
-Branch: main (all 33 task branches verified merged or superseded,
-2026-07-23; deletion blocked from the session - owner to prune them)
+Updated: 2026-07-24 (session)
+Branch: main is trunk; this change on
+claude/database-context-enrichment-1qdcyq (platform context only).
 
 ## In progress
-Roadmap context enrichment (protocol in work_notes, 2026-07-22): fixed
-context blocks in work_items.details, owner-confirmed in waves. Wave 1
-done: 13 theme descriptions, 12 area descriptions, all 15 workstreams,
-~26 items including all Now-band. Wave 2 remains (see next steps).
+Platform context enrichment (2026-07-24): owner-validated document
+extraction stored as platform context only - no roadmap items or
+workstreams created or changed. New tables domain_terms and
+journey_stages (schema/45_context.sql, policies wired); integrations
+enriched (DaoPay EU acquirer, EIT live/outbound, HubSpot primary CRM;
+added WebShield live, NetSuite planned); work_notes facts (Unity M2M
+auth -> Azure AD B2C, 17-step orchestration, contract edit/regenerate
++ Active/Pending Further Information statuses, acquirer routing,
+KPI-portal pricing). Provenance in work_documents (kind platform).
 
-Shipped today (on main, data live in Supabase): nested items stack in
-stage order under a workstream (childOrder, Timeline + Cascade;
-tests/unit/roadmap-child-order.test.js); child bars/cards inherit the
-workstream theme with a faint .rmv-theme-dot flagging a mismatched own
-theme; Timeline split into roadmap-views-timeline.js; "Acquirer Services
-and Fees" retagged Acquiring; "Optional pricing lines" toggle made
-standalone under Products & Pricing; dropped duplicate deleted.
+Roadmap context enrichment (protocol in work_notes, 2026-07-22): fixed
+context blocks in work_items.details, wave 1 done; wave 2 remains.
 
 ## Next steps
-1. Context enrichment wave 2: questionnaire sections D and E -
-   Next/Later items (Payment Service definition, merchant level
-   separation, IVR meaning, partner org identities, 10 Insights
-   children, bulk apply) and all backlog items; then spot-check by
-   generating a user story from stored context alone; then fold the
-   context template into ROADMAP-PLAYBOOK.md capture rules (owner nod).
-2. VALUE-CAPTURE session (docs/VALUE-CAPTURE.md) still pending -
-   merchant_value/pxp_value empty across the roadmap.
-3. Owner eyeballs the live board: colour blocks, mismatch dots,
-   child stacking.
+1. Confirm VFS meaning (stored low-confidence in domain_terms) and
+   supply a current roles document (2025 list held, not stored).
+2. Roadmap context enrichment wave 2: Next/Later + backlog items.
+3. VALUE-CAPTURE session (docs/VALUE-CAPTURE.md): merchant_value/
+   pxp_value still empty across the roadmap.
+4. Owner eyeballs the live board: colour blocks, mismatch dots.
 
 ## Open decisions
+- VFS: partner type/flow, exact meaning unconfirmed by owner.
 - Onboarding API: pull (COO) vs existing push/static-submission. Held.
-- State launches: US state-by-state vs broader region rollout. Placeholder.
+- State launches: US state-by-state vs broader region. Placeholder.
