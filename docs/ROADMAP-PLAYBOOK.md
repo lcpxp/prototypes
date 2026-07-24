@@ -204,6 +204,34 @@ A one-line request in chat should apply in one pass, not a research project:
 4. Apply the insert/update, then report one line: what changed and where it
    now sits. Record a `work_notes` decision only when the reasoning matters.
 
+## Contextual synchronisation (both ways)
+
+The roadmap and the platform knowledge base are two views of one reality and
+must be kept in step, in BOTH directions, on every review and material edit.
+The platform context lives in `product_capabilities` (what exists today, by
+maturity), `domain_terms` (the glossary), `journey_stages` (the onboarding
+lifecycle), `integrations`, and platform facts in `work_notes` (kind
+`'fact'`) - see docs/PLATFORM.md. Treat it as the source you enrich work
+from, and the record your delivered work keeps current.
+
+- **Context -> roadmap (source and enrich).** Before proposing or confirming
+  a work-item or workstream change, pull the context for its area (the
+  `product_capabilities`, `domain_terms` and `journey_stages` for its
+  `area_id`, plus open facts) and let it sharpen the item: a summary, a
+  dependency, a term it assumes, the lifecycle stage it touches, the
+  capability it extends. Offer these as concrete assertions to APPLY.
+- **Roadmap -> context (feed back).** When work moves - promoted, delivered,
+  dropped, rescoped - ask what it changes about the platform itself: a
+  capability now live or partial, a new integration, a term or lifecycle
+  stage that shifted, a problem now solved. Offer those as updates to the
+  context store (a `product_capabilities` maturity bump, a new fact, a term).
+- **The golden rule: every assertion is owner-validated.** Nothing is written
+  to a work item OR to the context store on the AI's own authority. Each
+  applied-or-planned assertion, both directions, is put to the owner to
+  confirm, correct or reject - as a clickable choice, not a wall of text -
+  before it lands. Record what was confirmed: a `work_notes` decision, and
+  provenance (source and date) on any context row.
+
 ## The review ritual ("let's go through the roadmap", or /roadmap)
 
 A tight, clickable pass. Each wave is one AskUserQuestion with options you
@@ -211,14 +239,22 @@ pre-compute from the data; each answer maps to a specific write above.
 
 - **Wave 0 - Orient** (no question): read `roadmap_current`; show Now and
   Next, what changed since last review (max `updated_at`), and the counts.
+  Also load the platform context for the areas in play (Contextual
+  synchronisation) so it is in hand for the waves that follow.
 - **Wave 1 - Now integrity**: for each Now item, on track / done / slipping /
   drop -> `status`, `progress`, `horizon`.
 - **Wave 2 - Capacity**: Now holds whatever is genuinely in flight - there
   is no cap on how many items or workstreams sit there. Promote Next items
   on evidence -> `horizon='now'`; demote when confidence drops.
 - **Wave 3 - New capture**: "anything new?" -> the quick-capture recipe.
-- **Wave 4 - Confirm**: summarise the edits, write one `work_notes` decision,
-  stop. This is the 2-5 minute core.
+- **Wave 4 - Context sync** (always, both ways): from the context loaded in
+  Wave 0, put forward as clickable validation (a) context->item enrichments
+  that sharpen items in play, and (b) item->context updates implied by this
+  session's moves and deliveries. Apply only what the owner confirms; skip
+  the wave only when there is genuinely nothing to sync, and say so.
+- **Wave 5 - Confirm**: summarise the edits, write one `work_notes` decision,
+  record any confirmed context updates with provenance, then stop. This is
+  the 2-5 minute core.
 
 Only after the core, offer deeper waves as further clickable options:
 reprioritise within a theme; review Later bets; revive parked/someday; scope
@@ -234,6 +270,10 @@ shareholder-ready export prep before a meeting.
   validated problems, Later are one-line bets. Do not over-write Later rows.
 - **Never lose a decision**: every move gets a `resolution` and/or a
   `work_notes` decision row.
+- **Keep context in step**: every review and material edit syncs both ways
+  with the platform knowledge base (Contextual synchronisation, docs/
+  PLATFORM.md) - source context into the work, feed delivery back into the
+  context - and every synced assertion is owner-validated before it lands.
 - **Public repo**: real merchant, partner and staff detail lives only in
   Supabase, never in git, seed.sql, commit messages or docs. All DOM output
   goes through `App.escape`.

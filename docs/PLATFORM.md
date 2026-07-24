@@ -26,6 +26,16 @@ rendering or schema itself changes.
   note, kv, table, code, values; see supabase/schema/10_reference.sql)
   so new facts about a capability never need a code change.
 
+Beyond these three, two further context stores hold platform knowledge
+that is not a capability catalogue entry, same scope and access (read
+behind the 'platform' grant, admin writes), in
+supabase/schema/45_context.sql: domain_terms (the LaunchPad/Unity
+glossary) and journey_stages (the canonical lead-to-live onboarding
+lifecycle). integrations (connected services) and platform facts in
+work_notes (kind 'fact') complete the picture. Together these are the
+context the roadmap synchronises against both ways every review - see
+the "Contextual synchronisation" section of docs/ROADMAP-PLAYBOOK.md.
+
 ## Ingestion protocol (drip-feed)
 
 When the owner supplies platform material in chat - a product

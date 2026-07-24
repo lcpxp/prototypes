@@ -7,7 +7,7 @@ document instead of walking the tree or reading whole files.
 | File | Lines | Purpose |
 |---|---:|---|
 | .claude/commands/roadmap-add.md | 30 |  |
-| .claude/commands/roadmap.md | 40 |  |
+| .claude/commands/roadmap.md | 55 |  |
 | .claude/settings.json | 49 |  |
 | .githooks/pre-commit | 29 |  |
 | .github/workflows/deploy.yml | 53 |  |
@@ -62,8 +62,8 @@ document instead of walking the tree or reading whole files.
 | docs/CHANGELOG.md | 159 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
-| docs/PLATFORM.md | 104 | Platform product-knowledge protocol |
-| docs/ROADMAP-PLAYBOOK.md | 240 | Roadmap playbook |
+| docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
+| docs/ROADMAP-PLAYBOOK.md | 280 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 154 | Roadmap process |
 | docs/ROADMAP.md | 199 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
@@ -122,6 +122,7 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 487 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
+| supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
