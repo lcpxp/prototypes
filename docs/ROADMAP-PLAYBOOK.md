@@ -78,7 +78,7 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `level` | workstream, item | item | container vs item |
 | `parent_id` | a workstream's id | null | nests under it |
 | `category_id` | a `roadmap_categories` id (theme) | null | theme lane |
-| `department` | sales_commercial, operations_onboarding, product_technology, finance_revenue, legal_compliance, risk_underwriting | null | exec grouping (single build owner) |
+| `department` | six business functions (sales_commercial, operations_onboarding, product_technology, finance_revenue, legal_compliance, risk_underwriting) plus core_launchpad | null | single accountable owner; core_launchpad = the platform itself, not a business function (see Ownership) |
 | `associated_departments` | text[] of the same department keys | `{}` | business area associations: extra departments that want visibility without owning; the department filter matches owner OR association |
 | `horizon` | now, next, later, someday | someday | start band |
 | `end_horizon` | now, next, later, someday | null | spans to this band |
@@ -95,6 +95,24 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 
 Items are never deleted. Close with `status='done'` or `'dropped'` plus a
 `resolution`; `resolved_at` is stamped by trigger. Reopening clears it.
+
+## Ownership: one accountable owner, many associations
+
+One owner per item (`department`); every other interested function is an
+association tag (`associated_departments`). The filter matches owner OR tag, so
+tags give visibility without diluting accountability - never give two owners,
+add a tag. Owners are the six business functions plus `core_launchpad` ("Core
+LaunchPad"): use it when an item IS the core product (merchant onboarding into
+PXP) and no business function owns it (Acquirer-only, Merchant Profile, currency
+conversion). It is not `product_technology` - Core LaunchPad = which platform
+the work is, product_technology = who engineers it, carried as a default tag on
+Core LaunchPad items. Otherwise the driving function owns: operations_onboarding
+owns onboarding, screening, CRM and automation and stays a distinct owner (tag
+other functions, never merge into one big Operations). Worked example: AI
+Enablement is product_technology-owned (core AI) with operations_onboarding
+tagged. Making core_launchpad a live owner still needs a schema CHECK, a
+tokens.css colour and the department filter; until then it is the classification
+rule, applied in data only once those land.
 
 ## Canonical operations (copy-paste, resolve ids by key/title)
 

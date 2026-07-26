@@ -1,8 +1,9 @@
 # Current state
 
-Updated: 2026-07-24 (session)
-Branch: main is trunk; this change on
-claude/database-context-enrichment-1qdcyq (platform context only).
+Updated: 2026-07-26 (session)
+Branch: main is trunk. Platform-context work on
+claude/database-context-enrichment-1qdcyq; roadmap taxonomy and
+playbook ownership rule on claude/pfac-enablement-workstream-t11ws7.
 
 ## In progress
 Platform context enrichment (2026-07-24): owner-validated document
@@ -25,6 +26,8 @@ context blocks in work_items.details, wave 1 done; wave 2 remains.
 3. VALUE-CAPTURE session (docs/VALUE-CAPTURE.md): merchant_value/
    pxp_value still empty across the roadmap.
 4. Owner eyeballs the live board: colour blocks, mismatch dots.
+5. Wire core_launchpad as a live owner: schema CHECK, tokens.css
+   colour, department filter (playbook rule added; not yet in app).
 
 ## Open decisions
 - VFS: partner type/flow, exact meaning unconfirmed by owner.
