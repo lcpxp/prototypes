@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="../../../assets/css/layout.css">
   <link rel="stylesheet" href="../../../assets/css/components.css">
   <link rel="stylesheet" href="../../../assets/css/pages.css">
-  <link rel="stylesheet" href="../../../assets/css/pci.css">
+  <link rel="stylesheet" href="../../../assets/css/prototype.css">
   <script src="../../../assets/js/core/theme.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
   <script defer src="../../../assets/js/core/supabase.js"></script>
@@ -29,7 +29,7 @@
   <script defer src="../../../assets/js/core/guard.js"></script>
   <script defer src="../../../assets/js/core/ui.js"></script>
   <script defer src="../../../assets/js/core/search.js"></script>
-  <script defer src="../../../assets/js/pages/pci-svg.js"></script>
+  <script defer src="../../../assets/js/pages/proto-svg.js"></script>
 </head>
 <body data-root="../../.." data-module="prototypes">
   <header id="app-nav"></header>
@@ -42,13 +42,13 @@
         IXOPAY pre-fills the SAQ, invites the merchant by email, chases them, and
         runs the annual lifecycle forever; Launchpad adds the fee product on
         invitation-sent and monitors status via webhook + 15-30 day polling.</p>
-      <p class="pci-meta">
+      <p class="proto-meta">
         <span class="badge draft">In build</span>
         <span class="badge">Owner: Product (onboarding)</span>
       </p>
     </div>
 
-    <section class="pci-section">
+    <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Overview</h2>
       <p>Launchpad captures merchant data exactly as today. At the compliance
         prompt, a merchant claiming existing compliance is verified via IXOPAY's
@@ -62,9 +62,9 @@
         reporting on demand.</p>
     </section>
 
-    <section class="pci-section">
+    <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">How it works, end to end</h2>
-      <ol class="pci-steps">
+      <ol class="proto-steps">
         <li><strong>Application information.</strong> Merchant, contacts and business
           details, captured as today.</li>
         <li><strong>Operating sites.</strong> The merchant's websites and any existing MIDs.</li>
@@ -83,13 +83,13 @@
       </ol>
     </section>
 
-    <section class="pci-section">
+    <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Purpose</h2>
       <p>Stress-free, automated compliance with near-zero Launchpad build;
         replaces the un-scoped VikingCloud integration gap.</p>
     </section>
 
-    <section class="pci-section">
+    <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Benefits</h2>
       <ul>
         <li>Enrolment-focused API, no data re-capture.</li>
@@ -102,7 +102,7 @@
       </ul>
     </section>
 
-    <section class="pci-section">
+    <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Features</h2>
       <ul>
         <li>Faithful PXP Partner Portal wizard: application, operating sites, products and pricing.</li>
@@ -115,9 +115,9 @@
       </ul>
     </section>
 
-    <section class="pci-section">
+    <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Backlog links</h2>
-      <ul class="pci-backlog">
+      <ul class="proto-backlog">
         <li><span class="badge">LP-PCI-001</span> Agent compliance prompt</li>
         <li><span class="badge">LP-PCI-002</span> Enrolment API call (full payload)</li>
         <li><span class="badge">LP-PCI-003</span> Invitation-sent event to basket fee product</li>
@@ -127,11 +127,11 @@
       </ul>
     </section>
 
-    <section class="pci-section">
+    <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Diagrams</h2>
       <p>Confirmed IXOPAY solution - enrolment, invitation, monitoring.</p>
-      <figure class="pci-figure">
-        <div id="pci-diagram" class="pci-diagram" data-src="pci-workflow.svg"
+      <figure class="proto-figure">
+        <div id="proto-diagram" class="proto-diagram" data-src="pci-workflow.svg"
           data-title="Confirmed IXOPAY solution - enrolment, invitation, monitoring">
           <p class="notice">Loading diagram</p>
         </div>
@@ -141,7 +141,7 @@
       </figure>
     </section>
 
-    <section class="pci-section">
+    <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Explore</h2>
       <p>A standalone replica of the PXP Partner Portal onboarding flow with the PCI
         compliance feature added - the first portal prototype of its kind. Walk the

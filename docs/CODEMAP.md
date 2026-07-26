@@ -20,13 +20,13 @@ document instead of walking the tree or reading whole files.
 | assets/css/layout.css | 351 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
-| assets/css/pci.css | 86 | pci.css - Styles for the PCI prototype's overview / detail page |
+| assets/css/prototype.css | 88 | prototype.css - Shared styles for a prototype's LPio-framed overview |
 | assets/css/pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
 | assets/css/pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype |
 | assets/css/roadmap-detail.css | 264 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 379 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 394 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
-| assets/css/tokens.css | 351 | tokens.css - Design tokens for the LPio hub. |
+| assets/css/tokens.css | 393 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
@@ -44,8 +44,8 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
 | assets/js/pages/pci-portal.js | 300 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
 | assets/js/pages/pci-reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
-| assets/js/pages/pci-svg.js | 123 | pci-svg.js - Inline SVG diagram viewer for the PCI overview page. |
 | assets/js/pages/platform.js | 202 | platform.js - The platform product-knowledge viewer for |
+| assets/js/pages/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
@@ -59,17 +59,17 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 159 | Changelog |
+| docs/CHANGELOG.md | 162 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
-| docs/ROADMAP-PLAYBOOK.md | 280 | Roadmap playbook |
+| docs/ROADMAP-PLAYBOOK.md | 298 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 154 | Roadmap process |
 | docs/ROADMAP.md | 199 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 33 | Current state |
+| docs/STATE.md | 31 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 110 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
@@ -88,7 +88,7 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/pci/reports.html | 77 | Compliance reporting - PXP replica - LPio |
 | modules/prototypes/website-screening/index.html | 50 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 124 | Roadmap - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 118 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 55 | Users - LPio / LaunchPad IO |
 | package.json | 13 |  |
 | scripts/audit.js | 123 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
@@ -128,7 +128,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
-| tests/checks/structure.test.js | 151 | tests/checks/structure.test.js - Page structure gates. |
+| tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
@@ -272,9 +272,6 @@ document instead of walking the tree or reading whole files.
 | closeQuote() | assets/js/pages/pci-portal.js:287 |
 | addPciFee() | assets/js/pages/pci-portal.js:288 |
 | stat() | assets/js/pages/pci-reports.js:16 |
-| sanitize() | assets/js/pages/pci-svg.js:22 |
-| fallback() | assets/js/pages/pci-svg.js:51 |
-| openOverlay() | assets/js/pages/pci-svg.js:59 |
 | toneClass() | assets/js/pages/platform.js:24 |
 | codeblock() | assets/js/pages/platform.js:28 |
 | tableBlock() | assets/js/pages/platform.js:33 |
@@ -287,6 +284,9 @@ document instead of walking the tree or reading whole files.
 | groupByArea() | assets/js/pages/platform.js:115 |
 | sectionHeading() | assets/js/pages/platform.js:127 |
 | pageHtml() | assets/js/pages/platform.js:135 |
+| sanitize() | assets/js/pages/proto-svg.js:22 |
+| fallback() | assets/js/pages/proto-svg.js:51 |
+| openOverlay() | assets/js/pages/proto-svg.js:59 |
 | codeblock() | assets/js/pages/reference-render.js:18 |
 | specOverview() | assets/js/pages/reference-render.js:32 |
 | paramsTable() | assets/js/pages/reference-render.js:69 |
@@ -465,9 +465,9 @@ document instead of walking the tree or reading whole files.
 | cdnPages() | tests/checks/perf.test.js:17 |
 | sqlWithoutComments() | tests/checks/perf.test.js:22 |
 | jwtRole() | tests/checks/security.test.js:27 |
-| htmlPages() | tests/checks/structure.test.js:14 |
-| protectedPages() | tests/checks/structure.test.js:17 |
-| scriptSrcs() | tests/checks/structure.test.js:20 |
+| htmlPages() | tests/checks/structure.test.js:19 |
+| protectedPages() | tests/checks/structure.test.js:22 |
+| scriptSrcs() | tests/checks/structure.test.js:25 |
 | trackedFiles() | tests/lib/repo.js:13 |
 | read() | tests/lib/repo.js:19 |
 | isTextFile() | tests/lib/repo.js:23 |
