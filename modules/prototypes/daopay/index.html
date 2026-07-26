@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://zlmkofbkobmhnslfnqsf.supabase.co" crossorigin>
+  <title>Daopay user role - EU merchant onboarding - LPio / LaunchPad IO</title>
+  <script>
+    (function() {
+      var theme = localStorage.getItem("theme");
+      if (theme === "dark" || theme === "light") {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../../assets/css/base.css">
+  <link rel="stylesheet" href="../../../assets/css/layout.css">
+  <link rel="stylesheet" href="../../../assets/css/components.css">
+  <link rel="stylesheet" href="../../../assets/css/pages.css">
+  <link rel="stylesheet" href="../../../assets/css/prototype.css">
+  <script src="../../../assets/js/core/theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
+  <script defer src="../../../assets/js/core/supabase.js"></script>
+  <script defer src="../../../assets/js/core/registry.js"></script>
+  <script defer src="../../../assets/js/core/guard.js"></script>
+  <script defer src="../../../assets/js/core/ui.js"></script>
+  <script defer src="../../../assets/js/core/search.js"></script>
+  <script defer src="../../../assets/js/pages/proto-svg.js"></script>
+</head>
+<body data-root="../../.." data-module="prototypes">
+  <header id="app-nav"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="eyebrow">Prototype</span>
+      <h1>Daopay user role - EU merchant onboarding</h1>
+      <p class="lede">A scoped role that lets the Daopay compliance team see
+        their own merchant applications and make the acquiring decision
+        themselves. They read everything and can add documents; they make
+        exactly one decision. Everything that generates a document, calls an
+        integration or overrides a screening result stays with PXP.</p>
+      <p class="proto-meta">
+        <span class="badge draft">In design</span>
+        <span class="badge">Owner: Product (onboarding)</span>
+        <span class="badge">Acquirer: Daopay (EU)</span>
+      </p>
+    </div>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">Why this exists</h2>
+      <p>Daopay is the acquirer for EU merchants, and their compliance function
+        is separate from PXP underwriting. This role puts the decision where the
+        accountability already sits: the Daopay compliance team logs in, opens
+        the application they are being asked to accept, reads the same evidence
+        PXP read, and decides. Nothing about the application changes - same
+        portal, same page, same evidence. The only difference is who is looking
+        at it and which buttons they get.</p>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">How it works, end to end</h2>
+      <p>Steps 1 to 7 are PXP and the platform. Step 8 is where the Daopay
+        compliance team picks it up.</p>
+      <ol class="proto-steps">
+        <li><strong>The application completes.</strong> All six application
+          steps are done - business information, processing information,
+          chargebacks and fraud, AML and CTF, contact information and
+          documents.</li>
+        <li><strong>The agent generates both documents.</strong> The merchant
+          contract and the Daopay KYC contract are generated together, by the
+          PXP agent, from the application summary page.</li>
+        <li><strong>The agent sends the contract.</strong> The merchant contract
+          goes out for signature.</li>
+        <li><strong>Screening checks run.</strong> Companies House,
+          ComplyAdvantage, VMSS, MATCH, ID-Pal and Webshield complete, each
+          result available as a PDF report.</li>
+        <li><strong>The contract is fully signed.</strong> Three signatures: the
+          merchant, then the Daopay CEO and the Daopay CTO countersigning.</li>
+        <li><strong>The documents and CRM record upload to Daopay
+          automatically.</strong> Full signature is the trigger; nobody presses
+          anything. The equivalent manual controls stay on the page as a PXP
+          fallback if a send needs repeating.</li>
+        <li><strong>Daopay compliance is notified.</strong> The application is
+          now waiting on a Daopay decision.</li>
+        <li><strong>Daopay compliance opens the application.</strong> Their
+          Applications list is the portal's own list, filtered to the
+          applications where they are the acquirer.</li>
+        <li><strong>They make one of three decisions.</strong> Reject, pending
+          further information, or approve - set out below.</li>
+        <li><strong>The merchant signs the KYC.</strong> One signature. That
+          completes the onboarding.</li>
+      </ol>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">The three decisions</h2>
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">Daopay decisions, how each is made
+            and what each triggers</caption>
+          <thead>
+            <tr><th>Decision</th><th>How it is made</th><th>What happens</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Reject</td><td>Application status select, then Update
+              status</td><td>Status becomes Rejected.</td></tr>
+            <tr><td>Pending further information</td><td>Application status
+              select, then Update status, with a note explaining what is
+              needed</td><td>Status becomes Pending Further Information, and the
+              note goes to the PXP accounts team so they can go back to the
+              merchant.</td></tr>
+            <tr><td>Approve</td><td>The Send KYC and approve merchant
+              button</td><td>Status becomes Approved and the KYC contract goes
+              out to the merchant for signature. Sending the KYC is the
+              approval - there is no separate confirmation step.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">What the role can and cannot do</h2>
+      <p>A Daopay user sees the same application page in the same order, with
+        fewer controls on it. Controls that are out of scope are not shown at
+        all rather than shown greyed out.</p>
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">Controls available to a PXP user
+            compared with a Daopay user</caption>
+          <thead>
+            <tr><th>Control</th><th>PXP user</th><th>Daopay user</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Read every section of the application</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Application status select and Update status</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Send KYC and approve merchant</td><td>Not shown</td><td>Yes</td></tr>
+            <tr><td>View and download contracts</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>View and generate screening report PDFs</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Upload a document</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Generate contract</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Send contract</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Send to CRM</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Send DaoPay onboarding record</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Send DaoPay documents</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Run check</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Override or remove screening</td><td>Yes</td><td>No</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The list of applications is scoped the same way. A Daopay user sees the
+        portal's Applications table filtered to the applications where Daopay is
+        the acquirer, not the full book.</p>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">Two statuses, and why they differ</h2>
+      <p>There are two status fields on the page and they are not the same
+        thing. An application can legitimately show one value at the top and a
+        different one in the card.</p>
+      <ul>
+        <li><strong>The onboarding stage</strong> is the chip at the top of the
+          page and in the list's STATUS column, derived from where the
+          application has got to: Application In Progress, Awaiting Contract
+          Send, Awaiting Contract Signature, Onboarding: Pending MID, Approved.
+          Nobody sets it directly.</li>
+        <li><strong>The decision status</strong> is the Application status
+          select inside the card, set by a person: Draft, In Progress,
+          Submitted, Pending Manual Review, Approved, Rejected, Pending Further
+          Information, Cancelled. The first four are not selectable from this
+          point in the flow.</li>
+      </ul>
+      <p>A Daopay decision changes the second. The first catches up on its
+        own.</p>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">Notifications</h2>
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">Notification points in the
+            flow</caption>
+          <thead>
+            <tr><th>Trigger</th><th>Who is notified</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Documents and CRM record uploaded to Daopay</td>
+              <td>Daopay compliance team</td></tr>
+            <tr><td>Status set to Pending Further Information, with a note</td>
+              <td>PXP accounts team</td></tr>
+            <tr><td>Send KYC and approve merchant</td>
+              <td>The merchant, with the KYC contract to sign</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">Signatures</h2>
+      <p>Two documents, two different ceremonies. Mixing them up is the easiest
+        mistake to make when reading the contracts tables.</p>
+      <ul>
+        <li><strong>The merchant contract takes three signatures:</strong> the
+          merchant, then the Daopay CEO and the Daopay CTO countersigning. It is
+          not fully signed, and the automatic upload does not fire, until all
+          three are in.</li>
+        <li><strong>The Daopay KYC contract takes one:</strong> the merchant's.
+          Nobody countersigns.</li>
+      </ul>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">Getting help</h2>
+      <p>For a question about a specific application - a screening result, a
+        missing document, why something was sent - contact the PXP underwriting
+        team or your PXP account manager. For the portal itself, including
+        access and permissions, raise it with your account manager.</p>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">Diagram</h2>
+      <p>The full sequence, from a completed application through to the signed
+        KYC.</p>
+      <figure class="proto-figure">
+        <div id="proto-diagram" class="proto-diagram" data-src="daopay-flow.svg"
+          data-title="Daopay EU onboarding - handoff and decision">
+          <p class="notice">Loading diagram</p>
+        </div>
+        <figcaption>Blue = PXP and the platform; green = Daopay; grey = the
+          merchant. Dashed arrows are automatic. Step numbers match the
+          sequence above.</figcaption>
+      </figure>
+    </section>
+
+    <section class="proto-section">
+      <h2 class="eyebrow eyebrow-heading">Explore</h2>
+      <p>A replica of the partner portal with the role applied. Open the same
+        application as a PXP user and as a Daopay user and compare the controls;
+        the reduced set is the whole point. All names, identifiers, websites and
+        amounts in it are invented - no real merchant, partner or staff
+        data.</p>
+      <p><a class="button" href="applications.html">Open the replica</a></p>
+    </section>
+  </main>
+
+</body>
+</html>

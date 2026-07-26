@@ -213,6 +213,48 @@
   --pxp-white: #ffffff;
   --pxp-content-max: 974px;
   --pxp-aside: 224px;
+
+  /* The portal sets font-family: Inter on *, body and html. Only the
+     replica uses this token; LPio's own chrome keeps --font-body.
+     The webfont itself is linked on replica pages only. */
+  --pxp-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  /* Signal chips. The portal expresses every status as a base colour
+     with a soft background and a darker text tone. Bases are the
+     confirmed portal values above (success, danger, primary, amber,
+     teal, hint-normal); the -bg and -text tints are derived from them
+     to match the chips in the application screenshots. */
+  --pxp-signal-success: #8acd33;
+  --pxp-signal-success-bg: #f0f9e3;
+  --pxp-signal-success-text: #4a7016;
+  --pxp-signal-warning: #ff8c00;
+  --pxp-signal-warning-bg: #fff4e5;
+  --pxp-signal-warning-text: #8a4b00;
+  --pxp-signal-danger: #ed2d3d;
+  --pxp-signal-danger-bg: #fdeaec;
+  --pxp-signal-danger-text: #9b1420;
+  --pxp-signal-info: #292cf5;
+  --pxp-signal-info-bg: #ecf2ff;
+  --pxp-signal-info-text: #25288a;
+  --pxp-signal-accent: #2aceff;
+  --pxp-signal-accent-bg: #e0fdff;
+  --pxp-signal-accent-text: #41677c;
+  --pxp-signal-flagged: #f4a58a;
+  --pxp-signal-flagged-bg: #fdeee7;
+  --pxp-signal-flagged-text: #8f3c1c;
+  --pxp-signal-inactive: #9ca3af;
+  --pxp-signal-inactive-bg: #f3f4f6;
+  --pxp-signal-inactive-text: #4b5563;
+  --pxp-signal-commerce: #7c3aed;
+  --pxp-signal-commerce-bg: #f3ebff;
+  --pxp-signal-commerce-text: #4c1d95;
+
+  /* Data tables and the portal's soft secondary button. */
+  --pxp-table-header-bg: #f3f4f6;
+  --pxp-table-stripe-bg: #f9fafb;
+  --pxp-button-secondary-bg: #e8f0ff;
+  --pxp-button-secondary-text: #0047ff;
 }
 
 /* Dark scheme: same relationships, inverted surfaces. Components

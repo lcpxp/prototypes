@@ -19,6 +19,11 @@ is the git history; what is unfinished is docs/STATE.md.
   the next stage.
 
 ### Added
+- New Daopay user-role prototype under Prototypes: a guidance overview of
+  how the Daopay compliance team will approve EU merchant applications, a
+  sequence diagram of the flow, and a replica of the partner portal that
+  renders the same application as a PXP user and as a Daopay user so the
+  reduced control set is visible side by side. All data in it is invented.
 - Nested work items now stack in stage order under their workstream (Now
   above Next above Later; within a stage, spans finishing sooner sit
   higher), inherit the workstream's theme colour, and carry a small faint

@@ -1,11 +1,13 @@
 /* ------------------------------------------------------------------
-   pci.css - Styles for the PCI prototype's overview / detail page
-   (modules/prototypes/pci/index.html). The interactive replica has its
-   own sheets (pxp.css, pxp-pci.css). The one optional page-specific
-   sheet, loaded after pages.css. Values come from tokens.css only.
+   prototype.css - Shared styles for a prototype's LPio-framed overview
+   page: the meta row, sections, step sequence, backlog list and the
+   diagram figure. Used by modules/prototypes/pci/index.html and
+   modules/prototypes/daopay/index.html. Interactive replicas have
+   their own sheets (pxp.css, pxp-pci.css, pxp-daopay.css). Loaded
+   after pages.css. Values come from tokens.css only.
 ------------------------------------------------------------------- */
 
-.pci-meta {
+.proto-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -13,12 +15,12 @@
   margin-block-start: var(--s-3);
 }
 
-.pci-section {
+.proto-section {
   margin-block-end: var(--s-6);
 }
 
 /* End-to-end step sequence outlined on the overview. */
-.pci-steps {
+.proto-steps {
   margin: 0;
   padding-inline-start: var(--s-5);
   display: flex;
@@ -27,26 +29,26 @@
   max-inline-size: var(--lede-max);
 }
 
-.pci-steps li {
+.proto-steps li {
   padding-inline-start: var(--s-1);
 }
 
-.pci-steps li::marker {
+.proto-steps li::marker {
   color: var(--accent);
   font-weight: var(--weight-semibold);
 }
 
-.pci-steps strong {
+.proto-steps strong {
   color: var(--ink);
 }
 
-.pci-backlog {
+.proto-backlog {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.pci-backlog li {
+.proto-backlog li {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -54,18 +56,18 @@
   padding-block: var(--s-1);
 }
 
-.pci-figure {
+.proto-figure {
   margin: 0;
 }
 
-.pci-figure figcaption {
+.proto-figure figcaption {
   color: var(--muted);
   font-size: var(--text-sm);
   margin-block-start: var(--s-2);
   max-inline-size: var(--lede-max);
 }
 
-.pci-diagram {
+.proto-diagram {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -74,12 +76,12 @@
   cursor: zoom-in;
 }
 
-.pci-diagram svg {
+.proto-diagram svg {
   display: block;
   inline-size: 100%;
   block-size: auto;
 }
 
-dialog.pci-overlay {
+dialog.proto-overlay {
   inline-size: min(60rem, calc(100vw - 2 * var(--gutter)));
 }

@@ -11,6 +11,11 @@ const { trackedFiles, read } = require("../lib/repo.js");
 
 const LOGIN_PAGE = "index.html";
 
+// The single agreed external stylesheet: Inter for the PXP replica.
+// Pinned exactly, so a future edit cannot widen it into "any Google font".
+const GOOGLE_FONTS_INTER =
+  "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap";
+
 function htmlPages() {
   return trackedFiles().filter((f) => f.endsWith(".html"));
 }
@@ -85,8 +90,14 @@ test("every page loads the core stylesheets first, in order", () => {
     assert.deepEqual(hrefs.slice(0, CORE.length),
       CORE.map((n) => `${prefix}assets/css/${n}.css`),
       `${page}: the first stylesheets must be tokens, base, layout, components, pages in order (see docs/DESIGN.md).`);
-    // Page-specific sheets (e.g. login.css) may follow, but only from assets/css/.
+    // Page-specific sheets (e.g. login.css) may follow, but only from
+    // assets/css/ - with one agreed exception: the PXP replica pages
+    // load Inter from Google Fonts, because the real portal uses it and
+    // an indicative system stack made the replica unfaithful. Owner
+    // agreement recorded in docs/STATE.md. No other external
+    // stylesheet is permitted.
     for (const extra of hrefs.slice(CORE.length)) {
+      if (extra === GOOGLE_FONTS_INTER) continue;
       assert.match(extra, new RegExp(`^${prefix}assets/css/[a-z-]+\\.css$`),
         `${page}: extra stylesheet "${extra}" must be a page sheet under assets/css/.`);
     }

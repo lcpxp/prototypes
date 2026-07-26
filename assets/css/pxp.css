@@ -11,7 +11,7 @@
   min-block-size: 100vh;
   background: var(--pxp-bg-page);
   color: var(--pxp-text-body);
-  font-family: var(--font-body);
+  font-family: var(--pxp-font);
   font-size: 14px;
   line-height: 1.5715;
 }

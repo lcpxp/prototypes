@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------
-// pci-svg.js - Inline SVG diagram viewer for the PCI overview page.
-// Fetches the diagram named in #pci-diagram[data-src], sanitises it
-// and injects it inline (fit-to-width, viewBox preserved), with a
-// click-to-enlarge overlay and download-original.
+// proto-svg.js - Inline SVG diagram viewer for a prototype overview
+// page. Fetches the diagram named in #proto-diagram[data-src],
+// sanitises it and injects it inline (fit-to-width, viewBox
+// preserved), with a click-to-enlarge overlay and download-original.
 //
 // The sanitiser strips <script>, on* handlers and external hrefs even
 // though the seed diagram is self-authored and safe: it proves the
@@ -12,7 +12,7 @@
 (function () {
   "use strict";
 
-  var mount = document.getElementById("pci-diagram");
+  var mount = document.getElementById("proto-diagram");
   if (!mount) return;
 
   var src = mount.getAttribute("data-src");
@@ -50,7 +50,7 @@
 
   function fallback(message) {
     // Never hard-fail: offer the raw file instead of an empty panel.
-    mount.classList.remove("pci-diagram");
+    mount.classList.remove("proto-diagram");
     mount.innerHTML =
       '<p class="notice">' + App.escape(message) + " " +
       '<a href="' + App.escape(src) + '">Open the diagram file</a>.</p>';
@@ -58,7 +58,7 @@
 
   function openOverlay(svgText) {
     var dialog = document.createElement("dialog");
-    dialog.className = "modal pci-overlay";
+    dialog.className = "modal proto-overlay";
     var head = document.createElement("div");
     head.className = "modal-head";
     var heading = document.createElement("h2");
@@ -79,7 +79,9 @@
     dl.className = "button secondary";
     dl.textContent = "Download original";
     dl.addEventListener("click", function () {
-      App.download("pci-workflow.svg", svgText, "image/svg+xml");
+      // Name the download after the source file, so the loader serves
+      // any prototype's diagram rather than only the PCI one.
+      App.download(src.split("/").pop(), svgText, "image/svg+xml");
     });
     actions.appendChild(dl);
     dialog.appendChild(actions);

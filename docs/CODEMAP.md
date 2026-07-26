@@ -15,18 +15,19 @@ document instead of walking the tree or reading whole files.
 | .gitmessage | 12 |  |
 | CLAUDE.md | 205 | CLAUDE.md |
 | README.md | 17 | LPio |
-| assets/css/base.css | 98 | base.css - Reset, typography and global element styles. |
+| assets/css/base.css | 111 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 447 | components.css - Reusable interface components: cards, forms, |
 | assets/css/layout.css | 351 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
-| assets/css/pci.css | 86 | pci.css - Styles for the PCI prototype's overview / detail page |
+| assets/css/prototype.css | 88 | prototype.css - Shared styles for a prototype's LPio-framed overview |
+| assets/css/pxp-daopay.css | 185 | pxp-daopay.css - The Daopay EU onboarding replica layered on the PXP |
 | assets/css/pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
 | assets/css/pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype |
 | assets/css/roadmap-detail.css | 264 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 379 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 394 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
-| assets/css/tokens.css | 351 | tokens.css - Design tokens for the LPio hub. |
+| assets/css/tokens.css | 393 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
@@ -37,15 +38,20 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
 | assets/js/core/ui.js | 285 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/backlog.js | 324 | backlog.js - The master work list for modules/backlog/. |
+| assets/js/pages/daopay-app.js | 134 | daopay-app.js - The application summary page in the Daopay replica: |
+| assets/js/pages/daopay-data.js | 193 | daopay-data.js - Fixture data and the role switch for the Daopay EU |
+| assets/js/pages/daopay-list.js | 107 | daopay-list.js - The Applications list in the Daopay replica. |
+| assets/js/pages/daopay-sections.js | 219 | daopay-sections.js - The markup for each section of the application |
+| assets/js/pages/daopay-shell.js | 116 | daopay-shell.js - Shared chrome for the Daopay replica pages: the |
 | assets/js/pages/dashboard.js | 159 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 124 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 114 | integrations.js - Integration overview for modules/integrations/. |
 | assets/js/pages/pci-interstitial.js | 144 | pci-interstitial.js - The PCI compliance "checkout interstitial" for |
 | assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
-| assets/js/pages/pci-portal.js | 300 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
+| assets/js/pages/pci-portal.js | 302 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
 | assets/js/pages/pci-reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
-| assets/js/pages/pci-svg.js | 123 | pci-svg.js - Inline SVG diagram viewer for the PCI overview page. |
 | assets/js/pages/platform.js | 202 | platform.js - The platform product-knowledge viewer for |
+| assets/js/pages/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
@@ -59,17 +65,17 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 159 | Changelog |
+| docs/CHANGELOG.md | 167 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
-| docs/ROADMAP-PLAYBOOK.md | 280 | Roadmap playbook |
+| docs/ROADMAP-PLAYBOOK.md | 298 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 154 | Roadmap process |
 | docs/ROADMAP.md | 199 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 33 | Current state |
+| docs/STATE.md | 38 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 110 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
@@ -79,6 +85,10 @@ document instead of walking the tree or reading whole files.
 | modules/backlog/index.html | 93 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 62 | Integrations - LPio / LaunchPad IO |
 | modules/platform/index.html | 56 | Platform - LPio / LaunchPad IO |
+| modules/prototypes/daopay/application.html | 49 | Application summary - PXP replica - LPio |
+| modules/prototypes/daopay/applications.html | 48 | Applications - PXP replica - LPio |
+| modules/prototypes/daopay/daopay-flow.svg | 78 |  |
+| modules/prototypes/daopay/index.html | 251 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
 | modules/prototypes/gdpr/index.html | 49 | GDPR compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/index.html | 61 | Prototypes - LPio / LaunchPad IO |
 | modules/prototypes/pci/dashboard.html | 67 | Dashboard - PXP replica - LPio |
@@ -88,7 +98,7 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/pci/reports.html | 77 | Compliance reporting - PXP replica - LPio |
 | modules/prototypes/website-screening/index.html | 50 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 124 | Roadmap - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 118 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 55 | Users - LPio / LaunchPad IO |
 | package.json | 13 |  |
 | scripts/audit.js | 123 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
@@ -128,11 +138,12 @@ document instead of walking the tree or reading whole files.
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
-| tests/checks/structure.test.js | 151 | tests/checks/structure.test.js - Page structure gates. |
+| tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/size-budget.json | 82 |  |
+| tests/unit/daopay-role.test.js | 151 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
 | tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
@@ -214,6 +225,40 @@ document instead of walking the tree or reading whole files.
 | renderItems() | assets/js/pages/backlog.js:162 |
 | renderDocuments() | assets/js/pages/backlog.js:199 |
 | fillFilters() | assets/js/pages/backlog.js:233 |
+| closeMenus() | assets/js/pages/daopay-app.js:46 |
+| applyStatus() | assets/js/pages/daopay-app.js:55 |
+| wireStatus() | assets/js/pages/daopay-app.js:72 |
+| sync() | assets/js/pages/daopay-app.js:76 |
+| wireMenus() | assets/js/pages/daopay-app.js:81 |
+| wireActions() | assets/js/pages/daopay-app.js:94 |
+| wireRecord() | assets/js/pages/daopay-app.js:112 |
+| render() | assets/js/pages/daopay-app.js:122 |
+| currentRole() | assets/js/pages/daopay-data.js:35 |
+| can() | assets/js/pages/daopay-data.js:40 |
+| tone() | assets/js/pages/daopay-data.js:182 |
+| rows() | assets/js/pages/daopay-list.js:23 |
+| chip() | assets/js/pages/daopay-list.js:30 |
+| merchantCell() | assets/js/pages/daopay-list.js:35 |
+| actionsCell() | assets/js/pages/daopay-list.js:43 |
+| body() | assets/js/pages/daopay-list.js:49 |
+| render() | assets/js/pages/daopay-list.js:68 |
+| chip() | assets/js/pages/daopay-sections.js:27 |
+| btn() | assets/js/pages/daopay-sections.js:32 |
+| statusBar() | assets/js/pages/daopay-sections.js:38 |
+| summary() | assets/js/pages/daopay-sections.js:46 |
+| steps() | assets/js/pages/daopay-sections.js:77 |
+| contractTable() | assets/js/pages/daopay-sections.js:88 |
+| contracts() | assets/js/pages/daopay-sections.js:106 |
+| kyc() | assets/js/pages/daopay-sections.js:116 |
+| checks() | assets/js/pages/daopay-sections.js:125 |
+| bank() | assets/js/pages/daopay-sections.js:162 |
+| documents() | assets/js/pages/daopay-sections.js:171 |
+| fees() | assets/js/pages/daopay-sections.js:188 |
+| record() | assets/js/pages/daopay-sections.js:200 |
+| navItems() | assets/js/pages/daopay-shell.js:38 |
+| withRole() | assets/js/pages/daopay-shell.js:51 |
+| header() | assets/js/pages/daopay-shell.js:55 |
+| demobar() | assets/js/pages/daopay-shell.js:68 |
 | loadCounts() | assets/js/pages/dashboard.js:14 |
 | renderRoadmapMeter() | assets/js/pages/dashboard.js:29 |
 | cardHtml() | assets/js/pages/dashboard.js:44 |
@@ -251,30 +296,27 @@ document instead of walking the tree or reading whole files.
 | emitEvent() | assets/js/pages/pci-ixopay.js:36 |
 | advance() | assets/js/pages/pci-ixopay.js:41 |
 | el() | assets/js/pages/pci-portal.js:15 |
-| renderStepper() | assets/js/pages/pci-portal.js:44 |
-| nav() | assets/js/pages/pci-portal.js:62 |
-| field() | assets/js/pages/pci-portal.js:69 |
-| stepApplication() | assets/js/pages/pci-portal.js:73 |
-| stepSites() | assets/js/pages/pci-portal.js:102 |
-| feeRow() | assets/js/pages/pci-portal.js:118 |
-| pciFeeRow() | assets/js/pages/pci-portal.js:125 |
-| stepProducts() | assets/js/pages/pci-portal.js:134 |
-| stepPass() | assets/js/pages/pci-portal.js:156 |
-| stepSummary() | assets/js/pages/pci-portal.js:161 |
-| renderStep() | assets/js/pages/pci-portal.js:176 |
-| wireStep() | assets/js/pages/pci-portal.js:188 |
-| onContinue() | assets/js/pages/pci-portal.js:209 |
-| goTo() | assets/js/pages/pci-portal.js:224 |
-| openSiteModal() | assets/js/pages/pci-portal.js:234 |
-| buildDrawer() | assets/js/pages/pci-portal.js:258 |
-| renderQuote() | assets/js/pages/pci-portal.js:271 |
-| openQuote() | assets/js/pages/pci-portal.js:286 |
-| closeQuote() | assets/js/pages/pci-portal.js:287 |
-| addPciFee() | assets/js/pages/pci-portal.js:288 |
+| renderStepper() | assets/js/pages/pci-portal.js:46 |
+| nav() | assets/js/pages/pci-portal.js:64 |
+| field() | assets/js/pages/pci-portal.js:71 |
+| stepApplication() | assets/js/pages/pci-portal.js:75 |
+| stepSites() | assets/js/pages/pci-portal.js:104 |
+| feeRow() | assets/js/pages/pci-portal.js:120 |
+| pciFeeRow() | assets/js/pages/pci-portal.js:127 |
+| stepProducts() | assets/js/pages/pci-portal.js:136 |
+| stepPass() | assets/js/pages/pci-portal.js:158 |
+| stepSummary() | assets/js/pages/pci-portal.js:163 |
+| renderStep() | assets/js/pages/pci-portal.js:178 |
+| wireStep() | assets/js/pages/pci-portal.js:190 |
+| onContinue() | assets/js/pages/pci-portal.js:211 |
+| goTo() | assets/js/pages/pci-portal.js:226 |
+| openSiteModal() | assets/js/pages/pci-portal.js:236 |
+| buildDrawer() | assets/js/pages/pci-portal.js:260 |
+| renderQuote() | assets/js/pages/pci-portal.js:273 |
+| openQuote() | assets/js/pages/pci-portal.js:288 |
+| closeQuote() | assets/js/pages/pci-portal.js:289 |
+| addPciFee() | assets/js/pages/pci-portal.js:290 |
 | stat() | assets/js/pages/pci-reports.js:16 |
-| sanitize() | assets/js/pages/pci-svg.js:22 |
-| fallback() | assets/js/pages/pci-svg.js:51 |
-| openOverlay() | assets/js/pages/pci-svg.js:59 |
 | toneClass() | assets/js/pages/platform.js:24 |
 | codeblock() | assets/js/pages/platform.js:28 |
 | tableBlock() | assets/js/pages/platform.js:33 |
@@ -287,6 +329,9 @@ document instead of walking the tree or reading whole files.
 | groupByArea() | assets/js/pages/platform.js:115 |
 | sectionHeading() | assets/js/pages/platform.js:127 |
 | pageHtml() | assets/js/pages/platform.js:135 |
+| sanitize() | assets/js/pages/proto-svg.js:22 |
+| fallback() | assets/js/pages/proto-svg.js:51 |
+| openOverlay() | assets/js/pages/proto-svg.js:59 |
 | codeblock() | assets/js/pages/reference-render.js:18 |
 | specOverview() | assets/js/pages/reference-render.js:32 |
 | paramsTable() | assets/js/pages/reference-render.js:69 |
@@ -465,15 +510,16 @@ document instead of walking the tree or reading whole files.
 | cdnPages() | tests/checks/perf.test.js:17 |
 | sqlWithoutComments() | tests/checks/perf.test.js:22 |
 | jwtRole() | tests/checks/security.test.js:27 |
-| htmlPages() | tests/checks/structure.test.js:14 |
-| protectedPages() | tests/checks/structure.test.js:17 |
-| scriptSrcs() | tests/checks/structure.test.js:20 |
+| htmlPages() | tests/checks/structure.test.js:19 |
+| protectedPages() | tests/checks/structure.test.js:22 |
+| scriptSrcs() | tests/checks/structure.test.js:25 |
 | trackedFiles() | tests/lib/repo.js:13 |
 | read() | tests/lib/repo.js:19 |
 | isTextFile() | tests/lib/repo.js:23 |
 | lineOf() | tests/lib/repo.js:28 |
 | loadView() | tests/lib/roadmap.js:12 |
 | sampleData() | tests/lib/roadmap.js:36 |
+| load() | tests/unit/daopay-role.test.js:18 |
 | loadBuilder() | tests/unit/gallery-future.test.js:14 |
 | load() | tests/unit/pci-ixopay.test.js:16 |
 | loadView() | tests/unit/platform-render.test.js:15 |
