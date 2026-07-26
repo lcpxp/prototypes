@@ -64,35 +64,33 @@
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">How it works, end to end</h2>
       <p>Steps 1 to 6 are PXP and the platform. Step 7 is where the Daopay
-        compliance team picks it up - and only step 9 happens in the portal.</p>
+        compliance team picks it up - and only step 10 happens in the portal.</p>
       <ol class="proto-steps">
         <li><strong>The application completes.</strong> All six application
           steps are done, from business information through to documents.</li>
         <li><strong>The agent generates both documents.</strong> The merchant
-          contract and the Daopay KYC contract are generated together, by the
-          PXP agent, from the application summary page.</li>
-        <li><strong>The agent sends the contract.</strong> The merchant contract
-          goes out for signature.</li>
+          contract and the Daopay KYC contract, together, from the application
+          summary page.</li>
+        <li><strong>The contract goes to the merchant.</strong> It is sent to
+          the merchant first, for their signature.</li>
         <li><strong>Screening checks run.</strong> Companies House,
           ComplyAdvantage, VMSS, MATCH, ID-Pal and Webshield, each returning a
           PDF report.</li>
-        <li><strong>The contract is fully signed.</strong> Three signatures: the
-          merchant, then the Daopay CEO and the Daopay CTO countersigning.</li>
+        <li><strong>The contract is signed in order.</strong> The merchant, then
+          the Daopay CEO, then the Daopay CTO.</li>
         <li><strong>Everything transfers to Daopay automatically.</strong> Full
           signature is the trigger; nobody presses anything. Merchant and
           application data goes into their CRM via the CRM integration; contract
           files and screening PDFs go by SFTP. The manual controls stay on the
           page as a PXP fallback.</li>
-        <li><strong>Daopay compliance is notified.</strong> By the time the
-          notification lands, the data and files are already in their
-          systems.</li>
-        <li><strong>They review and decide in their own systems.</strong> Their
-          normal underwriting process, on the CRM record, the contract files and
-          the screening PDFs - not in the portal.</li>
+        <li><strong>Daopay compliance is notified.</strong> By the time it
+          lands, the data and files are already in their systems.</li>
+        <li><strong>They review the merchant data.</strong> In their own CRM.</li>
+        <li><strong>They review the documents.</strong> The contract files and
+          screening PDFs, in their own file storage.</li>
         <li><strong>They open the portal and record the decision.</strong> Their
-          Applications list is the portal's own list, filtered to the
-          applications where they are the acquirer. Recording the outcome is the
-          only step that has to happen in LaunchPad.</li>
+          Applications list is filtered to their own acquirer. Recording the
+          outcome is the only step that happens in LaunchPad.</li>
         <li><strong>The merchant signs the KYC.</strong> One signature. That
           completes the onboarding.</li>
       </ol>
@@ -178,9 +176,9 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Notifications</h2>
-      <p>The notification to Daopay is not a prompt to go and look something up:
-        by the time it arrives, the data is in their CRM and the files are on
-        SFTP. Rejections notify nobody at present.</p>
+      <p>The notification is not a prompt to go and look something up: by the
+        time it arrives the data is in their CRM and the files are on SFTP.
+        Rejections notify nobody at present.</p>
       <div class="table-wrap">
         <table>
           <caption class="visually-hidden">Notification points in the
@@ -205,9 +203,9 @@
       <p>Two documents, two different ceremonies - the easiest thing to confuse
         when reading the contracts tables.</p>
       <ul>
-        <li><strong>The merchant contract takes three signatures:</strong> the
-          merchant, then the Daopay CEO and CTO countersigning. Nothing
-          transfers until all three are in.</li>
+        <li><strong>The merchant contract takes three signatures, in
+          order:</strong> the merchant, then the Daopay CEO, then the CTO.
+          Nothing transfers until all three are in.</li>
         <li><strong>The Daopay KYC contract takes one:</strong> the merchant's.
           Nobody countersigns.</li>
       </ul>
