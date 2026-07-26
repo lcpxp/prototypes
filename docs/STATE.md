@@ -1,35 +1,30 @@
 # Current state
 
 Updated: 2026-07-26 (session)
-Branch: main is trunk. Platform-context work on
-claude/database-context-enrichment-1qdcyq; roadmap taxonomy and
-playbook ownership rule on claude/pfac-enablement-workstream-t11ws7.
+Branch: main is trunk. No feature work in flight; partner-type roadmap
+edits and the roadmap intro trim landed on main.
 
 ## In progress
-Platform context enrichment (2026-07-24): owner-validated document
-extraction stored as platform context only - no roadmap items or
-workstreams created or changed. New tables domain_terms and
-journey_stages (schema/45_context.sql, policies wired); integrations
-enriched (DaoPay EU acquirer, EIT live/outbound, HubSpot primary CRM;
-added WebShield live, NetSuite planned); work_notes facts (Unity M2M
-auth -> Azure AD B2C, 17-step orchestration, contract edit/regenerate
-+ Active/Pending Further Information statuses, acquirer routing,
-KPI-portal pricing). Provenance in work_documents (kind platform).
+Partner Type Enablement workstream (owner-clarified 2026-07-26): partner
+types are ISO, PFAC, ISV and Referral Partner - only ISO is live today
+(plus some referral tools), PFAC is the next target. PFAC onboarding keeps
+only the Approval Workflow step as needed; all other standard steps are
+marked "Not required" but kept referenceable. Merchant Profile Submissions,
+notifications and account-management items now carry detail. VFS and Xolvis
+reclassified as specific partners (COO-requested tasks), not types.
 
-Roadmap context enrichment (protocol in work_notes, 2026-07-22): fixed
-context blocks in work_items.details, wave 1 done; wave 2 remains.
+Roadmap context enrichment (protocol in work_notes, 2026-07-22): wave 1
+done; wave 2 (Next/Later + backlog) remains.
 
 ## Next steps
-1. Confirm VFS meaning (stored low-confidence in domain_terms) and
-   supply a current roles document (2025 list held, not stored).
-2. Roadmap context enrichment wave 2: Next/Later + backlog items.
-3. VALUE-CAPTURE session (docs/VALUE-CAPTURE.md): merchant_value/
-   pxp_value still empty across the roadmap.
-4. Owner eyeballs the live board: colour blocks, mismatch dots.
-5. Wire core_launchpad as a live owner: schema CHECK, tokens.css
-   colour, department filter (playbook rule added; not yet in app).
+1. Roadmap context enrichment wave 2: Next/Later + backlog items.
+2. Scope the PFAC partner flow and the VFS/Xolvis COO tasks when priority
+   justifies (all currently idea/someday).
+3. Owner eyeballs the live board: colour blocks, mismatch dots.
+4. Wire core_launchpad as a live owner: schema CHECK, tokens.css colour,
+   department filter (playbook rule added; not yet in app).
 
 ## Open decisions
-- VFS: partner type/flow, exact meaning unconfirmed by owner.
 - Onboarding API: pull (COO) vs existing push/static-submission. Held.
-- State launches: US state-by-state vs broader region. Placeholder.
+- State launches: definition unclear; likely not state-by-state. Held.
+- Value capture: merchant_value/pxp_value empty across roadmap; deferred.

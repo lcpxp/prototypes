@@ -11,6 +11,9 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The roadmap page intro is trimmed to a few lines so the board sits higher
+  on the page: it no longer enumerates each view tab, keeping only the
+  altitude note, the click-for-detail hint and where the data lives.
 - Top-level roadmap rows now sort by span length before priority: work
   that finishes in its starting stage sits above work that runs on into
   the next stage.
