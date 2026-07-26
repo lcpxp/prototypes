@@ -5,21 +5,20 @@ Branch: claude/daopay-onboarding-demo-qgmm5n (Daopay work). main is trunk
 otherwise; partner-type roadmap edits landed there earlier.
 
 ## In progress
-Daopay user-role demo. Owner settled the flow, control matrix, signing
-model and fictional identity set this session. Built: guidance page,
-sequence diagram, and the two-role portal replica under
-modules/prototypes/daopay/. The reserved prototypes registry row now
-points at it. Remaining: load the underlying facts into platform
-knowledge (work_documents kind 'platform', product_capabilities rows for
-acquirer-enablement / onboarding-contract-automation / contracting,
-journey_stages stage 8 actor, domain_terms), and supersede work_note
-baa152d2.
+Daopay user-role demo, complete and awaiting owner review. Guidance page,
+sequence diagram and the two-role portal replica are under
+modules/prototypes/daopay/; the reserved prototypes registry row points
+at it. Platform knowledge loaded: source work_document, three
+product_capabilities rows (acquirer-scoped roles planned/unverified, the
+flow and the contract model partial - the role itself is not built yet),
+journey_stages stage 8 actor widened to the acquirer, four domain_terms,
+and work_notes baa152d2 and 4744743b superseded.
 
 Partner Type Enablement and roadmap context enrichment wave 2 remain as
 before, untouched this session.
 
 ## Next steps
-1. Platform-knowledge load for the Daopay flow (see above).
+1. Owner reviews the Daopay collateral, then it goes to Daopay.
 2. Roadmap context enrichment wave 2: Next/Later + backlog items.
 3. Owner eyeballs the live board: colour blocks, mismatch dots.
 4. Wire core_launchpad as a live owner: schema CHECK, tokens.css colour,
