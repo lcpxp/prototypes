@@ -16,20 +16,22 @@
 
   var CARET = '<svg class="pxp-fees-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>';
 
-  // Pre-filled application, mirroring the screenshots. Generic demo data.
+  // Pre-filled application, mirroring the screenshots. Every value is
+  // invented: this repo is public, so no real person, contact detail or
+  // domain belongs in it.
   var app = {
     merchant: {
-      contact: "Luke Clifford", email: "luke.clifford@pxpfinancial.com",
-      phone: "+447477747777", referrer: "John Doe",
+      contact: "A. Berger", email: "a.berger@example.com",
+      phone: "+44 20 7946 0000", referrer: "J. Marsh",
       businessName: "Daopay Test Application", legalName: "Daopay Test Application Company",
-      website: "https://www.daopaytestapplication.io", channel: "Online",
+      website: "https://www.daopay-test.example", channel: "Online",
       industries: "Other (High Risk)", legalForm: "Private company",
       size: "£1M to £5M - SME IV", baseCurrency: "€ Euro",
       incorporationNumber: "1234567", incorporationDate: "2022/01/01",
       mcc: "[5816] Digital Goods - Games", address: "Flat 1, First Street",
       city: "Vienna", country: "Austria", postal: "111111", atv: "25",
     },
-    sites: [{ name: "A Demonstration Website", url: "https://www.daopaytestapplication.io", status: "active" }],
+    sites: [{ name: "A Demonstration Website", url: "https://www.daopay-test.example", status: "active" }],
     products: [{ site: "A Demonstration Website", name: "ECOM - Integrated / Gateway (High Risk)", qty: 1 }],
   };
   var quote = { hasPciFee: false };
