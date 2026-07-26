@@ -15,7 +15,7 @@ document instead of walking the tree or reading whole files.
 | .gitmessage | 12 |  |
 | CLAUDE.md | 205 | CLAUDE.md |
 | README.md | 17 | LPio |
-| assets/css/base.css | 98 | base.css - Reset, typography and global element styles. |
+| assets/css/base.css | 111 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 447 | components.css - Reusable interface components: cards, forms, |
 | assets/css/layout.css | 351 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
@@ -59,7 +59,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 162 | Changelog |
+| docs/CHANGELOG.md | 167 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
@@ -69,7 +69,7 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 31 | Current state |
+| docs/STATE.md | 38 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 110 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
