@@ -27,10 +27,11 @@ before, untouched this session.
 ## Open decisions
 - Inter via Google Fonts: AGREED by the owner this session. It is the one
   external stylesheet; the structure gate pins that exact URL.
-- Does Reject also notify the PXP accounts team? Owner stated it only for
-  Pending Further Information. Shown on Pend only until confirmed.
+- Reject notifications: CLOSED - none needed currently, revisit later.
 - Contracts table: screenshot shows Type = Signed/Unsigned and Status =
   Active/Inactive; owner described it as one status. Built the
   screenshot's way; confirm at review.
+- Escalation inbox for the Daopay-facing document is still a placeholder
+  ("PXP underwriting team or your account manager"). Owner to supply.
 - Onboarding API: pull (COO) vs existing push/static-submission. Held.
 - Value capture: merchant_value/pxp_value empty across roadmap; deferred.

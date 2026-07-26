@@ -63,34 +63,36 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">How it works, end to end</h2>
-      <p>Steps 1 to 7 are PXP and the platform. Step 8 is where the Daopay
-        compliance team picks it up.</p>
+      <p>Steps 1 to 6 are PXP and the platform. Step 7 is where the Daopay
+        compliance team picks it up - and only step 9 happens in the portal.</p>
       <ol class="proto-steps">
         <li><strong>The application completes.</strong> All six application
-          steps are done - business information, processing information,
-          chargebacks and fraud, AML and CTF, contact information and
-          documents.</li>
+          steps are done, from business information through to documents.</li>
         <li><strong>The agent generates both documents.</strong> The merchant
           contract and the Daopay KYC contract are generated together, by the
           PXP agent, from the application summary page.</li>
         <li><strong>The agent sends the contract.</strong> The merchant contract
           goes out for signature.</li>
         <li><strong>Screening checks run.</strong> Companies House,
-          ComplyAdvantage, VMSS, MATCH, ID-Pal and Webshield complete, each
-          result available as a PDF report.</li>
+          ComplyAdvantage, VMSS, MATCH, ID-Pal and Webshield, each returning a
+          PDF report.</li>
         <li><strong>The contract is fully signed.</strong> Three signatures: the
           merchant, then the Daopay CEO and the Daopay CTO countersigning.</li>
-        <li><strong>The documents and CRM record upload to Daopay
-          automatically.</strong> Full signature is the trigger; nobody presses
-          anything. The equivalent manual controls stay on the page as a PXP
-          fallback if a send needs repeating.</li>
-        <li><strong>Daopay compliance is notified.</strong> The application is
-          now waiting on a Daopay decision.</li>
-        <li><strong>Daopay compliance opens the application.</strong> Their
+        <li><strong>Everything transfers to Daopay automatically.</strong> Full
+          signature is the trigger; nobody presses anything. Merchant and
+          application data goes into their CRM via the CRM integration; contract
+          files and screening PDFs go by SFTP. The manual controls stay on the
+          page as a PXP fallback.</li>
+        <li><strong>Daopay compliance is notified.</strong> By the time the
+          notification lands, the data and files are already in their
+          systems.</li>
+        <li><strong>They review and decide in their own systems.</strong> Their
+          normal underwriting process, on the CRM record, the contract files and
+          the screening PDFs - not in the portal.</li>
+        <li><strong>They open the portal and record the decision.</strong> Their
           Applications list is the portal's own list, filtered to the
-          applications where they are the acquirer.</li>
-        <li><strong>They make one of three decisions.</strong> Reject, pending
-          further information, or approve - set out below.</li>
+          applications where they are the acquirer. Recording the outcome is the
+          only step that has to happen in LaunchPad.</li>
         <li><strong>The merchant signs the KYC.</strong> One signature. That
           completes the onboarding.</li>
       </ol>
@@ -124,9 +126,9 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">What the role can and cannot do</h2>
-      <p>A Daopay user sees the same application page in the same order, with
-        fewer controls on it. Controls that are out of scope are not shown at
-        all rather than shown greyed out.</p>
+      <p>A Daopay user sees the same page in the same order, with fewer controls
+        on it. Out-of-scope controls are not shown at all rather than greyed
+        out, and the list is filtered to their own acquirer.</p>
       <div class="table-wrap">
         <table>
           <caption class="visually-hidden">Controls available to a PXP user
@@ -151,9 +153,6 @@
           </tbody>
         </table>
       </div>
-      <p>The list of applications is scoped the same way. A Daopay user sees the
-        portal's Applications table filtered to the applications where Daopay is
-        the acquirer, not the full book.</p>
     </section>
 
     <section class="proto-section">
@@ -179,6 +178,9 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Notifications</h2>
+      <p>The notification to Daopay is not a prompt to go and look something up:
+        by the time it arrives, the data is in their CRM and the files are on
+        SFTP. Rejections notify nobody at present.</p>
       <div class="table-wrap">
         <table>
           <caption class="visually-hidden">Notification points in the
@@ -187,7 +189,7 @@
             <tr><th>Trigger</th><th>Who is notified</th></tr>
           </thead>
           <tbody>
-            <tr><td>Documents and CRM record uploaded to Daopay</td>
+            <tr><td>Transfer to Daopay complete - CRM data in, files on SFTP</td>
               <td>Daopay compliance team</td></tr>
             <tr><td>Status set to Pending Further Information, with a note</td>
               <td>PXP accounts team</td></tr>
@@ -200,13 +202,12 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Signatures</h2>
-      <p>Two documents, two different ceremonies. Mixing them up is the easiest
-        mistake to make when reading the contracts tables.</p>
+      <p>Two documents, two different ceremonies - the easiest thing to confuse
+        when reading the contracts tables.</p>
       <ul>
         <li><strong>The merchant contract takes three signatures:</strong> the
-          merchant, then the Daopay CEO and the Daopay CTO countersigning. It is
-          not fully signed, and the automatic upload does not fire, until all
-          three are in.</li>
+          merchant, then the Daopay CEO and CTO countersigning. Nothing
+          transfers until all three are in.</li>
         <li><strong>The Daopay KYC contract takes one:</strong> the merchant's.
           Nobody countersigns.</li>
       </ul>
@@ -216,22 +217,20 @@
       <h2 class="eyebrow eyebrow-heading">Getting help</h2>
       <p>For a question about a specific application - a screening result, a
         missing document, why something was sent - contact the PXP underwriting
-        team or your PXP account manager. For the portal itself, including
-        access and permissions, raise it with your account manager.</p>
+        team or your account manager, who also handle portal access.</p>
     </section>
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Diagram</h2>
-      <p>The full sequence, from a completed application through to the signed
-        KYC.</p>
+      <p>The full sequence, from a completed application to the signed KYC.</p>
       <figure class="proto-figure">
         <div id="proto-diagram" class="proto-diagram" data-src="daopay-flow.svg"
           data-title="Daopay EU onboarding - handoff and decision">
           <p class="notice">Loading diagram</p>
         </div>
         <figcaption>Blue = PXP and the platform; green = Daopay; grey = the
-          merchant. Dashed arrows are automatic. Step numbers match the
-          sequence above.</figcaption>
+          merchant. Dashed arrows are automatic; numbers match the steps
+          above.</figcaption>
       </figure>
     </section>
 

@@ -19,6 +19,11 @@ is the git history; what is unfinished is docs/STATE.md.
   the next stage.
 
 ### Added
+- The Daopay guidance now says where the review actually happens: on full
+  signature the merchant and application data transfers into Daopay's CRM
+  and the contract files and screening PDFs go across by SFTP, so the
+  notification is a cue to check their own systems. They open the portal
+  only to record the decision.
 - New Daopay user-role prototype under Prototypes: a guidance overview of
   how the Daopay compliance team will approve EU merchant applications, a
   sequence diagram of the flow, and a replica of the partner portal that
