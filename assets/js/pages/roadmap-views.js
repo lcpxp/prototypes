@@ -98,8 +98,13 @@
     return !hidden || !hidden[BANDS[colStart(i)].key];
   }
 
+  // The product board shows everything EXCEPT work explicitly filed as the
+  // LPio portal's own internal development (scope 'portal'). Unfiled work
+  // (no area, or an area with no scope) defaults to visible, so anything
+  // scheduled onto the roadmap surfaces without needing an area assigned -
+  // nothing is silently hidden for want of filing.
   function productItems(items, scopeByArea) {
-    return items.filter(function (i) { return scopeByArea[i.area_id] === "product"; });
+    return items.filter(function (i) { return scopeByArea[i.area_id] !== "portal"; });
   }
 
   // A maintenance "fix": a standalone item (no workstream parent, not a
