@@ -10,6 +10,24 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Added
+- The roadmap item drawer now shows the assignee (with any support owner as
+  "Tim (Red supporting)") and the owner's rank in their queue ("Xavier -
+  1st of 5"), high in the field list. The board bars carry the owner too,
+  so ownership scans at a glance. New fields also surface when set: the
+  item's level, presentation, source document, created date, a clickable
+  link to the related work item, and the long-form details parsed into
+  titled sections (What / Relates to / Business benefits ...). Notes are
+  now badged by kind (decision, fact, question, risk ...) and marked when
+  resolved or superseded. The JSON and CSV exports carry the new columns.
+
+### Fixed
+- The roadmap item drawer no longer prints raw internal values: priority
+  shows as a band (P1) rather than a sort integer, progress shows a bar and
+  a percentage (so a value of 1 reads "1% complete", not "Not started"),
+  and the internal attribute keys that used to leak as "Assignee rank" and
+  "Priority band" rows are folded into the assignee and priority lines.
+
 ### Fixed
 - The roadmap's Workstreams, Timeline, Work Items and Executive views now
   show work that has no filing area, instead of silently dropping it. The

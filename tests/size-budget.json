@@ -51,11 +51,11 @@
     },
     "assets/js/pages/roadmap.js": {
       "hard": 540,
-      "note": "Over soft since the stage-toggle wiring on the board headers. The drawer wiring is the extract-to-a-module seam - pull it into roadmap-drawer.js before extending further."
+      "note": "Over soft (fetch, switcher, board click/change wiring). The drawer surface is now in roadmap-drawer.js; the export dropdown wiring is the next extract seam if it grows again."
     },
     "assets/js/pages/roadmap-detail.js": {
       "hard": 500,
-      "note": "Over soft since the drawer began surfacing the full stored context. Exit plan: move the JSON/CSV export builders into a roadmap-detail-export.js sharing the drawer helpers."
+      "note": "Over soft: the drawer builders plus the value helpers shared with roadmap-detail-export.js (App._rmd). The JSON/CSV export builders are already split out; the details/notes parsers are the next seam."
     },
     "assets/js/pages/backlog.js": {
       "hard": 500,

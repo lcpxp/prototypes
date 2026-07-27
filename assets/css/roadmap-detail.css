@@ -224,6 +224,40 @@
 }
 .rmd-row dt { color: var(--faint); font-size: var(--text-sm); }
 .rmd-row dd { margin: 0; color: var(--ink); font-size: var(--text-sm); }
+/* An in-drawer link (a related item) reads as a link and swaps the drawer
+   to that item on click. */
+.rmd-link { color: var(--accent); text-decoration: underline; cursor: pointer; }
+/* The rank suffix on the assignee line ("- 1st of 5") sits quieter than
+   the name it qualifies. */
+.rmd-rank { color: var(--muted); }
+/* Progress: a thin token-fill bar plus the exact percentage, so a low
+   value reads as "1% complete" rather than "Not started". */
+.rmd-progress-cell { display: flex; align-items: center; gap: var(--s-2); }
+.rmd-progress {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+  overflow: hidden;
+}
+.rmd-progress-fill { display: block; height: 100%; background: var(--accent); }
+.rmd-progress-num {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+/* A parsed details section (What / Relates to / Business benefits ...):
+   a small heading over its block, so the blob reads as structure. */
+.rmd-detail-sec { margin: 0 0 var(--s-3); }
+.rmd-detail-sec h4 {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--faint);
+  margin: 0 0 var(--s-1);
+}
 .rmd-section, .rmd-note { margin: var(--s-4) 0; }
 .rmd-section h3, .rmd-note h3 {
   font-size: var(--text-xs);
@@ -254,10 +288,37 @@
    the body, mirroring the fact-row divider rhythm. */
 .rmd-note-row { padding: var(--s-2) 0; border-top: 1px solid var(--line); }
 .rmd-note-row p { margin: var(--s-1) 0 0; color: var(--ink); font-size: var(--text-sm); white-space: pre-line; }
+/* A replaced or closed note (superseded/resolved) reads as settled
+   history: quieter than a current record. */
+.rmd-note-row--muted p { color: var(--muted); }
 .rmd-note-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--faint);
 }
+/* The note kind badge distinguishes a risk from a bare note; risk and
+   question carry a warning tint, the rest read neutral. */
+.rmd-note-kind {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--muted);
+  background: var(--alt-surface);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--s-1);
+}
+.rmd-note-kind--risk, .rmd-note-kind--question { color: var(--warn); background: var(--warn-soft); }
+.rmd-note-kind--decision { color: var(--accent); background: var(--accent-soft, var(--alt-surface)); }
+.rmd-note-status {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--faint);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--s-1);
+}
+.rmd-note-date { margin-inline-start: auto; }
 .rmd-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-5); }
 body.rmd-open { overflow: hidden; }

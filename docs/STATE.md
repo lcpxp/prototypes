@@ -23,11 +23,13 @@ the two real signatories.
 3. Owner eyeballs the live board: colour blocks, mismatch dots.
 4. Wire core_launchpad as a live owner: schema CHECK, tokens.css colour,
    department filter.
+5. Drawer follow-ups (display layer done): drawer LINKS relates_to but
+   can't SET it (needs a write path/RLS); same for inherited area notes and
+   Tier 3 unused schema - raise work_item_dependencies first.
 
 ## Open decisions
 - Inter via Google Fonts: AGREED. The one external stylesheet; the
   structure gate pins that exact URL.
-- Reject notifications: CLOSED - none needed currently, revisit later.
 - Post-signature stage: owner set it to "Application Signed".
 - Demo flow: PXP generates both contracts, Daopay sends them (Send
   contract is now Daopay-only). Canonical flow docs still have PXP sending

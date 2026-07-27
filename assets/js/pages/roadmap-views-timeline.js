@@ -66,10 +66,15 @@
       var colStyle = "grid-column:" + (s - first + 2) + " / " + (e - first + 3);
       var dot = p._dot ? '<span class="rmv-theme-dot rm-cat-' +
         App.escape(p._dot.key) + '" aria-hidden="true"></span>' : "";
+      // The owner rides inside the bar so a reader can scan ownership off
+      // the board itself (standups) without opening each item.
+      var who = p._assignee
+        ? '<span class="rmv-tl-who" title="Assignee">' + App.escape(p._assignee) + "</span>" : "";
       var bar = '<span class="rmv-tl-bar' + (p.done ? " rmv-tl-bar--done" : "") +
         (p._s === R.PARKED ? " rmv-tl-bar--parked" : "") + (p._ws ? " rmv-tl-bar--ws" : "") +
         R.catClass(p._cat) + progCls +
-        '"' + idAttr + ' style="' + colStyle + '">' + App.escape(p.label) + dot + "</span>";
+        '"' + idAttr + ' style="' + colStyle + '"><span class="rmv-tl-title">' +
+        App.escape(p.label) + "</span>" + who + dot + "</span>";
       var rowCls = "rmv-tl-row" + (p._child ? " rmv-tl-row--child" : "") + R.pickCls(p._id, pick);
       return '<div class="' + rowCls + '"><span class="rmv-tl-label">' +
         App.escape(p._catLabel) + "</span>" + bar + R.pickBox(p._id, pick) + "</div>";
@@ -96,7 +101,7 @@
       _catLabel: cat ? cat.label : "General", _pri: i.priority, _so: i.sort_order,
       _bug: R.bugRank(i), _catSo: cat ? cat.sort_order : 1e9,
       label: i.title, done: i.status === "done", _id: i.id, _prog: R.progressOf(i),
-      _ws: i.level === "workstream", _child: !!child };
+      _ws: i.level === "workstream", _child: !!child, _assignee: i.assignee || "" };
   }
 
   // Pre-order rows for a bars-with-children view: sort top-level rows by

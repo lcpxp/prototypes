@@ -101,7 +101,7 @@ test("timeline (team) spans active bars, hides parked/portal, nests sub-items un
   assert.doesNotMatch(html, />Parked</, "Team has no Parked column");
   // i1 is delivered but unmarked here, so it lands in Previously (band 0).
   assert.match(html, /rmv-tl-bar--done[^"]*"[^>]*grid-column:2 \/ 3/);
-  assert.match(html, /grid-column:4 \/ 6">[^<]*Portal overhaul/);
+  assert.match(html, /grid-column:4 \/ 6"><span class="rmv-tl-title">Portal overhaul/);
   assert.doesNotMatch(html, /US market/, "parked item hidden from Team");
   assert.doesNotMatch(html, /Whitelist blacklist/, "dropped item hidden from Team");
   assert.doesNotMatch(html, /Portal tooling/, "portal item hidden from Team");
@@ -119,10 +119,10 @@ test("timeline (team) renders a workstream's nested work items as indented child
   const html = V.timeline(data, "team");
   // The nested work item (i2b Settlement, level='item') is its own bar,
   // marked as a child; the deliverable (i2a Merchant Group) is not.
-  assert.match(html, /rmv-tl-row--child[^>]*>[\s\S]*?rmv-tl-bar[^>]*>Settlement/,
+  assert.match(html, /rmv-tl-row--child[\s\S]*?rmv-tl-bar[\s\S]*?Settlement/,
     "the nested work item renders as an indented child bar");
   assert.doesNotMatch(html, /Merchant Group/, "the workstream's deliverable stays off the board");
-  assert.match(html, /rmv-tl-bar--ws[^>]*>Unity integration/, "the workstream bar is marked");
+  assert.match(html, /rmv-tl-bar--ws[\s\S]*?Unity integration/, "the workstream bar is marked");
 });
 
 test("timeline (team) orders by start band, then span length, then priority", () => {

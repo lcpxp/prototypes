@@ -354,51 +354,18 @@
     if (dlBtn) dlBtn.addEventListener("click", function () { window.print(); });
 
     // Detail drawer: any element carrying a data-item-id opens the item.
-    var drawer = document.getElementById("roadmap-drawer");
-    var scrim = document.getElementById("roadmap-scrim");
-    var drawerBody = document.getElementById("rmd-body");
-    var closeBtn = document.getElementById("rmd-close");
-    var lastFocus = null;
-
-    // Reflect the open item in the URL (?item=<id>) so a drawer is
-    // shareable and deep-linkable, without disturbing the view-state
-    // hash (#level/layout).
-    function setItemParam(id) {
-      if (!window.history || !window.history.replaceState) return;
-      var url = new URL(window.location.href);
-      if (id) url.searchParams.set("item", id);
-      else url.searchParams.delete("item");
-      window.history.replaceState(null, "", url.href);
-    }
-
-    function openDrawer(item) {
-      if (!drawer || !drawerBody) return;
-      drawerBody.innerHTML = App.roadmapDetail.drawerHtml(item, ctx);
-      lastFocus = document.activeElement;
-      drawer.hidden = false;
-      if (scrim) scrim.hidden = false;
-      document.body.classList.add("rmd-open");
-      setItemParam(item.id);
-      var itemExport = document.getElementById("rmd-export");
-      if (itemExport) itemExport.addEventListener("click", function () {
+    // The drawer's open/close, deep-link URL sync and in-drawer navigation
+    // live in roadmap-drawer.js; the board's own click/change handlers
+    // (band toggles, custom-view picks) stay here.
+    var openDrawer = App.roadmapDrawer({
+      lookup: function (id) { return itemsById[id]; },
+      getCtx: function () { return ctx; },
+      download: function (item) {
         downloadJson("roadmap-item-" + safeName(item.title) + ".json",
           App.roadmapDetail.toKpiItem(item, ctx));
-      });
-      if (closeBtn) closeBtn.focus();
-    }
-    function closeDrawer() {
-      if (drawer) drawer.hidden = true;
-      if (scrim) scrim.hidden = true;
-      document.body.classList.remove("rmd-open");
-      setItemParam(null);
-      if (lastFocus && lastFocus.focus) lastFocus.focus();
-    }
-
-    if (closeBtn) closeBtn.addEventListener("click", closeDrawer);
-    if (scrim) scrim.addEventListener("click", closeDrawer);
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && drawer && !drawer.hidden) closeDrawer();
+      },
     });
+
     host.addEventListener("click", function (e) {
       // A stage header (Now/Next/Later) toggles that stage off, then on:
       // the header stays put with a strike-through so it can be clicked back.
@@ -454,21 +421,27 @@
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
-        .select("id, parent_id, relates_to_id, area_id, category_id, title, summary, details, type, level, " +
-          "status, horizon, end_horizon, " +
+        .select("id, parent_id, relates_to_id, area_id, category_id, source_document_id, title, summary, details, type, level, " +
+          "assignee, support_assignee, status, horizon, end_horizon, " +
           "presentation, priority, effort, impact, department, associated_departments, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
-          "sort_order, updated_at, resolution, resolved_at, requested_by, external_ref, tags")
+          "sort_order, created_at, updated_at, resolution, resolved_at, requested_by, external_ref, tags")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItemPhases)
         .select("work_item_id, phase, quarter, starts_on, ends_on, start_tbc, end_tbc, sort_order")
         .order("sort_order", { ascending: true }),
+      // Notes carry their status so the drawer can mark a resolved question
+      // or a superseded decision, rather than silently dropping or (worse)
+      // showing replaced context as current. Active first, then the rest.
       App.db.from(App.registry.tables.workNotes)
-        .select("work_item_id, kind, body, created_at")
-        .eq("status", "active")
+        .select("work_item_id, kind, body, status, created_at")
         .not("work_item_id", "is", null)
         .order("created_at", { ascending: false }),
+      // Source-document titles for the provenance link (read gated on
+      // backlog access, so a denied fetch just leaves the field blank).
+      App.db.from(App.registry.tables.workDocuments)
+        .select("id, title"),
     ]);
 
     var itemsResult = results[2];
@@ -487,10 +460,18 @@
     phases.forEach(function (p) {
       (phasesByItem[p.work_item_id] = phasesByItem[p.work_item_id] || []).push(p);
     });
+    // Notes: active entries lead, then resolved/superseded, each kept in
+    // its recency order, so replaced context sits below the current record.
     var notes = results[4] && !results[4].error ? results[4].data || [] : [];
+    var STATUS_RANK = { active: 0 };
     var notesByItem = {};
     notes.forEach(function (n) {
       (notesByItem[n.work_item_id] = notesByItem[n.work_item_id] || []).push(n);
+    });
+    Object.keys(notesByItem).forEach(function (id) {
+      notesByItem[id].sort(function (a, b) {
+        return (STATUS_RANK[a.status] != null ? 0 : 1) - (STATUS_RANK[b.status] != null ? 0 : 1);
+      });
     });
     itemsById = {};
     data.items.forEach(function (i) {
@@ -502,6 +483,16 @@
     // each done item against the current clock, once, before any render.
     App.roadmapView.markRecency(data.items);
     ctx = App.roadmapView.context(data);
+    // Enrich the shared context with lookups the drawer needs: a document
+    // title map for the source-document link, and a per-assignee item count
+    // so the ownership line can read "Xavier - 1st of 5".
+    var docs = results[5] && !results[5].error ? results[5].data || [] : [];
+    ctx.docById = {};
+    docs.forEach(function (d) { ctx.docById[d.id] = d; });
+    ctx.assigneeCounts = {};
+    data.items.forEach(function (i) {
+      if (i.assignee) ctx.assigneeCounts[i.assignee] = (ctx.assigneeCounts[i.assignee] || 0) + 1;
+    });
 
     renderControls(nav, layoutNav, host);
     render(host);
