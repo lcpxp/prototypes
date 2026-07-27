@@ -25,6 +25,7 @@ function load() {
     "assets/js/pages/roadmap-views.js",
     "assets/js/pages/roadmap-views-breakdown.js",
     "assets/js/pages/roadmap-detail.js",
+    "assets/js/pages/roadmap-detail-export.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App;
 }
@@ -147,9 +148,10 @@ test("drawerHtml surfaces the full stored context: details, classifiers, links, 
   assert.match(html, /<dt>Type<\/dt><dd>Feature/);
   assert.match(html, /<dt>Effort<\/dt><dd>Large/);
   assert.match(html, /<dt>Impact<\/dt><dd>High/);
-  assert.match(html, /<dt>Priority<\/dt><dd>20/);
+  assert.match(html, /<dt>Priority<\/dt><dd>P2/);
   assert.match(html, /<dt>Workstream<\/dt><dd>Unity programme/, "parent resolves to its title");
-  assert.match(html, /<dt>Related to<\/dt><dd>Unity programme/, "soft link resolves to its title");
+  assert.match(html, /<dt>Related to<\/dt><dd><a class="rmd-link"[^>]*data-item-id="ws1">Unity programme<\/a>/,
+    "soft link resolves to a clickable link to its title");
   assert.match(html, /<dt>Requested by<\/dt><dd>COO/);
   assert.match(html, /<dt>External ref<\/dt><dd>DEVOPS-123/);
   assert.match(html, /<dt>Tags<\/dt><dd>priority, q3/);
@@ -200,7 +202,7 @@ test("toKpiItem and toCsvRoadmap carry the extended context", () => {
   const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctx);
   const lines = csv.trim().split("\r\n");
   assert.match(lines[0], /,level,type,effort,impact,/, "the CSV names the new columns");
-  assert.match(lines[0], /,related_to,requested_by,external_ref,resolution,details,/);
+  assert.match(lines[0], /,related_to,requested_by,source_document_id,external_ref,resolution,details,/);
   assert.match(lines[1], /DEVOPS-123/);
 });
 
@@ -253,7 +255,7 @@ test("toCsvRoadmap emits a row per product item with resolved labels and attribu
   const data = sample();
   const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctxOf(App, data));
   const lines = csv.trim().split("\r\n");
-  assert.match(lines[0], /^id,parent_id,parent_title,title,theme,area,department,business_areas,band,/);
+  assert.match(lines[0], /^id,parent_id,parent_title,title,theme,area,department,business_areas,assignee,support_assignee,band,/);
   // Attributes are spread as attr_<key> columns, derived dynamically so a
   // new KPI field would appear with no code change.
   assert.match(lines[0], /attr_team/);

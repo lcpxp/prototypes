@@ -189,6 +189,9 @@
      plain surface - never the track colour, or the bar would vanish.
      position anchors the theme-mismatch dot at the bar's right end. */
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
   background: color-mix(in srgb, var(--rm-a, var(--line-strong)) 10%,
     var(--rm-s, var(--surface)));
   border-inline-start: 3px solid var(--rm-a, var(--line-strong));
@@ -199,6 +202,21 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* The title takes the room; a long title ellipses rather than crowding
+   out the owner chip that follows it. */
+.rmv-tl-title { overflow: hidden; text-overflow: ellipsis; }
+/* The owner chip on a board bar: a compact, quieter tag pinned after the
+   title so ownership scans down the board. */
+.rmv-tl-who {
+  flex: none;
+  margin-inline-start: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs, var(--text-xs));
+  color: var(--muted);
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: 0 var(--s-2);
 }
 
 /* Delivered bars read as settled history: quieter fill, done accent. */
