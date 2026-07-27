@@ -97,7 +97,8 @@
 
     mount.querySelectorAll("[data-delete]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        demo.toast("Removing an application is out of scope for this prototype.");
+        demo.toast("Not in this prototype",
+          "Removing an application is out of scope for the demo.", "warn");
       });
     });
   }

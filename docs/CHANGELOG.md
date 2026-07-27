@@ -11,6 +11,13 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The Daopay replica's role switch moved into the black header bar and the
+  blue prototype banner over the content is gone, so the page below the
+  chrome is the portal and nothing else. A Daopay user is now offered only
+  the two statuses they can set, Rejected and Pending Further Information;
+  the pending note sits in an amber panel that closes to show what was
+  sent. Contracts show one row each and screening is limited to Mastercard
+  MATCH and Webshield.
 - The roadmap page intro is trimmed to a few lines so the board sits higher
   on the page: it no longer enumerates each view tab, keeping only the
   altitude note, the click-for-detail hint and where the data lives.
@@ -19,6 +26,14 @@ is the git history; what is unfinished is docs/STATE.md.
   the next stage.
 
 ### Added
+- The Daopay replica now simulates a run rather than describing one.
+  Sending a contract asks for the merchant's email, then an Adobe Sign
+  panel shows the envelope going out and the three signatures landing in
+  order - merchant, then Oliver, then Michael - each with a spinner and a
+  tick. Full signature kicks off the automated handoff, which reports the
+  CRM upload, the SFTP file transfer and the Daopay notification as they
+  happen. Success messages now stack down the top right and stay long
+  enough to read, replacing the single black pill at the foot of the page.
 - The Daopay guidance now says where the review actually happens: on full
   signature the merchant and application data transfers into Daopay's CRM
   and the contract files and screening PDFs go across by SFTP, so the

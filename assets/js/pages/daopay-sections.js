@@ -43,21 +43,33 @@
   }
 
   // ---- Application summary, decision status and the send controls ----
-  function summary(decision) {
-    var options = app && demo.statuses.map(function (s) {
+  function summary(decision, noteSent) {
+    var options = demo.statusOptions(decision).map(function (s) {
       return '<option value="' + esc(s.value) + '"' +
         (s.disabled ? " disabled" : "") +
         (s.value === decision ? " selected" : "") + ">" + esc(s.value) + "</option>";
     }).join("");
 
     // The note belongs to Pend, and Pend is a Daopay decision, so the
-    // field only exists for the role that can make it.
-    var note = can("approveAndSendKyc")
-      ? '<div class="pxp-notefield" id="pxp-note" hidden>' +
-        '<label for="pxp-note-text">Note for the PXP accounts team</label>' +
-        '<textarea id="pxp-note-text" placeholder="What is needed before this ' +
-        'can proceed?"></textarea></div>'
-      : "";
+    // panel only exists for the role that can make it. Once sent, the
+    // field is replaced by what was sent and to whom - the input has
+    // done its job and leaving it editable implies it can be resent.
+    var note = "";
+    if (can("approveAndSendKyc")) {
+      note = noteSent
+        ? '<div class="pxp-notepanel" id="pxp-note">' +
+          '<p class="pxp-notepanel-head">Pending further information</p>' +
+          '<blockquote class="pxp-notepanel-quote">' + esc(noteSent) +
+          "</blockquote></div>"
+        : '<div class="pxp-notepanel" id="pxp-note" hidden>' +
+          '<p class="pxp-notepanel-head">This note goes to the PXP accounts ' +
+          "team</p>" +
+          '<label class="pxp-notepanel-label" for="pxp-note-text">Say what is ' +
+          "needed before the application can proceed. It will not send " +
+          "without one.</label>" +
+          '<textarea id="pxp-note-text" placeholder="For example: the bank ' +
+          'statement provided is older than three months."></textarea></div>';
+    }
 
     return '<section class="pxp-sec"><h2>Application summary</h2>' +
       '<p class="pxp-sec-hint">Please review all the information you have ' +
@@ -210,9 +222,9 @@
 
   demo.sections = {
     statusBar: statusBar,
-    all: function (decision) {
-      return summary(decision) + steps() + contracts() + kyc() + checks() +
-        bank() + documents() + fees() + record();
+    all: function (state) {
+      return summary(state.decision, state.noteSent) + steps() + contracts() +
+        kyc() + checks() + bank() + documents() + fees() + record();
     },
   };
 })();

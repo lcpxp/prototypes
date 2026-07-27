@@ -28,8 +28,8 @@
   };
 
   var ROLES = {
-    pxp: { key: "pxp", label: "PXP user", user: "R. Nowak" },
-    daopay: { key: "daopay", label: "Daopay user", user: "K. Lindqvist" },
+    pxp: { key: "pxp", label: "PXP user", user: "Luke" },
+    daopay: { key: "daopay", label: "Daopay user", user: "Lindqvist" },
   };
 
   function currentRole() {
@@ -87,7 +87,6 @@
 
     contracts: [
       { name: "Merchant Agreement - Nordwind Digital GmbH", type: "Unsigned", status: "Active", updated: "2026/07/14 10:26" },
-      { name: "Merchant Agreement - Nordwind Digital GmbH", type: "Unsigned", status: "Inactive", updated: "2026/07/12 16:02" },
     ],
 
     kycContracts: [
@@ -95,12 +94,8 @@
     ],
 
     checks: [
-      { name: "Companies House", status: "Complete", reason: "", by: "SYSTEM", at: "2026/07/14 10:31" },
-      { name: "ComplyAdvantage", status: "Complete", reason: "", by: "SYSTEM", at: "2026/07/14 10:31" },
-      { name: "VMSS", status: "Override", reason: "Address match", by: "A. Berger", at: "2026/07/14 11:02" },
-      { name: "MATCH", status: "Override", reason: "Manually checked - no hits", by: "A. Berger", at: "2026/07/14 11:04" },
-      { name: "ID-Pal", status: "Flagged", reason: "", by: "SYSTEM", at: "2026/07/14 10:33" },
-      { name: "Webshield", status: "Override", reason: "Manual review. No violations", by: "A. Berger", at: "2026/07/14 11:09" },
+      { name: "Mastercard MATCH", status: "Complete", reason: "No hits", by: "SYSTEM", at: "2026/07/14 10:31" },
+      { name: "Webshield", status: "Complete", reason: "No violations", by: "SYSTEM", at: "2026/07/14 10:33" },
     ],
 
     bank: { bank: "Example Bank SA", holder: "Nordwind Digital GmbH", verified: false },
@@ -181,10 +176,24 @@
 
   function tone(value) { return TONES[value] || "inactive"; }
 
+  // The Daopay role only ever sets two of the eight values, so it is
+  // shown two - plus the application's current value, disabled, so the
+  // select still reads as a status field rather than a two-item menu.
+  function statusOptions(current) {
+    if (currentRole().key !== "daopay") return statuses;
+    var theirs = ["Rejected", "Pending Further Information"];
+    var list = theirs.indexOf(current) === -1
+      ? [{ value: current, disabled: true }] : [];
+    return list.concat(theirs.map(function (v) {
+      return { value: v, disabled: false };
+    }));
+  }
+
   window.DaopayDemo = {
     applications: applications,
     application: application,
     statuses: statuses,
+    statusOptions: statusOptions,
     currentRole: currentRole,
     can: can,
     tone: tone,

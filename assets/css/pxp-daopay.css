@@ -6,23 +6,27 @@
    .pxp-app; --pxp-* tokens only. Loaded after pxp.css.
 ------------------------------------------------------------------- */
 
-/* ---------- Demo-only role bar (not part of the portal) ---------- */
-.pxp-demobar {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; flex-wrap: wrap;
-  padding: 10px 16px; margin-block-end: 16px;
-  background: var(--pxp-signal-info-bg); border: 1px solid var(--pxp-primary);
-  border-radius: 8px; font-size: 13px; color: var(--pxp-signal-info-text);
+/* ---------- Role switch, in the header chrome ----------
+   The only control on screen that is not in the real portal. Styled to
+   sit in the black bar rather than announce itself over the content. */
+.pxp-roleswitch {
+  display: inline-flex;
+  margin-inline-start: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 2px;
+  gap: 2px;
 }
-.pxp-demobar strong { color: var(--pxp-signal-info-text); }
-.pxp-demobar-actions { display: flex; align-items: center; gap: 8px; }
 .pxp-roletab {
-  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
-  padding: 5px 12px; border-radius: 999px;
-  background: var(--pxp-white); color: var(--pxp-primary);
-  border: 1px solid var(--pxp-primary);
+  font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+  padding: 3px 12px; border-radius: 999px; border: 0;
+  background: transparent; color: rgba(255, 255, 255, 0.75);
 }
-.pxp-roletab[aria-pressed="true"] { background: var(--pxp-primary); color: var(--pxp-white); }
+.pxp-roletab:hover { color: var(--pxp-white); }
+.pxp-roletab[aria-pressed="true"] {
+  background: var(--pxp-white);
+  color: var(--pxp-header-bg);
+}
 
 /* ---------- Signal chips ---------- */
 .pxp-chip {
@@ -165,20 +169,43 @@
 .pxp-recordkey { inline-size: 220px; flex-shrink: 0; color: var(--pxp-hint-mid); }
 .pxp-recordval { color: var(--pxp-text-body); overflow-wrap: anywhere; }
 
-/* ---------- Inline note field (pending further information) ---------- */
-.pxp-notefield { margin-block-start: 12px; max-inline-size: 520px; }
-.pxp-notefield textarea {
+/* ---------- Pending further information ----------
+   An amber panel, so a request for information reads as a hold on the
+   application rather than an ordinary form field. After sending, the
+   textarea is replaced by the note that went, in the same panel. */
+.pxp-notepanel {
+  margin-block-start: 14px;
+  max-inline-size: 620px;
+  padding: 14px 16px;
+  border: 1px solid var(--pxp-signal-warning);
+  border-radius: 8px;
+  background: var(--pxp-signal-warning-bg);
+}
+.pxp-notepanel-head {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--pxp-signal-warning-text);
+}
+.pxp-notepanel-label {
+  display: block;
+  font-size: 13px;
+  color: var(--pxp-signal-warning-text);
+  margin-block: 6px 8px;
+}
+.pxp-notepanel textarea {
   inline-size: 100%; min-block-size: 76px; padding: 8px 12px; font: inherit;
   font-size: 14px; color: var(--pxp-text-body); background: var(--pxp-white);
-  border: 1px solid var(--pxp-line); border-radius: 6px; resize: vertical;
+  border: 1px solid var(--pxp-signal-warning); border-radius: 6px;
+  resize: vertical;
 }
-.pxp-notefield textarea:focus { outline: none; border-color: var(--pxp-primary); }
-
-/* ---------- Toast for demo feedback ---------- */
-.pxp-toast {
-  position: fixed; inset-block-end: 24px; inset-inline-start: 50%;
-  transform: translateX(-50%); z-index: 60;
-  background: var(--pxp-header-bg); color: var(--pxp-white);
-  font-size: 13px; padding: 10px 18px; border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(9, 9, 12, 0.3);
+.pxp-notepanel textarea:focus { outline: none; border-color: var(--pxp-signal-warning-text); }
+/* The sent note sits in the same amber field as the rest of the panel -
+   one block of colour, not a white card inside an orange one. */
+.pxp-notepanel-quote {
+  margin: 8px 0 0;
+  padding: 0 0 0 12px;
+  border-inline-start: 3px solid var(--pxp-signal-warning);
+  font-size: 13px;
+  color: var(--pxp-signal-warning-text);
 }

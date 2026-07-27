@@ -1,11 +1,11 @@
 // ------------------------------------------------------------------
 // daopay-shell.js - Shared chrome for the Daopay replica pages: the
-// black portal header, the navigation sider, and the demo-only role
-// bar that switches between the PXP and Daopay views of the same page.
+// black portal header, the navigation sider, and the role switch that
+// flips between the PXP and Daopay views of the same page.
 // Renders into [data-pxp-shell]; the page modules fill .pxp-content.
 //
-// The role bar is the one thing on screen that is not in the real
-// portal. It carries a label saying so.
+// The role switch sits in the header rather than in a banner over the
+// content, so the page below it is the portal and nothing else.
 // ------------------------------------------------------------------
 
 (function () {
@@ -52,33 +52,27 @@
     return role.key === "daopay" ? href + "?role=daopay" : href;
   }
 
+  // The one control that is not in the real portal. It lives in the
+  // header chrome, styled to belong there.
+  function roleSwitch() {
+    return '<span class="pxp-roleswitch" role="group" aria-label="View as">' +
+      '<button type="button" class="pxp-roletab" data-role="pxp" aria-pressed="' +
+      (role.key === "pxp") + '">PXP</button>' +
+      '<button type="button" class="pxp-roletab" data-role="daopay" aria-pressed="' +
+      (role.key === "daopay") + '">Daopay</button></span>';
+  }
+
   function header() {
     return '<header class="pxp-header"><div class="pxp-header-inner">' +
       '<div class="pxp-header-left"><span class="pxp-logo">' + LOGO +
-      "<strong>pxp</strong></span></div>" +
+      "<strong>pxp</strong></span>" + roleSwitch() + "</div>" +
       '<div class="pxp-header-right">' +
       (role.key === "pxp"
         ? '<button type="button" class="pxp-quote-trigger">Quote Tool</button>'
         : "") +
-      '<span class="pxp-user">Welcome, ' + esc(role.user.split(" ").pop()) + "</span>" +
+      '<span class="pxp-user">Welcome, ' + esc(role.user) + "</span>" +
       '<span class="pxp-avatar" aria-hidden="true">' + AVATAR + "</span>" +
       "</div></div></header>";
-  }
-
-  function demobar() {
-    return '<div class="pxp-demobar">' +
-      "<span>Prototype control, not part of the portal. Viewing as " +
-      "<strong>" + esc(role.label) + "</strong>." +
-      (role.key === "daopay"
-        ? " Out-of-scope controls are removed, not disabled."
-        : " This is the page exactly as it is today.") +
-      "</span>" +
-      '<span class="pxp-demobar-actions">' +
-      '<button type="button" class="pxp-roletab" data-role="pxp" aria-pressed="' +
-      (role.key === "pxp") + '">PXP user</button>' +
-      '<button type="button" class="pxp-roletab" data-role="daopay" aria-pressed="' +
-      (role.key === "daopay") + '">Daopay user</button>' +
-      "</span></div>";
   }
 
   host.innerHTML = header() +
@@ -86,7 +80,7 @@
     '<aside class="pxp-sider"><div class="pxp-sider-title"><span>Navigation</span></div>' +
     '<ul class="pxp-menu">' + navItems() + "</ul>" +
     '<div class="pxp-sider-footer">PXP &copy; 2026</div></aside>' +
-    '<main class="pxp-content">' + demobar() +
+    '<main class="pxp-content">' +
     '<div class="pxp-sheet" data-pxp-page data-page="' +
     esc(host.getAttribute("data-pxp-page-kind") || "") + '"></div></main></div>';
 
@@ -98,18 +92,4 @@
       window.location.href = url.toString();
     });
   });
-
-  // Shared feedback for actions that would call a real system.
-  var timer = null;
-  window.DaopayDemo.toast = function (message) {
-    var existing = document.querySelector(".pxp-toast");
-    if (existing) existing.remove();
-    var node = document.createElement("div");
-    node.className = "pxp-toast";
-    node.setAttribute("role", "status");
-    node.textContent = message;
-    document.body.appendChild(node);
-    window.clearTimeout(timer);
-    timer = window.setTimeout(function () { node.remove(); }, 3200);
-  };
 })();

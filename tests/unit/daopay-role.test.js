@@ -104,6 +104,44 @@ test("ACQUIRER is the scoping key and it narrows the list", () => {
   }
 });
 
+test("a Daopay user is offered only the two statuses they can set", () => {
+  // Cancelled, Approved and the rest are not theirs. The application's
+  // current value rides along disabled so the control still reads as a
+  // status field rather than a two-item menu.
+  const demo = load(AS_DAOPAY);
+  const opts = Array.from(demo.statusOptions("In Progress"));
+  assert.deepEqual(opts.map((o) => o.value),
+    ["In Progress", "Rejected", "Pending Further Information"]);
+  assert.equal(opts[0].disabled, true);
+  assert.deepEqual(opts.slice(1).map((o) => o.disabled), [false, false]);
+});
+
+test("the Daopay status list never repeats the current value", () => {
+  const demo = load(AS_DAOPAY);
+  const opts = Array.from(demo.statusOptions("Rejected"));
+  assert.deepEqual(opts.map((o) => o.value),
+    ["Rejected", "Pending Further Information"]);
+});
+
+test("a PXP user still gets the portal's full status list", () => {
+  const demo = load(AS_PXP);
+  assert.equal(Array.from(demo.statusOptions("In Progress")).length, 8);
+});
+
+test("the fixture holds one contract of each kind", () => {
+  // Two rows of the same contract made the tables look like a history
+  // log rather than the live document.
+  const demo = load(AS_PXP);
+  assert.equal(demo.application.contracts.length, 1);
+  assert.equal(demo.application.kycContracts.length, 1);
+});
+
+test("screening is the two checks that matter to this flow", () => {
+  const demo = load(AS_PXP);
+  assert.deepEqual(Array.from(demo.application.checks, (c) => c.name),
+    ["Mastercard MATCH", "Webshield"]);
+});
+
 test("the decision statuses match the portal, with the first four disabled", () => {
   // Array.from re-homes the sandbox's arrays into this realm, so
   // deepStrictEqual compares contents rather than prototypes.
