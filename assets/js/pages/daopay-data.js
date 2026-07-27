@@ -91,13 +91,14 @@
       "Contact Information", "Documents",
     ],
 
-    contracts: [
-      { name: "Merchant Agreement - Nordwind Digital GmbH", type: "Unsigned", status: "Active", updated: "2026/07/14 10:26" },
-    ],
-
-    kycContracts: [
-      { name: "DaoPay KYC - Nordwind Digital GmbH", type: "Unsigned", status: "Active", updated: "2026/07/14 10:26" },
-    ],
+    // Both tables begin empty. The PXP user generates each contract,
+    // which pushes its generatable row below. The Daopay user then sends.
+    contracts: [],
+    kycContracts: [],
+    generatable: {
+      contract: { name: "Merchant Agreement - Nordwind Digital GmbH", type: "Unsigned", status: "Active" },
+      kyc: { name: "DaoPay KYC - Nordwind Digital GmbH", type: "Unsigned", status: "Active" },
+    },
 
     checks: [
       { name: "Mastercard MATCH", status: "Complete", reason: "No hits", by: "SYSTEM", at: "2026/07/14 10:31" },
@@ -196,6 +197,44 @@
     }));
   }
 
+  // Switching role reloads the page, so the point-in-time state - which
+  // contracts have been generated, whether they are signed, the stage
+  // and any decision - is kept in sessionStorage. That lets the PXP user
+  // generate the contracts, switch to Daopay, and find them there to
+  // send. It lasts the tab and resets in a fresh one. Wrapped in
+  // try/catch so the test sandbox (no sessionStorage) and private modes
+  // fall back to a clean in-memory run.
+  var STATE_KEY = "daopay-demo-state";
+  var savedState = { decision: application.status, noteSent: "" };
+
+  try {
+    var raw = window.sessionStorage.getItem(STATE_KEY);
+    if (raw) {
+      var s = JSON.parse(raw);
+      if (s.contracts) application.contracts = s.contracts;
+      if (s.kycContracts) application.kycContracts = s.kycContracts;
+      if (s.stage) application.stage = s.stage;
+      savedState.decision = s.decision || application.status;
+      savedState.noteSent = s.noteSent || "";
+    }
+  } catch (e) { /* no persisted state; start clean */ }
+
+  function persist(extra) {
+    try {
+      window.sessionStorage.setItem(STATE_KEY, JSON.stringify({
+        contracts: application.contracts,
+        kycContracts: application.kycContracts,
+        stage: application.stage,
+        decision: extra.decision,
+        noteSent: extra.noteSent,
+      }));
+    } catch (e) { /* storage unavailable; state just won't survive a switch */ }
+  }
+
+  function resetState() {
+    try { window.sessionStorage.removeItem(STATE_KEY); } catch (e) { /* noop */ }
+  }
+
   window.DaopayDemo = {
     applications: applications,
     application: application,
@@ -204,5 +243,8 @@
     currentRole: currentRole,
     can: can,
     tone: tone,
+    savedState: savedState,
+    persist: persist,
+    resetState: resetState,
   };
 })();

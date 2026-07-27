@@ -16,6 +16,12 @@
 
   var esc = App.escape;
   var demo = window.DaopayDemo;
+
+  // The list is where an onboarding begins, so it is also the natural
+  // place to start over: opening it clears any run in progress, and the
+  // application opens fresh with empty contract tables.
+  demo.resetState();
+
   var role = demo.currentRole();
   var scoped = role.key === "daopay";
   var query = "";

@@ -20,8 +20,15 @@
   var app = demo.application;
   var sections = demo.sections;
 
-  var state = { decision: app.status, noteSent: "" };
+  // Hydrated from sessionStorage by daopay-data.js, so a role switch -
+  // which reloads the page - resumes where it left off.
+  var state = {
+    decision: demo.savedState.decision,
+    noteSent: demo.savedState.noteSent,
+  };
   var busy = false;
+
+  function save() { demo.persist(state); }
 
   function stamp() {
     var d = new Date();
@@ -30,15 +37,52 @@
       " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
   }
 
+  // ---------------- Generate (PXP) ----------------
+  // The tables begin empty. Generating adds the row and persists it, so
+  // the Daopay user finds the contract there to send after the switch.
+  function generateContract() {
+    if (app.contracts.length) {
+      demo.toast("Already generated", "The merchant contract is on the application.");
+      return;
+    }
+    app.contracts.push({
+      name: app.generatable.contract.name, type: "Unsigned",
+      status: "Active", updated: stamp(),
+    });
+    save();
+    render();
+    demo.toast("Merchant contract generated", "Ready for Daopay to send for signature.");
+  }
+
+  function generateKyc() {
+    if (app.kycContracts.length) {
+      demo.toast("Already generated", "The KYC contract is on the application.");
+      return;
+    }
+    app.kycContracts.push({
+      name: app.generatable.kyc.name, type: "Unsigned",
+      status: "Active", updated: stamp(),
+    });
+    save();
+    render();
+    demo.toast("KYC contract generated", "Ready for Daopay to send on approval.");
+  }
+
   // ---------------- The merchant contract ----------------
   // Sent to the merchant, who signs first; the two Daopay countersigners
   // follow on their own. The delays are what make the order legible.
   function sendContract() {
+    if (!app.contracts.length) {
+      demo.toast("No contract to send",
+        "A PXP user needs to generate the contract first.", "warn");
+      return;
+    }
     return demo.askEmail("Send contract for signature",
       "The merchant signs first, then the Daopay CEO and CTO countersign.",
       "Merchant email address").then(function (email) {
       if (!email) return;
       app.stage = "Awaiting Contract Signature";
+      save();
       render();
       demo.toast("Contract sent", "Sent to " + email + " for signature.");
       return demo.runSteps("Adobe Sign - Merchant Agreement",
@@ -55,6 +99,7 @@
         ], "Continue").then(function () {
         app.contracts[0].type = "Signed";
         app.contracts[0].updated = stamp();
+        save();
         render();
         return handoff();
       });
@@ -72,12 +117,18 @@
       { wait: 1200, toast: ["Daopay compliance notified", "The application is now waiting on a Daopay decision."] },
     ]).then(function () {
       app.stage = "Application Signed";
+      save();
       render();
     });
   }
 
   // ---------------- Approve: send the KYC ----------------
   function approveAndSendKyc() {
+    if (!app.kycContracts.length) {
+      demo.toast("No KYC contract",
+        "A PXP user needs to generate the KYC contract first.", "warn");
+      return;
+    }
     return demo.askEmail("Send KYC and approve merchant",
       "Sending the KYC contract for signature is the approval. There is no " +
       "separate confirmation step.",
@@ -85,6 +136,7 @@
       if (!email) return;
       state.decision = "Approved";
       app.stage = "Approved";
+      save();
       render();
       demo.toast("Merchant approved", "The KYC contract is on its way to " + email + ".");
       return demo.runSteps("Adobe Sign - DaoPay KYC", "Nordwind Digital GmbH", [
@@ -95,6 +147,7 @@
       ], "Close").then(function () {
         app.kycContracts[0].type = "Signed";
         app.kycContracts[0].updated = stamp();
+        save();
         render();
       });
     });
@@ -118,6 +171,7 @@
       state.decision = next;
       state.noteSent = text;
       app.stage = "Pending Further Information";
+      save();
       render();
       demo.toast("Status updated", "Set to Pending Further Information.");
       demo.runBackground([
@@ -129,6 +183,7 @@
     state.decision = next;
     state.noteSent = "";
     app.stage = next;
+    save();
     render();
     demo.toast("Status updated", "Set to " + next + ".");
   }
@@ -138,8 +193,6 @@
     sendToCrm: ["Sent to CRM", "Manual re-send. In the live flow this fires on full signature."],
     sendOnboardingRecord: ["Onboarding record sent", "Manual re-send to DaoPay."],
     sendDocuments: ["Documents sent", "Manual re-send to DaoPay by SFTP."],
-    generateContract: ["Merchant contract generated", "Ready to send for signature."],
-    generateKyc: ["KYC contract generated", "Ready for Daopay to send."],
     viewContract: ["Opening the contract", "Merchant Agreement.pdf"],
     downloadContract: ["Download started", "Merchant Agreement.pdf"],
     viewReport: ["Opening the screening report", "Full result and evidence."],
@@ -184,6 +237,8 @@
         closeMenus();
         if (busy) return;
         if (action === "updateStatus") { applyStatus(); return; }
+        if (action === "generateContract") { generateContract(); return; }
+        if (action === "generateKyc") { generateKyc(); return; }
         if (action === "sendContract") { run(sendContract); return; }
         if (action === "approveAndSendKyc") { run(approveAndSendKyc); return; }
         var msg = SIMPLE[action];

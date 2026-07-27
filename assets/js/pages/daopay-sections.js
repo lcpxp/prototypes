@@ -97,7 +97,14 @@
   }
 
   // ---- The two contract tables. Row actions are View and Download. ----
-  function contractTable(list, prefix) {
+  function contractTable(list, prefix, emptyText) {
+    var head = "<thead><tr><th>Contract</th><th>Type</th><th>Status</th>" +
+      "<th>Updated on</th><th>Action</th></tr></thead>";
+    if (!list.length) {
+      return '<div class="pxp-grid-wrap"><table class="pxp-grid">' + head +
+        '<tbody><tr><td colspan="5"><p class="pxp-empty">' + esc(emptyText) +
+        "</p></td></tr></tbody></table></div>";
+    }
     var rows = list.map(function (c, i) {
       return "<tr><td>" + esc(c.name) + "</td><td>" + chip(c.type) + "</td>" +
         "<td>" + chip(c.status) + "</td><td>" + esc(c.updated) + "</td>" +
@@ -109,10 +116,8 @@
         '<li><button type="button" data-action="downloadContract">Download' +
         "</button></li></ul></div></td></tr>";
     }).join("");
-    return '<div class="pxp-grid-wrap"><table class="pxp-grid">' +
-      "<thead><tr><th>Contract</th><th>Type</th><th>Status</th>" +
-      "<th>Updated on</th><th>Action</th></tr></thead><tbody>" +
-      rows + "</tbody></table></div>";
+    return '<div class="pxp-grid-wrap"><table class="pxp-grid">' + head +
+      "<tbody>" + rows + "</tbody></table></div>";
   }
 
   function contracts() {
@@ -120,7 +125,8 @@
       '<div class="pxp-controls">' +
       btn("generateContract", "Generate contract") +
       btn("sendContract", "Send contract", "primary") +
-      "</div>" + contractTable(app.contracts, "c") + "</section>";
+      "</div>" + contractTable(app.contracts, "c",
+        "No contract yet. A PXP user generates it here.") + "</section>";
   }
 
   // Approve lives here: sending the KYC contract is the approval, so
@@ -131,7 +137,8 @@
       btn("generateKyc", "Generate contract") +
       btn("sendKyc", "Send contract", "primary") +
       btn("approveAndSendKyc", "Send KYC and approve merchant", "primary") +
-      "</div>" + contractTable(app.kycContracts, "k") + "</section>";
+      "</div>" + contractTable(app.kycContracts, "k",
+        "No KYC contract yet. A PXP user generates it here.") + "</section>";
   }
 
   function checks() {

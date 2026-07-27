@@ -23,6 +23,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/prototype.css | 88 | prototype.css - Shared styles for a prototype's LPio-framed overview |
 | assets/css/pxp-daopay.css | 212 | pxp-daopay.css - The Daopay EU onboarding replica layered on the PXP |
 | assets/css/pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
+| assets/css/pxp-sim.css | 191 | pxp-sim.css - The simulation layer for the Daopay replica: the toast |
 | assets/css/pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype |
 | assets/css/roadmap-detail.css | 264 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 379 | roadmap-views.css - The roadmap home's level views (Executive theme |
@@ -38,11 +39,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
 | assets/js/core/ui.js | 285 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/backlog.js | 324 | backlog.js - The master work list for modules/backlog/. |
-| assets/js/pages/daopay-app.js | 229 | daopay-app.js - The application summary page in the Daopay replica: |
-| assets/js/pages/daopay-data.js | 202 | daopay-data.js - Fixture data and the role switch for the Daopay EU |
-| assets/js/pages/daopay-list.js | 108 | daopay-list.js - The Applications list in the Daopay replica. |
-| assets/js/pages/daopay-sections.js | 231 | daopay-sections.js - The markup for each section of the application |
+| assets/js/pages/daopay-app.js | 275 | daopay-app.js - The application summary page in the Daopay replica: |
+| assets/js/pages/daopay-data.js | 251 | daopay-data.js - Fixture data and the role switch for the Daopay EU |
+| assets/js/pages/daopay-list.js | 114 | daopay-list.js - The Applications list in the Daopay replica. |
+| assets/js/pages/daopay-sections.js | 238 | daopay-sections.js - The markup for each section of the application |
 | assets/js/pages/daopay-shell.js | 96 | daopay-shell.js - Shared chrome for the Daopay replica pages: the |
+| assets/js/pages/daopay-sim.js | 169 | daopay-sim.js - The simulation layer for the Daopay replica: the |
 | assets/js/pages/dashboard.js | 159 | dashboard.js - Renders module cards, counts and recent activity |
 | assets/js/pages/gallery.js | 124 | gallery.js - Prototype registry for modules/prototypes/. |
 | assets/js/pages/integrations.js | 114 | integrations.js - Integration overview for modules/integrations/. |
@@ -65,7 +67,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 187 | Changelog |
+| docs/CHANGELOG.md | 195 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
@@ -75,7 +77,7 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 39 | Current state |
+| docs/STATE.md | 41 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 110 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
@@ -143,7 +145,7 @@ document instead of walking the tree or reading whole files.
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/size-budget.json | 82 |  |
-| tests/unit/daopay-role.test.js | 189 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
+| tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
 | tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
@@ -225,44 +227,55 @@ document instead of walking the tree or reading whole files.
 | renderItems() | assets/js/pages/backlog.js:162 |
 | renderDocuments() | assets/js/pages/backlog.js:199 |
 | fillFilters() | assets/js/pages/backlog.js:233 |
-| stamp() | assets/js/pages/daopay-app.js:26 |
-| pad() | assets/js/pages/daopay-app.js:28 |
-| sendContract() | assets/js/pages/daopay-app.js:36 |
-| handoff() | assets/js/pages/daopay-app.js:67 |
-| approveAndSendKyc() | assets/js/pages/daopay-app.js:80 |
-| applyStatus() | assets/js/pages/daopay-app.js:104 |
-| closeMenus() | assets/js/pages/daopay-app.js:153 |
-| wire() | assets/js/pages/daopay-app.js:159 |
-| run() | assets/js/pages/daopay-app.js:214 |
-| free() | assets/js/pages/daopay-app.js:216 |
-| render() | assets/js/pages/daopay-app.js:220 |
-| currentRole() | assets/js/pages/daopay-data.js:35 |
-| can() | assets/js/pages/daopay-data.js:40 |
-| tone() | assets/js/pages/daopay-data.js:177 |
-| statusOptions() | assets/js/pages/daopay-data.js:182 |
-| rows() | assets/js/pages/daopay-list.js:23 |
-| chip() | assets/js/pages/daopay-list.js:30 |
-| merchantCell() | assets/js/pages/daopay-list.js:35 |
-| actionsCell() | assets/js/pages/daopay-list.js:43 |
-| body() | assets/js/pages/daopay-list.js:49 |
-| render() | assets/js/pages/daopay-list.js:68 |
+| save() | assets/js/pages/daopay-app.js:31 |
+| stamp() | assets/js/pages/daopay-app.js:33 |
+| pad() | assets/js/pages/daopay-app.js:35 |
+| generateContract() | assets/js/pages/daopay-app.js:43 |
+| generateKyc() | assets/js/pages/daopay-app.js:57 |
+| sendContract() | assets/js/pages/daopay-app.js:74 |
+| handoff() | assets/js/pages/daopay-app.js:112 |
+| approveAndSendKyc() | assets/js/pages/daopay-app.js:126 |
+| applyStatus() | assets/js/pages/daopay-app.js:157 |
+| closeMenus() | assets/js/pages/daopay-app.js:206 |
+| wire() | assets/js/pages/daopay-app.js:212 |
+| run() | assets/js/pages/daopay-app.js:260 |
+| free() | assets/js/pages/daopay-app.js:262 |
+| render() | assets/js/pages/daopay-app.js:266 |
+| currentRole() | assets/js/pages/daopay-data.js:41 |
+| can() | assets/js/pages/daopay-data.js:46 |
+| tone() | assets/js/pages/daopay-data.js:185 |
+| statusOptions() | assets/js/pages/daopay-data.js:190 |
+| persist() | assets/js/pages/daopay-data.js:222 |
+| resetState() | assets/js/pages/daopay-data.js:234 |
+| rows() | assets/js/pages/daopay-list.js:29 |
+| chip() | assets/js/pages/daopay-list.js:36 |
+| merchantCell() | assets/js/pages/daopay-list.js:41 |
+| actionsCell() | assets/js/pages/daopay-list.js:49 |
+| body() | assets/js/pages/daopay-list.js:55 |
+| render() | assets/js/pages/daopay-list.js:74 |
 | chip() | assets/js/pages/daopay-sections.js:27 |
 | btn() | assets/js/pages/daopay-sections.js:32 |
 | statusBar() | assets/js/pages/daopay-sections.js:38 |
 | summary() | assets/js/pages/daopay-sections.js:46 |
 | steps() | assets/js/pages/daopay-sections.js:89 |
 | contractTable() | assets/js/pages/daopay-sections.js:100 |
-| contracts() | assets/js/pages/daopay-sections.js:118 |
-| kyc() | assets/js/pages/daopay-sections.js:128 |
-| checks() | assets/js/pages/daopay-sections.js:137 |
-| bank() | assets/js/pages/daopay-sections.js:174 |
-| documents() | assets/js/pages/daopay-sections.js:183 |
-| fees() | assets/js/pages/daopay-sections.js:200 |
-| record() | assets/js/pages/daopay-sections.js:212 |
+| contracts() | assets/js/pages/daopay-sections.js:123 |
+| kyc() | assets/js/pages/daopay-sections.js:134 |
+| checks() | assets/js/pages/daopay-sections.js:144 |
+| bank() | assets/js/pages/daopay-sections.js:181 |
+| documents() | assets/js/pages/daopay-sections.js:190 |
+| fees() | assets/js/pages/daopay-sections.js:207 |
+| record() | assets/js/pages/daopay-sections.js:219 |
 | navItems() | assets/js/pages/daopay-shell.js:38 |
 | withRole() | assets/js/pages/daopay-shell.js:51 |
 | roleSwitch() | assets/js/pages/daopay-shell.js:57 |
 | header() | assets/js/pages/daopay-shell.js:65 |
+| stack() | assets/js/pages/daopay-sim.js:34 |
+| remove() | assets/js/pages/daopay-sim.js:57 |
+| openModal() | assets/js/pages/daopay-sim.js:67 |
+| done() | assets/js/pages/daopay-sim.js:96 |
+| advance() | assets/js/pages/daopay-sim.js:132 |
+| advance() | assets/js/pages/daopay-sim.js:158 |
 | loadCounts() | assets/js/pages/dashboard.js:14 |
 | renderRoadmapMeter() | assets/js/pages/dashboard.js:29 |
 | cardHtml() | assets/js/pages/dashboard.js:44 |

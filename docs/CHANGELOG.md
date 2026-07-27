@@ -11,6 +11,11 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The Daopay replica's contract tables now start empty. A PXP user
+  generates each contract, which adds its row; the generated state is
+  kept for the tab, so switching to the Daopay view finds the contracts
+  there to send. Sending is blocked, with a prompt, if nothing has been
+  generated. Opening the Applications list starts a fresh run.
 - The Daopay replica's role switch moved into the black header bar and the
   blue prototype banner over the content is gone, so the page below the
   chrome is the portal and nothing else. A Daopay user is now offered only
