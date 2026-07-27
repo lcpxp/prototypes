@@ -11,6 +11,12 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The Daopay prototype intro page now matches the guidance document: its
+  overview no longer implies the review happens in the portal (it happens
+  in Daopay's own CRM and file storage; the portal is only for recording
+  the decision), the screening step no longer over-lists checks, and the
+  embedded diagram is the current involvement flow with the three-outcome
+  branch at step 10.
 - The Daopay replica's contract tables now start empty. A PXP user
   generates each contract, which adds its row; the generated state is
   kept for the tab, so switching to the Daopay view finds the contracts

@@ -54,11 +54,12 @@
       <h2 class="eyebrow eyebrow-heading">Why this exists</h2>
       <p>Daopay is the acquirer for EU merchants, and their compliance function
         is separate from PXP underwriting. This role puts the decision where the
-        accountability already sits: the Daopay compliance team logs in, opens
-        the application they are being asked to accept, reads the same evidence
-        PXP read, and decides. Nothing about the application changes - same
-        portal, same page, same evidence. The only difference is who is looking
-        at it and which buttons they get.</p>
+        accountability already sits. It does not move the review into the
+        portal: once the merchant contract is fully signed, everything transfers
+        to Daopay automatically - the data to their CRM, the files by SFTP - and
+        they are notified. They review it in their own systems, on their normal
+        underwriting process, and open the portal only to record what they have
+        decided.</p>
     </section>
 
     <section class="proto-section">
@@ -73,9 +74,8 @@
           summary page.</li>
         <li><strong>The contract goes to the merchant.</strong> It is sent to
           the merchant first, for their signature.</li>
-        <li><strong>Screening checks run.</strong> Companies House,
-          ComplyAdvantage, VMSS, MATCH, ID-Pal and Webshield, each returning a
-          PDF report.</li>
+        <li><strong>Screening checks run.</strong> Each result is available as
+          a PDF report.</li>
         <li><strong>The contract is signed in order.</strong> The merchant, then
           the Daopay CEO, then the Daopay CTO.</li>
         <li><strong>Everything transfers to Daopay automatically.</strong> Full
@@ -220,14 +220,16 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Diagram</h2>
-      <p>The full sequence, from a completed application to the signed KYC.</p>
+      <p>The full sequence, with the Daopay team's steps highlighted.</p>
       <figure class="proto-figure">
         <div id="proto-diagram" class="proto-diagram" data-src="daopay-flow.svg"
-          data-title="Daopay EU onboarding - handoff and decision">
+          data-title="Daopay underwriting - where your involvement sits">
           <p class="notice">Loading diagram</p>
         </div>
-        <figcaption>Blue = PXP and the platform; green = Daopay; grey = the
-          merchant. Dashed arrows are automatic; numbers match the steps
+        <figcaption>The green steps are the Daopay team's; the greyed steps are
+          handled before and after. A dashed outline means it happens
+          automatically. Step 10 is where the decision is recorded - reject,
+          pending further information, or approve. Numbers match the steps
           above.</figcaption>
       </figure>
     </section>
