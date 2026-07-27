@@ -15,15 +15,21 @@
   // rather than branching on the role in a dozen places, so the
   // boundary is stated once and is the thing under demonstration.
   var CONTROLS = {
+    // Two send controls are Daopay-only. "sendContract" (the merchant
+    // contract) and "approveAndSendKyc" both live with the acquirer, so
+    // the whole run - send, sign, hand off, decide - can be demonstrated
+    // from the Daopay view without switching roles. The generic "sendKyc"
+    // is absent from both lists: the acquirer's named approve button
+    // below replaces it, and PXP never gets a send in that section.
     pxp: [
       "updateStatus", "sendToCrm", "sendOnboardingRecord", "sendDocuments",
-      "generateContract", "sendContract", "generateKyc", "sendKyc",
+      "generateContract", "generateKyc",
       "viewContract", "downloadContract", "viewReport", "generatePdf",
       "overrideScreening", "removeScreening", "runCheck", "uploadDocument",
     ],
     daopay: [
-      "updateStatus", "viewContract", "downloadContract", "viewReport",
-      "generatePdf", "uploadDocument", "approveAndSendKyc",
+      "updateStatus", "sendContract", "viewContract", "downloadContract",
+      "viewReport", "generatePdf", "uploadDocument", "approveAndSendKyc",
     ],
   };
 
@@ -171,6 +177,7 @@
     "Rejected": "danger", "High": "flagged", "Flagged": "flagged",
     "Pending": "info", "Awaiting Contract Send": "info",
     "Application In Progress": "info", "Onboarding: Pending MID": "info",
+    "Application Signed": "info",
     "Pending Further Information": "warning",
   };
 

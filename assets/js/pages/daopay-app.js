@@ -71,7 +71,7 @@
       { wait: 1300, toast: ["Files transferred by SFTP", "Signed contract and 2 screening report PDFs."] },
       { wait: 1200, toast: ["Daopay compliance notified", "The application is now waiting on a Daopay decision."] },
     ]).then(function () {
-      app.stage = "Awaiting Acquirer Decision";
+      app.stage = "Application Signed";
       render();
     });
   }
@@ -186,15 +186,6 @@
         if (action === "updateStatus") { applyStatus(); return; }
         if (action === "sendContract") { run(sendContract); return; }
         if (action === "approveAndSendKyc") { run(approveAndSendKyc); return; }
-        // The KYC send exists on the page for PXP but is not theirs to
-        // use: that send is the acquirer's approval. Saying so is more
-        // useful than pretending it went.
-        if (action === "sendKyc") {
-          demo.toast("Not yours to send",
-            "Only Daopay can send the KYC contract - that send is the approval.",
-            "warn");
-          return;
-        }
         var msg = SIMPLE[action];
         if (msg) demo.toast(msg[0], msg[1]);
       });

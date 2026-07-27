@@ -17,7 +17,10 @@ is the git history; what is unfinished is docs/STATE.md.
   the two statuses they can set, Rejected and Pending Further Information;
   the pending note sits in an amber panel that closes to show what was
   sent. Contracts show one row each and screening is limited to Mastercard
-  MATCH and Webshield.
+  MATCH and Webshield. Both send controls - the merchant contract and the
+  KYC approval - sit with the Daopay view so the whole run demonstrates
+  without a role switch, and the status between full signature and a
+  decision reads Application Signed.
 - The roadmap page intro is trimmed to a few lines so the board sits higher
   on the page: it no longer enumerates each view tab, keeping only the
   altitude note, the click-for-detail hint and where the data lives.

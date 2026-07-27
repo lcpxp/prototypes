@@ -32,18 +32,19 @@ const AS_DAOPAY = "?role=daopay";
 
 // Everything a Daopay user must not be able to reach. Sending to CRM,
 // sending the onboarding record or documents, generating either
-// contract, sending the merchant contract, running a check and
-// overriding a screening result all stay with PXP.
+// contract, running a check and overriding a screening result all stay
+// with PXP. "sendContract" is NOT here: the merchant-contract send is a
+// Daopay control, so the run can be driven from their view.
 const OUT_OF_SCOPE = [
   "sendToCrm", "sendOnboardingRecord", "sendDocuments", "generateContract",
-  "sendContract", "generateKyc", "sendKyc", "runCheck", "overrideScreening",
-  "removeScreening",
+  "generateKyc", "runCheck", "overrideScreening", "removeScreening",
 ];
 
-// Everything they must keep: read, add documents, and decide.
+// Everything they must keep: read, add documents, send the contract for
+// signature, and decide.
 const IN_SCOPE = [
-  "updateStatus", "viewContract", "downloadContract", "viewReport",
-  "generatePdf", "uploadDocument", "approveAndSendKyc",
+  "updateStatus", "sendContract", "viewContract", "downloadContract",
+  "viewReport", "generatePdf", "uploadDocument", "approveAndSendKyc",
 ];
 
 test("a Daopay user gets none of the PXP-only controls", () => {
@@ -63,25 +64,29 @@ test("a Daopay user keeps read, upload and the decision controls", () => {
   }
 });
 
-test("approve is a Daopay-only control; the generic KYC send is PXP-only", () => {
-  // Sending the KYC contract is the approval, but the two roles reach
-  // it differently: PXP has the generic Send contract it cannot use for
-  // KYC approval, Daopay has the one named button.
+test("both contract sends are Daopay-only, so the run drives from one view", () => {
+  // Sending the merchant contract and sending the KYC (which is the
+  // approval) both belong to the acquirer. PXP gets neither send: the
+  // whole simulation runs from the Daopay view without a role switch.
   const pxp = load(AS_PXP);
   const daopay = load(AS_DAOPAY);
-  assert.equal(pxp.can("approveAndSendKyc"), false);
+  assert.equal(daopay.can("sendContract"), true);
   assert.equal(daopay.can("approveAndSendKyc"), true);
-  assert.equal(pxp.can("sendKyc"), true);
+  assert.equal(pxp.can("sendContract"), false);
+  assert.equal(pxp.can("approveAndSendKyc"), false);
+  // The generic KYC send belongs to nobody - the named approve replaces it.
+  assert.equal(pxp.can("sendKyc"), false);
   assert.equal(daopay.can("sendKyc"), false);
 });
 
-test("a PXP user gets the page exactly as it is today", () => {
+test("a PXP user keeps every control except the two Daopay sends", () => {
   const demo = load(AS_PXP);
   assert.equal(demo.currentRole().key, "pxp");
   for (const action of OUT_OF_SCOPE) {
     assert.equal(demo.can(action), true,
       `A PXP user must keep "${action}".`);
   }
+  assert.equal(demo.can("sendContract"), false);
 });
 
 test("an unknown role falls back to the PXP view, never a wider one", () => {

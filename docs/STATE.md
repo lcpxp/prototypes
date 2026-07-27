@@ -28,11 +28,10 @@ names the two real signatories, which must not enter a public repo.
 - Inter via Google Fonts: AGREED. The one external stylesheet; the
   structure gate pins that exact URL.
 - Reject notifications: CLOSED - none needed currently, revisit later.
-- "Awaiting Acquirer Decision" is a stage chip the replica invents for the
-  gap between handoff and decision; not seen in the real portal. Confirm
-  or replace with the live value.
-- Contracts table: screenshot shows Type = Signed/Unsigned and Status =
-  Active/Inactive; owner described it as one status. Built the
-  screenshot's way; confirm at review.
-- Escalation inbox for the Daopay-facing document is still a placeholder.
-- Onboarding API: pull (COO) vs existing push/static-submission. Held.
+- Post-signature stage: owner set it to "Application Signed".
+- Prototype drives both contract sends from the Daopay view (owner's ask,
+  no role switch mid-demo). Canonical flow docs still have PXP sending the
+  merchant contract at step 3 - real process, separate from this demo
+  button placement. Revisit if production moves the send to the acquirer.
+- Contracts table Type/Status split: built the screenshot's way; confirm.
+- Daopay-facing document escalation inbox is still a placeholder.
