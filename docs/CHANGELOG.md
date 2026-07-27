@@ -10,6 +10,14 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Fixed
+- The roadmap's Workstreams, Timeline, Work Items and Executive views now
+  show work that has no filing area, instead of silently dropping it. The
+  product board previously kept only items whose area was explicitly
+  product-scoped, so a workstream or item scheduled without an area never
+  appeared. It now hides only work explicitly filed as the portal's own
+  internal development; everything else on the roadmap is visible.
+
 ### Changed
 - The Daopay prototype intro page now matches the guidance document: its
   overview no longer implies the review happens in the portal (it happens

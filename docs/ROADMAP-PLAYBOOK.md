@@ -168,11 +168,13 @@ rule, applied in data only once those land.
 
 ## Capture rules that keep work visible and classed
 
-- **Every item needs a product area.** The board and exports show only
-  items whose area scope is 'product'; an item with no area (or a 'portal'
-  area) shows only in the Backlog master list. Always set `area_id`,
-  resolved by key, to the product area whose theme matches the item's
-  category: `(select id from work_areas where key='insights-analytics')`.
+- **Set a product area for correct theming, not for visibility.** The
+  board and exports now show every item EXCEPT work explicitly filed in a
+  'portal' area (the portal's own internal development); an item with no
+  area still appears, grouped under General. Setting `area_id` is what
+  places an item in the right theme lane and Detailed grouping, so still
+  set it, resolved by key, to the product area whose theme matches the
+  item's category: `(select id from work_areas where key='insights-analytics')`.
 - **A task or fix can nest or stand alone - your judgement.** It may be a
   nested work item under a workstream (a real step of that work), a
   standalone item, or a deliverable (drawer-only detail). Nothing forbids a

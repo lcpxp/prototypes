@@ -69,6 +69,30 @@ test("productItems keeps product scope; topLevel drops sub-items", () => {
   assert.ok(!tops.some((i) => i.parent_id), "no sub-item survives topLevel");
 });
 
+test("productItems keeps unfiled work (no area / no scope); only portal is hidden", () => {
+  const V = loadView();
+  const scope = { a1: "product", a2: "portal" };
+  const items = [
+    { id: "p1", area_id: "a1", title: "Filed product" },
+    { id: "p2", area_id: "a2", title: "Portal internal" },
+    { id: "p3", area_id: null, title: "Unfiled workstream" },
+    { id: "p4", area_id: "unknown", title: "Area with no scope" },
+  ];
+  const kept = V.productItems(items, scope);
+  assert.deepEqual(kept.map((i) => i.id), ["p1", "p3", "p4"],
+    "portal excluded; unfiled and unknown-scope work stays visible");
+});
+
+test("timeline (workstreams) surfaces a workstream with no filing area under General", () => {
+  const V = loadView();
+  const data = sampleData();
+  data.items.push({ id: "ws0", area_id: null, category_id: null, title: "Hand over",
+    level: "workstream", status: "in_progress", horizon: "now", end_horizon: "next",
+    presentation: "ongoing", priority: 5, sort_order: 5, updated_at: "2026-07-20T09:00:00Z" });
+  const html = V.timeline(data, "workstreams");
+  assert.match(html, /Hand over/, "an unfiled workstream still renders on the strategic gantt");
+});
+
 test("timeline (team) spans active bars, hides parked/portal, nests sub-items under their parent", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team");
