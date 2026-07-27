@@ -129,13 +129,13 @@
   <g class="pick">
     <rect x="48" y="616" width="206" height="78" rx="8"/>
     <text class="t" x="151" y="638" text-anchor="middle" dominant-baseline="central">Reject</text>
-    <text class="s" x="151" y="658" text-anchor="middle" dominant-baseline="central">Status becomes Rejected</text>
+    <text class="s" x="151" y="658" text-anchor="middle" dominant-baseline="central">Set to Rejected in the dropdown</text>
     <text class="s" x="151" y="676" text-anchor="middle" dominant-baseline="central">The application is closed</text>
   </g>
   <g class="pick">
     <rect x="266" y="616" width="206" height="78" rx="8"/>
     <text class="t" x="369" y="638" text-anchor="middle" dominant-baseline="central">Pending further information</text>
-    <text class="s" x="369" y="658" text-anchor="middle" dominant-baseline="central">Set the status, and add a note</text>
+    <text class="s" x="369" y="658" text-anchor="middle" dominant-baseline="central">Set in the dropdown, add a note</text>
     <text class="s" x="369" y="676" text-anchor="middle" dominant-baseline="central">It will not send without one</text>
   </g>
   <g class="pick">

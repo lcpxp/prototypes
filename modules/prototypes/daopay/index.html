@@ -106,13 +106,14 @@
             <tr><th>Decision</th><th>How it is made</th><th>What happens</th></tr>
           </thead>
           <tbody>
-            <tr><td>Reject</td><td>Application status select, then Update
-              status</td><td>Status becomes Rejected.</td></tr>
-            <tr><td>Pending further information</td><td>Application status
-              select, then Update status, with a note explaining what is
-              needed</td><td>Status becomes Pending Further Information, and the
-              note goes to the PXP accounts team so they can go back to the
-              merchant.</td></tr>
+            <tr><td>Reject</td><td>In the Application status dropdown, choose
+              Rejected, then Update status</td><td>Status becomes
+              Rejected.</td></tr>
+            <tr><td>Pending further information</td><td>In the Application status
+              dropdown, choose Pending Further Information, add a note, then
+              Update status</td><td>Status becomes Pending Further Information,
+              and the note goes to the PXP accounts team so they can go back to
+              the merchant.</td></tr>
             <tr><td>Approve</td><td>The Send KYC and approve merchant
               button</td><td>Status becomes Approved and the KYC contract goes
               out to the merchant for signature. Sending the KYC is the
@@ -127,6 +128,10 @@
       <p>A Daopay user sees the same page in the same order, with fewer controls
         on it. Out-of-scope controls are not shown at all rather than greyed
         out, and the list is filtered to their own acquirer.</p>
+      <p>They are provisioned a scoped Daopay Admin role - limited to viewing
+        applications and a small set of actions. Their Applications dashboard is
+        the portal's own list, filtered to Daopay: a table they open to review
+        an application and record a decision.</p>
       <div class="table-wrap">
         <table>
           <caption class="visually-hidden">Controls available to a PXP user
@@ -213,9 +218,9 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Getting help</h2>
-      <p>For a question about a specific application - a screening result, a
-        missing document, why something was sent - contact the PXP underwriting
-        team or your account manager, who also handle portal access.</p>
+      <p>For a question about a specific application, or any difficulty with
+        LaunchPad itself, contact the PXP underwriting team or your PXP account
+        manager, who also handle portal access.</p>
     </section>
 
     <section class="proto-section">
