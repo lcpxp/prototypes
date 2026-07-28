@@ -24,13 +24,24 @@ store without the owner validating it as a clickable choice first.
    items, what changed since the last review (max `updated_at`), and the
    counts. Also load the platform context for the areas in play -
    `product_capabilities`, `domain_terms`, `journey_stages`, `integrations`
-   and facts - per docs/PLATFORM.md.
+   and facts - per docs/PLATFORM.md. Add two standing lines from the search
+   surface (queries in docs/ROADMAP-CONTEXT.md): any hollow rows
+   (`roadmap_searchable.is_hollow`) in the areas in play, and any high-band
+   pair already sitting in the data and not linked. Report them and move on -
+   Wave 0 asks nothing.
 2. Wave 1 - Now integrity: for the Now items, ask on track / done / slipping
    / drop, and apply `status`, `progress`, `horizon`.
 3. Wave 2 - Capacity: promote Next items to Now on evidence; demote where
    confidence dropped.
-4. Wave 3 - New capture: ask if anything is new; apply the quick-capture
-   recipe for each.
+4. Wave 3 - New capture: ask if anything is new, then contextualise it
+   (playbook, "Contextualising new work"). A batch is ONE conversation, not
+   one per line: compare the new lines against history AND against each
+   other - an umbrella and its own components arriving together is the
+   commonest miss - then come back once, with the clean items applied and the
+   flagged ones grouped into a single pass. Never fourteen sequential
+   questions. If the batch would land with `department`, `category_id` and
+   `relates_to_id` uniformly null, the classification step has been skipped:
+   offer it in that same pass rather than writing unclassified rows.
 5. Wave 4 - Context sync (always, both ways): from the context loaded in
    Wave 0, put forward as clickable validation (a) context->item enrichments
    that sharpen items in play, and (b) item->context updates implied by this

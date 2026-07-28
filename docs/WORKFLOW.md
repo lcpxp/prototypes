@@ -58,10 +58,32 @@ backlog list, a DevOps copy-paste, a sprint summary), the session:
    decisions made, facts stated, risks raised, open questions,
    actions agreed. Each linked to the document and, where clear, an
    area or item.
-4. Creates or updates work_items for actionable entries (horizon
-   defaults to 'someday' - an unscheduled candidate), linked to the
-   source document via source_document_id and carrying any external
-   reference (DevOps id, ticket number) in external_ref.
+4. Contextualises the actionable entries before writing any of them,
+   then creates or updates work_items (horizon defaults to 'someday' -
+   an unscheduled candidate), linked to the source document via
+   source_document_id and carrying any external reference (DevOps id,
+   ticket number) in external_ref.
+
+   Contextualising means placing each entry against what the roadmap
+   already holds - roadmap_find over every row including done and
+   dropped - and banding the best match before deciding whether to
+   speak: high recommends an outcome to apply on one click, medium
+   offers options, low mentions the neighbour without asking, none
+   applies silently. The outcome is often not a new row: enrich the
+   existing one, merge, promote, revive, associate or split. The full
+   procedure is docs/ROADMAP-PLAYBOOK.md, "Contextualising new work",
+   with the SQL in docs/ROADMAP-CONTEXT.md.
+
+   Documents are the highest-volume path into the backlog - a DevOps
+   export or a sprint summary can carry twenty candidates at once - so
+   the batch discipline matters most here. Compare the entries against
+   history AND against each other, since a document routinely contains
+   both a heading and the items it is a heading over. Then come back
+   ONCE, with the clean entries applied and the flagged ones grouped
+   into a single pass; twenty sequential questions is a failure even if
+   every one is correct. If the batch would land with department,
+   category_id and relates_to_id uniformly null, the classification
+   step has been skipped - offer it in the same pass.
 5. If the material replaces an earlier document (this sprint's
    summary superseding last sprint's), sets supersedes_id on the new
    row and status 'superseded' on the old one.
