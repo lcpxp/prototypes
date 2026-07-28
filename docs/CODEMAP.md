@@ -6,8 +6,8 @@ document instead of walking the tree or reading whole files.
 
 | File | Lines | Purpose |
 |---|---:|---|
-| .claude/commands/roadmap-add.md | 30 |  |
-| .claude/commands/roadmap.md | 55 |  |
+| .claude/commands/roadmap-add.md | 42 |  |
+| .claude/commands/roadmap.md | 66 |  |
 | .claude/settings.json | 49 |  |
 | .githooks/pre-commit | 29 |  |
 | .github/workflows/deploy.yml | 53 |  |
@@ -57,7 +57,9 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/roadmap-detail-export.js | 203 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
 | assets/js/pages/roadmap-detail.js | 347 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
+| assets/js/pages/roadmap-drawer.js | 76 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
 | assets/js/pages/roadmap-views-cascade.js | 201 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
@@ -67,19 +69,19 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 209 | Changelog |
+| docs/CHANGELOG.md | 227 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
-| docs/ROADMAP-PLAYBOOK.md | 300 | Roadmap playbook |
+| docs/ROADMAP-PLAYBOOK.md | 360 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 154 | Roadmap process |
 | docs/ROADMAP.md | 199 | Roadmap |
 | docs/SECURITY.md | 80 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 38 | Current state |
+| docs/STATE.md | 40 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
-| docs/WORKFLOW.md | 110 | Work intake and backlog workflow |
+| docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
@@ -128,7 +130,7 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260722160000_work_item_associated_departments.sql | 68 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722170000_roadmap_move_workstream_cascade.sql | 65 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722190000_work_item_deliverable_level.sql | 23 | Deliverables: a third presentation level for work_items. A deliverable |
-| supabase/policies.sql | 251 | ------------------------------------------------------------------ |
+| supabase/policies.sql | 272 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
@@ -144,7 +146,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
-| tests/size-budget.json | 82 |  |
+| tests/size-budget.json | 86 |  |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
@@ -377,6 +379,10 @@ document instead of walking the tree or reading whole files.
 | fillPicker() | assets/js/pages/reference.js:189 |
 | wireContent() | assets/js/pages/reference.js:218 |
 | openHashTarget() | assets/js/pages/reference.js:247 |
+| toKpiItem() | assets/js/pages/roadmap-detail-export.js:18 |
+| toKpiRoadmap() | assets/js/pages/roadmap-detail-export.js:103 |
+| flattenItem() | assets/js/pages/roadmap-detail-export.js:136 |
+| toCsvRoadmap() | assets/js/pages/roadmap-detail-export.js:189 |
 | esc() | assets/js/pages/roadmap-detail.js:33 |
 | day() | assets/js/pages/roadmap-detail.js:34 |
 | dateRange() | assets/js/pages/roadmap-detail.js:35 |
@@ -406,6 +412,10 @@ document instead of walking the tree or reading whole files.
 | notesHtml() | assets/js/pages/roadmap-detail.js:238 |
 | phasesHtml() | assets/js/pages/roadmap-detail.js:245 |
 | drawerHtml() | assets/js/pages/roadmap-detail.js:259 |
+| App.roadmapDrawer | assets/js/pages/roadmap-drawer.js:19 |
+| setItemParam() | assets/js/pages/roadmap-drawer.js:29 |
+| openDrawer() | assets/js/pages/roadmap-drawer.js:37 |
+| closeDrawer() | assets/js/pages/roadmap-drawer.js:49 |
 | breakdownItemRow() | assets/js/pages/roadmap-views-breakdown.js:18 |
 | breakdown() | assets/js/pages/roadmap-views-breakdown.js:31 |
 | areaSort() | assets/js/pages/roadmap-views-breakdown.js:34 |

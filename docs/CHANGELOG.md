@@ -11,6 +11,11 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Roadmap intake now places new work against what is already on the board
+  before writing it, and leads with a recommendation - improve the existing
+  row, merge, promote, revive, associate or split - instead of always
+  creating something new. Adjacent-but-different work is applied silently as
+  before, so the extra step only speaks when it has something to say.
 - The roadmap item drawer now shows the assignee (with any support owner as
   "Tim (Red supporting)") and the owner's rank in their queue ("Xavier -
   1st of 5"), high in the field list. The board bars carry the owner too,
