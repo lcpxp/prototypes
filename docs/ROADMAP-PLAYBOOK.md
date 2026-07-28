@@ -3,7 +3,9 @@
 The single operating manual for the roadmap. If you are an AI (or a person)
 about to add, update, review or present roadmap work, read this file and you
 have everything: the model, every field, the copy-paste operations, the
-quick-capture recipe and the review ritual. Deeper rendering detail is in
+quick-capture recipe and the review ritual. The one companion you will
+reach for is docs/ROADMAP-CONTEXT.md: the contextualisation protocol in
+full, with copy-paste SQL for every outcome. Deeper rendering detail is in
 docs/ROADMAP.md; taxonomy rationale in docs/ROADMAP-PROCESS.md; intake in
 docs/WORKFLOW.md; sprints in docs/SPRINTS.md. You rarely need them.
 
@@ -63,6 +65,15 @@ Delivered = `status='done'`; Parked = `horizon='someday'` or
 department for you. Read it first, every session, before proposing changes.
 Then read open `work_notes` (status='active') for the areas in play.
 
+`roadmap_current` is the *board* view: it carries no `summary`, `details`,
+`relates_to_id` or `resolution`, so comparing a new request against it can
+only ever be a title match. For that, use `roadmap_searchable` (every row,
+including done and dropped, with the text and a computed `is_hollow`) and
+`roadmap_find(query)`, ranking candidates across all four text columns:
+
+    select title, score, status, horizon, is_hollow
+      from roadmap_find('currency swap on the summary page');
+
 `shareholder_visible` is LEGACY: the Workstreams view is now the
 shareholder-facing surface (workstreams only, fixes and loose items
 excluded), so there is no need to set the flag on new work. It still exists
@@ -108,11 +119,9 @@ conversion). It is not `product_technology` - Core LaunchPad = which platform
 the work is, product_technology = who engineers it, carried as a default tag on
 Core LaunchPad items. Otherwise the driving function owns: operations_onboarding
 owns onboarding, screening, CRM and automation and stays a distinct owner (tag
-other functions, never merge into one big Operations). Worked example: AI
-Enablement is product_technology-owned (core AI) with operations_onboarding
-tagged. Making core_launchpad a live owner still needs a schema CHECK, a
-tokens.css colour and the department filter; until then it is the classification
-rule, applied in data only once those land.
+other functions, never merge into one big Operations). Making core_launchpad
+a live owner still needs a schema CHECK, a tokens.css colour and the
+department filter; until then it is the classification rule, in data only.
 
 ## Canonical operations (copy-paste, resolve ids by key/title)
 
@@ -175,14 +184,20 @@ rule, applied in data only once those land.
   places an item in the right theme lane and Detailed grouping, so still
   set it, resolved by key, to the product area whose theme matches the
   item's category: `(select id from work_areas where key='insights-analytics')`.
+- **`relates_to_id` is the general "related but distinct" mechanism.** Any
+  time work is genuinely its own item but sits beside something else, soft-
+  link it. Unlike `parent_id` it does not roll up onto the gantt and does
+  not promote what it points at, so it costs nothing to record and it is
+  how the next session learns that two pieces of work touch. Reach for it
+  by default, not only for bugs; the outcome is `ASSOCIATE` in
+  docs/ROADMAP-CONTEXT.md.
 - **A task or fix can nest or stand alone - your judgement.** It may be a
   nested work item under a workstream (a real step of that work), a
   standalone item, or a deliverable (drawer-only detail). Nothing forbids a
-  task nesting. What follows is the pattern for the MAINTENANCE track only:
-  a one-line bug that you want visible but attributed without lighting up a
-  strategic workstream. There, keep it STANDALONE and soft-link the
-  workstream it relates to via `relates_to_id` (nesting would roll up onto
-  the gantt; the soft link does not). Tag its department, category and area:
+  task nesting. The MAINTENANCE track is one worked example of the soft
+  link above: a one-line bug you want visible but attributed without
+  lighting up a strategic workstream. Keep it STANDALONE, soft-link the
+  workstream via `relates_to_id`, and tag department, category and area:
 
       insert into work_items (title, type, level, category_id, area_id,
         department, relates_to_id, horizon, status)
@@ -205,52 +220,84 @@ Add a theme only for a genuinely new workstream lane: insert a
 `roadmap_categories` row, then a `--rm-<key>` token pair and a `.rm-cat-<key>`
 rule in assets/css/tokens.css (else it renders neutral).
 
+## Contextualising new work
+
+New work is placed against what already exists, never written blind. The
+lookup is unconditional - it does not wait for the request to be phrased as
+an update, because the commonest failure is an add that is really an
+improvement to a row already there. Full procedure and copy-paste SQL for
+every outcome: docs/ROADMAP-CONTEXT.md.
+
+1. **Understand.** Name the surface, the actor, the behaviour and any
+   scheduling word - those are the search handles. If the request
+   enumerates three or more pieces of work, it is a `SPLIT`/`UMBRELLA`
+   candidate: ask, whatever the scores say. A heading matches everything
+   weakly and nothing strongly, so no score will catch it.
+2. **Gather.** `roadmap_find` on the headline and again on the full
+   request; take the better score per candidate. Search includes `done`
+   and `dropped` - parked is not gone. Add one narrow search on the rarest
+   handle over parked work; `REVIVE` cases score low by construction.
+3. **Band.** The band decides whether to speak at all:
+
+   | Band | Score | Behaviour |
+   | --- | --- | --- |
+   | High | >= 0.65 | Present the candidate, recommend an outcome, apply on one click |
+   | Medium | 0.40 - 0.65 | Present as options with the distinction spelled out; recommend, and say what would make it the other way |
+   | Low | 0.22 - 0.40 | Apply as new. Mention the neighbour in one line - do not ask |
+   | None | < 0.22 | Apply silently. Report one line |
+
+   A low-band match never generates a question; restraint is a feature. A
+   **hollow** candidate (`is_hollow`) in the medium band is a strong
+   `ENRICH` signal - hollow rows attract re-raises.
+4. **Recommend.** Always lead with one recommended outcome and its
+   reasoning, then the alternatives: `NEW`, `ENRICH`, `MERGE`, `PROMOTE`,
+   `REVIVE`, `ASSOCIATE`, `SPLIT`, `UMBRELLA`, `UNRELATED`. Never a bare
+   list - that moves the work back onto the owner. When the request is
+   better described than the row it matches, the description moves onto
+   the existing row: the owner's words are the asset.
+5. **Apply and record.** For anything other than `NEW`, write a
+   `work_notes` decision so the judgement is inherited, not re-derived.
+   Nothing is deleted - rows close with `status`, a `resolution` and a
+   back-link - so state the undo in the confirmation line.
+
 ## Quick capture / quick edit ("add X" / "update Y")
 
 A one-line request in chat should apply in one pass, not a research project:
 
-1. Read `roadmap_current` (and, if updating, find the row by title).
-2. Decide add vs update. Infer `category_id` (theme), `parent_id` (does it
-   belong under a named workstream?), `department` and `horizon` from the
-   words. Default `horizon='someday'` unless a scheduling word ("now",
-   "this sprint", "next", "urgent") is present. Judge the `level`: a
-   headline area is a `workstream`; real roadmap-visible work is an `item`;
-   a step-grade line inside a bigger piece ("publish the spec", "write the
-   migration") is a `deliverable` (drawer-only). When a captured line is
-   clearly step-grade under a named parent, file it as a deliverable.
-3. If exactly one critical field is genuinely ambiguous (which workstream? or
-   now vs someday?), ask ONE clickable question (AskUserQuestion). Otherwise
-   apply silently.
-4. Apply the insert/update, then report one line: what changed and where it
-   now sits. Record a `work_notes` decision only when the reasoning matters.
+1. Contextualise (above). The outcome it returns drives everything below.
+2. Infer `category_id` (theme), `parent_id` (does it belong under a named
+   workstream?), `department` and `horizon` from the words. Default
+   `horizon='someday'` unless a scheduling word ("now", "this sprint",
+   "next", "urgent") is present. Judge the `level`: a headline area is a
+   `workstream`; real roadmap-visible work is an `item`; a step-grade line
+   inside a bigger piece ("publish the spec", "write the migration") is a
+   `deliverable` (drawer-only).
+3. Ask only what the band calls for, plus at most ONE clickable
+   `AskUserQuestion` where a critical field is genuinely ambiguous (which
+   workstream? now vs someday?). None and Low bands apply silently, which
+   is most requests.
+4. Apply the outcome, then report one line: what changed, where it now
+   sits, and how to reverse it.
 
 ## Contextual synchronisation (both ways)
 
 The roadmap and the platform knowledge base are two views of one reality and
 must be kept in step, in BOTH directions, on every review and material edit.
-The platform context lives in `product_capabilities` (what exists today, by
-maturity), `domain_terms` (the glossary), `journey_stages` (the onboarding
-lifecycle), `integrations`, and platform facts in `work_notes` (kind
-`'fact'`) - see docs/PLATFORM.md. Treat it as the source you enrich work
-from, and the record your delivered work keeps current.
+The context lives in `product_capabilities`, `domain_terms`,
+`journey_stages`, `integrations` and `work_notes` of kind `'fact'` - see
+docs/PLATFORM.md.
 
-- **Context -> roadmap (source and enrich).** Before proposing or confirming
-  a work-item or workstream change, pull the context for its area (the
-  `product_capabilities`, `domain_terms` and `journey_stages` for its
-  `area_id`, plus open facts) and let it sharpen the item: a summary, a
+- **Context -> roadmap.** Before proposing or confirming a change, pull the
+  context for the item's `area_id` and let it sharpen the item: a summary, a
   dependency, a term it assumes, the lifecycle stage it touches, the
   capability it extends. Offer these as concrete assertions to APPLY.
-- **Roadmap -> context (feed back).** When work moves - promoted, delivered,
-  dropped, rescoped - ask what it changes about the platform itself: a
-  capability now live or partial, a new integration, a term or lifecycle
-  stage that shifted, a problem now solved. Offer those as updates to the
-  context store (a `product_capabilities` maturity bump, a new fact, a term).
-- **The golden rule: every assertion is owner-validated.** Nothing is written
-  to a work item OR to the context store on the AI's own authority. Each
-  applied-or-planned assertion, both directions, is put to the owner to
-  confirm, correct or reject - as a clickable choice, not a wall of text -
-  before it lands. Record what was confirmed: a `work_notes` decision, and
-  provenance (source and date) on any context row.
+- **Roadmap -> context.** When work moves - promoted, delivered, dropped,
+  rescoped - ask what it changes about the platform: a capability now live
+  or partial, a new integration, a term or stage that shifted.
+- **The golden rule: every assertion is owner-validated**, both directions,
+  as a clickable choice rather than a wall of text. Nothing lands on the
+  AI's own authority. Record what was confirmed: a `work_notes` decision,
+  plus provenance (source and date) on any context row.
 
 ## The review ritual ("let's go through the roadmap", or /roadmap)
 
@@ -259,14 +306,21 @@ pre-compute from the data; each answer maps to a specific write above.
 
 - **Wave 0 - Orient** (no question): read `roadmap_current`; show Now and
   Next, what changed since last review (max `updated_at`), and the counts.
-  Also load the platform context for the areas in play (Contextual
-  synchronisation) so it is in hand for the waves that follow.
+  Load the platform context for the areas in play (Contextual
+  synchronisation). Add two standing lines from the search surface: any
+  **hollow rows** in those areas, and any **high-band pair already in the
+  data** and not linked (both queries in docs/ROADMAP-CONTEXT.md). Report
+  them; ask nothing here.
 - **Wave 1 - Now integrity**: for each Now item, on track / done / slipping /
   drop -> `status`, `progress`, `horizon`.
 - **Wave 2 - Capacity**: Now holds whatever is genuinely in flight - there
   is no cap on how many items or workstreams sit there. Promote Next items
   on evidence -> `horizon='now'`; demote when confidence drops.
-- **Wave 3 - New capture**: "anything new?" -> the quick-capture recipe.
+- **Wave 3 - New capture**: "anything new?" -> contextualise each line, and
+  the batch against itself as well as against history. Come back ONCE: the
+  clean items applied, the flagged ones grouped into a single pass. If they
+  would all land with `department`, `category_id` and `relates_to_id` null,
+  offer the classification in that same pass.
 - **Wave 4 - Context sync** (always, both ways): from the context loaded in
   Wave 0, put forward as clickable validation (a) context->item enrichments
   that sharpen items in play, and (b) item->context updates implied by this
@@ -290,6 +344,12 @@ shareholder-ready export prep before a meeting.
   validated problems, Later are one-line bets. Do not over-write Later rows.
 - **Never lose a decision**: every move gets a `resolution` and/or a
   `work_notes` decision row.
+- **Nothing is written blind**: every new item is placed against what
+  already exists first (Contextualising new work), at review as well as at
+  capture - the duplicates found in July were both already in the data.
+- **Hollow rows attract re-raises**: a row with no `summary` and no
+  `details` gets re-requested by someone who cannot see it is covered.
+  Fill them while the area is in hand (`roadmap_searchable.is_hollow`).
 - **Keep context in step**: every review and material edit syncs both ways
   with the platform knowledge base (Contextual synchronisation, docs/
   PLATFORM.md) - source context into the work, feed delivery back into the

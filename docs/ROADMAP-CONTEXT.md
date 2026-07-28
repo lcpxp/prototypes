@@ -1,0 +1,240 @@
+# Contextualising new work
+
+The procedure behind the playbook's "Contextualising new work" section:
+the five stages in full, the copy-paste SQL for every outcome, and the
+calibration the confidence bands rest on. Read the playbook first; come
+here for the SQL and the reasoning.
+
+## Why this exists
+
+Intake used to write what it was given. A batch of 14 items added on
+2026-07-27 turned out, on review, to contain 5 rows that already existed
+under different titles, 1 heading whose components had been created as
+separate rows in the same session, and 3 items that were correctly
+distinct but recorded no relationship to anything. All 14 landed with
+`department`, `category_id` and `relates_to_id` null. A whole batch
+sharing that signature is not fourteen lapses; it is a missing step.
+
+Note what it was not: careless requests. Several of the new descriptions
+were better than the rows that already existed - one arrived with a clear
+scope against an existing row that had an empty summary and empty
+details. The right answer was to carry the description onto the existing
+row. Nothing could notice, so a second row was created and the good
+wording landed in the wrong place.
+
+## Stage 1 - Understand
+
+Read the request and name what it names: a **surface** (summary page,
+contract, admin tools), an **actor** (global admin, partner, merchant), a
+**behaviour**, and any **scheduling word**. Those are the search handles.
+
+Decide the request's *shape* here, before any scoring:
+
+- If it enumerates three or more distinct pieces of work (a comma or
+  "and" list of noun phrases, or a sweep word - "sweep", "overhaul",
+  "everything") it is a `SPLIT` or `UMBRELLA` candidate. Ask, regardless
+  of score. **A heading matches everything weakly and nothing strongly,
+  so the score will never catch it** - this rule is what catches it.
+- Otherwise it is a single piece of work; go to Stage 2.
+
+## Stage 2 - Gather candidates
+
+Search all rows, including `done` and `dropped`, via `roadmap_find`:
+
+    -- the headline, then the full request; band on the better score
+    select title, score, status, horizon, workstream_title, is_hollow,
+           summary, details, relates_to_id, resolution
+      from roadmap_find('currency swap on the summary page', 8, 0.15);
+
+    select * from roadmap_find(
+      'currency swap on the summary page - global admin swaps all values '
+      'to another currency, character swap only, no conversion', 8, 0.15);
+
+Run both. A bare headline is precise but thin; the full request is rich
+but dilutes rare handles across many common ones. Take the **higher**
+score per candidate - the two disagree often enough to matter.
+
+Then one narrow search on the rarest handle alone, restricted to parked
+work, because `REVIVE` cases score low by construction (the parked row
+is worded for the problem as it looked then, not as it looks now):
+
+    select title, score, status, horizon, resolution
+      from roadmap_find('IVR', 5, 0.10)
+     where status = 'dropped' or horizon = 'someday';
+
+Surface any parked hit from that search whatever its band.
+
+## Stage 3 - Band
+
+| Band | Score | Behaviour |
+| --- | --- | --- |
+| High | >= 0.65 | Present the candidate, recommend an outcome, apply on one click |
+| Medium | 0.40 - 0.65 | Present as options with the distinction spelled out; recommend, and say what would make it the other way |
+| Low | 0.22 - 0.40 | Apply as new. Mention the neighbour in one line of the confirmation - do not ask |
+| None | < 0.22 | Apply silently. Report one line |
+
+A low-band match never generates a question. Two adjustments on top:
+
+- A **hollow** candidate (`is_hollow` - no summary and no details) in the
+  medium band is a strong `ENRICH` signal: recommend `ENRICH`, not `NEW`.
+  Three of the five 2026-07-27 duplicates matched a hollow row.
+- A **parked** candidate found by the narrow search is surfaced at any
+  band, as a `REVIVE` option.
+
+### The calibration
+
+Bands were fitted against the 2026-07-27 batch replayed read-only, each
+item scored only against rows that existed before it. Best score per item:
+
+    0.861  Currency Swap on summary page          -> duplicate
+    0.794  Contract - Summary page: Sites/Totals  -> duplicate
+    0.741  Quantity value on pricing lines ...    -> duplicate
+    0.528  Split Unity enrolment buttons ...      -> duplicate
+    0.464  Screening check toggles should work    -> distinct (real neighbour)
+    0.427  Every application value adjustable     -> duplicate
+    0.365  Show IVR lead information ...          -> distinct
+    0.327  Automation sweep: CRM, Daopay ...      -> umbrella (caught at Stage 1)
+    0.285  Capture acquirer name for site ...     -> distinct
+    0.241  Processed Fees not Initiated           -> new
+    0.237  Lower Pricing Minimums                 -> new
+    0.216  Product Visible Description            -> new
+    0.206  Date of birth output off by one day    -> new, deliberately unlinked
+    0.186  New "Ad-hoc" billing frequency type    -> new
+
+0.65 is the highest threshold that keeps three duplicates in High with
+zero false positives. 0.40 is set just under the lowest true duplicate
+(0.427) and admits one genuine neighbour at 0.464 - which is a correct
+medium, not a false positive: the owner kept those two rows distinct and
+would want the relationship offered. 0.22 sits above the date-of-birth
+case (0.206), which must never fire: that is a timezone parse defect and
+"Fix date fields to handle UK standard inputs only" is input-format
+restriction. Same code region, different work, deliberately not linked.
+
+The scorer weights query tokens by inverse document frequency, so a rare
+handle ("IVR", "currency") outweighs a ubiquitous one ("page",
+"application"), and damps queries under three informative tokens, so a
+one-word query ("CRM") does not score 1.0 against every row containing
+that word. Both were needed: without IDF, duplicates and noise overlap.
+
+## Stage 4 - Generate options and recommend
+
+Every response carries a recommended outcome with its reasoning, plus the
+credible alternatives. Never a bare list - an option list with no
+recommendation moves the work back onto the owner, which is the problem
+being solved.
+
+| Outcome | Use when |
+| --- | --- |
+| `NEW` | Nothing comparable exists |
+| `ENRICH` | The row exists but is thinner than the request |
+| `MERGE` | Two live rows are the same work |
+| `PROMOTE` | It exists but is scheduled later than now needed |
+| `REVIVE` | It exists as `dropped` or `someday` and the need has returned |
+| `ASSOCIATE` | Genuinely distinct but related |
+| `SPLIT` | The request contains more than one piece of work |
+| `UMBRELLA` | The request is a heading over work already captured |
+| `UNRELATED` | Adjacent but distinct; insert standalone, do not link |
+
+## Stage 5 - Apply and record
+
+    -- ENRICH: the owner's words are the asset. The row keeps its id,
+    -- status, parent and history; it gains the better description.
+    update work_items
+       set summary = 'Global admin can swap every value on the Summary page to another currency',
+           details = 'Character swap only - no FX conversion. Confirmation step before applying.'
+     where title = 'Adapt overall application currency on the Summary page (admin tool)';
+
+    -- MERGE: keep the older/better-placed row, retire the other with a
+    -- resolution naming the survivor and a back-link to it. Never delete.
+    update work_items
+       set status = 'dropped',
+           resolution = 'Duplicate: merged into "Quantity values on pricing lines" (19 Jul) - same feature.',
+           relates_to_id = (select id from work_items where title = 'Quantity values on pricing lines')
+     where title = 'Quantity value on pricing lines during workflow question configuration';
+
+    -- PROMOTE: it exists, it is just scheduled too late.
+    update work_items set horizon = 'now' where title = 'Inbound API';
+    -- or, for a whole workstream and its children:
+    select roadmap_move_workstream(
+      (select id from work_items where title = 'Insights' and level = 'workstream'), 'now');
+
+    -- REVIVE: reopen, carry the new context in, say what changed.
+    update work_items
+       set status = 'planned', horizon = 'next', resolution = null,
+           details = coalesce(details || E'\n\n', '') || 'Revived 28 Jul: the need returned when ...'
+     where title = 'Resolve read-only IVR / adjust live applications';
+
+    -- ASSOCIATE: genuinely distinct, but do not lose the relationship.
+    -- relates_to_id is the general "related but distinct" mechanism, not
+    -- a bug-tracking special case; it does not roll up onto the gantt.
+    update work_items
+       set relates_to_id = (select id from work_items where title = 'Harden screening checks')
+     where title = 'Screening check toggles should work';
+
+    -- UMBRELLA: a coordination row, not build work. Link the components.
+    update work_items
+       set details = 'Coordination row: carries no build work, do not schedule or estimate directly.'
+     where title = 'Automation sweep: CRM submission, Daopay, screening and notifications';
+    update work_items
+       set relates_to_id = (select id from work_items where title = 'Automation sweep: CRM submission, Daopay, screening and notifications')
+     where title in ('Daopay: notifications to Daopay', 'Daopay: notifications to PXP account managers and PXP underwriting');
+
+For anything other than `NEW`, write the reasoning down so the next
+session inherits the judgement rather than re-deriving it:
+
+    insert into work_notes (kind, body, work_item_id)
+    values ('decision',
+            'ENRICH over NEW: the 23 Jul row covered the same ground but was hollow; '
+            'the new description was more specific, so it moved onto the existing row.',
+            (select id from work_items where title = 'Adapt overall application currency on the Summary page (admin tool)'));
+
+State how to reverse the change in the confirmation line. Nothing is
+deleted, so every outcome has an undo: `ENRICH` restores the previous
+text, `MERGE` clears `status`, `resolution` and `relates_to_id` on the
+retired row, `PROMOTE` and `REVIVE` put the bands back.
+
+## Batches
+
+A batch is one conversation, not fourteen. Compare it against history
+**and against itself** - the 2026-07-27 umbrella and its own components
+were created side by side, unlinked, because nothing did the second
+comparison:
+
+    -- self-diff: score each new line against the others in the same batch
+    select a.title, b.title, f.score
+      from unnest(array['line one', 'line two', 'line three']) with ordinality a(title, i),
+           unnest(array['line one', 'line two', 'line three']) with ordinality b(title, j),
+           lateral roadmap_find(a.title, 5, 0.40) f
+     where a.i < b.j and f.title = b.title;
+
+Then come back **once**: the clean items applied, the flagged ones
+grouped into a single pass. Fourteen sequential questions is a failure
+even if every one is correct.
+
+If a batch would land with `department`, `category_id` and
+`relates_to_id` uniformly null, the classification step has been skipped.
+Offer the classification as part of the same pass rather than writing
+unclassified rows.
+
+## At review time, too
+
+Contextualisation is not only an add-time step: the Unity enrolment pair
+were both already in the data when the duplicate was found. The standing
+sweep for high-band pairs that are not linked:
+
+    with live as (
+      select id, title, concat_ws(' ', title, summary, details) q, relates_to_id, parent_id
+        from work_items
+       where status not in ('done', 'dropped') and level in ('workstream', 'item')
+    )
+    select l.title, f.title, f.score, f.status, f.horizon
+      from live l, lateral roadmap_find(l.q, 3, 0.65, l.id) f
+      join work_items w on w.id = f.id
+     where coalesce(l.relates_to_id, '00000000-0000-0000-0000-000000000000') <> f.id
+       and coalesce(w.parent_id,    '00000000-0000-0000-0000-000000000000') <> l.id
+     order by f.score desc;
+
+And the hollow rows worth filling while the area is in hand:
+
+    select title, status, horizon, workstream_title from roadmap_searchable
+     where is_hollow and status not in ('done', 'dropped') order by horizon, priority;

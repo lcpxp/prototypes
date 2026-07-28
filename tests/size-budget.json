@@ -17,6 +17,10 @@
       "hard": 400,
       "note": "Process reference, read on demand rather than every session."
     },
+    "docs/ROADMAP-PLAYBOOK.md": {
+      "hard": 360,
+      "note": "The single operating manual: model, fields, operations, contextualisation, capture and review in one read. Splitting it is what it exists to avoid. The procedure detail and per-outcome SQL already live in docs/ROADMAP-CONTEXT.md. Exit plan: if it passes 360, move 'The review ritual' into docs/ROADMAP-REVIEW.md - it is the one self-contained section, and /roadmap already restates it."
+    },
     "supabase/seed.sql": {
       "hard": 550,
       "note": "Sample data, not logic; length tracks the number of seeded rows. Exit plan: split per domain (seed/ directory, one file per schema domain) if it nears this cap."
