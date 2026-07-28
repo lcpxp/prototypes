@@ -243,6 +243,27 @@ revoke execute on function public.dashboard_counts() from public, anon;
 grant execute on function public.dashboard_counts() to authenticated;
 
 -- ---------------------------------------------------------------
+-- Roadmap search surface (schema/31_roadmap_search.sql).
+--
+-- roadmap_searchable is a security_invoker view over work_items, so it
+-- carries no policies of its own: every read is filtered by the
+-- "work_items: members read" policy above, exactly as roadmap_current is.
+-- It exposes summary, details and resolution, which the board does not
+-- need, so it is granted to authenticated only - never to anon.
+--
+-- roadmap_find() is a plain (invoker-rights) SQL function reading only
+-- that view, so it inherits the same RLS. Signed-in users only.
+-- ---------------------------------------------------------------
+
+revoke all on public.roadmap_searchable from public, anon;
+grant select on public.roadmap_searchable to authenticated;
+
+revoke execute on function public.roadmap_find(text, int, numeric, uuid)
+  from public, anon;
+grant execute on function public.roadmap_find(text, int, numeric, uuid)
+  to authenticated;
+
+-- ---------------------------------------------------------------
 -- After running this file, promote your own account to admin:
 --
 --   update public.profiles set role = 'admin'
