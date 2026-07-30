@@ -29,6 +29,26 @@
       "hard": 500,
       "note": "The work-items domain (items, phases, dependencies, notes) in one file; split by sub-table if it nears the hard limit."
     },
+    "supabase/schema/50_review.sql": {
+      "hard": 500,
+      "note": "The application-review domain (waves, applications, evidence, revisions, two lookups, two guards) in one file, like 30_work.sql. Much of the length is the rationale for each column: these rules were each learned by getting them wrong, and the reasoning has to sit next to the constraint that encodes it. Exit plan: the two guard functions are the clean seam - move them to 51_review_guards.sql if it nears the cap."
+    },
+    "supabase/migrations/20260730120000_app_review.sql": {
+      "hard": 500,
+      "note": "Applied migrations are immutable history, never edited after the fact, so they are not split or reflowed. Length tracks the schema it creates."
+    },
+    "supabase/policies.sql": {
+      "hard": 500,
+      "note": "Deliberately one file: this is the security boundary, and every policy in the project must be readable in a single pass. Splitting it would make 'which tables can be written, and by whom' a multi-file question. Exit plan: none while that holds."
+    },
+    "assets/css/app-review.css": {
+      "hard": 500,
+      "note": "The review board: headline split, legend and filters, do-now strip, and the row treatments (tints, rails, markers, flags). The drawer is already split into app-review-detail.css. Exit plan: the legend and filter block is the next seam."
+    },
+    "tests/unit/appreview-model.test.js": {
+      "hard": 500,
+      "note": "One dataset drives the single-row derivations together: grouping, the three-way split, age, triggers, ordering and filtering. The cross-record cases are already split into appreview-findings.test.js. Exit plan: age and ordering are the next seam."
+    },
     "assets/css/components.css": {
       "hard": 500,
       "note": "Over soft. Exit plan: shed badge and table styles into components-data.css, linked wherever components.css is."

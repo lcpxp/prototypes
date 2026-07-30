@@ -101,6 +101,36 @@
   /* Risk & Underwriting - orange */
   --rm-acquiring: #b5561f;    --rm-acquiring-soft: #faeadd;
 
+  /* Application review triage categories. Each key mirrors a
+     triage_categories.key and is named by its colour_token column, so
+     a new category renders on a neutral fallback until a token is
+     added here - the same contract the --rm-* lanes use.
+
+     The base draws the left rail and the badge text at full strength;
+     the soft tint fills the row. Tints are deliberately saturated
+     enough to read as colour rather than off-white, because colour on
+     this board means "still live". Hues carry meaning: act is the
+     action blue, chase and investigate warm toward a nudge, blocked
+     and rejected are the two reds (stopped by us, declined by them),
+     monitor is cyan for an unverified assumption, watch violet for
+     standing attention, leave a settled sage, cancelled plain grey. */
+  --ar-act: #1f5fa8;         --ar-act-soft: #dfeaf7;
+  --ar-investigate: #b5561f; --ar-investigate-soft: #fae7d9;
+  --ar-blocked: #b0272e;     --ar-blocked-soft: #f9e3e4;
+  --ar-chase: #8f6400;       --ar-chase-soft: #f7eeda;
+  --ar-monitor: #02738d;     --ar-monitor-soft: #ddf2f9;
+  --ar-watch: #6a3fb5;       --ar-watch-soft: #ece5f9;
+  --ar-leave: #4a6b52;       --ar-leave-soft: #e6eee8;
+  --ar-rejected: #8a1f3d;    --ar-rejected-soft: #f7e0e6;
+  --ar-cancelled: #5a616b;   --ar-cancelled-soft: #e9ebee;
+
+  /* Settled rows share ONE flat surface and dim their text, so live
+     work is the only thing carrying colour. The rail keeps its
+     category base at full strength on top of this, which is what
+     keeps rejected, cancelled, confirmed and leave apart while dimmed. */
+  --ar-settled-bg: #f1f2f4;
+  --ar-settled-ink: #6b7280;
+
   /* HTTP method badge colours (convention-led, muted tints; a
      coloured marker dot beside the label is added in components.css) */
   --m-get: #0b7d70;
@@ -309,6 +339,27 @@
   --rm-sales: #e389ab;        --rm-sales-soft: #33121f;
   /* Risk & Underwriting - orange */
   --rm-acquiring: #e8a06a;    --rm-acquiring-soft: #331d0f;
+
+  /* Triage categories, retuned rather than inverted. The bases lift to
+     clear AA on a dark row; the tints are dark colours in their own
+     right, not the light tints flipped, because a flipped tint reads
+     as grey with a colour cast instead of as the category's colour. */
+  --ar-act: #7fabe6;         --ar-act-soft: #16243a;
+  --ar-investigate: #e8a06a; --ar-investigate-soft: #33210f;
+  --ar-blocked: #e2727a;     --ar-blocked-soft: #391f22;
+  --ar-chase: #d3a648;       --ar-chase-soft: #332a16;
+  --ar-monitor: #4fd8ee;     --ar-monitor-soft: #0f2a31;
+  --ar-watch: #b79bff;       --ar-watch-soft: #241d3d;
+  --ar-leave: #8fb89a;       --ar-leave-soft: #16241a;
+  --ar-rejected: #e58ba0;    --ar-rejected-soft: #331520;
+  --ar-cancelled: #9aa2ae;   --ar-cancelled-soft: #24272c;
+
+  /* Dimming inverts differently from tinting: in light mode a settled
+     row recedes by going flatter and lighter than the page, in dark
+     mode by going DARKER than --surface, toward --paper. Flipping the
+     light values would have made settled rows brighter than live ones. */
+  --ar-settled-bg: #191c21;
+  --ar-settled-ink: #79818e;
 
   --m-get: #4db3a7;
   --m-get-bg: #123230;

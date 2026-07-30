@@ -48,6 +48,14 @@
         statLabel: "Connected services",
       },
       {
+        key: "app-review",
+        title: "App Review",
+        path: "modules/app-review/",
+        heading: "Application review",
+        description: "Waves of merchant application triage against LaunchPad",
+        statTable: null,
+      },
+      {
         key: "prototypes",
         title: "Prototypes",
         path: "modules/prototypes/",
@@ -91,6 +99,12 @@
       workNotes: "work_notes",
       productCapabilities: "product_capabilities",
       moduleAccess: "module_access",
+      reviewWaves: "review_waves",
+      reviewApplications: "review_applications",
+      reviewEvidence: "review_evidence",
+      reviewRevisions: "review_revisions",
+      triageCategories: "triage_categories",
+      launchpadStatuses: "launchpad_statuses",
     },
     // Spec families group api_specs rows into distinct reference
     // "sites" inside the reference module. Order here is display
@@ -168,6 +182,15 @@
       case "roadmap":
       case "backlog":
         return id ? base + "index.html?item=" + encodeURIComponent(id) : base;
+      // A review row is only meaningful inside its wave, so the link
+      // opens the board with that application's drawer, never the row
+      // on its own.
+      case "app-review":
+        if (row && row.wave_id) {
+          return base + "wave.html?wave=" + encodeURIComponent(row.wave_id) +
+            (id ? "&application=" + encodeURIComponent(id) : "");
+        }
+        return id ? base + "wave.html?wave=" + encodeURIComponent(id) : base;
       case "platform":
         return id ? base + "index.html#capability-" + id : base;
       case "users":
