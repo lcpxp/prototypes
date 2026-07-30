@@ -33,20 +33,27 @@
       ");--row-tint:var(--" + token + '-soft)"';
   }
 
-  // The state marker glyph. The tick is drawn rather than typed: the
-  // repo bans emoji and every tick character sits inside that range.
+  // The state marker glyph. Open and settled are drawn rather than
+  // typed - the tick characters all sit inside the emoji range the
+  // repo bans - and they pair deliberately: a hollow ring for still
+  // open, a tick for done with. Assumed and ongoing stay as plain
+  // punctuation, which needs no drawing.
+  //
   // Meaning is carried by the adjacent visually-hidden label, never by
-  // the glyph or the colour alone.
+  // the glyph or the row colour alone.
+  var MARKER_SVG = 'viewBox="0 0 24 24" width="14" height="14" fill="none" ' +
+    'stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" ' +
+    'aria-hidden="true"';
+
   function markerGlyph(kind) {
     if (kind === "settled") {
-      return '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" ' +
-        'stroke="currentColor" stroke-width="3" stroke-linecap="round" ' +
-        'stroke-linejoin="round" aria-hidden="true"><path d="M4 12l6 6L20 6">' +
-        "</path></svg>";
+      return "<svg " + MARKER_SVG + ' stroke-width="3">' +
+        '<path d="M4 12l6 6L20 6"></path></svg>';
     }
     if (kind === "assumed") return "?";
     if (kind === "ongoing") return "!";
-    return "&#9675;"; // hollow circle: still open
+    return "<svg " + MARKER_SVG + ' stroke-width="2.5">' +
+      '<circle cx="12" cy="12" r="7"></circle></svg>';
   }
 
   // ----------------------------------------------------------------

@@ -148,6 +148,13 @@ half-finished change.
   this item", or "let's go through the roadmap", route through the
   playbook (the /roadmap and /roadmap-add commands wrap it). Database
   writes only; the repo does not change.
+- Application review (a wave of merchant application triage, or
+  screenshots of the LaunchPad list and mailbox threads): follow
+  docs/APP-REVIEW.md - the wave lifecycle, the thirteen domain rules,
+  how to classify and the copy-paste SQL. The /app-review command
+  wraps it. Database writes only; the repo does not change, and the
+  portal at modules/app-review/ only displays what the session wrote.
+  Never set confirmed_at yourself: confirmation is a human act.
 - New prototype: create the page under modules/prototypes/, follow
   the script include order above, then insert a registry row into the
   prototypes table. Do not hand-edit navigation.
