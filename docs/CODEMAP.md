@@ -70,6 +70,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
 | docs/CHANGELOG.md | 232 | Changelog |
+| docs/COPILOT.md | 197 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |

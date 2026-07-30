@@ -52,6 +52,28 @@ signal there is: work is being scheduled against something nobody has
 written down. Read the previous round's work_documents row too - it
 records what was already asked and what was deliberately held back.
 
+**Counting rows is not measuring the gap.** A null column means a field
+is empty, not that the knowledge is missing - it may be held somewhere
+richer. The reference specs are the trap: `api_topics` carries runbooks,
+data models, gap registers and whole enum catalogues that no count over
+`work_items` will ever surface. Read them before scoping anything:
+
+    -- what the specs already document, and what they say is missing
+    select s.title, t.title, jsonb_array_length(t.blocks) blocks
+      from api_topics t join api_specs s on s.id = t.spec_id
+     order by s.title, t.sort_order;
+
+    -- every enumerated value set already catalogued
+    select b->>'name' name, b->>'field' field
+      from api_topics t, lateral jsonb_array_elements(t.blocks) b
+     where b->>'kind' = 'values';
+
+A spec's own **gap register** is the most valuable input to a round:
+it is the system stating what it does not know. Sort those gaps by who
+can close them. Most are capture gaps - another HAR run closes them and
+no document assistant can. The few that say "the PRD describes this and
+we never observed it" are exactly what a round is for.
+
 ### 2. Scope the round
 
 Five to ten topics. Fewer wastes the round; more degrades the answer
@@ -59,9 +81,22 @@ before it reaches the end of the list. Order them by value, state that
 order in the request, and tell the assistant to stop at a topic boundary
 rather than truncate.
 
-Each topic carries: why it is needed in one line, a bullet list of
-concrete questions, and a cap on how much to return. A topic phrased as a
-subject heading gets a subject-heading answer.
+Each topic carries three parts, in this order: **what we already hold**
+on the subject, **the gap** stated as one sentence, and a bullet list of
+concrete questions. A topic phrased as a subject heading gets a
+subject-heading answer; "Unity integration" returns the sequence we
+already have, while "the 17 steps PRD V3 defines, which supersede the 14
+we captured" returns the thing we lack.
+
+Prefer topics whose answer contains a number, a threshold, a band
+boundary, a named list or a named approver. Policy and commercial
+knowledge - risk band cut points, commission mechanics, fee catalogues,
+who signs off - is what never appears in a captured API and never gets
+written down anywhere the system can reach. Enum literals, status
+machines and call sequences almost always exist already.
+
+A round that resolves a contradiction earns its place twice over: where
+two stored records disagree, name both and ask which is current.
 
 ### 3. Write the request
 
@@ -80,6 +115,13 @@ are not softened:
   which one is current.
 - **Conflict.** Contradictions are reported, newest first, both retained.
   The assistant never picks a winner; the owner does.
+
+Plus a sixth that only exists because the store is already rich: a
+**do-not-send list**. The request carries a section stating what is
+already held - the status machines, the call sequences, the enum
+catalogues, the verified integrations - and instructs the assistant to
+skip anything that repeats it. Without it a weaker model answers the
+easy, well-documented part of every topic and never reaches the gap.
 
 Plus a redaction rule (no credentials, endpoints, personal contact
 details or individual merchant names) and a format-only rule (no

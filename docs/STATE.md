@@ -4,19 +4,19 @@ Updated: 2026-07-30 (session)
 Branch: claude/launchpad-copilot-handover-bewgof (docs only; main untouched)
 
 ## In progress
-Copilot capture round 1 written, awaiting the owner's run. Protocol
-committed as docs/COPILOT.md (gap measurement, five mandates,
-validation gate, storage routing), referenced from CLAUDE.md. The
-request names real partners and products, so it stays out of git: it is
-in the session scratchpad and goes to work_documents once the round runs.
+Copilot capture round 1 written, awaiting the owner's run. Protocol in
+docs/COPILOT.md, referenced from CLAUDE.md. The request names real
+partners: scratchpad now, work_documents once the round runs.
 
-Ten topics, priority order: glossary, roles and permissions, application
-statuses, pricing and fees, product catalogue, Unity integration,
-screening and approval, partner model, definitions for 13 named hollow
-rows, delivery process and dates. Topics 1-6 are the core. Scope came
-from measurement: 90 items no summary, 154 no details, 213 no
-dates/sprints/PRD-status, 0 external_ref; pricing (22 items), core
-service (42), insights (19), partners (18) carry zero capability rows.
+Scope rewritten after reading api_topics: the specs already hold the
+status machine, both runbooks, the RBAC matrix and ~60 enum sets, so the
+first draft asked for known material. Now targets policy and commercial
+knowledge only - IVR band thresholds and the auto-approval rule, the
+Commercial Matrix, commission, the fee catalogue, named roles and
+approval authority, PRD V3's 17 steps and MerchantProvisioner,
+AnyPay/Oracle commercials, the ISO+PAYFAC vs four-partner-type
+contradiction, 12 hollow rows, delivery governance, 12-term annex, and a
+do-not-send list of everything already held.
 
 ## Next steps
 1. Owner runs the round; validate through the gate in docs/COPILOT.md
