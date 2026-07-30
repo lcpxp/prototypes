@@ -1,22 +1,13 @@
 # Current state
 
-Updated: 2026-07-30 (session)
-Branch: claude/launchpad-copilot-handover-bewgof (docs only; main untouched)
+Updated: 2026-07-30 (merged to main)
 
-## In progress
-Copilot capture rounds 1 and 2 both run, gated and applied; the process is
-closed. Protocol in docs/COPILOT.md, referenced from CLAUDE.md. Responses
-stored verbatim with URLs redacted (work_documents 96f2a332, 59fde8b1).
+Copilot capture protocol complete. Rounds 1 and 2 run, validated and
+applied. Documentation merged to main: docs/COPILOT.md (protocol), docs/ROADMAP-CONTEXT.md (contextualisation), docs/ROADMAP-PLAYBOOK.md (updated), tests/size-budget.json (exceptions), docs/STATE.md checkpoint.
 
-Landed: 19 facts/decisions/risks, 4 domain_terms (Merchant Contributor,
-EIT, T+1 settlement, Decisioned) plus Partner type rewritten to
-four-intended-two-built, 2 product_capabilities (fee-model-domains,
-acquirer-selection-product-organisation - first rows behind the pricing
-and acquirer areas), the Unity runbook corrected to PRD V3's 17-step
-numbering with failure semantics, 3 hollow rows filled, and the first
-start_sprint value in the system (26-04). Owner rejected the User Roles
-v1 list (twice) and all fee amounts (permanently out of scope); roles and
-IVR thresholds are config, so both close by capture not by round.
+Supabase data live: 19 work_notes, 4 domain_terms, 2 product_capabilities,
+1 api_topics update, 3 hollow rows filled, first start_sprint value (26-04),
+2 risk notes (unapplied pending owner), 1 question note (5 candidates).
 
 ## Next steps
 1. Round 3 when wanted: brief is a decision note in work_notes. Targets
