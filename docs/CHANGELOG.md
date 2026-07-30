@@ -11,6 +11,18 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- App Review: a new area holding waves of merchant application triage. A
+  wave reconciles the LaunchPad list against the mail trail, because
+  LaunchPad status alone does not say what needs doing - a record showing
+  "Awaiting Contract Send" may already be mid-underwriting, and one
+  showing "Cancelled" may have been approved days earlier. The board reads
+  in LaunchPad order, colours rows by what they need, and marks each with a
+  state glyph so the fastest read is scanning one edge. An assumed
+  "nothing to do here" is kept visibly apart from a confirmed one and stays
+  on the work list until a person confirms it. The wave list carries a
+  standing watch list across every open wave, each item showing what it is
+  waiting on - a date or a named dependency - which is what a wave exists
+  to produce.
 - Roadmap intake now places new work against what is already on the board
   before writing it, and leads with a recommendation - improve the existing
   row, merge, promote, revive, associate or split - instead of always

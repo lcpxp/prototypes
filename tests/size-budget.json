@@ -94,8 +94,12 @@
       "note": "Over soft: one dataset (tests/lib/roadmap.js) drives the level/layout benchmarks together. The custom-view and department-filter cases are already split into roadmap-views-custom.test.js; the exec-board cases are the next split seam."
     },
     "docs/ARCHITECTURE.md": {
-      "hard": 300,
+      "hard": 320,
       "note": "Architecture reference, read on demand rather than every session."
+    },
+    "docs/APP-REVIEW.md": {
+      "hard": 300,
+      "note": "The application-review operating manual: wave lifecycle, the thirteen domain rules, how to classify, and the copy-paste SQL in one read. Because the portal never writes this data, these rules cannot be enforced by a UI - this document IS the enforcement, so splitting it is what it exists to avoid. Exit plan: if it passes 300, move 'Operations' into docs/APP-REVIEW-SQL.md, which is the one self-contained section."
     },
     "docs/ROADMAP.md": {
       "hard": 300,

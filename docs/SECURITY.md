@@ -48,6 +48,36 @@ and caches persist.
 3. Assume a table with no policies is world-readable via the anon key,
    because with RLS off, it is.
 
+## Application review: read-only by design
+
+The review tables (50_review.sql) hold the most commercially sensitive
+data in the portal - merchant and partner names, application ids, risk
+levels and mail-trail contents. They are handled differently from every
+other content table, and the difference is deliberate:
+
+- **Select is the only policy granted.** There is no insert, update or
+  delete policy for authenticated users, not even for admins, so no
+  write path to this data exists from the browser at all. Every write
+  happens in a Claude Code session over the service connection. Adding
+  a write policy here does not just enable an edit, it moves the
+  boundary of the feature - do not add one without the owner asking.
+- **Screenshots are never persisted.** They carry everything sensitive
+  in image form. The session extracts what it needs and lets the image
+  go; review_evidence.screenshot_ref is a human-written locator, never
+  a URL and never an image. There is no storage bucket, and adding one
+  would need the owner's agreement first.
+- **Nothing about a record reaches browser storage.** Filter state is
+  held in memory for the session only.
+- **App Review is kept out of global search**, so merchant names never
+  surface in a nav dropdown.
+
+Verified on the live project: as anon, all six tables return zero rows;
+as a signed-in member whose app-review grant is revoked, zero rows; as
+a signed-in user holding the grant, insert is refused outright and
+update and delete affect no rows (RLS filters them to nothing rather
+than erroring, so check the row count, not just the absence of an
+error, when re-testing this).
+
 ## Account and access practice
 
 - Accounts are created by an admin in the Supabase dashboard

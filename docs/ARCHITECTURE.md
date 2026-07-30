@@ -177,6 +177,37 @@ waterfall, exported snapshots) reads these same rows, so
 reprioritising or rescheduling is always a data change, never a
 code change.
 
+Application review (50_review.sql, docs/APP-REVIEW.md):
+
+- review_waves: one wave per point-in-time review of the merchant
+  application estate (draft, active, closed). carried_from_wave_id
+  links a wave to the one whose watch list it inherited.
+- review_applications: one row per LaunchPad application in a wave.
+  Three separate columns hold three separate things and are never
+  collapsed: launchpad_status (external truth), triage_category (our
+  judgement), and confirmed_at/confirmed_by (a human's decision about
+  our own review, applicable to any row whatever its category).
+- review_evidence: the mail trail a classification rests on.
+  is_truncated marks a source that cut off mid-sentence; signal types
+  what an entry means (approval, decline, delivery_failure, request)
+  so contradictions are found structurally rather than by matching
+  words in prose. Screenshots are never persisted - screenshot_ref is
+  a human-written locator, never a URL.
+- review_revisions: every change to a classification, written by
+  trigger rather than by the caller, so it cannot be skipped.
+- launchpad_statuses, triage_categories: lookups that carry behaviour
+  as well as labels. age_meaningful decides whether a record's age is
+  a staleness signal at all (it is false for Application In Progress,
+  where a dormant draft may sit for months with nothing handed to us);
+  requires_note forces a real message onto Pending Further Information;
+  group_key drives the needs-action / ongoing / settled split.
+
+This module is READ ONLY in the browser: policies.sql grants select and
+nothing else, and every write happens in a Claude Code session over the
+service connection. Age, group membership, the three-way split, the
+do-now ordering and duplicate detection are all derived at render time
+and never stored.
+
 ## Schema and migrations
 
 Two representations of the same database, kept in step:

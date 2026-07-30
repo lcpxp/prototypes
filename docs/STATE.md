@@ -1,38 +1,39 @@
 # Current state
 
-Updated: 2026-07-28 (session)
-Branch: main is trunk; roadmap contextualisation merged and pushed there.
+Updated: 2026-07-30 (session)
+Branch: claude/app-review-portal-feature-u7vks1 (App Review), off main.
 
 ## In progress
-Roadmap intake contextualisation is complete and live. New in Supabase:
-roadmap_searchable (every work_items row, no status filter, with the
-text columns, relates_to and a computed is_hollow) and roadmap_find -
-IDF-weighted token overlap plus pg_trgm, damped for short queries.
-Bands calibrated against the 2026-07-27 batch: 0.65 / 0.40 / 0.22.
-Protocol in docs/ROADMAP-CONTEXT.md, summarised in the playbook; both
-/roadmap commands and docs/WORKFLOW.md route through it.
-roadmap_current and the board are untouched.
+App Review is built on its branch: six tables
+(supabase/schema/50_review.sql), select-only RLS, the wave list with a
+standing watch list, the triage board, the detail drawer, a shared
+core/drawer.js, and docs/APP-REVIEW.md plus /app-review as the session
+protocol. 185 benchmarks green. No merchant data in the repo; the review
+tables hold only the seeded status and category vocabulary. Not merged to
+main, and no wave has been run through it yet - the first real wave is
+the test of whether the board reads the way the owner works.
 
-Daopay user-role demo unchanged and still ready for another wave
-(modules/prototypes/daopay/).
+Roadmap intake contextualisation remains live and untouched.
 
 ## Next steps
-1. Owner reviews the 13 unlinked high-band pairs the sweep found; the
-   top one (0.982) looks like a genuine duplicate. Not yet acted on.
-2. Fill hollow rows (roadmap_searchable.is_hollow) in Now.
-3. Next wave of prototype adjustments from the owner.
-4. Roadmap context enrichment wave 2: Next/Later + backlog items.
-5. Wire core_launchpad as a live owner: schema CHECK, tokens.css colour,
+1. Run a real wave through /app-review and see what the board gets
+   wrong. Expect the do-now ordering and the staleness threshold
+   (14 days, App.appReview.STALE_DAYS) to need tuning against real data.
+2. Merge the App Review branch to main once that wave confirms it.
+3. Owner reviews the 13 unlinked high-band roadmap pairs the sweep
+   found; the top one (0.982) looks like a genuine duplicate.
+4. Fill hollow rows (roadmap_searchable.is_hollow) in Now.
+5. Migrate the roadmap drawer onto core/drawer.js and delete
+   roadmap-drawer.js; left alone rather than refactored mid-feature.
+6. Wire core_launchpad as a live owner: schema CHECK, tokens.css colour,
    department filter.
-6. Drawer follow-ups: drawer LINKS relates_to but cannot SET it (needs a
-   write path/RLS); same for inherited area notes and Tier 3 schema.
 
 ## Open decisions
-- ROADMAP-PLAYBOOK.md size budget raised to 360 (was 300) so
-  contextualisation could live in the single manual. Exit plan in
-  tests/size-budget.json: split the review ritual out. Owner may
-  prefer that split now.
-- UMBRELLA is detected from the request's shape, not from a score - a
-  heading matches everything weakly and nothing strongly.
-- Inter via Google Fonts: AGREED. The one external stylesheet.
-- Contracts table Type/Status split: built the screenshot's way; confirm.
+- evidence_confidence uses corroborated/inferred/truncated, not the
+  handover's confirmed/inferred/truncated_evidence: a value called
+  "confirmed" beside confirmed_by re-collapses the distinction rule 1
+  protects. Flagged to the owner, not yet confirmed.
+- App Review stays out of global search so merchant names never appear
+  in a nav dropdown. Revisit if finding records fast matters.
+- Pre-existing: roadmap_move_workstream has a mutable search_path
+  (get_advisors warns). One-line fix, out of scope here.

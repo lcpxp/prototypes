@@ -6,6 +6,7 @@ document instead of walking the tree or reading whole files.
 
 | File | Lines | Purpose |
 |---|---:|---|
+| .claude/commands/app-review.md | 45 |  |
 | .claude/commands/roadmap-add.md | 42 |  |
 | .claude/commands/roadmap.md | 66 |  |
 | .claude/settings.json | 49 |  |
@@ -13,8 +14,10 @@ document instead of walking the tree or reading whole files.
 | .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 24 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 205 | CLAUDE.md |
+| CLAUDE.md | 212 | CLAUDE.md |
 | README.md | 17 | LPio |
+| assets/css/app-review-detail.css | 112 | app-review-detail.css - The application review detail drawer: the |
+| assets/css/app-review.css | 378 | app-review.css - The application review board and wave list. |
 | assets/css/base.css | 111 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 447 | components.css - Reusable interface components: cards, forms, |
 | assets/css/layout.css | 351 | layout.css - Navigation, page scaffold and grids. |
@@ -28,16 +31,23 @@ document instead of walking the tree or reading whole files.
 | assets/css/roadmap-detail.css | 325 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 397 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 394 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
-| assets/css/tokens.css | 393 | tokens.css - Design tokens for the LPio hub. |
+| assets/css/tokens.css | 444 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
+| assets/js/core/drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 191 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 214 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
 | assets/js/core/ui.js | 285 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
+| assets/js/pages/appreview-detail.js | 174 | appreview-detail.js - The drawer body for one application. A pure |
+| assets/js/pages/appreview-findings.js | 145 | appreview-findings.js - The cross-record half of the review model: |
+| assets/js/pages/appreview-model.js | 240 | appreview-model.js - What the board derives from a single row: its |
+| assets/js/pages/appreview-render.js | 288 | appreview-render.js - The board's HTML builders. Data in, string |
+| assets/js/pages/appreview-waves.js | 163 | appreview-waves.js - The wave list for modules/app-review/index.html, |
 | assets/js/pages/backlog.js | 324 | backlog.js - The master work list for modules/backlog/. |
 | assets/js/pages/daopay-app.js | 275 | daopay-app.js - The application summary page in the Daopay replica: |
 | assets/js/pages/daopay-data.js | 251 | daopay-data.js - Fixture data and the role switch for the Daopay EU |
@@ -68,24 +78,28 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap.js | 505 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
-| docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 227 | Changelog |
+| docs/APP-REVIEW.md | 258 | Application review playbook |
+| docs/ARCHITECTURE.md | 278 | Architecture |
+| docs/CHANGELOG.md | 244 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
+| docs/ROADMAP-CONTEXT.md | 241 | Contextualising new work |
 | docs/ROADMAP-PLAYBOOK.md | 360 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 154 | Roadmap process |
 | docs/ROADMAP.md | 199 | Roadmap |
-| docs/SECURITY.md | 80 | Security model |
+| docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 40 | Current state |
+| docs/STATE.md | 44 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
 | index.html | 76 | Sign in - LPio / LaunchPad IO |
+| modules/app-review/index.html | 74 | Application review - LPio / LaunchPad IO |
+| modules/app-review/wave.html | 98 | Wave - Application review - LPio / LaunchPad IO |
 | modules/backlog/index.html | 93 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 62 | Integrations - LPio / LaunchPad IO |
 | modules/platform/index.html | 56 | Platform - LPio / LaunchPad IO |
@@ -130,23 +144,30 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260722160000_work_item_associated_departments.sql | 68 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722170000_roadmap_move_workstream_cascade.sql | 65 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722190000_work_item_deliverable_level.sql | 23 | Deliverables: a third presentation level for work_items. A deliverable |
-| supabase/policies.sql | 272 | ------------------------------------------------------------------ |
+| supabase/migrations/20260728120000_roadmap_searchable_and_find.sql | 190 | Contextualisation read surface: roadmap_searchable + roadmap_find. |
+| supabase/migrations/20260730120000_app_review.sql | 334 | --------------------------------------------------------------- |
+| supabase/policies.sql | 339 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 487 | ------------------------------------------------------------------ |
+| supabase/schema/31_roadmap_search.sql | 192 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
+| supabase/schema/50_review.sql | 394 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
+| tests/checks/roadmap-intake.test.js | 109 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
-| tests/size-budget.json | 86 |  |
+| tests/size-budget.json | 106 |  |
+| tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
+| tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
@@ -165,15 +186,21 @@ document instead of walking the tree or reading whole files.
 
 | Symbol | Location |
 |---|---|
+| App.drawer | assets/js/core/drawer.js:35 |
+| isOpen() | assets/js/core/drawer.js:45 |
+| focusable() | assets/js/core/drawer.js:49 |
+| trapTab() | assets/js/core/drawer.js:60 |
+| open() | assets/js/core/drawer.js:75 |
+| close() | assets/js/core/drawer.js:91 |
 | readCache() | assets/js/core/guard.js:54 |
 | writeCache() | assets/js/core/guard.js:61 |
 | fetchAccess() | assets/js/core/guard.js:68 |
 | App.canAccess | assets/js/core/guard.js:88 |
 | App.onAuthed | assets/js/core/guard.js:116 |
 | enforceModule() | assets/js/core/guard.js:124 |
-| App.moduleHref | assets/js/core/registry.js:144 |
-| App.itemHref | assets/js/core/registry.js:154 |
-| App.departmentLabel | assets/js/core/registry.js:184 |
+| App.moduleHref | assets/js/core/registry.js:158 |
+| App.itemHref | assets/js/core/registry.js:168 |
+| App.departmentLabel | assets/js/core/registry.js:207 |
 | sources() | assets/js/core/search.js:24 |
 | canReach() | assets/js/core/search.js:47 |
 | moduleByKey() | assets/js/core/search.js:51 |
@@ -216,6 +243,55 @@ document instead of walking the tree or reading whole files.
 | themeIcon() | assets/js/core/ui.js:135 |
 | renderNav() | assets/js/core/ui.js:152 |
 | App.onThemeChange | assets/js/core/ui.js:260 |
+| param() | assets/js/pages/appreview-board.js:32 |
+| day() | assets/js/pages/appreview-board.js:36 |
+| renderAll() | assets/js/pages/appreview-board.js:46 |
+| renderFiltered() | assets/js/pages/appreview-board.js:63 |
+| renderWaveHead() | assets/js/pages/appreview-board.js:73 |
+| openApplication() | assets/js/pages/appreview-board.js:91 |
+| toggleCategory() | assets/js/pages/appreview-board.js:105 |
+| soloGroup() | assets/js/pages/appreview-board.js:115 |
+| wire() | assets/js/pages/appreview-board.js:128 |
+| loadEvidence() | assets/js/pages/appreview-board.js:161 |
+| day() | assets/js/pages/appreview-detail.js:30 |
+| block() | assets/js/pages/appreview-detail.js:36 |
+| paragraph() | assets/js/pages/appreview-detail.js:42 |
+| confirmation() | assets/js/pages/appreview-detail.js:52 |
+| findingsHtml() | assets/js/pages/appreview-detail.js:66 |
+| trailHtml() | assets/js/pages/appreview-detail.js:77 |
+| triggerHtml() | assets/js/pages/appreview-detail.js:104 |
+| metadataHtml() | assets/js/pages/appreview-detail.js:112 |
+| App.appReviewDetail | assets/js/pages/appreview-detail.js:142 |
+| duplicateKeys() | assets/js/pages/appreview-findings.js:27 |
+| duplicateKeyOf() | assets/js/pages/appreview-findings.js:39 |
+| partnerBlockers() | assets/js/pages/appreview-findings.js:47 |
+| findings() | assets/js/pages/appreview-findings.js:64 |
+| groupOf() | assets/js/pages/appreview-model.js:59 |
+| split() | assets/js/pages/appreview-model.js:67 |
+| categoryCounts() | assets/js/pages/appreview-model.js:77 |
+| ageOf() | assets/js/pages/appreview-model.js:103 |
+| marker() | assets/js/pages/appreview-model.js:128 |
+| triggerOf() | assets/js/pages/appreview-model.js:150 |
+| doNowOrder() | assets/js/pages/appreview-model.js:165 |
+| carryForward() | assets/js/pages/appreview-model.js:186 |
+| visible() | assets/js/pages/appreview-model.js:210 |
+| index() | assets/js/pages/appreview-model.js:218 |
+| rowStyle() | assets/js/pages/appreview-render.js:28 |
+| markerGlyph() | assets/js/pages/appreview-render.js:48 |
+| splitHtml() | assets/js/pages/appreview-render.js:72 |
+| partnerPanelHtml() | assets/js/pages/appreview-render.js:86 |
+| doNowItem() | assets/js/pages/appreview-render.js:106 |
+| doNowHtml() | assets/js/pages/appreview-render.js:119 |
+| legendHtml() | assets/js/pages/appreview-render.js:159 |
+| flagsHtml() | assets/js/pages/appreview-render.js:200 |
+| ageCell() | assets/js/pages/appreview-render.js:224 |
+| rowHtml() | assets/js/pages/appreview-render.js:236 |
+| boardHtml() | assets/js/pages/appreview-render.js:261 |
+| waveHref() | assets/js/pages/appreview-waves.js:19 |
+| day() | assets/js/pages/appreview-waves.js:25 |
+| triggerCell() | assets/js/pages/appreview-waves.js:35 |
+| watchingHtml() | assets/js/pages/appreview-waves.js:48 |
+| wavesHtml() | assets/js/pages/appreview-waves.js:87 |
 | bandOf() | assets/js/pages/backlog.js:34 |
 | fmtDate() | assets/js/pages/backlog.js:40 |
 | kvHtml() | assets/js/pages/backlog.js:44 |
@@ -549,6 +625,14 @@ document instead of walking the tree or reading whole files.
 | lineOf() | tests/lib/repo.js:28 |
 | loadView() | tests/lib/roadmap.js:12 |
 | sampleData() | tests/lib/roadmap.js:36 |
+| loadFindings() | tests/unit/appreview-findings.test.js:20 |
+| plain() | tests/unit/appreview-findings.test.js:31 |
+| app() | tests/unit/appreview-findings.test.js:35 |
+| loadModel() | tests/unit/appreview-model.test.js:20 |
+| plain() | tests/unit/appreview-model.test.js:33 |
+| categories() | tests/unit/appreview-model.test.js:39 |
+| statuses() | tests/unit/appreview-model.test.js:55 |
+| app() | tests/unit/appreview-model.test.js:68 |
 | load() | tests/unit/daopay-role.test.js:18 |
 | loadBuilder() | tests/unit/gallery-future.test.js:14 |
 | load() | tests/unit/pci-ixopay.test.js:16 |
