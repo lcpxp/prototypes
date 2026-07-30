@@ -2,21 +2,19 @@
 
 How a knowledge round with an external document assistant runs: choosing
 the gaps, writing the request, validating the answer, storing what
-survives.
-
-The third intake protocol. docs/WORKFLOW.md captures what we are doing;
-docs/PLATFORM.md captures what the platform is; this one covers material
-held in documents nobody has pasted into a session. The assistant has the
+survives. The third intake protocol - docs/WORKFLOW.md captures what we
+are doing, docs/PLATFORM.md what the platform is, this one material held
+in documents nobody has pasted into a session. The assistant has the
 documents, this system has the structure, and a round joins the two.
 
 ## Why it is a protocol and not a chat
 
-The assistant answering is weaker than the session reading its answer, has
-no view of what is already stored, and cannot tell a gap from a topic it
-did not look hard enough at. Left unconstrained it returns fluent prose
-assembled from general domain knowledge - the one output worse than
-silence, because a missing fact announces itself and an invented one does
-not. Every rule below makes silence cheap and invention expensive.
+The assistant is weaker than the session reading its answer, cannot see
+what is already stored, and cannot tell a gap from a topic it did not
+look hard enough at. Unconstrained it returns fluent prose from general
+domain knowledge - worse than silence, because a missing fact announces
+itself and an invented one does not. Every rule below makes silence cheap
+and invention expensive.
 
 ## The five stages
 
@@ -39,7 +37,7 @@ because work is being scheduled against something nobody wrote down:
      where is_hollow and status not in ('done', 'dropped');
 
 Read the previous round's work_documents row too - it records what was
-asked, what was rejected and what was held back.
+asked, rejected and held back.
 
 **Counting rows is not measuring the gap.** A null column means a field
 is empty, not that the knowledge is missing. The reference specs are the
@@ -58,9 +56,9 @@ before scoping anything:
 
 A spec's own **gap register** is the most valuable input to a round: the
 system stating what it does not know. Sort those gaps by who can close
-them. Most are capture gaps that only another HAR run closes. The few
-saying "the PRD describes this and we never observed it" are what a round
-is for.
+them - most are capture gaps only another HAR run closes; the few saying
+"the PRD describes this and we never observed it" are what a round is
+for.
 
 ### 2. Scope the round
 
@@ -89,7 +87,10 @@ are not softened:
 - **Provenance.** Every fact names one document, one date and one
   verbatim quote. A fact with no quote is discarded on arrival; say so.
 - **Verbatim.** Quotes are copied, capped at roughly 40 words, never
-  tidied. A paraphrase presented as a quote defeats the whole check.
+  tidied, and must contain the **fact** rather than its subject: "Done
+  Ongoing" does not evidence a status vocabulary, "2025" does not
+  evidence a date. Show a topic-quote failing in the wrong example, or
+  the mandate is met mechanically and proves nothing.
 - **Not-found.** Absence is a correct and valuable answer, stated in
   those words more than once - it is the instruction a weaker model
   discards first.
@@ -99,11 +100,11 @@ are not softened:
   The assistant never picks a winner; the owner does.
 
 Plus a sixth that only exists because the store is already rich: a
-**do-not-send list** stating what is already held - status machines, call
+**do-not-send list** of what is already held - status machines, call
 sequences, enum catalogues, verified integrations - which the assistant
 must skip. Without it a weaker model answers the easy, well-documented
-part of every topic and never reaches the gap. Plus a redaction rule (no
-credentials, endpoints, contact details or merchant names) and a
+part of every topic and never reaches the gap. Plus redaction (no
+credentials, endpoints, contact details, merchant names) and a
 format-only rule (no preamble, no closing offer).
 
 The response format is flat and delimited, never nested JSON: fixed
@@ -115,22 +116,23 @@ of instruction.
 
 Ask for a document inventory as the first section, always, and check it
 against the citations in the body: round 1 listed seven documents then
-cited thirteen, and the six it omitted included the one most likely to
-hold the delivery dates that round failed to find.
+cited thirteen, and the six omitted included the one most likely to hold
+the delivery dates that round failed to find.
 
 **Weigh the format against the compliance you get.** An eight-field block
 is worth asking for once; if a round returns five quotes across fifty
 assertions, drop to the three that matter - fact, quote, source. A format
 that is ignored yields nothing; a lighter one that holds yields
-provenance on every line.
+provenance on every line. Then police what the lighter format lets
+through: round 2 quoted every fact and a third of the quotes proved only
+the topic.
 
-Rounds come in two shapes. An **exploratory** round asks about subjects
-and discovers what exists. A **targeted** round names specific files and
-asks a short list of questions under each - what an exploratory round's
-inventory earns, and far richer per token, so only the first round of a
-new area should be broad. Where a named file is a spreadsheet, ask for it
-as a delimited table in its own column names: rows are more faithful and
-easier to ingest than a summary.
+Rounds come in two shapes. An **exploratory** round asks about subjects;
+a **targeted** round names specific files with a short question list
+under each - what an exploratory round's inventory earns, and far richer
+per token, so only the first round of a new area should be broad. Where
+a named file is a spreadsheet, ask for it as a delimited table in its own
+column names: rows are more faithful than a summary.
 
 ### 4. The validation gate
 
@@ -140,27 +142,34 @@ landing silently in a store later sessions treat as true.
 
 The session prepares the answer for review and does not apply it:
 
-1. Discard every fact that arrives without a quote, and say how many.
-2. Group what remains into confirm / query / reject. Query means a
+1. Discard every fact whose quote is missing or proves only the topic,
+   and say how many.
+2. Check each file was actually opened and that its quotes name the file
+   requested - a partial open quoting a different title means the answer
+   is about some other document.
+3. Group what remains into confirm / query / reject. Query means a
    specific doubt - the source predates something we know changed, or it
    contradicts a stored row.
-3. For each contradiction, show both sides with their dates and say
+4. For each contradiction, show both sides with their dates and say
    which is newer.
-4. Put the questions in **one** batched pass with a recommendation
+5. Put the questions in **one** batched pass with a recommendation
    against each. Sequential questions are a failure even when every one
    is correct - the same rule as docs/ROADMAP-CONTEXT.md.
-5. Apply only what the owner confirms. Record what was rejected and why.
+6. Apply only what the owner confirms. Record what was rejected and why.
 
 Anything the owner does not reach stays unapplied. A partial round is a
-normal outcome.
+normal outcome. Where the owner closes the round without answering,
+apply what is additive and evidenced - facts, definitions, capabilities,
+hollow-row enrichment - and record anything that would change a roadmap
+row's status or create one as a `risk` or `question` note against that
+row. The drift stays visible without being silently applied.
 
-Two gate outcomes become standing decisions rather than one-off
-rejections, because they change every future round. A **rejected source**
-stays rejected, recorded with its reason; a source rejected twice is not
-a source, and the gap it stood in for needs closing another way. A
-**subject the owner does not want captured** - figures that go stale,
-detail another system will own - becomes a scope boundary in the request
-itself, which is cheaper than rejecting the same material every round.
+Two gate outcomes become standing decisions, because they change every
+future round. A **rejected source** stays rejected, recorded with its
+reason; rejected twice, it is not a source, and the gap needs closing
+another way. A **subject the owner does not want captured** - figures
+that go stale, detail another system will own - becomes a scope boundary
+in the request, cheaper than rejecting it every round.
 
 A gap no document answers is often the wrong question rather than a
 missing answer: thresholds held in an admin screen, roles in a
@@ -169,8 +178,7 @@ plainly does, suspect configuration and redirect to a capture session.
 
 ### 5. Store
 
-Confirmed material lands by kind, following the existing protocols rather
-than inventing a path:
+Confirmed material lands by kind, following the existing protocols:
 
 | What arrived | Where it goes |
 | --- | --- |
@@ -181,19 +189,18 @@ than inventing a path:
 | Substance for an existing roadmap row | `work_items.summary` / `details`, via the ENRICH path in docs/ROADMAP-CONTEXT.md |
 | A new piece of work | `work_items`, contextualised first - never inserted straight |
 
-Set `verified = true` only on rows the owner confirmed in the gate. A
-fact accepted despite arriving unquoted or at low confidence is stored
-`verified = false`, with the doubt written into a work_note. Roadmap rows
-are never created directly from a round: every candidate goes through
-contextualisation first, exactly as a pasted document would, since the
-round is a high-volume intake path and that is where duplicates come
-from.
+Set `verified = true` only on rows the owner confirmed in the gate; a
+fact accepted despite a weak quote is stored `verified = false` with the
+doubt in a work_note. Roadmap rows are never created directly from a
+round - every candidate goes through contextualisation first, exactly as
+a pasted document would, since a round is a high-volume intake path and
+that is where duplicates come from.
 
 ## Boundaries
 
 Both the request and the response name real partners, products and
-merchants, so both live outside the repo: in the scratchpad while the
-request is written, and in `work_documents` once the round runs. Only
-this protocol is committed. Real material never enters git, including
-commit messages and docs/STATE.md. Redaction happens at ingestion and is
-noted in the summary - the same rule as the other two protocols.
+merchants, so both live outside the repo: the scratchpad while the
+request is written, `work_documents` once the round runs. Only this
+protocol is committed. Real material never enters git, including commit
+messages and docs/STATE.md. Redaction happens at ingestion and is noted
+in the summary - the same rule as the other two protocols.

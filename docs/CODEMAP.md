@@ -70,7 +70,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
 | docs/CHANGELOG.md | 232 | Changelog |
-| docs/COPILOT.md | 200 | Copilot capture protocol |
+| docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
@@ -151,7 +151,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
-| tests/size-budget.json | 86 |  |
+| tests/size-budget.json | 90 |  |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |

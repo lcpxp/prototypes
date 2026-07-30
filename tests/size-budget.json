@@ -17,6 +17,10 @@
       "hard": 400,
       "note": "Process reference, read on demand rather than every session."
     },
+    "docs/COPILOT.md": {
+      "hard": 260,
+      "note": "One operating manual for a capture round, read start to finish before writing a request; splitting it means an agent reads half and writes the other half wrong. Grows by a few lines per round as each one teaches something about the request. Exit plan: if it passes 260, move 'Write the request' into docs/COPILOT-REQUEST.md - it is the self-contained section and the one that accretes, leaving measurement, gate and storage here."
+    },
     "docs/ROADMAP-PLAYBOOK.md": {
       "hard": 360,
       "note": "The single operating manual: model, fields, operations, contextualisation, capture and review in one read. Splitting it is what it exists to avoid. The procedure detail and per-outcome SQL already live in docs/ROADMAP-CONTEXT.md. Exit plan: if it passes 360, move 'The review ritual' into docs/ROADMAP-REVIEW.md - it is the one self-contained section, and /roadmap already restates it."
