@@ -4,28 +4,28 @@ Updated: 2026-07-30 (session)
 Branch: claude/launchpad-copilot-handover-bewgof (docs only; main untouched)
 
 ## In progress
-Copilot capture round 1 written, awaiting the owner's run. Protocol in
-docs/COPILOT.md, referenced from CLAUDE.md. The request names real
-partners: scratchpad now, work_documents once the round runs.
-
-Scope rewritten after reading api_topics: the specs already hold the
-status machine, both runbooks, the RBAC matrix and ~60 enum sets, so the
-first draft asked for known material. Now targets policy and commercial
-knowledge only - IVR band thresholds and the auto-approval rule, the
-Commercial Matrix, commission, the fee catalogue, named roles and
-approval authority, PRD V3's 17 steps and MerchantProvisioner,
-AnyPay/Oracle commercials, the ISO+PAYFAC vs four-partner-type
-contradiction, 12 hollow rows, delivery governance, 12-term annex, and a
-do-not-send list of everything already held.
+Copilot round 1 run and through the gate. Response stored (work_documents
+96f2a332, URLs redacted). Applied: 8 facts, 4 decisions, 1 round-2
+question; domain_terms Merchant Contributor, EIT, T+1 settlement, and
+Partner type rewritten to four-intended-two-built; product_capabilities
+fee-model-domains (first row in the pricing area); Unity Provisioning
+runbook corrected to PRD V3's 17-step numbering with failure semantics;
+T+1 work item enriched. Owner rejected the User Roles v1 list (second
+time) and all fee amounts - pricing numbers are permanently out of
+capture scope. Format compliance was poor (only topic 1 used FACT
+blocks, ~5 of 50 assertions quoted, every document undated), so
+everything unquoted is stored verified=false.
 
 ## Next steps
-1. Owner runs the round; validate through the gate in docs/COPILOT.md
-   before any write. Nothing lands unconfirmed.
-2. Owner reviews the 13 unlinked high-band pairs the sweep found; the
+1. Round 2, targeting the six documents cited but absent from round 1's
+   own inventory - especially the Q3/Q4 2026 dev-tasks spreadsheet for
+   delivery dates, and External Reference Guide v2 (supersedes our v1).
+2. Roles gap: no 2026 source exists, so close it by capture against the
+   live admin screens rather than another document round. Same for IVR
+   thresholds - they are config, not documentation.
+3. Owner reviews the 13 unlinked high-band pairs the sweep found; the
    top one (0.982) looks like a genuine duplicate. Not yet acted on.
-3. Fill hollow rows (roadmap_searchable.is_hollow) in Now - round 1
-   topic 9 covers 13 of them.
-4. Roadmap context enrichment wave 2: Next/Later + backlog items.
+4. Fill remaining hollow rows in Now; round 1 answered only T+1.
 5. Wire core_launchpad as a live owner: schema CHECK, tokens.css colour,
    department filter.
 6. Drawer follow-ups: drawer LINKS relates_to but cannot SET it (needs a
