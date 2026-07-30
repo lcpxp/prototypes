@@ -235,6 +235,73 @@ create policy "module_access: admins delete"
   using ((select public.is_admin()));
 
 -- ---------------------------------------------------------------
+-- Application review (schema/50_review.sql). READ ONLY, deliberately.
+--
+-- These tables are NOT in the content-table loop above, because that
+-- loop grants admins insert/update/delete and this feature must not
+-- expose a write path to the browser at all. Every write happens in a
+-- Claude Code session over the service connection, which bypasses RLS;
+-- the portal only ever displays what that session wrote.
+--
+-- The consequence to keep in mind when changing this: adding a write
+-- policy here does not just enable an edit, it moves the boundary of
+-- the feature. Do not add one without the owner asking for it.
+--
+-- Contents are commercially sensitive (merchant and partner names,
+-- application ids, risk levels, mail-trail summaries), so reads are
+-- gated on the app-review module grant and anon gets nothing.
+-- ---------------------------------------------------------------
+
+alter table public.launchpad_statuses    enable row level security;
+alter table public.triage_categories     enable row level security;
+alter table public.review_waves          enable row level security;
+alter table public.review_applications   enable row level security;
+alter table public.review_evidence       enable row level security;
+alter table public.review_revisions      enable row level security;
+
+-- Written out one by one rather than through the loop above: this is
+-- the security boundary, and a reader (or a grep, or tests/checks/
+-- security.test.js) must be able to see every policy that exists on
+-- every table without executing anything to find out.
+
+drop policy if exists "launchpad_statuses: members read" on public.launchpad_statuses;
+drop policy if exists "triage_categories: members read" on public.triage_categories;
+drop policy if exists "review_waves: members read" on public.review_waves;
+drop policy if exists "review_applications: members read" on public.review_applications;
+drop policy if exists "review_evidence: members read" on public.review_evidence;
+drop policy if exists "review_revisions: members read" on public.review_revisions;
+
+create policy "launchpad_statuses: members read"
+  on public.launchpad_statuses for select
+  to authenticated
+  using ((select public.has_module_access('app-review')));
+
+create policy "triage_categories: members read"
+  on public.triage_categories for select
+  to authenticated
+  using ((select public.has_module_access('app-review')));
+
+create policy "review_waves: members read"
+  on public.review_waves for select
+  to authenticated
+  using ((select public.has_module_access('app-review')));
+
+create policy "review_applications: members read"
+  on public.review_applications for select
+  to authenticated
+  using ((select public.has_module_access('app-review')));
+
+create policy "review_evidence: members read"
+  on public.review_evidence for select
+  to authenticated
+  using ((select public.has_module_access('app-review')));
+
+create policy "review_revisions: members read"
+  on public.review_revisions for select
+  to authenticated
+  using ((select public.has_module_access('app-review')));
+
+-- ---------------------------------------------------------------
 -- dashboard_counts() (defined in schema/90_dashboard.sql) is the one read RPC:
 -- callable by signed-in users only, never by anon.
 -- ---------------------------------------------------------------
