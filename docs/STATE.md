@@ -1,26 +1,30 @@
 # Current state
 
-Updated: 2026-07-28 (session)
-Branch: main is trunk; roadmap contextualisation merged and pushed there.
+Updated: 2026-07-30 (session)
+Branch: claude/launchpad-copilot-handover-bewgof (docs only; main untouched)
 
 ## In progress
-Roadmap intake contextualisation is complete and live. New in Supabase:
-roadmap_searchable (every work_items row, no status filter, with the
-text columns, relates_to and a computed is_hollow) and roadmap_find -
-IDF-weighted token overlap plus pg_trgm, damped for short queries.
-Bands calibrated against the 2026-07-27 batch: 0.65 / 0.40 / 0.22.
-Protocol in docs/ROADMAP-CONTEXT.md, summarised in the playbook; both
-/roadmap commands and docs/WORKFLOW.md route through it.
-roadmap_current and the board are untouched.
+Copilot capture round 1 written, awaiting the owner's run. Protocol
+committed as docs/COPILOT.md (gap measurement, five mandates,
+validation gate, storage routing), referenced from CLAUDE.md. The
+request names real partners and products, so it stays out of git: it is
+in the session scratchpad and goes to work_documents once the round runs.
 
-Daopay user-role demo unchanged and still ready for another wave
-(modules/prototypes/daopay/).
+Ten topics, priority order: glossary, roles and permissions, application
+statuses, pricing and fees, product catalogue, Unity integration,
+screening and approval, partner model, definitions for 13 named hollow
+rows, delivery process and dates. Topics 1-6 are the core. Scope came
+from measurement: 90 items no summary, 154 no details, 213 no
+dates/sprints/PRD-status, 0 external_ref; pricing (22 items), core
+service (42), insights (19), partners (18) carry zero capability rows.
 
 ## Next steps
-1. Owner reviews the 13 unlinked high-band pairs the sweep found; the
+1. Owner runs the round; validate through the gate in docs/COPILOT.md
+   before any write. Nothing lands unconfirmed.
+2. Owner reviews the 13 unlinked high-band pairs the sweep found; the
    top one (0.982) looks like a genuine duplicate. Not yet acted on.
-2. Fill hollow rows (roadmap_searchable.is_hollow) in Now.
-3. Next wave of prototype adjustments from the owner.
+3. Fill hollow rows (roadmap_searchable.is_hollow) in Now - round 1
+   topic 9 covers 13 of them.
 4. Roadmap context enrichment wave 2: Next/Later + backlog items.
 5. Wire core_launchpad as a live owner: schema CHECK, tokens.css colour,
    department filter.
@@ -28,11 +32,8 @@ Daopay user-role demo unchanged and still ready for another wave
    write path/RLS); same for inherited area notes and Tier 3 schema.
 
 ## Open decisions
-- ROADMAP-PLAYBOOK.md size budget raised to 360 (was 300) so
-  contextualisation could live in the single manual. Exit plan in
-  tests/size-budget.json: split the review ritual out. Owner may
-  prefer that split now.
-- UMBRELLA is detected from the request's shape, not from a score - a
-  heading matches everything weakly and nothing strongly.
+- ROADMAP-PLAYBOOK.md size budget raised to 360 (was 300). Exit plan in
+  tests/size-budget.json: split the review ritual out.
+- UMBRELLA is detected from the request's shape, not from a score.
 - Inter via Google Fonts: AGREED. The one external stylesheet.
 - Contracts table Type/Status split: built the screenshot's way; confirm.

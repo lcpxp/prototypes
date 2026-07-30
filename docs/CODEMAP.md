@@ -13,7 +13,7 @@ document instead of walking the tree or reading whole files.
 | .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 24 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 205 | CLAUDE.md |
+| CLAUDE.md | 211 | CLAUDE.md |
 | README.md | 17 | LPio |
 | assets/css/base.css | 111 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 447 | components.css - Reusable interface components: cards, forms, |
@@ -69,10 +69,11 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/ARCHITECTURE.md | 247 | Architecture |
-| docs/CHANGELOG.md | 227 | Changelog |
+| docs/CHANGELOG.md | 232 | Changelog |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
+| docs/ROADMAP-CONTEXT.md | 241 | Contextualising new work |
 | docs/ROADMAP-PLAYBOOK.md | 360 | Roadmap playbook |
 | docs/ROADMAP-PROCESS.md | 154 | Roadmap process |
 | docs/ROADMAP.md | 199 | Roadmap |
@@ -130,16 +131,19 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260722160000_work_item_associated_departments.sql | 68 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722170000_roadmap_move_workstream_cascade.sql | 65 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722190000_work_item_deliverable_level.sql | 23 | Deliverables: a third presentation level for work_items. A deliverable |
+| supabase/migrations/20260728120000_roadmap_searchable_and_find.sql | 190 | Contextualisation read surface: roadmap_searchable + roadmap_find. |
 | supabase/policies.sql | 272 | ------------------------------------------------------------------ |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 487 | ------------------------------------------------------------------ |
+| supabase/schema/31_roadmap_search.sql | 192 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
+| tests/checks/roadmap-intake.test.js | 109 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
