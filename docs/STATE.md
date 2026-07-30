@@ -12,17 +12,17 @@ fee-model-domains (first row in the pricing area); Unity Provisioning
 runbook corrected to PRD V3's 17-step numbering with failure semantics;
 T+1 work item enriched. Owner rejected the User Roles v1 list (second
 time) and all fee amounts - pricing numbers are permanently out of
-capture scope. Format compliance was poor (only topic 1 used FACT
-blocks, ~5 of 50 assertions quoted, every document undated), so
-everything unquoted is stored verified=false.
+capture scope. Format compliance was poor (only topic 1 used FACT blocks,
+~5 of 50 assertions quoted, every document undated), so everything
+unquoted is stored verified=false.
 
 ## Next steps
-1. Round 2, targeting the six documents cited but absent from round 1's
-   own inventory - especially the Q3/Q4 2026 dev-tasks spreadsheet for
-   delivery dates, and External Reference Guide v2 (supersedes our v1).
-2. Roles gap: no 2026 source exists, so close it by capture against the
-   live admin screens rather than another document round. Same for IVR
-   thresholds - they are config, not documentation.
+1. Round 2 written, waiting to run: seven named files, three-field format
+   (round 1's eight-field block did not hold), spreadsheet asked for as a
+   delimited table. Targets delivery dates, sprint 04-07 dates, analytics
+   definitions, External Reference Guide v2 delta.
+2. Roles and IVR thresholds are config, not documentation: close both by
+   capture against the live admin screens, not another document round.
 3. Owner reviews the 13 unlinked high-band pairs the sweep found; the
    top one (0.982) looks like a genuine duplicate. Not yet acted on.
 4. Fill remaining hollow rows in Now; round 1 answered only T+1.
