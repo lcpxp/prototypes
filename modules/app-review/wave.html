@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://zlmkofbkobmhnslfnqsf.supabase.co" crossorigin>
+  <title>Wave - Application review - LPio / LaunchPad IO</title>
+  <script>
+    (function() {
+      var theme = localStorage.getItem("theme");
+      if (theme === "dark" || theme === "light") {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/layout.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="../../assets/css/pages.css">
+  <link rel="stylesheet" href="../../assets/css/app-review.css">
+  <link rel="stylesheet" href="../../assets/css/app-review-detail.css">
+  <script src="../../assets/js/core/theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
+  <script defer src="../../assets/js/core/supabase.js"></script>
+  <script defer src="../../assets/js/core/registry.js"></script>
+  <script defer src="../../assets/js/core/guard.js"></script>
+  <script defer src="../../assets/js/core/ui.js"></script>
+  <script defer src="../../assets/js/core/search.js"></script>
+  <script defer src="../../assets/js/core/drawer.js"></script>
+  <script defer src="../../assets/js/pages/appreview-model.js"></script>
+  <script defer src="../../assets/js/pages/appreview-findings.js"></script>
+  <script defer src="../../assets/js/pages/appreview-render.js"></script>
+  <script defer src="../../assets/js/pages/appreview-detail.js"></script>
+  <script defer src="../../assets/js/pages/appreview-board.js"></script>
+</head>
+<body data-root="../.." data-module="app-review">
+  <header id="app-nav"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="eyebrow">Application review</span>
+      <h1 id="ar-wave-name">Wave</h1>
+      <p class="ar-crumb"><a href="index.html">All waves</a></p>
+      <div id="ar-wave-meta"></div>
+    </div>
+
+    <!-- The headline read: how much is live, how much is standing, how
+         much is done. Everything below is a way of working through it. -->
+    <div id="ar-split" class="ar-split" role="status"></div>
+
+    <!-- Partner-scope blockers rolled up. A blocker that gates every
+         application under a partner is a partner problem, not a row
+         problem, and reading it once beats reading it five times. -->
+    <div id="ar-partner-blockers"></div>
+
+    <section class="ar-section" aria-labelledby="ar-donow-head">
+      <div class="ar-section-head">
+        <span class="eyebrow" id="ar-donow-head">Do now</span>
+      </div>
+      <div id="ar-donow"></div>
+    </section>
+
+    <section class="ar-section" aria-labelledby="ar-legend-head">
+      <div class="ar-section-head">
+        <span class="eyebrow" id="ar-legend-head">Categories</span>
+        <p class="ar-section-note">Every category is showing. Click one to hide
+          it, or a group heading to show only that group.</p>
+      </div>
+      <div id="ar-legend"></div>
+      <p class="ar-showing" id="ar-showing" role="status"></p>
+    </section>
+
+    <section class="ar-section" aria-labelledby="ar-board-head">
+      <div class="ar-section-head">
+        <span class="eyebrow" id="ar-board-head">Applications</span>
+        <p class="ar-section-note">In LaunchPad list order, so the board and the
+          source list can be read side by side.</p>
+      </div>
+      <div id="ar-board">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="ar-scrim" id="ar-scrim" hidden></div>
+  <aside class="ar-drawer" id="ar-drawer" role="dialog" aria-modal="true"
+    aria-label="Application detail" tabindex="-1" hidden>
+    <button class="ar-drawer-close button quiet" type="button" id="ar-drawer-close">Close</button>
+    <div id="ar-drawer-body"></div>
+  </aside>
+
+</body>
+</html>

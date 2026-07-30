@@ -1,0 +1,111 @@
+/* ------------------------------------------------------------------
+   app-review-detail.css - The application review detail drawer: the
+   slide-over surface and the blocks inside it (findings, mail trail,
+   confirmation state, record metadata).
+
+   Split from app-review.css, which styles the board. Behaviour -
+   Escape, backdrop click, focus return and focus containment - is in
+   assets/js/core/drawer.js; the body markup is built by
+   assets/js/pages/appreview-detail.js.
+------------------------------------------------------------------- */
+
+.ar-scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--scrim);
+  z-index: 40;
+}
+
+.ar-drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: min(34rem, 100vw);
+  background: var(--surface);
+  border-inline-start: 1px solid var(--line);
+  box-shadow: var(--shadow-overlay);
+  padding: var(--s-5);
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.ar-drawer-close {
+  position: absolute;
+  inset-block-start: var(--s-3);
+  inset-inline-end: var(--s-3);
+}
+
+.ar-drawer h2 {
+  font-size: var(--text-lg);
+  margin: 0 0 var(--s-1);
+  padding-inline-end: var(--s-7);
+}
+
+.ar-drawer-sub {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin-block: 0 var(--s-4);
+}
+
+.ar-drawer-block { margin-block-start: var(--s-5); }
+
+.ar-drawer-block .eyebrow {
+  display: block;
+  margin-block-end: var(--s-2);
+}
+
+.ar-note {
+  border-inline-start: 3px solid var(--line);
+  padding-inline-start: var(--s-3);
+  color: var(--muted);
+  margin: 0;
+}
+
+.ar-finding {
+  border-radius: var(--radius-sm);
+  padding: var(--s-2) var(--s-3);
+  margin-block-end: var(--s-2);
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+
+.ar-finding.is-danger { background: var(--danger-soft); }
+.ar-finding.is-warn { background: var(--warn-soft); }
+
+/* The mail trail. One entry per evidence row, oldest first, with the
+   date and actor kept next to what was said. */
+.ar-trail { list-style: none; padding: 0; margin: 0; }
+
+.ar-trail li {
+  border-block-end: 1px solid var(--line);
+  padding-block: var(--s-3);
+}
+
+.ar-trail li:last-child { border-block-end: none; }
+
+.ar-trail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+  margin-block-end: var(--s-1);
+}
+
+.ar-trail-truncated {
+  color: var(--warn);
+  font-style: italic;
+  font-size: var(--text-xs);
+}
+
+.ar-confirm {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  font-size: var(--text-sm);
+}
+
+.ar-confirm.is-assumed { color: var(--warn); }
+.ar-confirm.is-confirmed { color: var(--ok); }

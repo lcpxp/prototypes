@@ -1,0 +1,377 @@
+/* ------------------------------------------------------------------
+   app-review.css - The application review board and wave list.
+
+   Colour on this page means one thing: this row is still live. Rows
+   that need action or watching carry their category's tint; settled
+   rows share one flat neutral surface and dim. Each row keeps a left
+   rail at its category's FULL strength on top of that surface, so the
+   flavours of settled - rejected, cancelled, confirmed, leave - stay
+   apart while the rows themselves recede.
+
+   Category colour is applied once, per row, into two custom
+   properties (--row-accent, --row-tint); everything below reads those
+   rather than naming a category. A category with no token in
+   tokens.css falls back to the neutral pair and still renders.
+
+   Colour never carries meaning alone: every row also has a state
+   marker glyph and a category badge.
+------------------------------------------------------------------- */
+
+.ar-section {
+  margin-block-start: var(--section-gap);
+}
+
+.ar-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-4);
+  margin-block-end: var(--s-3);
+}
+
+.ar-section-note {
+  color: var(--faint);
+  font-size: var(--text-sm);
+  max-inline-size: var(--lede-max);
+  margin: 0;
+}
+
+.ar-crumb {
+  font-size: var(--text-sm);
+  margin-block: var(--s-2) 0;
+}
+
+/* ---------------------------------------------------------------
+   The headline read: how much is live, how much is standing, how
+   much is done. Deliberately the first thing on the page.
+--------------------------------------------------------------- */
+
+.ar-split {
+  display: grid;
+  gap: var(--s-3);
+  margin-block-start: var(--s-5);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 36rem) {
+  .ar-split { grid-template-columns: repeat(3, 1fr); }
+}
+
+.ar-split-cell {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--s-4);
+  box-shadow: var(--shadow-rest);
+}
+
+.ar-split-cell .eyebrow {
+  display: block;
+  margin-block-end: var(--s-1);
+}
+
+.ar-split-figure {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: 1.1;
+}
+
+.ar-split-cell.is-needs .ar-split-figure { color: var(--ar-act); }
+.ar-split-cell.is-ongoing .ar-split-figure { color: var(--ar-watch); }
+.ar-split-cell.is-settled .ar-split-figure { color: var(--faint); }
+
+.ar-split-note {
+  color: var(--faint);
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------
+   Legend and filters. Group headings solo their group; category
+   chips toggle independently, so hiding one or two is a single
+   click rather than re-picking everything else. A deselected chip
+   is struck through, because "off" must be legible without colour.
+--------------------------------------------------------------- */
+
+.ar-legend {
+  display: grid;
+  gap: var(--s-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 48rem) {
+  .ar-legend { grid-template-columns: repeat(3, 1fr); }
+}
+
+.ar-legend-group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s-3);
+}
+
+.ar-legend-head {
+  display: flex;
+  inline-size: 100%;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+  background: none;
+  border: 0;
+  padding: 0 0 var(--s-2);
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink);
+  text-align: start;
+}
+
+.ar-legend-head .eyebrow { color: var(--muted); }
+.ar-legend-head:hover .eyebrow { color: var(--accent); }
+.ar-legend-head[aria-pressed="true"] .eyebrow { color: var(--accent); }
+
+.ar-legend-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--muted);
+}
+
+.ar-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.ar-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-2);
+  border: 1px solid var(--row-accent, var(--line));
+  border-radius: var(--radius-sm);
+  background: var(--row-tint, var(--alt-surface));
+  color: var(--ink);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: opacity var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease);
+}
+
+.ar-chip::before {
+  content: "";
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--row-accent, var(--faint));
+  flex-shrink: 0;
+}
+
+.ar-chip[aria-pressed="false"] {
+  background: var(--alt-surface);
+  border-color: var(--line);
+  color: var(--faint);
+  text-decoration: line-through;
+  opacity: 0.65;
+}
+
+.ar-chip[aria-pressed="false"]::before { background: var(--faint); }
+
+.ar-chip-count {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+}
+
+.ar-showing {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+  margin-block: var(--s-3) 0;
+}
+
+/* ---------------------------------------------------------------
+   Do now: the highest-value actions in execution order. When the
+   Needs action group empties this strip becomes the carry-forward
+   list, which is the wave's actual output.
+--------------------------------------------------------------- */
+
+.ar-donow-list {
+  display: grid;
+  gap: var(--s-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ar-donow-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-3);
+  inline-size: 100%;
+  text-align: start;
+  padding: var(--s-3);
+  border: 1px solid var(--row-accent, var(--line));
+  border-inline-start-width: 4px;
+  border-radius: var(--radius);
+  background: var(--row-tint, var(--surface));
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition: box-shadow var(--dur-fast) var(--ease);
+}
+
+.ar-donow-item:hover { box-shadow: var(--shadow-raised); }
+
+.ar-donow-rank {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.ar-donow-what { font-weight: var(--weight-semibold); }
+.ar-donow-action { color: var(--muted); }
+
+.ar-done {
+  border: 1px solid var(--ok);
+  border-radius: var(--radius);
+  background: var(--ok-soft);
+  padding: var(--s-4);
+}
+
+.ar-done h2 {
+  font-size: var(--text-lg);
+  margin: 0 0 var(--s-1);
+}
+
+.ar-done p { margin: 0; color: var(--muted); }
+
+/* ---------------------------------------------------------------
+   The board. One row per application, in LaunchPad list order.
+--------------------------------------------------------------- */
+
+.ar-row {
+  background: var(--row-tint, var(--surface));
+  cursor: pointer;
+}
+
+.ar-row td:first-child {
+  border-inline-start: 4px solid var(--row-accent, var(--line));
+}
+
+.ar-row:hover { background: var(--row-tint, var(--alt-surface)); }
+.ar-row:hover td { box-shadow: inset 0 0 0 100vmax rgba(0, 0, 0, 0.03); }
+
+.ar-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* Settled rows drop their category tint for one shared surface and
+   dim. The rail above keeps its full-strength colour, which is what
+   still tells rejected from cancelled from confirmed. */
+.ar-row.is-settled {
+  background: var(--ar-settled-bg);
+  color: var(--ar-settled-ink);
+}
+
+.ar-row.is-settled:hover { background: var(--ar-settled-bg); }
+.ar-row.is-settled .ar-merchant { color: var(--ar-settled-ink); }
+
+/* Cancelled is the deletion mechanism in LaunchPad: the record was
+   killed, and the name reads as struck out. */
+.ar-row.is-cancelled .ar-merchant { text-decoration: line-through; }
+
+.ar-marker {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  color: var(--row-accent, var(--muted));
+}
+
+.ar-marker svg { vertical-align: middle; }
+
+.ar-index {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+
+.ar-merchant {
+  font-weight: var(--weight-semibold);
+  color: var(--ink);
+}
+
+.ar-partner {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.ar-age { font-family: var(--font-mono); white-space: nowrap; }
+.ar-age.is-stale { color: var(--danger); font-weight: var(--weight-semibold); }
+.ar-age.is-quiet { color: var(--faint); }
+
+.ar-badge {
+  color: var(--row-accent, var(--muted));
+  background: var(--row-tint, var(--alt-surface));
+  border-color: transparent;
+}
+
+.ar-row.is-settled .ar-badge { background: var(--surface); }
+
+.ar-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin-block-start: var(--s-1);
+}
+
+.ar-flag {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 0 var(--s-1);
+  border-radius: var(--radius-sm);
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.ar-flag.is-danger { background: var(--danger-soft); color: var(--danger); }
+.ar-flag.is-info { background: var(--accent-soft); color: var(--accent); }
+
+/* ---------------------------------------------------------------
+   Wave-level panels: partner blockers, and the wave list itself.
+--------------------------------------------------------------- */
+
+.ar-panel {
+  border: 1px solid var(--warn);
+  border-radius: var(--radius);
+  background: var(--warn-soft);
+  padding: var(--s-4);
+  margin-block-start: var(--s-5);
+}
+
+.ar-panel h2 {
+  font-size: var(--text-md);
+  margin: 0 0 var(--s-2);
+}
+
+.ar-panel ul { margin: 0; padding-inline-start: var(--s-5); }
+.ar-panel li { margin-block-end: var(--s-1); }
+
+.ar-trigger {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.ar-trigger-kind {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-slight);
+  color: var(--faint);
+}
+
+.ar-wave-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}

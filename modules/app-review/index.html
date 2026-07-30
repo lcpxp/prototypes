@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://zlmkofbkobmhnslfnqsf.supabase.co" crossorigin>
+  <title>Application review - LPio / LaunchPad IO</title>
+  <script>
+    (function() {
+      var theme = localStorage.getItem("theme");
+      if (theme === "dark" || theme === "light") {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/layout.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="../../assets/css/pages.css">
+  <link rel="stylesheet" href="../../assets/css/app-review.css">
+  <script src="../../assets/js/core/theme.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
+  <script defer src="../../assets/js/core/supabase.js"></script>
+  <script defer src="../../assets/js/core/registry.js"></script>
+  <script defer src="../../assets/js/core/guard.js"></script>
+  <script defer src="../../assets/js/core/ui.js"></script>
+  <script defer src="../../assets/js/core/search.js"></script>
+  <script defer src="../../assets/js/pages/appreview-model.js"></script>
+  <script defer src="../../assets/js/pages/appreview-findings.js"></script>
+  <script defer src="../../assets/js/pages/appreview-waves.js"></script>
+</head>
+<body data-root="../.." data-module="app-review">
+  <header id="app-nav"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="eyebrow">Application review</span>
+      <h1>Review waves</h1>
+      <p class="lede">Each wave is a point-in-time snapshot of the application
+        estate plus the triage decided against it. A wave's output is the
+        standing list below, not the board: everything else gets closed,
+        confirmed or left alone. Waves are opened and worked from a Claude Code
+        session; this is the record of what was decided and why.</p>
+    </div>
+
+    <section class="ar-section" aria-labelledby="ar-watching-head">
+      <div class="ar-section-head">
+        <span class="eyebrow" id="ar-watching-head">Standing watch list</span>
+        <p class="ar-section-note">Everything under ongoing attention across
+          every open wave, with what each one is waiting on. Dated triggers
+          first, then named dependencies.</p>
+      </div>
+      <div id="ar-watching">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
+
+    <section class="ar-section" aria-labelledby="ar-waves-head">
+      <div class="ar-section-head">
+        <span class="eyebrow" id="ar-waves-head">Waves</span>
+      </div>
+      <div id="ar-waves">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
