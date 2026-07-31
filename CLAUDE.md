@@ -174,6 +174,12 @@ half-finished change.
   docs/PLATFORM.md. Verbatim source to work_documents (kind
   'platform'), distilled rows to product_capabilities linked to
   work_areas. Database inserts only; the repo does not change.
+- Knowledge held in documents nobody has pasted in (a capture round
+  with an external document assistant): follow docs/COPILOT.md.
+  Measure the gap from the data, scope five to ten topics, and put
+  the answer through the validation gate before storing anything.
+  The request and the response both hold real material, so they live
+  outside the repo.
 - New table: schema in the right supabase/schema/ domain file,
   policies in supabase/policies.sql, both in the same commit, and
   the change applied to the live project as a migration.

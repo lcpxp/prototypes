@@ -1,39 +1,39 @@
 # Current state
 
-Updated: 2026-07-30 (session)
-Branch: claude/app-review-portal-feature-u7vks1 (App Review), off main.
+Updated: 2026-07-30 (App Review merged to main)
 
 ## In progress
-App Review is built on its branch: six tables
-(supabase/schema/50_review.sql), select-only RLS, the wave list with a
-standing watch list, the triage board, the detail drawer, a shared
-core/drawer.js, and docs/APP-REVIEW.md plus /app-review as the session
-protocol. 185 benchmarks green. No merchant data in the repo; the review
-tables hold only the seeded status and category vocabulary. Not merged to
-main, and no wave has been run through it yet - the first real wave is
-the test of whether the board reads the way the owner works.
+App Review is live on main and unproven: six tables
+(supabase/schema/50_review.sql), select-only RLS so the portal
+displays waves and never writes them, the wave list with a standing
+watch list, the board, the drawer, a shared core/drawer.js, and
+docs/APP-REVIEW.md plus /app-review as the session protocol. No wave
+has run through it yet - the first is the test of whether the board
+reads the way the owner works.
 
-Roadmap intake contextualisation remains live and untouched.
+Copilot capture protocol complete: rounds 1 and 2 run and applied.
+Live in Supabase: 19 work_notes, 4 domain_terms, 2
+product_capabilities, 3 hollow rows filled, start_sprint 26-04.
 
 ## Next steps
-1. Run a real wave through /app-review and see what the board gets
-   wrong. Expect the do-now ordering and the staleness threshold
-   (14 days, App.appReview.STALE_DAYS) to need tuning against real data.
-2. Merge the App Review branch to main once that wave confirms it.
-3. Owner reviews the 13 unlinked high-band roadmap pairs the sweep
-   found; the top one (0.982) looks like a genuine duplicate.
-4. Fill hollow rows (roadmap_searchable.is_hollow) in Now.
-5. Migrate the roadmap drawer onto core/drawer.js and delete
-   roadmap-drawer.js; left alone rather than refactored mid-feature.
-6. Wire core_launchpad as a live owner: schema CHECK, tokens.css colour,
-   department filter.
+1. Run a real wave through /app-review. Expect the do-now ordering
+   and the staleness threshold (14 days, App.appReview.STALE_DAYS)
+   to need tuning against real records.
+2. Two roadmap-drift risks logged against their rows, unapplied
+   pending owner: Terminal financing and Merchant Contributor.
+3. Five unmatched sheet rows held as candidates, not created:
+   Snowflake, CardStream plugins, Partner Oversight, Zendesk,
+   "London & Zurich".
+4. Sprint calendar derived (26-16 current) but not owner-confirmed;
+   stamping items awaits that.
+5. Owner reviews the 13 unlinked high-band pairs; top (0.982) looks
+   like a duplicate. Then wire core_launchpad as a live owner.
+6. Copilot round 3 when wanted; the brief is a work_notes decision.
+7. Migrate the roadmap drawer onto core/drawer.js.
 
 ## Open decisions
-- evidence_confidence uses corroborated/inferred/truncated, not the
-  handover's confirmed/inferred/truncated_evidence: a value called
-  "confirmed" beside confirmed_by re-collapses the distinction rule 1
-  protects. Flagged to the owner, not yet confirmed.
-- App Review stays out of global search so merchant names never appear
-  in a nav dropdown. Revisit if finding records fast matters.
-- Pre-existing: roadmap_move_workstream has a mutable search_path
-  (get_advisors warns). One-line fix, out of scope here.
+- evidence_confidence uses corroborated/inferred/truncated: a value
+  called "confirmed" beside confirmed_by re-collapses rule 1.
+- ROADMAP-PLAYBOOK.md budget 360, COPILOT.md 260; exit plans in
+  tests/size-budget.json.
+- Inter via Google Fonts: AGREED. The one external stylesheet.

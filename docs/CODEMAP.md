@@ -14,7 +14,7 @@ document instead of walking the tree or reading whole files.
 | .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 24 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 212 | CLAUDE.md |
+| CLAUDE.md | 218 | CLAUDE.md |
 | README.md | 17 | LPio |
 | assets/css/app-review-detail.css | 112 | app-review-detail.css - The application review detail drawer: the |
 | assets/css/app-review.css | 378 | app-review.css - The application review board and wave list. |
@@ -81,6 +81,7 @@ document instead of walking the tree or reading whole files.
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 278 | Architecture |
 | docs/CHANGELOG.md | 244 | Changelog |
+| docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
@@ -91,7 +92,7 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 44 | Current state |
+| docs/STATE.md | 40 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
@@ -165,7 +166,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
-| tests/size-budget.json | 106 |  |
+| tests/size-budget.json | 114 |  |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
