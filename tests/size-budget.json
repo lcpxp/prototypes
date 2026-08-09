@@ -20,7 +20,7 @@
     },
     "supabase/schema/30_work.sql": {
       "hard": 500,
-      "note": "The work-items domain (items, phases, dependencies, notes) in one file; split by sub-table if it nears the hard limit."
+      "note": "The work-items DOMAIN in one file (areas, taxonomy, documents, items, phases, dependencies, notes), much of the length being the rationale beside each constraint. The surfaces built on it are already split out: 31_roadmap_search.sql (intake) and 32_roadmap_board.sql (board view and the move operation). Exit plan: work_documents and work_notes are the next seam - they are intake concerns, not roadmap ones."
     },
     "supabase/schema/50_review.sql": {
       "hard": 500,

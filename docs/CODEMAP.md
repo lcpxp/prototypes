@@ -151,7 +151,7 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
-| supabase/schema/30_work.sql | 487 | ------------------------------------------------------------------ |
+| supabase/schema/30_work.sql | 447 | ------------------------------------------------------------------ |
 | supabase/schema/31_roadmap_search.sql | 192 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |

@@ -6,6 +6,11 @@
 -- Executive theme rollup, the Team roadmap, the Backlog master list -
 -- is a projection of the same rows, so moving work between views is a
 -- single field edit (see docs/ROADMAP.md, docs/ROADMAP-PLAYBOOK.md).
+--
+-- This file holds the DOMAIN only. The surfaces built on top of it are
+-- separate so neither file has to grow without limit:
+--   31_roadmap_search.sql  roadmap_searchable + roadmap_find (intake)
+--   32_roadmap_board.sql   roadmap_current + roadmap_move_workstream
 -- ------------------------------------------------------------------
 
 -- ---------------------------------------------------------------
@@ -163,11 +168,19 @@ create table if not exists public.work_items (
   source_document_id uuid references public.work_documents (id) on delete set null,
   -- Parent work item, for breaking a coarse item into ordered sub-steps
   -- that are themselves work items (e.g. "Unity integration" -> Merchant
-  -- Group, Merchant, Site, ...). Self-referential; deleting a parent
-  -- removes its steps. One level of nesting by convention: the roadmap
-  -- nests parent -> children only and never places a child as its own
-  -- bar. A child carries its own status/progress.
-  parent_id uuid references public.work_items (id) on delete cascade,
+  -- Group, Merchant, Site, ...). Self-referential. One level of nesting
+  -- by convention: the roadmap nests parent -> children only and never
+  -- places a child as its own bar. A child carries its own
+  -- status/progress.
+  --
+  -- SET NULL, not CASCADE. This was cascade until 2026-08-09, in a table
+  -- whose governing rule is that nothing is ever deleted - 162 of 239
+  -- rows have a parent, so removing one workstream would have taken
+  -- every child with it, silently and with no undo. Every other foreign
+  -- key here (area_id, category_id, milestone_id, source_document_id)
+  -- already set null; this one was the outlier. The delete guard below
+  -- is the belt to this braces.
+  parent_id uuid references public.work_items (id) on delete set null,
   -- Presentation level. A 'workstream' is a top-level, presentable
   -- container (e.g. "Self Service API", "Unity integration"); an 'item'
   -- is a work item - standalone, or nested under a workstream where it
@@ -212,6 +225,16 @@ create table if not exists public.work_items (
     check (associated_departments <@ array['sales_commercial', 'operations_onboarding',
       'product_technology', 'finance_revenue', 'legal_compliance',
       'risk_underwriting']::text[]),
+  -- Named delivery owner, and an optional second where an item is
+  -- shared. Distinct from `department`, which is the accountable
+  -- business FUNCTION: assignee is the person. Free text rather than a
+  -- foreign key because these names come from the KPI portal and are
+  -- not LPio accounts, so a team change must not need a migration.
+  -- Rendered on the timeline bar (roadmap-views-timeline.js) and the
+  -- drawer's Ownership line (roadmap-detail.js), and carried in both the
+  -- JSON and CSV exports.
+  assignee text,
+  support_assignee text,
   status text not null default 'idea'
     check (status in ('idea', 'planned', 'in_progress', 'blocked', 'done', 'dropped')),
   -- Start band on the continuous axis. 'someday' is the Parked
@@ -282,6 +305,45 @@ create index if not exists work_items_source_document_idx
   on public.work_items (source_document_id);
 create index if not exists work_items_associated_departments_idx
   on public.work_items using gin (associated_departments);
+-- Filtering by owner is a common read path; partial, since most rows
+-- carry no assignee.
+create index if not exists work_items_assignee_idx
+  on public.work_items (assignee)
+  where assignee is not null;
+
+-- Deleting a work item is not an operation this system has. Rows close
+-- with status 'done' or 'dropped' plus a resolution (see the trigger
+-- below), which keeps the decision and the history. A delete would take
+-- the row, its resolution, its notes and its links with it, and there is
+-- no undo - so the guard refuses unless a session opts in explicitly:
+--
+--   set local lpio.allow_work_item_delete = 'on';
+--
+-- That makes an accidental delete fail loudly rather than succeed
+-- quietly, while leaving a deliberate cleanup possible in one
+-- transaction. Same shape as the review guards in 50_review.sql.
+create or replace function public.work_item_delete_guard()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  if coalesce(current_setting('lpio.allow_work_item_delete', true), 'off') <> 'on' then
+    raise exception using
+      errcode = 'restrict_violation',
+      message = format('work_items rows are closed, not deleted (id %s, "%s")',
+        old.id, old.title),
+      hint = 'Set status to done or dropped with a resolution. To delete anyway: '
+        || 'set local lpio.allow_work_item_delete = ''on'';';
+  end if;
+  return old;
+end;
+$$;
+
+drop trigger if exists work_items_delete_guard on public.work_items;
+create trigger work_items_delete_guard
+  before delete on public.work_items
+  for each row execute function public.work_item_delete_guard();
 
 -- Closing an item (status done/dropped) stamps resolved_at so the
 -- historic record needs no manual bookkeeping; reopening clears it.
@@ -382,105 +444,3 @@ drop trigger if exists work_notes_updated_at on public.work_notes;
 create trigger work_notes_updated_at
   before update on public.work_notes
   for each row execute function public.set_updated_at();
-
--- ---------------------------------------------------------------
--- roadmap_current: the whole roadmap joined and human-readable in one
--- query, so any assistant with the project ref reads the current state
--- in a single call (see docs/ROADMAP-PLAYBOOK.md). security_invoker, so
--- it exposes exactly what the caller's RLS already allows on the base
--- tables and adds no new surface. Rendering still comes from the page;
--- this view is the operating/read entry point, not a board dependency.
--- ---------------------------------------------------------------
-
-drop view if exists public.roadmap_current;
-create view public.roadmap_current
-  with (security_invoker = on) as
-  select
-    wi.id,
-    wi.title,
-    wi.level,
-    (wi.parent_id is not null) as is_child,
-    parent.title              as workstream_title,
-    rc.key                    as theme_key,
-    rc.label                  as theme_label,
-    coalesce(rc.shareholder_visible, false) as shareholder_visible,
-    wa.title                  as filing_area,
-    wa.scope                  as scope,
-    wi.department,
-    wi.associated_departments,
-    wi.type,
-    wi.status,
-    wi.horizon,
-    wi.end_horizon,
-    wi.presentation,
-    wi.priority,
-    wi.progress,
-    wi.start_sprint,
-    wi.end_sprint,
-    wi.updated_at
-  from public.work_items wi
-  left join public.work_items parent    on parent.id = wi.parent_id
-  left join public.roadmap_categories rc on rc.id = wi.category_id
-  left join public.work_areas wa         on wa.id = wi.area_id
-  order by rc.sort_order nulls last, wi.priority, wi.sort_order;
-
-grant select on public.roadmap_current to anon, authenticated;
-
--- ---------------------------------------------------------------
--- roadmap_move_workstream: reschedule a workstream and cascade the band
--- shift to its direct child items, preserving their relative offsets and
--- the workstream's span (a Next->Later workstream with 2 Next + 2 Later
--- children, moved to Now, becomes a Now->Next workstream with 2 Now + 2
--- Next children). Bands clamp to now..someday; priority/sort_order are
--- untouched so ordering within a band is kept. Only direct children
--- (parent_id) move; soft-linked items (relates_to_id) stay put. This is
--- the canonical "move this workstream" operation (see
--- docs/ROADMAP-PLAYBOOK.md); the board page stays read-only.
--- ---------------------------------------------------------------
-create or replace function public.roadmap_move_workstream(
-  p_workstream_id uuid,
-  p_target_horizon text)
-returns integer
-language plpgsql
-as $$
-declare
-  bands text[] := array['now', 'next', 'later', 'someday'];
-  cur_idx int;
-  tgt_idx int;
-  delta int;
-  affected int;
-begin
-  tgt_idx := array_position(bands, p_target_horizon);
-  if tgt_idx is null then
-    raise exception 'invalid target horizon %, expected one of now/next/later/someday', p_target_horizon;
-  end if;
-
-  select array_position(bands, horizon) into cur_idx
-    from public.work_items
-   where id = p_workstream_id and level = 'workstream';
-  if cur_idx is null then
-    raise exception 'no workstream found with id % (must be level=workstream)', p_workstream_id;
-  end if;
-
-  delta := tgt_idx - cur_idx;
-  if delta = 0 then
-    return 0;
-  end if;
-
-  with moved as (
-    update public.work_items set
-      horizon = bands[greatest(1, least(4, array_position(bands, horizon) + delta))],
-      end_horizon = case
-        when end_horizon is null then null
-        else bands[greatest(1, least(4, array_position(bands, end_horizon) + delta))]
-      end
-    where id = p_workstream_id
-       or parent_id = p_workstream_id
-    returning 1)
-  select count(*) into affected from moved;
-
-  return affected;
-end $$;
-
-comment on function public.roadmap_move_workstream(uuid, text) is
-  'Reschedule a workstream and cascade the band shift to its direct children, preserving relative offsets and span. See docs/ROADMAP-PLAYBOOK.md.';
