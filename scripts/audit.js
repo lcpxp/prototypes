@@ -98,6 +98,21 @@ function stalePaths() {
   return hits;
 }
 
+// 6. Database drift at a glance. The gate that fails a commit lives in
+//    tests/checks/schema-drift.test.js; this is the one-screen read.
+function snapshotSummary() {
+  var snap = JSON.parse(read("supabase/schema-snapshot.json"));
+  var dir = path.join(ROOT, "supabase", "migrations");
+  var files = require("node:fs").readdirSync(dir)
+    .filter(function (f) { return f.endsWith(".sql"); });
+  return {
+    tables: Object.keys(snap.tables || {}).length,
+    policies: (snap.policies || []).length,
+    migrations: (snap.migrations || []).length,
+    files: files.length,
+  };
+}
+
 var t = testTotals();
 console.log("LPio audit");
 head("Tests");
@@ -111,6 +126,13 @@ os.forEach(function (f) { row("", f); });
 head("Security");
 var mp = tablesMissingPolicy();
 row("schema tables missing policy", mp.length + (mp.length ? " (" + mp.join(", ") + ")" : ""));
+
+head("Database");
+var snap = snapshotSummary();
+row("snapshot tables / policies", snap.tables + " / " + snap.policies);
+row("applied migrations", snap.migrations + " (files: " + snap.files + ")");
+row("snapshot vs migration files", snap.migrations === snap.files
+  ? "in step" : "DRIFT - run npm test for detail");
 
 head("Structure");
 var tg = themeGuardAnomalies();

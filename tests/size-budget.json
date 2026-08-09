@@ -1,14 +1,36 @@
 {
   "comment": "Line budgets per file type. soft = warning (plan a split); hard = test failure (split before extending). Source files ~500 so a single read stays cheap. Docs share that hard cap: line count is only a PROXY for what actually degrades instruction adherence, which is one concept stated in two places saying slightly different things. That is enforced directly by the one-home-per-concept gate in tests/checks/roadmap-intake.test.js. The old 200/300 doc cap forced splits that produced the very duplication the gate now catches - the confidence bands ended up stated in three files - and generated an exceptions block longer than several of the files it exempted.",
   "byExtension": {
-    ".js":   { "soft": 300, "hard": 500 },
-    ".ts":   { "soft": 300, "hard": 500 },
-    ".css":  { "soft": 300, "hard": 500 },
-    ".html": { "soft": 250, "hard": 400 },
-    ".sql":  { "soft": 300, "hard": 500 },
-    ".md":   { "soft": 300, "hard": 500 }
+    ".js": {
+      "soft": 300,
+      "hard": 500
+    },
+    ".ts": {
+      "soft": 300,
+      "hard": 500
+    },
+    ".css": {
+      "soft": 300,
+      "hard": 500
+    },
+    ".html": {
+      "soft": 250,
+      "hard": 400
+    },
+    ".sql": {
+      "soft": 300,
+      "hard": 500
+    },
+    ".md": {
+      "soft": 300,
+      "hard": 500
+    }
   },
-  "generated": ["docs/CODEMAP.md", "llms.txt"],
+  "generated": [
+    "docs/CODEMAP.md",
+    "llms.txt",
+    "supabase/schema-snapshot.json"
+  ],
   "exceptions": {
     "docs/STATE.md": {
       "hard": 40,

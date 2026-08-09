@@ -119,9 +119,10 @@ document instead of walking the tree or reading whole files.
 | modules/reference/index.html | 75 | API reference - LPio / LaunchPad IO |
 | modules/roadmap/index.html | 120 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 55 | Users - LPio / LaunchPad IO |
-| package.json | 13 |  |
-| scripts/audit.js | 123 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
+| package.json | 14 |  |
+| scripts/audit.js | 145 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
+| scripts/gen-snapshot.js | 136 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
 | supabase/migrations/20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected |
@@ -142,17 +143,25 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260720000000_workstreams_and_visibility.sql | 98 | ------------------------------------------------------------------ |
 | supabase/migrations/20260720130000_category_department_and_fix_relates.sql | 74 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722000000_future_prototypes.sql | 68 | --------------------------------------------------------------- |
+| supabase/migrations/20260722153355_restore_roadmap_current_security_invoker.sql | 14 | ------------------------------------------------------------------ |
+| supabase/migrations/20260722153511_roadmap_current_canonical_column_order.sql | 43 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722160000_work_item_associated_departments.sql | 68 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722170000_roadmap_move_workstream_cascade.sql | 65 | ------------------------------------------------------------------ |
 | supabase/migrations/20260722190000_work_item_deliverable_level.sql | 23 | Deliverables: a third presentation level for work_items. A deliverable |
+| supabase/migrations/20260724142347_add_context_tables_domain_terms_journey_stages.sql | 90 | ------------------------------------------------------------------ |
+| supabase/migrations/20260727210907_add_assignee_to_work_items.sql | 39 | ------------------------------------------------------------------ |
+| supabase/migrations/20260728094808_roadmap_find_idf_weighting.sql | 18 | ------------------------------------------------------------------ |
 | supabase/migrations/20260728120000_roadmap_searchable_and_find.sql | 190 | Contextualisation read surface: roadmap_searchable + roadmap_find. |
 | supabase/migrations/20260730120000_app_review.sql | 334 | --------------------------------------------------------------- |
+| supabase/migrations/20260809120000_schema_catchup_and_delete_guard.sql | 64 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 339 | ------------------------------------------------------------------ |
+| supabase/schema-snapshot.json | 881 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 447 | ------------------------------------------------------------------ |
 | supabase/schema/31_roadmap_search.sql | 192 | Roadmap search: the contextualisation read surface. |
+| supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
 | supabase/schema/50_review.sql | 394 | ------------------------------------------------------------------ |
@@ -160,13 +169,14 @@ document instead of walking the tree or reading whole files.
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/roadmap-intake.test.js | 137 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
+| tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
-| tests/size-budget.json | 91 |  |
+| tests/size-budget.json | 113 |  |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
@@ -611,11 +621,17 @@ document instead of walking the tree or reading whole files.
 | themeGuardAnomalies() | scripts/audit.js:63 |
 | thenBalance() | scripts/audit.js:74 |
 | stalePaths() | scripts/audit.js:88 |
+| snapshotSummary() | scripts/audit.js:103 |
 | firstLineMatching() | scripts/gen-codemap.js:22 |
 | purposeOf() | scripts/gen-codemap.js:30 |
 | symbolsOf() | scripts/gen-codemap.js:41 |
+| sorted() | scripts/gen-snapshot.js:91 |
+| write() | scripts/gen-snapshot.js:101 |
 | cdnPages() | tests/checks/perf.test.js:17 |
 | sqlWithoutComments() | tests/checks/perf.test.js:22 |
+| schemaFiles() | tests/checks/schema-drift.test.js:32 |
+| schemaText() | tests/checks/schema-drift.test.js:35 |
+| migrationFiles() | tests/checks/schema-drift.test.js:38 |
 | jwtRole() | tests/checks/security.test.js:27 |
 | htmlPages() | tests/checks/structure.test.js:19 |
 | protectedPages() | tests/checks/structure.test.js:22 |

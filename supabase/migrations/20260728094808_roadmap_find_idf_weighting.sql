@@ -1,0 +1,17 @@
+-- ------------------------------------------------------------------
+-- Ledger placeholder. No statements: this entry's DDL is already in
+-- 20260728120000_roadmap_searchable_and_find.sql.
+--
+-- The live ledger records two migrations applied minutes apart on
+-- 2026-07-28: roadmap_searchable_and_find (094653), then
+-- roadmap_find_idf_weighting (094808), which replaced roadmap_find with
+-- the IDF-weighted scorer. The repo squashed both into the single
+-- searchable-and-find file, which carries the final IDF version - so
+-- the DDL is present and a fresh project reaches the right state, but
+-- the ledger name had no matching file and the drift gate flagged it.
+--
+-- This file closes that gap without editing an applied migration.
+-- Re-applying it is a no-op by design.
+-- ------------------------------------------------------------------
+
+-- (intentionally empty)
