@@ -62,6 +62,22 @@ test("symmetric kinds are stored once, in canonical order", () => {
     "unique index cannot catch");
 });
 
+test("the graph reads from both ends, symmetric kinds included", () => {
+  const schema = read(SCHEMA);
+  const view = schema.split("create view public.knowledge_graph")[1] || "";
+  const body = view.split("grant select")[0];
+  // The reverse branch must not filter symmetric kinds out. A symmetric
+  // link is stored ONCE in canonical endpoint order, so excluding it
+  // from the reverse branch means whichever item sorts second never
+  // sees its own relationship - which is what happened, and what this
+  // check exists to stop happening again.
+  assert.doesNotMatch(body, /where l\.valid_to is null and not k\.is_symmetric/,
+    "the reverse branch must include symmetric kinds; storing a pair once " +
+    "is not the same as reading it from one end only");
+  assert.match(body, /case when k\.is_symmetric then k\.label else k\.inverse_label end/,
+    "a symmetric kind reads the same from either end; a directional one flips");
+});
+
 test("the invariants are constraints, not conventions", () => {
   const schema = read(SCHEMA);
   assert.match(schema, /constraint knowledge_links_not_self/,

@@ -181,6 +181,14 @@
     {
       "name": "backfill_relates_to_id_into_knowledge_links",
       "version": "20260809131500"
+    },
+    {
+      "name": "roadmap_searchable_links",
+      "version": "20260809132000"
+    },
+    {
+      "name": "knowledge_graph_symmetric_both_ends",
+      "version": "20260809132500"
     }
   ],
   "policies": [

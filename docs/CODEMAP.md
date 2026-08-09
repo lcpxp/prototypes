@@ -92,7 +92,7 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 39 | Current state |
+| docs/STATE.md | 40 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
@@ -155,21 +155,24 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260730120000_app_review.sql | 334 | --------------------------------------------------------------- |
 | supabase/migrations/20260809120000_schema_catchup_and_delete_guard.sql | 64 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809130647_knowledge_links_typed_vocabulary.sql | 340 | ------------------------------------------------------------------ |
+| supabase/migrations/20260809131500_backfill_relates_to_id_into_knowledge_links.sql | 25 | ------------------------------------------------------------------ |
+| supabase/migrations/20260809132000_roadmap_searchable_links.sql | 50 | ------------------------------------------------------------------ |
+| supabase/migrations/20260809132500_knowledge_graph_symmetric_both_ends.sql | 34 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 355 | ------------------------------------------------------------------ |
-| supabase/schema-snapshot.json | 951 |  |
+| supabase/schema-snapshot.json | 959 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 443 | ------------------------------------------------------------------ |
-| supabase/schema/31_roadmap_search.sql | 192 | Roadmap search: the contextualisation read surface. |
+| supabase/schema/31_roadmap_search.sql | 209 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
-| supabase/schema/33_links.sql | 335 | ------------------------------------------------------------------ |
+| supabase/schema/33_links.sql | 344 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
 | supabase/schema/50_review.sql | 394 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
-| tests/checks/knowledge-links.test.js | 104 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
+| tests/checks/knowledge-links.test.js | 120 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/roadmap-intake.test.js | 137 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |

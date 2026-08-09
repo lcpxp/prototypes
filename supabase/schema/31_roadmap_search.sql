@@ -42,6 +42,23 @@ create view public.roadmap_searchable
     wi.assignee,
     wi.relates_to_id,
     rel.title                 as relates_to_title,
+    -- Every open link on this item, from either end, already resolved to
+    -- the other end's title and the reading that applies from here. A
+    -- session banding a candidate needs to see that two rows were
+    -- already adjudicated `distinct_from` without a second query - that
+    -- is the whole point of recording the judgement.
+    coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'kind', g.kind, 'reads', g.reads, 'family', g.family,
+               'other_type', g.dst_type, 'other_id', g.dst_id,
+               'other_title', other.title,
+               'note', g.note, 'confidence', g.confidence)
+             order by g.family, g.kind, other.title)
+        from public.knowledge_graph g
+        left join public.work_items other
+          on g.dst_type = 'work_item' and other.id = g.dst_id
+       where g.src_type = 'work_item' and g.src_id = wi.id
+    ), '[]'::jsonb)          as links,
     wi.resolution,
     wi.tags,
     (coalesce(wi.summary, '') = '' and coalesce(wi.details, '') = '') as is_hollow,

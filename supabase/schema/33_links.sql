@@ -287,8 +287,13 @@ create constraint trigger knowledge_links_duplicate_dropped
 -- Read surfaces.
 -- ---------------------------------------------------------------
 
--- Every OPEN link, expanded to read from BOTH ends with the correct
--- label, so a consumer never has to know which way a row was stored.
+-- Every OPEN link, emitted from BOTH ends with the reading that applies
+-- from that end, so a consumer never has to know which way a row was
+-- stored. Both branches run for every kind, including symmetric ones: a
+-- symmetric link is stored once in canonical endpoint order, so if only
+-- the forward branch emitted it, whichever item sorted second would
+-- never see its own relationship. The two branches differ in src/dst,
+-- so no row is duplicated - they are the two directions, not two copies.
 drop view if exists public.knowledge_graph;
 create view public.knowledge_graph
   with (security_invoker = on) as
@@ -301,11 +306,15 @@ create view public.knowledge_graph
    where l.valid_to is null
   union all
   select l.id, l.to_type, l.to_id, l.from_type, l.from_id,
-         l.kind, k.inverse_label, k.family, k.is_symmetric,
+         l.kind,
+         -- A symmetric kind reads the same from either end ("Related
+         -- to"); a directional one flips ("Part of" / "Includes").
+         case when k.is_symmetric then k.label else k.inverse_label end,
+         k.family, k.is_symmetric,
          l.note, l.confidence, l.valid_from
     from public.knowledge_links l
     join public.link_kinds k on k.key = l.kind
-   where l.valid_to is null and not k.is_symmetric;
+   where l.valid_to is null;
 
 grant select on public.knowledge_graph to authenticated;
 
