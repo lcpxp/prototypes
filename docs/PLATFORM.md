@@ -90,6 +90,29 @@ the session:
 
 Database inserts only; the repo does not change for a content load.
 
+## What the page shows, and what it asks for
+
+modules/platform/ renders every store above, not just the capability
+catalogue: the lead-to-live journey from journey_stages, the glossary
+from domain_terms, the recorded facts from work_notes (kind 'fact'),
+and the source documents each record was distilled from. A capability
+card also carries its provenance and any typed links out of it, so
+"what is the roadmap doing to this capability" reads off the card.
+
+Above all that sits a **Coverage** panel that names the gaps: areas
+with no capability recorded, capabilities with neither a summary nor
+any blocks, capabilities with no source, and unverified terms. That
+panel is the prompt to write - a gap should be something to fill, not
+something to discover. When a round of ingestion finishes, read it and
+decide whether the next round is more capture or filling the holes.
+
+One rule this enforces mechanically: every kind allowed by the
+constraint on product_capabilities.kind must have a place on the page
+(tests/unit/platform-knowledge.test.js). Three kinds were added in
+August 2026 and rendered nowhere for a week because the page filtered
+for kind='capability'; anything unplaced now falls through to a
+backstop section rather than vanishing.
+
 ## Retrieval protocol
 
 To brief a session on current platform capability:

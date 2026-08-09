@@ -11,6 +11,17 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- The Platform page now shows the whole knowledge base, not just the
+  capability catalogue. It previously rendered 18 capability rows while
+  63 more sat in the database unseen: the 13-stage lead-to-live journey,
+  the 16-term glossary, 29 recorded facts and the 5 source documents
+  everything was distilled from. Each capability now also shows where it
+  came from and what the roadmap is doing to it.
+- A Coverage panel near the top of the Platform page names what is
+  missing - areas with no capability recorded, capabilities with no
+  substance or no source, unverified glossary terms - so a gap is
+  something to fill rather than something to discover. On today's data
+  it finds 10 product areas with nothing written against them.
 - The roadmap drawer now shows typed relationships instead of a single
   "Related to" line: an item reads "Part of", "Related to" or "Distinct
   from" against each of its neighbours, each clickable through to that

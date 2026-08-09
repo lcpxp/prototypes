@@ -1,0 +1,143 @@
+/* ------------------------------------------------------------------
+   platform.css - The platform knowledge page (modules/platform/).
+   Covers the stores the capability catalogue does not: coverage and
+   gaps, the lead-to-live lifecycle, the glossary, recorded facts and
+   source documents, plus the link and provenance lines on a capability
+   card. All values from tokens.css; no hard-coded colour or spacing.
+   ------------------------------------------------------------------ */
+
+.pk-section { margin: var(--s-6) 0; }
+
+/* --- Coverage ---------------------------------------------------- */
+
+.pk-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+}
+.pk-stat {
+  flex: 1 1 8rem;
+  background: var(--alt-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s-3) var(--s-4);
+}
+.pk-stat-n {
+  display: block;
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: 1.1;
+}
+.pk-stat-l {
+  display: block;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+/* A gap is a prompt to write something, so it reads as a list of jobs
+   rather than a warning banner. */
+.pk-gaps { list-style: none; margin: 0; padding: 0; }
+.pk-gaps li {
+  border-left: 2px solid var(--line-strong);
+  margin-bottom: var(--s-3);
+  padding-left: var(--s-3);
+}
+.pk-gaps li strong { display: block; }
+.pk-gaps li span {
+  color: var(--muted);
+  display: block;
+  font-size: var(--text-xs);
+}
+
+/* --- Lifecycle ---------------------------------------------------- */
+
+.pk-stages { list-style: none; margin: 0; padding: 0; }
+.pk-stage {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-3) 0;
+}
+.pk-stage + .pk-stage { border-top: 1px solid var(--line); }
+.pk-stage-no {
+  align-items: center;
+  background: var(--accent-soft);
+  border-radius: 50%;
+  color: var(--accent);
+  display: flex;
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+.pk-stage-body { min-width: 0; }
+.pk-stage-body h3 { margin: 0 0 var(--s-1); }
+.pk-stage-body p { margin: 0 0 var(--s-1); }
+.pk-stage-actor {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+/* --- Glossary ----------------------------------------------------- */
+
+.pk-glossary {
+  display: grid;
+  gap: var(--s-3);
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
+  margin: 0;
+}
+.pk-term {
+  background: var(--alt-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s-3) var(--s-4);
+}
+.pk-term dt { font-weight: 600; }
+.pk-term dd { color: var(--muted); margin: var(--s-1) 0 0; }
+.pk-expansion {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* --- Facts and sources -------------------------------------------- */
+
+.pk-fact-group { margin-bottom: var(--s-4); }
+.pk-fact-group h3 { margin: 0 0 var(--s-2); }
+.pk-fact-group ul { margin: 0; padding-left: var(--s-4); }
+.pk-fact-group li { margin-bottom: var(--s-2); }
+
+.pk-sources { list-style: none; margin: 0; padding: 0; }
+.pk-sources li {
+  border-top: 1px solid var(--line);
+  padding: var(--s-3) 0;
+}
+.pk-sources li p { color: var(--muted); margin: var(--s-1) 0 0; }
+.pk-date {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Capability card additions ------------------------------------ */
+
+.cap-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 0;
+}
+.cap-link {
+  background: var(--alt-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  padding: 0 var(--s-2);
+}
+.cap-link-kind { color: var(--muted); }
+.cap-source {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  margin: var(--s-3) 0 0;
+}

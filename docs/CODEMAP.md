@@ -23,6 +23,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/layout.css | 351 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
+| assets/css/platform.css | 144 | platform.css - The platform knowledge page (modules/platform/). |
 | assets/css/prototype.css | 88 | prototype.css - Shared styles for a prototype's LPio-framed overview |
 | assets/css/pxp-daopay.css | 212 | pxp-daopay.css - The Daopay EU onboarding replica layered on the PXP |
 | assets/css/pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
@@ -36,7 +37,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 231 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 233 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
@@ -62,7 +63,8 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
 | assets/js/pages/pci-portal.js | 302 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
 | assets/js/pages/pci-reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
-| assets/js/pages/platform.js | 202 | platform.js - The platform product-knowledge viewer for |
+| assets/js/pages/platform-knowledge.js | 200 | platform-knowledge.js - The parts of the platform knowledge base the |
+| assets/js/pages/platform.js | 337 | platform.js - The platform product-knowledge viewer for |
 | assets/js/pages/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
@@ -80,12 +82,12 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 278 | Architecture |
-| docs/CHANGELOG.md | 251 | Changelog |
+| docs/CHANGELOG.md | 262 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/KNOWLEDGE-MODEL.md | 187 | The knowledge model |
-| docs/PLATFORM.md | 140 | Platform product-knowledge protocol |
+| docs/PLATFORM.md | 163 | Platform product-knowledge protocol |
 | docs/ROADMAP-INTAKE.md | 405 | Roadmap intake |
 | docs/ROADMAP-PLAYBOOK.md | 259 | Roadmap playbook |
 | docs/ROADMAP-REVIEW.md | 130 | Roadmap review |
@@ -104,7 +106,7 @@ document instead of walking the tree or reading whole files.
 | modules/app-review/wave.html | 98 | Wave - Application review - LPio / LaunchPad IO |
 | modules/backlog/index.html | 93 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 62 | Integrations - LPio / LaunchPad IO |
-| modules/platform/index.html | 56 | Platform - LPio / LaunchPad IO |
+| modules/platform/index.html | 60 | Platform - LPio / LaunchPad IO |
 | modules/prototypes/daopay/application.html | 51 | Application summary - PXP replica - LPio |
 | modules/prototypes/daopay/applications.html | 50 | Applications - PXP replica - LPio |
 | modules/prototypes/daopay/daopay-flow.svg | 171 |  |
@@ -193,6 +195,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
+| tests/unit/platform-knowledge.test.js | 200 | tests/unit/platform-knowledge.test.js - The stores the capability |
 | tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
@@ -220,9 +223,9 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:88 |
 | App.onAuthed | assets/js/core/guard.js:116 |
 | enforceModule() | assets/js/core/guard.js:124 |
-| App.moduleHref | assets/js/core/registry.js:175 |
-| App.itemHref | assets/js/core/registry.js:185 |
-| App.departmentLabel | assets/js/core/registry.js:224 |
+| App.moduleHref | assets/js/core/registry.js:177 |
+| App.itemHref | assets/js/core/registry.js:187 |
+| App.departmentLabel | assets/js/core/registry.js:226 |
 | sources() | assets/js/core/search.js:24 |
 | canReach() | assets/js/core/search.js:47 |
 | moduleByKey() | assets/js/core/search.js:51 |
@@ -434,18 +437,32 @@ document instead of walking the tree or reading whole files.
 | closeQuote() | assets/js/pages/pci-portal.js:289 |
 | addPciFee() | assets/js/pages/pci-portal.js:290 |
 | stat() | assets/js/pages/pci-reports.js:16 |
-| toneClass() | assets/js/pages/platform.js:24 |
-| codeblock() | assets/js/pages/platform.js:28 |
-| tableBlock() | assets/js/pages/platform.js:33 |
-| kvBlock() | assets/js/pages/platform.js:50 |
-| valuesBlock() | assets/js/pages/platform.js:59 |
-| blockHtml() | assets/js/pages/platform.js:75 |
-| maturityChips() | assets/js/pages/platform.js:96 |
-| capabilityCard() | assets/js/pages/platform.js:101 |
-| byOrder() | assets/js/pages/platform.js:111 |
-| groupByArea() | assets/js/pages/platform.js:115 |
-| sectionHeading() | assets/js/pages/platform.js:127 |
-| pageHtml() | assets/js/pages/platform.js:135 |
+| esc() | assets/js/pages/platform-knowledge.js:23 |
+| byOrder() | assets/js/pages/platform-knowledge.js:24 |
+| section() | assets/js/pages/platform-knowledge.js:26 |
+| gaps() | assets/js/pages/platform-knowledge.js:38 |
+| stat() | assets/js/pages/platform-knowledge.js:56 |
+| coverageHtml() | assets/js/pages/platform-knowledge.js:61 |
+| lifecycleHtml() | assets/js/pages/platform-knowledge.js:116 |
+| glossaryHtml() | assets/js/pages/platform-knowledge.js:134 |
+| factsHtml() | assets/js/pages/platform-knowledge.js:153 |
+| sourcesHtml() | assets/js/pages/platform-knowledge.js:177 |
+| kindsIn() | assets/js/pages/platform.js:39 |
+| toneClass() | assets/js/pages/platform.js:43 |
+| codeblock() | assets/js/pages/platform.js:47 |
+| tableBlock() | assets/js/pages/platform.js:52 |
+| kvBlock() | assets/js/pages/platform.js:69 |
+| valuesBlock() | assets/js/pages/platform.js:78 |
+| blockHtml() | assets/js/pages/platform.js:94 |
+| maturityChips() | assets/js/pages/platform.js:115 |
+| capabilityLinks() | assets/js/pages/platform.js:125 |
+| capabilityCard() | assets/js/pages/platform.js:134 |
+| byOrder() | assets/js/pages/platform.js:147 |
+| groupByArea() | assets/js/pages/platform.js:151 |
+| sectionHeading() | assets/js/pages/platform.js:163 |
+| renderUnknown() | assets/js/pages/platform.js:174 |
+| pageHtml() | assets/js/pages/platform.js:191 |
+| rows() | assets/js/pages/platform.js:299 |
 | sanitize() | assets/js/pages/proto-svg.js:22 |
 | fallback() | assets/js/pages/proto-svg.js:51 |
 | openOverlay() | assets/js/pages/proto-svg.js:59 |
@@ -665,6 +682,8 @@ document instead of walking the tree or reading whole files.
 | load() | tests/unit/daopay-role.test.js:18 |
 | loadBuilder() | tests/unit/gallery-future.test.js:14 |
 | load() | tests/unit/pci-ixopay.test.js:16 |
+| load() | tests/unit/platform-knowledge.test.js:22 |
+| sample() | tests/unit/platform-knowledge.test.js:40 |
 | loadView() | tests/unit/platform-render.test.js:15 |
 | sampleData() | tests/unit/platform-render.test.js:31 |
 | loadApp() | tests/unit/reference-render.test.js:13 |

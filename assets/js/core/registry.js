@@ -98,6 +98,8 @@
       workDocuments: "work_documents",
       workNotes: "work_notes",
       productCapabilities: "product_capabilities",
+      domainTerms: "domain_terms",
+      journeyStages: "journey_stages",
       moduleAccess: "module_access",
       reviewWaves: "review_waves",
       reviewApplications: "review_applications",
