@@ -156,14 +156,28 @@
       '<span class="rmd-progress-num">' + esc(label) + "</span></dd></div>";
   }
 
-  // The related work item as a clickable link into its own drawer (the
-  // drawer body delegates data-item-id clicks). Blank when unset or the
-  // target is not in view.
-  function relatedLink(item, ctx) {
-    var id = item.relates_to_id, t = titleOf(id, ctx);
-    if (!t) return "";
-    return '<a class="rmd-link" href="?item=' + esc(id) + '" data-item-id="' +
-      esc(id) + '">' + esc(t) + "</a>";
+  // Typed relationships, one drawer row per reading ("Part of", then
+  // "Related to", then "Distinct from"), each target a clickable link
+  // into its own drawer - the drawer body delegates data-item-id
+  // clicks. ctx.linksByItem is built in roadmap.js and already carries
+  // the reading that applies from THIS end, so nothing here has to know
+  // which way the row was stored. A `note` becomes the title attribute:
+  // on distinct_from that note is the reason the pair was judged apart,
+  // which is the thing worth not losing.
+  function relatedRows(item, ctx) {
+    var links = (ctx && ctx.linksByItem && ctx.linksByItem[item.id]) || [];
+    var byReading = {};
+    links.forEach(function (l) {
+      var t = titleOf(l.otherId, ctx);
+      if (!t) return;
+      var a = '<a class="rmd-link" href="?item=' + esc(l.otherId) +
+        '" data-item-id="' + esc(l.otherId) + '"' +
+        (l.note ? ' title="' + esc(l.note) + '"' : "") + ">" + esc(t) + "</a>";
+      (byReading[l.reads] = byReading[l.reads] || []).push(a);
+    });
+    return Object.keys(byReading).map(function (reads) {
+      return row(reads, byReading[reads].join(", "));
+    }).join("");
   }
 
   // The originating work_document title (provenance), resolved through the
@@ -265,7 +279,7 @@
       row("Theme", esc(V.themeLabel(item, ctx))) +
       row("Area", esc(V.areaTitleOf(item, ctx))) +
       row("Workstream", esc(titleOf(item.parent_id, ctx))) +
-      row("Related to", relatedLink(item, ctx)) +
+      relatedRows(item, ctx) +
       row("Department", esc(App.departmentLabel(item.department))) +
       row("Business areas", businessAreaLabels(item).map(esc).join(", ")) +
       row("Assignee", assigneeText(item, ctx)) +

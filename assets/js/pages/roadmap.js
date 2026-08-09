@@ -421,7 +421,7 @@
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
-        .select("id, parent_id, relates_to_id, area_id, category_id, source_document_id, title, summary, details, type, level, " +
+        .select("id, parent_id, area_id, category_id, source_document_id, title, summary, details, type, level, " +
           "assignee, support_assignee, status, horizon, end_horizon, " +
           "presentation, priority, effort, impact, department, associated_departments, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
@@ -442,6 +442,13 @@
       // backlog access, so a denied fetch just leaves the field blank).
       App.db.from(App.registry.tables.workDocuments)
         .select("id, title"),
+      // Typed relationships between work items. Read separately rather
+      // than joined, because a link is one row that both of its ends
+      // display: the map below indexes each link under BOTH item ids,
+      // with the reading that applies from that end.
+      App.db.from(App.registry.tables.knowledgeLinks)
+        .select("from_id, to_id, kind, note, confidence")
+        .is("valid_to", null),
     ]);
 
     var itemsResult = results[2];
@@ -492,6 +499,32 @@
     ctx.assigneeCounts = {};
     data.items.forEach(function (i) {
       if (i.assignee) ctx.assigneeCounts[i.assignee] = (ctx.assigneeCounts[i.assignee] || 0) + 1;
+    });
+
+    // Typed links, indexed under both ends. A symmetric kind reads the
+    // same either way ("Related to"); a directional one flips, so the
+    // item pointed AT reads the inverse ("Includes" against "Part of").
+    // Mirrors the knowledge_graph view in supabase/schema/33_links.sql;
+    // the labels live here because the page never reads link_kinds.
+    ctx.linksByItem = {};
+    var links = results[6] && !results[6].error ? results[6].data || [] : [];
+    links.forEach(function (l) {
+      var k = App.registry.linkKinds[l.kind];
+      if (!k) return;
+      var push = function (id, otherId, reads) {
+        if (!id || !otherId) return;
+        (ctx.linksByItem[id] = ctx.linksByItem[id] || []).push({
+          kind: l.kind, reads: reads, family: k.family,
+          otherId: otherId, note: l.note || "", confidence: l.confidence,
+        });
+      };
+      push(l.from_id, l.to_id, k.label);
+      push(l.to_id, l.from_id, k.symmetric ? k.label : k.inverse);
+    });
+    Object.keys(ctx.linksByItem).forEach(function (id) {
+      ctx.linksByItem[id].sort(function (a, b) {
+        return a.family.localeCompare(b.family) || a.kind.localeCompare(b.kind);
+      });
     });
 
     renderControls(nav, layoutNav, host);

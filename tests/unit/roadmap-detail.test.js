@@ -131,7 +131,6 @@ test("drawerHtml surfaces the full stored context: details, classifiers, links, 
     priority: 10, sort_order: 5, attributes: {} });
   const item = data.items[0];
   item.parent_id = "ws1";
-  item.relates_to_id = "ws1";
   item.type = "feature";
   item.effort = "large";
   item.impact = "high";
@@ -143,15 +142,28 @@ test("drawerHtml surfaces the full stored context: details, classifiers, links, 
   item.resolved_at = "2026-07-20T10:00:00Z";
   item.attributes.legacy_priority_tags = ["P1", "board"];
   item.notes = [{ kind: "decision", body: "Promoted on partner deadline", created_at: "2026-07-18T09:00:00Z" }];
-  const html = App.roadmapDetail.drawerHtml(item, ctxOf(App, data));
+  // Typed links as roadmap.js indexes them: the reading that applies
+  // from THIS end, so the drawer never has to know which way the row
+  // was stored. Two kinds, to prove one row per reading.
+  const ctx = ctxOf(App, data);
+  ctx.linksByItem = { [item.id]: [
+    { kind: "part_of", reads: "Part of", family: "hierarchy",
+      otherId: "ws1", note: "", confidence: "confirmed" },
+    { kind: "distinct_from", reads: "Distinct from", family: "association",
+      otherId: "ws1", note: "Different platform; no shared code.",
+      confidence: "confirmed" },
+  ] };
+  const html = App.roadmapDetail.drawerHtml(item, ctx);
   assert.match(html, /Long-form context/, "details text renders");
   assert.match(html, /<dt>Type<\/dt><dd>Feature/);
   assert.match(html, /<dt>Effort<\/dt><dd>Large/);
   assert.match(html, /<dt>Impact<\/dt><dd>High/);
   assert.match(html, /<dt>Priority<\/dt><dd>P2/);
   assert.match(html, /<dt>Workstream<\/dt><dd>Unity programme/, "parent resolves to its title");
-  assert.match(html, /<dt>Related to<\/dt><dd><a class="rmd-link"[^>]*data-item-id="ws1">Unity programme<\/a>/,
-    "soft link resolves to a clickable link to its title");
+  assert.match(html, /<dt>Part of<\/dt><dd><a class="rmd-link"[^>]*data-item-id="ws1">Unity programme<\/a>/,
+    "a typed link renders under its own reading, clickable to the target");
+  assert.match(html, /<dt>Distinct from<\/dt><dd><a[^>]*title="Different platform; no shared code\."/,
+    "the adjudication note rides along, so the reason is never lost");
   assert.match(html, /<dt>Requested by<\/dt><dd>COO/);
   assert.match(html, /<dt>External ref<\/dt><dd>DEVOPS-123/);
   assert.match(html, /<dt>Tags<\/dt><dd>priority, q3/);

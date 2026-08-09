@@ -224,7 +224,7 @@
     });
     // Map each parent to its ordered sub-items so the detail and drawer
     // can nest them without another pass over the dataset; itemById lets
-    // the drawer resolve parent_id/relates_to_id back to titles.
+    // the drawer resolve parent_id and link endpoints back to titles.
     var childrenByParent = {}, itemById = {};
     (data.items || []).forEach(function (i) {
       itemById[i.id] = i;

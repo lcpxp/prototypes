@@ -94,7 +94,7 @@
       roadmapCategories: "roadmap_categories",
       roadmapMilestones: "roadmap_milestones",
       workItems: "work_items",
-      workItemDependencies: "work_item_dependencies",
+      knowledgeLinks: "knowledge_links",
       workDocuments: "work_documents",
       workNotes: "work_notes",
       productCapabilities: "product_capabilities",
@@ -105,6 +105,23 @@
       reviewRevisions: "review_revisions",
       triageCategories: "triage_categories",
       launchpadStatuses: "launchpad_statuses",
+    },
+    // Link kinds: the display half of the vocabulary in
+    // supabase/schema/33_links.sql (link_kinds). The database is
+    // authoritative for which kinds exist and what they mean; this
+    // mirrors only the labels, so the page can render "Part of" and
+    // "Includes" without a second fetch. A kind missing here renders
+    // nothing rather than a raw key. Keys and readings must match the
+    // seed - tests/checks/knowledge-links.test.js holds them in step.
+    linkKinds: {
+      duplicate_of:  { label: "Duplicate of",  inverse: "Has duplicate",  family: "equivalence", symmetric: false },
+      supersedes:    { label: "Supersedes",    inverse: "Superseded by",  family: "equivalence", symmetric: false },
+      part_of:       { label: "Part of",       inverse: "Includes",       family: "hierarchy",   symmetric: false },
+      blocks:        { label: "Blocks",        inverse: "Blocked by",     family: "sequence",    symmetric: false },
+      relates_to:    { label: "Related to",    inverse: "Related to",     family: "association", symmetric: true },
+      distinct_from: { label: "Distinct from", inverse: "Distinct from",  family: "association", symmetric: true },
+      about:         { label: "About",         inverse: "Described by",   family: "knowledge",   symmetric: false },
+      affects:       { label: "Affects",       inverse: "Affected by",    family: "knowledge",   symmetric: false },
     },
     // Spec families group api_specs rows into distinct reference
     // "sites" inside the reference module. Order here is display

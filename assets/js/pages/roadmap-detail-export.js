@@ -47,8 +47,20 @@
       support_assignee: item.support_assignee || null,
       assignee_rank: a.assignee_rank != null ? a.assignee_rank : null,
       workstream: H.titleOf(item.parent_id, ctx) || null,
-      related_to: H.titleOf(item.relates_to_id, ctx) || null,
-      related_to_id: item.relates_to_id || null,
+      // Typed relationships, as read from THIS item's end. An AI reader
+      // needs the kind, not just the neighbour: "distinct from" and
+      // "duplicate of" mean opposite things about the same pair.
+      links: (function () {
+        var ls = (ctx && ctx.linksByItem && ctx.linksByItem[item.id]) || [];
+        return ls.map(function (l) {
+          return H.clean({
+            kind: l.kind, reads: l.reads,
+            title: H.titleOf(l.otherId, ctx) || null,
+            id: l.otherId, note: l.note || null,
+            confidence: l.confidence,
+          });
+        });
+      })(),
       theme: V.themeLabel(item, ctx),
       area: V.areaTitleOf(item, ctx) || null,
       department: App.departmentLabel(item.department) || null,
@@ -170,7 +182,13 @@
       end_date: item.ends_on || "",
       start_sprint: item.start_sprint || "",
       end_sprint: item.end_sprint || "",
-      related_to: H.titleOf(item.relates_to_id, ctx),
+      // One column still, so the leading column set stays stable:
+      // "kind: title" pairs, semicolon-separated.
+      related_to: ((ctx && ctx.linksByItem && ctx.linksByItem[item.id]) || [])
+        .map(function (l) {
+          var t2 = H.titleOf(l.otherId, ctx);
+          return t2 ? l.reads + ": " + t2 : "";
+        }).filter(Boolean).join("; "),
       requested_by: item.requested_by || "",
       source_document_id: item.source_document_id || "",
       external_ref: item.external_ref || "",

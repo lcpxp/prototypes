@@ -109,6 +109,29 @@ test("the link tables have policies recorded in policies.sql", () => {
   }
 });
 
+test("the registry's link labels match the schema seed exactly", () => {
+  // The board never fetches link_kinds - it renders "Part of" and
+  // "Includes" from App.registry.linkKinds, so the two lists have to say
+  // the same thing. This is the one place a reading could drift without
+  // anything failing, which is why it is checked rather than trusted.
+  const registry = read("assets/js/core/registry.js");
+  for (const { key, label, inverse } of seededKinds()) {
+    const entry = new RegExp(
+      key + ":\\s*\\{[^}]*label: \"" + label + "\"[^}]*inverse: \"" + inverse + "\"");
+    assert.match(registry, entry,
+      `App.registry.linkKinds.${key} must read "${label}" / "${inverse}", ` +
+      "matching the link_kinds seed in " + SCHEMA);
+  }
+  // And nothing extra: a kind the page renders but the database does not
+  // know is a label that can never appear.
+  const block = registry.split("linkKinds: {")[1].split("},\n")[0];
+  const inRegistry = [...block.matchAll(/^\s*(\w+):\s*\{/gm)].map((m) => m[1]);
+  const known = new Set(seededKinds().map((k) => k.key));
+  for (const key of inRegistry) {
+    assert.ok(known.has(key), `App.registry.linkKinds.${key} is not a seeded kind`);
+  }
+});
+
 test("work_item_dependencies is gone, not left running alongside", () => {
   const work = read("supabase/schema/30_work.sql");
   assert.doesNotMatch(work, /create table if not exists public\.work_item_dependencies/,

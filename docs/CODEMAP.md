@@ -36,7 +36,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 214 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 231 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
@@ -67,15 +67,15 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
-| assets/js/pages/roadmap-detail-export.js | 203 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
-| assets/js/pages/roadmap-detail.js | 347 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
+| assets/js/pages/roadmap-detail-export.js | 221 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
+| assets/js/pages/roadmap-detail.js | 361 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-drawer.js | 76 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
 | assets/js/pages/roadmap-views-cascade.js | 201 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
 | assets/js/pages/roadmap-views-timeline.js | 180 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
 | assets/js/pages/roadmap-views.js | 408 | roadmap-views.js - Pure HTML builders for the roadmap home |
-| assets/js/pages/roadmap.js | 505 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
+| assets/js/pages/roadmap.js | 538 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
@@ -172,7 +172,7 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/50_review.sql | 394 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
-| tests/checks/knowledge-links.test.js | 120 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
+| tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/roadmap-intake.test.js | 137 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
@@ -192,7 +192,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
-| tests/unit/roadmap-detail.test.js | 299 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
+| tests/unit/roadmap-detail.test.js | 311 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views-custom.test.js | 220 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
 | tests/unit/roadmap-views.test.js | 456 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
@@ -215,9 +215,9 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:88 |
 | App.onAuthed | assets/js/core/guard.js:116 |
 | enforceModule() | assets/js/core/guard.js:124 |
-| App.moduleHref | assets/js/core/registry.js:158 |
-| App.itemHref | assets/js/core/registry.js:168 |
-| App.departmentLabel | assets/js/core/registry.js:207 |
+| App.moduleHref | assets/js/core/registry.js:175 |
+| App.itemHref | assets/js/core/registry.js:185 |
+| App.departmentLabel | assets/js/core/registry.js:224 |
 | sources() | assets/js/core/search.js:24 |
 | canReach() | assets/js/core/search.js:47 |
 | moduleByKey() | assets/js/core/search.js:51 |
@@ -473,9 +473,9 @@ document instead of walking the tree or reading whole files.
 | wireContent() | assets/js/pages/reference.js:218 |
 | openHashTarget() | assets/js/pages/reference.js:247 |
 | toKpiItem() | assets/js/pages/roadmap-detail-export.js:18 |
-| toKpiRoadmap() | assets/js/pages/roadmap-detail-export.js:103 |
-| flattenItem() | assets/js/pages/roadmap-detail-export.js:136 |
-| toCsvRoadmap() | assets/js/pages/roadmap-detail-export.js:189 |
+| toKpiRoadmap() | assets/js/pages/roadmap-detail-export.js:115 |
+| flattenItem() | assets/js/pages/roadmap-detail-export.js:148 |
+| toCsvRoadmap() | assets/js/pages/roadmap-detail-export.js:207 |
 | esc() | assets/js/pages/roadmap-detail.js:33 |
 | day() | assets/js/pages/roadmap-detail.js:34 |
 | dateRange() | assets/js/pages/roadmap-detail.js:35 |
@@ -496,15 +496,15 @@ document instead of walking the tree or reading whole files.
 | priorityBand() | assets/js/pages/roadmap-detail.js:132 |
 | priorityLabel() | assets/js/pages/roadmap-detail.js:138 |
 | progressRow() | assets/js/pages/roadmap-detail.js:148 |
-| relatedLink() | assets/js/pages/roadmap-detail.js:162 |
-| sourceText() | assets/js/pages/roadmap-detail.js:171 |
-| parseDetails() | assets/js/pages/roadmap-detail.js:186 |
-| detailsHtml() | assets/js/pages/roadmap-detail.js:202 |
-| extraAttrRows() | assets/js/pages/roadmap-detail.js:213 |
-| noteRow() | assets/js/pages/roadmap-detail.js:227 |
-| notesHtml() | assets/js/pages/roadmap-detail.js:238 |
-| phasesHtml() | assets/js/pages/roadmap-detail.js:245 |
-| drawerHtml() | assets/js/pages/roadmap-detail.js:259 |
+| relatedRows() | assets/js/pages/roadmap-detail.js:167 |
+| sourceText() | assets/js/pages/roadmap-detail.js:185 |
+| parseDetails() | assets/js/pages/roadmap-detail.js:200 |
+| detailsHtml() | assets/js/pages/roadmap-detail.js:216 |
+| extraAttrRows() | assets/js/pages/roadmap-detail.js:227 |
+| noteRow() | assets/js/pages/roadmap-detail.js:241 |
+| notesHtml() | assets/js/pages/roadmap-detail.js:252 |
+| phasesHtml() | assets/js/pages/roadmap-detail.js:259 |
+| drawerHtml() | assets/js/pages/roadmap-detail.js:273 |
 | App.roadmapDrawer | assets/js/pages/roadmap-drawer.js:19 |
 | setItemParam() | assets/js/pages/roadmap-drawer.js:29 |
 | openDrawer() | assets/js/pages/roadmap-drawer.js:37 |
