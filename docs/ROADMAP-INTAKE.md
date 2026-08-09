@@ -276,8 +276,8 @@ learns that two pieces of work touch.
 
 **`distinct_from` is the one that pays for the vocabulary.** It records that a
 pair was examined and judged different - "Automate enrolling partners to
-Unity" against "...to LaunchPad", "VFS partner flow" against "Xolvis partner
-flow" - so the standing sweeps **suppress** that pair from future candidate
+Unity" against "...to LaunchPad", or two same-shaped partner-flow rows
+belonging to different partners - so the standing sweeps **suppress** that pair from future candidate
 lists instead of raising it every review. Use it the moment a candidate is
 rejected, with the reason in `note`. An adjudication that is not recorded is
 one the owner has to make again.

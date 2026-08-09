@@ -44,8 +44,8 @@ for a different problem.
 
 `roadmap_find`'s IDF weighting is hard-won and wins where a general-purpose
 embedding is weakest: rare handles the model has never seen. Measured on the
-live corpus, `xolvis` scores IDF 4.228, `ivr` 3.977, `currency` 3.776,
-against `merchant` at 1.130.
+live corpus, the rarest partner name scores IDF 4.228, `ivr` 3.977 and
+`currency` 3.776, against `merchant` at 1.130.
 
 It loses, badly, on rewording. The same row, asked for twice:
 
@@ -141,11 +141,12 @@ a person re-litigates it.
 
 There was previously no way to say it at all. A trigram sweep over titles at
 0.45 and above returns 42 pairs, 39 of them unlinked - including
-`Automate enrolling partners to Unity` against `...to LaunchPad` (0.66) and
-`VFS partner flow` against `Xolvis partner flow` (0.54), both genuinely
-different work. Those were re-examined at every review because nothing
-recorded that they had already been judged. `distinct_from` turns a domain
-judgement into data.
+`Automate enrolling partners to Unity` against `...to LaunchPad` (0.66), and
+a pair of identically-shaped partner-flow rows for two different partners
+(0.54) - both genuinely different work. Those were re-examined at every
+review because nothing recorded that they had already been judged.
+`distinct_from` turns a domain judgement into data. (Partner names stay in
+Supabase; the scores are the point here, not who they belong to.)
 
 ## Why the repo must describe the database
 

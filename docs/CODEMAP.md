@@ -84,6 +84,7 @@ document instead of walking the tree or reading whole files.
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
+| docs/KNOWLEDGE-MODEL.md | 187 | The knowledge model |
 | docs/PLATFORM.md | 140 | Platform product-knowledge protocol |
 | docs/ROADMAP-INTAKE.md | 405 | Roadmap intake |
 | docs/ROADMAP-PLAYBOOK.md | 259 | Roadmap playbook |
@@ -170,7 +171,7 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/30_work.sql | 437 | ------------------------------------------------------------------ |
 | supabase/schema/31_roadmap_search.sql | 220 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
-| supabase/schema/33_links.sql | 344 | ------------------------------------------------------------------ |
+| supabase/schema/33_links.sql | 345 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 78 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
 | supabase/schema/50_review.sql | 394 | ------------------------------------------------------------------ |
