@@ -61,7 +61,7 @@ grant select on public.roadmap_current to anon, authenticated;
 -- children, moved to Now, becomes a Now->Next workstream with 2 Now + 2
 -- Next children). Bands clamp to now..someday; priority/sort_order are
 -- untouched so ordering within a band is kept. Only direct children
--- (parent_id) move; soft-linked items (relates_to_id) stay put. This is
+-- (parent_id) move; items linked via knowledge_links stay put. This is
 -- the canonical "move this workstream" operation (see
 -- docs/ROADMAP-PLAYBOOK.md); the board page stays read-only.
 -- ---------------------------------------------------------------

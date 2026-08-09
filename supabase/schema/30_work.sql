@@ -192,14 +192,11 @@ create table if not exists public.work_items (
   -- (constraint below). See docs/ROADMAP-PLAYBOOK.md.
   level text not null default 'item'
     check (level in ('workstream', 'item', 'deliverable')),
-  -- LEGACY, read-only since 2026-08-09. Superseded by knowledge_links
-  -- (33_links.sql), which carries the same relationships typed, dated,
-  -- unlimited per row and readable from both ends. Every one of its 35
-  -- rows was migrated; nothing new should be written here. Kept only
-  -- until the front end reads links instead, then dropped - a dead
-  -- column left in place would leave two mechanisms for one job, which
-  -- is the ambiguity the link graph exists to remove.
-  relates_to_id uuid references public.work_items (id) on delete set null,
+  -- relates_to_id was here. One nullable uuid carrying four meanings
+  -- (duplicate of, component of, superseded by, related to) with a
+  -- ceiling of one relationship per row. Its 35 rows were migrated into
+  -- knowledge_links (33_links.sql) on 2026-08-09 and the column dropped:
+  -- leaving it in place would have left two mechanisms for one job.
   title text not null,
   summary text,
   details text,
@@ -284,7 +281,6 @@ create table if not exists public.work_items (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint work_items_parent_not_self check (parent_id is null or parent_id <> id),
-  constraint work_items_relates_not_self check (relates_to_id is null or relates_to_id <> id),
   constraint work_items_workstream_top_level check (level <> 'workstream' or parent_id is null)
 );
 
@@ -292,8 +288,6 @@ create index if not exists work_items_area_idx
   on public.work_items (area_id, horizon, priority, sort_order);
 create index if not exists work_items_parent_idx
   on public.work_items (parent_id, sort_order);
-create index if not exists work_items_relates_to_idx
-  on public.work_items (relates_to_id);
 create index if not exists work_items_level_idx
   on public.work_items (level, priority, sort_order);
 create index if not exists work_items_category_idx

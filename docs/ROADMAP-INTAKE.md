@@ -20,7 +20,7 @@ Intake used to write what it was given. A batch of 14 items added on
 under different titles, 1 heading whose components had been created as
 separate rows in the same session, and 3 items that were correctly distinct
 but recorded no relationship to anything. All 14 landed with `department`,
-`category_id` and `relates_to_id` null. A whole batch sharing that signature
+`category_id` and any link null. A whole batch sharing that signature
 is not fourteen lapses; it is a missing step.
 
 Note what it was not: careless requests. Several of the new descriptions were
@@ -51,7 +51,7 @@ Search all rows, including `done` and `dropped`, via `roadmap_find`:
 
     -- the headline, then the full request; band on the better score
     select title, score, status, horizon, workstream_title, is_hollow,
-           summary, details, relates_to_id, resolution
+           summary, details, links, resolution
       from roadmap_find('currency swap on the summary page', 8, 0.15);
 
     select * from roadmap_find(
@@ -175,12 +175,20 @@ moves onto the existing row: the owner's words are the asset.
      where title = 'Adapt overall application currency on the Summary page (admin tool)';
 
     -- MERGE: keep the older/better-placed row, retire the other with a
-    -- resolution naming the survivor and a back-link to it. Never delete.
+    -- resolution naming the survivor and a duplicate_of link to it. Never
+    -- delete. Both statements belong in ONE transaction: the duplicate_of
+    -- constraint checks the retired row is dropped, and it is deferred so
+    -- the order within the transaction does not matter.
+    begin;
     update work_items
        set status = 'dropped',
-           resolution = 'Duplicate: merged into "Quantity values on pricing lines" (19 Jul) - same feature.',
-           relates_to_id = (select id from work_items where title = 'Quantity values on pricing lines')
+           resolution = 'Duplicate: merged into "Quantity values on pricing lines" (19 Jul) - same feature.'
      where title = 'Quantity value on pricing lines during workflow question configuration';
+    insert into knowledge_links (from_type, from_id, to_type, to_id, kind, note, confidence)
+    select 'work_item', (select id from work_items where title = 'Quantity value on pricing lines during workflow question configuration'),
+           'work_item', (select id from work_items where title = 'Quantity values on pricing lines'),
+           'duplicate_of', 'Same feature, raised twice.', 'confirmed';
+    commit;
 
     -- PROMOTE: it exists, it is just scheduled too late.
     update work_items set horizon = 'now' where title = 'Inbound API';
@@ -195,19 +203,23 @@ moves onto the existing row: the owner's words are the asset.
      where title = 'Resolve read-only IVR / adjust live applications';
 
     -- ASSOCIATE: genuinely distinct, but do not lose the relationship.
-    -- relates_to_id is the general "related but distinct" mechanism, not
-    -- a bug-tracking special case; it does not roll up onto the gantt.
-    update work_items
-       set relates_to_id = (select id from work_items where title = 'Harden screening checks')
-     where title = 'Screening check toggles should work';
+    -- relates_to is the general "related but distinct" mechanism, not a
+    -- bug-tracking special case; it does not roll up onto the gantt.
+    insert into knowledge_links (from_type, from_id, to_type, to_id, kind, confidence)
+    select 'work_item', (select id from work_items where title = 'Screening check toggles should work'),
+           'work_item', (select id from work_items where title = 'Harden screening checks'),
+           'relates_to', 'confirmed';
 
     -- UMBRELLA: a coordination row, not build work. Link the components.
     update work_items
        set details = 'Coordination row: carries no build work, do not schedule or estimate directly.'
      where title = 'Automation sweep: CRM submission, Daopay, screening and notifications';
-    update work_items
-       set relates_to_id = (select id from work_items where title = 'Automation sweep: CRM submission, Daopay, screening and notifications')
-     where title in ('Daopay: notifications to Daopay', 'Daopay: notifications to PXP account managers and PXP underwriting');
+    insert into knowledge_links (from_type, from_id, to_type, to_id, kind, confidence)
+    select 'work_item', c.id, 'work_item',
+           (select id from work_items where title = 'Automation sweep: CRM submission, Daopay, screening and notifications'),
+           'part_of', 'confirmed'
+      from work_items c
+     where c.title in ('Daopay: notifications to Daopay', 'Daopay: notifications to PXP account managers and PXP underwriting');
 
 For anything other than `NEW`, write the reasoning down so the next session
 inherits the judgement rather than re-deriving it:
@@ -220,16 +232,17 @@ inherits the judgement rather than re-deriving it:
 
 State how to reverse the change in the confirmation line. Nothing is deleted,
 so every outcome has an undo: `ENRICH` restores the previous text, `MERGE`
-clears `status`, `resolution` and `relates_to_id` on the retired row,
+clears `status` and `resolution` on the retired row and closes the link
+(`valid_to`),
 `PROMOTE` and `REVIVE` put the bands back.
 
 ## The link vocabulary
 
 Relationships are rows in `knowledge_links`, not a column on the item. Eight
 kinds, grouped on the W3C SKOS split between hierarchical and associative
-relations. `relates_to_id` is the general "related but distinct" mechanism it
-replaces: same intent, but typed, unlimited per row, dated, and readable from
-both ends.
+relations. `relates_to` is the general "related but distinct" mechanism, replacing the
+old `relates_to_id` column: same intent, but typed, unlimited per row, dated,
+and readable from both ends.
 
 | Kind | Reads forward | Reads back | Use when |
 | --- | --- | --- | --- |
@@ -330,8 +343,8 @@ Then come back **once**: the clean items applied, the flagged ones grouped
 into a single pass. Fourteen sequential questions is a failure even if every
 one is correct.
 
-If a batch would land with `department`, `category_id` and `relates_to_id`
-uniformly null, the classification step has been skipped. Offer the
+If a batch would land with `department` and `category_id` uniformly null
+and no links at all, the classification step has been skipped. Offer the
 classification as part of the same pass rather than writing unclassified rows.
 
 ## The standing sweeps
@@ -342,15 +355,19 @@ ritual runs both of these and reports them.
 
     -- high-band pairs already in the data and not linked
     with live as (
-      select id, title, concat_ws(' ', title, summary, details) q, relates_to_id, parent_id
+      select id, title, concat_ws(' ', title, summary, details) q, parent_id
         from work_items
        where status not in ('done', 'dropped') and level in ('workstream', 'item')
     )
     select l.title, f.title, f.score, f.status, f.horizon
       from live l, lateral roadmap_find(l.q, 3, 0.65, l.id) f
       join work_items w on w.id = f.id
-     where coalesce(l.relates_to_id, '00000000-0000-0000-0000-000000000000') <> f.id
-       and coalesce(w.parent_id,    '00000000-0000-0000-0000-000000000000') <> l.id
+     where not exists (
+             select 1 from knowledge_links k
+              where k.valid_to is null
+                and ((k.from_id = l.id and k.to_id = f.id)
+                  or (k.from_id = f.id and k.to_id = l.id)))
+       and coalesce(w.parent_id, '00000000-0000-0000-0000-000000000000') <> l.id
      order by f.score desc;
 
     -- hollow rows worth filling while the area is in hand
@@ -364,6 +381,9 @@ rather than a per-review one:
     select a.title, b.title, round(similarity(a.title, b.title)::numeric, 2) as trgm
       from work_items a join work_items b on a.id < b.id
      where similarity(a.title, b.title) >= 0.45
-       and coalesce(a.relates_to_id, b.id) <> b.id
-       and coalesce(b.relates_to_id, a.id) <> a.id
+       and not exists (
+             select 1 from knowledge_links k
+              where k.valid_to is null
+                and ((k.from_id = a.id and k.to_id = b.id)
+                  or (k.from_id = b.id and k.to_id = a.id)))
      order by 3 desc;

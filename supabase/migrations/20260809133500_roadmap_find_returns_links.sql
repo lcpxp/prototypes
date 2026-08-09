@@ -1,16 +1,17 @@
--- Roadmap search: the contextualisation read surface.
+-- ------------------------------------------------------------------
+-- Applied 2026-08-09. roadmap_searchable and roadmap_find rebuilt
+-- without relates_to_id / relates_to_title, returning the `links`
+-- aggregate instead: a candidate's full typed relationships rather than
+-- one untyped neighbour, so banding can see a pair was already
+-- adjudicated distinct_from.
 --
--- Split out of 30_work.sql, which is at its size budget.
---
--- roadmap_current cannot express a semantic match: it carries no summary,
--- details, links or resolution, so any comparison against it is a
--- title match - and duplicate work is usually titled differently. These two
--- objects are the read surface intake needs to place new work against what
--- already exists (docs/ROADMAP-PLAYBOOK.md, "Contextualising new work").
---
--- roadmap_current is deliberately untouched; the board depends on its shape.
+-- The return type changes, so roadmap_find is dropped and recreated
+-- rather than replaced. The scoring body is untouched and scores are
+-- unchanged, verified against the same queries before and after.
+-- Applied migrations are immutable: do not re-apply or edit this file.
+-- ------------------------------------------------------------------
 
-create extension if not exists pg_trgm with schema extensions;
+drop function if exists public.roadmap_find(text, int, numeric, uuid);
 
 -- ---------------------------------------------------------------
 -- roadmap_searchable: every work_items row, no status filter, with the

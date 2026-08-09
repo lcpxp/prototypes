@@ -73,7 +73,7 @@ department for you. Read it first, every session, before proposing changes.
 Then read open `work_notes` (status='active') for the areas in play.
 
 `roadmap_current` is the *board* view: it carries no `summary`, `details`,
-`relates_to_id` or `resolution`, so comparing a new request against it can
+`links` or `resolution`, so comparing a new request against it can
 only ever be a title match. For that, use `roadmap_searchable` (every row,
 including done and dropped, with the text and a computed `is_hollow`) and
 `roadmap_find(query)`, ranking candidates across all four text columns:
@@ -112,7 +112,6 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `summary` | text (Now-grade only) | null | card summary |
 | `effort` / `impact` | small/medium/large, low/medium/high | null | drawer |
 | `start_sprint` / `end_sprint` | `NN-NN` (e.g. 26-16) | null | drawer (docs/SPRINTS.md) |
-| `relates_to_id` | another item's id | null | soft, non-nesting association |
 | `resolution` | text | null | closing note (park/drop) |
 
 Items are never deleted. Close with `status='done'` or `'dropped'` plus a
@@ -170,7 +169,7 @@ department filter; until then it is the classification rule, in data only.
     -- call: shifts the workstream and every direct child by the same band
     -- delta, keeping their relative offsets and the workstream's span
     -- (Next->Later with 2 Next + 2 Later children -> Now->Next with 2 Now
-    -- + 2 Next). Soft-linked (relates_to_id) items stay put. Use this for
+    -- + 2 Next). Linked (knowledge_links) items stay put. Use this for
     -- "move workstream X to now/next/later" instead of editing each row.
     select roadmap_move_workstream(
       (select id from work_items where title='Insights' and level='workstream'), 'now');
@@ -195,29 +194,34 @@ department filter; until then it is the classification rule, in data only.
   places an item in the right theme lane and Detailed grouping, so still
   set it, resolved by key, to the product area whose theme matches the
   item's category: `(select id from work_areas where key='insights-analytics')`.
-- **`relates_to_id` is the general "related but distinct" mechanism.** Any
-  time work is genuinely its own item but sits beside something else, soft-
-  link it. Unlike `parent_id` it does not roll up onto the gantt and does
-  not promote what it points at, so it costs nothing to record and it is
-  how the next session learns that two pieces of work touch. Reach for it
-  by default, not only for bugs; the outcome is `ASSOCIATE` in
-  docs/ROADMAP-INTAKE.md.
+- **Record relationships as typed links.** Any time work is genuinely its
+  own item but sits beside something else, link it. Unlike `parent_id` a
+  link does not roll up onto the gantt and does not promote what it points
+  at, so it costs nothing to record and it is how the next session learns
+  that two pieces of work touch. `relates_to` is the general "related but
+  distinct" mechanism - reach for it by default, not only for bugs. The
+  eight kinds and their SQL are in docs/ROADMAP-INTAKE.md.
 - **A task or fix can nest or stand alone - your judgement.** It may be a
   nested work item under a workstream (a real step of that work), a
   standalone item, or a deliverable (drawer-only detail). Nothing forbids a
-  task nesting. The MAINTENANCE track is one worked example of the soft
-  link above: a one-line bug you want visible but attributed without
-  lighting up a strategic workstream. Keep it STANDALONE, soft-link the
-  workstream via `relates_to_id`, and tag department, category and area:
+  task nesting. The MAINTENANCE track is one worked example of the link
+  above: a one-line bug you want visible but attributed without lighting
+  up a strategic workstream. Keep it STANDALONE, link the workstream with
+  `relates_to`, and tag department, category and area:
 
-      insert into work_items (title, type, level, category_id, area_id,
-        department, relates_to_id, horizon, status)
-      values ('Acquirer selection screen renders empty', 'bug', 'item',
-        (select id from roadmap_categories where key='acquiring'),
-        (select id from work_areas where key='screening-workflow-automation'),
-        'product_technology',
-        (select id from work_items where title='Acquirer management' and level='workstream'),
-        'someday', 'idea');
+      with fix as (
+        insert into work_items (title, type, level, category_id, area_id,
+          department, horizon, status)
+        values ('Acquirer selection screen renders empty', 'bug', 'item',
+          (select id from roadmap_categories where key='acquiring'),
+          (select id from work_areas where key='screening-workflow-automation'),
+          'product_technology', 'someday', 'idea')
+        returning id)
+      insert into knowledge_links (from_type, from_id, to_type, to_id, kind, confidence)
+      select 'work_item', fix.id, 'work_item',
+             (select id from work_items where title='Acquirer management' and level='workstream'),
+             'relates_to', 'confirmed'
+        from fix;
 
   Standalone fixes stay off the Workstreams/Exec view and never promote
   their related workstream; they surface in Work Items, the Backlog and

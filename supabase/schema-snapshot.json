@@ -180,15 +180,23 @@
     },
     {
       "name": "backfill_relates_to_id_into_knowledge_links",
-      "version": "20260809131500"
+      "version": "20260809131014"
     },
     {
       "name": "roadmap_searchable_links",
-      "version": "20260809132000"
+      "version": "20260809131238"
     },
     {
       "name": "knowledge_graph_symmetric_both_ends",
-      "version": "20260809132500"
+      "version": "20260809131342"
+    },
+    {
+      "name": "drop_relates_to_id",
+      "version": "20260809131937"
+    },
+    {
+      "name": "roadmap_find_returns_links",
+      "version": "20260809132014"
     }
   ],
   "policies": [
@@ -920,7 +928,6 @@
       "priority",
       "progress",
       "project_status",
-      "relates_to_id",
       "requested_by",
       "resolution",
       "resolved_at",

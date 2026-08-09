@@ -82,8 +82,8 @@ backlog list, a DevOps copy-paste, a sprint summary), the session:
    ONCE, with the clean entries applied and the flagged ones grouped
    into a single pass; twenty sequential questions is a failure even if
    every one is correct. If the batch would land with department,
-   category_id and relates_to_id uniformly null, the classification
-   step has been skipped - offer it in the same pass.
+   category_id null and no links at all, the classification step has
+   been skipped - offer it in the same pass.
 5. If the material replaces an earlier document (this sprint's
    summary superseding last sprint's), sets supersedes_id on the new
    row and status 'superseded' on the old one.

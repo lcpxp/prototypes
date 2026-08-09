@@ -85,9 +85,9 @@ document instead of walking the tree or reading whole files.
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
-| docs/ROADMAP-INTAKE.md | 370 | Roadmap intake |
-| docs/ROADMAP-PLAYBOOK.md | 255 | Roadmap playbook |
-| docs/ROADMAP-REVIEW.md | 131 | Roadmap review |
+| docs/ROADMAP-INTAKE.md | 390 | Roadmap intake |
+| docs/ROADMAP-PLAYBOOK.md | 259 | Roadmap playbook |
+| docs/ROADMAP-REVIEW.md | 130 | Roadmap review |
 | docs/ROADMAP.md | 236 | Roadmap |
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
@@ -158,13 +158,15 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260809131500_backfill_relates_to_id_into_knowledge_links.sql | 25 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809132000_roadmap_searchable_links.sql | 50 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809132500_knowledge_graph_symmetric_both_ends.sql | 34 | ------------------------------------------------------------------ |
+| supabase/migrations/20260809133000_drop_relates_to_id.sql | 44 | ------------------------------------------------------------------ |
+| supabase/migrations/20260809133500_roadmap_find_returns_links.sql | 206 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 355 | ------------------------------------------------------------------ |
-| supabase/schema-snapshot.json | 959 |  |
+| supabase/schema-snapshot.json | 966 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
-| supabase/schema/30_work.sql | 443 | ------------------------------------------------------------------ |
-| supabase/schema/31_roadmap_search.sql | 209 | Roadmap search: the contextualisation read surface. |
+| supabase/schema/30_work.sql | 437 | ------------------------------------------------------------------ |
+| supabase/schema/31_roadmap_search.sql | 205 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
 | supabase/schema/33_links.sql | 344 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
@@ -174,7 +176,7 @@ document instead of walking the tree or reading whole files.
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
-| tests/checks/roadmap-intake.test.js | 137 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
+| tests/checks/roadmap-intake.test.js | 142 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |

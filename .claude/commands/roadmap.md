@@ -30,8 +30,8 @@ Operating notes for this command specifically:
   history AND against each other - an umbrella and its own components
   arriving together is the commonest miss - then come back once. Never
   fourteen sequential questions. If the batch would land with `department`,
-  `category_id` and `relates_to_id` uniformly null, the classification step
-  has been skipped: offer it in that same pass.
+  `category_id` null and no links at all, the classification step has been
+  skipped: offer it in that same pass.
 - If `$ARGUMENTS` names a deeper wave (for example `shareholder`, `later`,
   `parked`, `workstream`), do Wave 0 to orient and then jump straight to that
   wave instead of running the full core.

@@ -126,11 +126,16 @@ test("batch intake is a concept on every path that can carry one", () => {
   }
 });
 
-test("relates_to_id is presented as the general association mechanism", () => {
+test("relates_to is presented as the general association mechanism", () => {
   const text = read(PLAYBOOK) + read(INTAKE);
   assert.match(text,
-    /`relates_to_id` is the general "related but distinct" mechanism/,
-    "RC5: relates_to_id must not read as a bug-tracking special case");
+    /`relates_to` is the general "related but distinct" mechanism/,
+    "RC5: the default association must not read as a bug-tracking special case");
   assert.doesNotMatch(text, /pattern for the MAINTENANCE track only/,
-    "the MAINTENANCE framing is now one example, not the only framing");
+    "the MAINTENANCE framing is one example, not the only framing");
+  // The column is gone; no document may still tell a session to write it.
+  for (const file of [PLAYBOOK, INTAKE, REVIEW, ADD_CMD, REVIEW_CMD]) {
+    assert.doesNotMatch(read(file), /set relates_to_id|relates_to_id =/,
+      `${file} still writes relates_to_id, which was dropped on 2026-08-09`);
+  }
 });

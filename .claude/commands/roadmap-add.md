@@ -15,7 +15,7 @@ recipe. Then:
 
 1. Look up what already exists. ALWAYS, whether the request is phrased as an
    add or an update. Search with `roadmap_find`, not `roadmap_current`: the
-   board view has no summary, details or relates_to_id, so it can only match
+   board view has no summary, details or links, so it can only match
    titles, and duplicate work is usually titled differently. Run it on the
    headline and on the full request, take the better score per candidate, and
    include `done` and `dropped` rows.

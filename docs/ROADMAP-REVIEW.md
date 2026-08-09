@@ -53,9 +53,8 @@ components arriving together is the commonest miss.
 Come back ONCE: the clean items applied, the flagged ones grouped into a
 single pass. Fourteen sequential questions is a failure even if every one is
 correct. If the batch would land with `department`, `category_id` and
-`relates_to_id` uniformly null, the classification step has been skipped -
-offer the classification in that same pass rather than writing unclassified
-rows.
+no links uniformly, the classification step has been skipped - offer the
+classification in that same pass rather than writing unclassified rows.
 
 ## Wave 4 - Context sync (always, both ways)
 
