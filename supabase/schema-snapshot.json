@@ -177,6 +177,10 @@
     {
       "name": "knowledge_links_typed_vocabulary",
       "version": "20260809130647"
+    },
+    {
+      "name": "backfill_relates_to_id_into_knowledge_links",
+      "version": "20260809131500"
     }
   ],
   "policies": [

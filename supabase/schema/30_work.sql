@@ -192,12 +192,13 @@ create table if not exists public.work_items (
   -- (constraint below). See docs/ROADMAP-PLAYBOOK.md.
   level text not null default 'item'
     check (level in ('workstream', 'item', 'deliverable')),
-  -- Soft, NON-nesting reference to the workstream (or item) a piece of
-  -- work relates to. The maintenance/fixes track uses it so a one-line
-  -- bug can be attributed to, say, "Acquirer management" for filtering
-  -- and reporting WITHOUT nesting under it - nesting (parent_id) rolls up
-  -- and would light that workstream up on the strategic gantt; this does
-  -- not. See docs/ROADMAP-PLAYBOOK.md.
+  -- LEGACY, read-only since 2026-08-09. Superseded by knowledge_links
+  -- (33_links.sql), which carries the same relationships typed, dated,
+  -- unlimited per row and readable from both ends. Every one of its 35
+  -- rows was migrated; nothing new should be written here. Kept only
+  -- until the front end reads links instead, then dropped - a dead
+  -- column left in place would leave two mechanisms for one job, which
+  -- is the ambiguity the link graph exists to remove.
   relates_to_id uuid references public.work_items (id) on delete set null,
   title text not null,
   summary text,

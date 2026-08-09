@@ -276,6 +276,43 @@ hold both a hierarchical (`part_of`) and an associative (`relates_to`,
 be `dropped`. Every link carries `confidence`: a link written by an assistant
 is `proposed` until the owner confirms it.
 
+### Adjudicating the migrated links
+
+The 35 links carried over from `relates_to_id` on 2026-08-09 are all
+`relates_to` / `proposed`, because the column recorded that two rows were
+connected but not how. Their real kinds are largely recoverable. Work them in
+owner-confirmed waves, grouped - never one at a time:
+
+    -- What is still unadjudicated, grouped by the kind the evidence suggests
+    select case
+             when a.resolution ilike 'duplicate%' or a.resolution ilike '%merged into%'
+               then 'duplicate_of'
+             when a.resolution ilike '%supersed%' then 'supersedes'
+             when b.details ilike '%coordination row%' then 'part_of'
+             else 'relates_to (no evidence either way)'
+           end as suggests,
+           count(*), array_agg(a.title order by a.title)
+      from knowledge_links l
+      join work_items a on a.id = l.from_id
+      join work_items b on b.id = l.to_id
+     where l.confidence = 'proposed' and l.valid_to is null
+     group by 1 order by 2 desc;
+
+Present each group as ONE clickable confirm-all. On confirmation, retype the
+link rather than editing in place, so the change is visible in the graph's
+history:
+
+    update knowledge_links set valid_to = now() where id = '<old>';
+    insert into knowledge_links (from_type, from_id, to_type, to_id, kind, note, confidence)
+    values ('work_item', '<from>', 'work_item', '<to>', 'part_of',
+            'Component of the automation sweep; confirmed <date>.', 'confirmed');
+
+A `duplicate_of` will be refused unless the retired row is `dropped`. That is
+the constraint doing its job: two live rows found in August 2026 - "Currency
+Swap on summary page" and "Terminal financing admin toggles (enable /
+disable)" - carry duplicate resolutions without being retired, and must be
+resolved by the owner before their links can be typed.
+
 ## Batches
 
 A batch is one conversation, not fourteen. Compare it against history **and
