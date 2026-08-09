@@ -14,6 +14,15 @@
 -- its contents are exposed to anyone with the anon key. Treat any
 -- new table as public until this file covers it.
 --
+-- THIS FILE IS AUTHORITATIVE. Every policy in the project is declared
+-- here, so "which tables can be written, and by whom" stays a
+-- single-file question. A migration that needs a policy applies the
+-- same statement and cites the block here that it mirrors - it does
+-- not become that policy's home. Both halves of that claim used to be
+-- asserted and neither was checked; since 2026-08-09
+-- tests/checks/schema-drift.test.js compares every policy live on the
+-- database against this file and fails on anything missing.
+--
 -- Performance rules baked into every policy here (enforced by
 -- tests/checks/perf.test.js):
 --   * auth.uid() and the helper functions are always wrapped in a
