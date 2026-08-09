@@ -1,20 +1,20 @@
 # Current state
 
-Updated: 2026-08-09 (typed links shipped; semantic recall outstanding)
+Updated: 2026-08-09 (platform page shows everything; recall outstanding)
 
 ## In progress
-Association, typed links and repo/DB truth, on branch
-claude/roadmap-association-typed-links-qbnpns. Shipped: the rule
-rewrites, the doc restructure to one home per concept, schema/DB
-reconciliation, the drift gate, the typed link graph with its 35-link
-backfill, the front end on links, relates_to_id dropped, the stoplist
-pruned, widened knowledge kinds, docs/KNOWLEDGE-MODEL.md. 204 tests
-green; 39 migrations, files in step with the ledger.
+Knowledge layer overhaul, merged to main. Shipped: rule rewrites, docs
+to one home per concept, schema/DB reconciliation, the drift gate, the
+typed link graph with its 35-link backfill, front end on links,
+relates_to_id dropped, stoplist pruned, widened knowledge kinds,
+docs/KNOWLEDGE-MODEL.md, and the Platform page now rendering all 102
+knowledge rows (was 18) with a Coverage panel naming the gaps.
+215 tests green; 39 migrations in step with the ledger.
 
-NOT done, and it is the piece that fixes the headline problem:
-semantic recall. A reworded request still collapses High to Low and
-applies in silence ("customer birthday displaying a day earlier"
-scores 0.265 against the row it duplicates).
+NOT done, and it is what fixes the headline problem: semantic recall.
+A reworded request still collapses High to Low and applies in silence
+("customer birthday displaying a day earlier" scores 0.265 against the
+row it duplicates).
 
 ## Next steps
 1. Embeddings: pgvector, plus embedding / embedded_at /
@@ -23,14 +23,14 @@ scores 0.265 against the row it duplicates).
    Staleness is FLAGGED, never blanked.
 2. Edge Function: supabase/functions/knowledge/index.ts, modes embed
    and find, new Supabase.ai.Session('gte-small'). Add 'ts' to
-   isTextFile in tests/lib/repo.js in the SAME commit so the secret
-   scanner covers it. pgmq + pg_cron + pg_net; function URL and key
-   from vault BY NAME, never inline.
+   isTextFile in tests/lib/repo.js the SAME commit (secret scanner).
+   pgmq + pg_cron + pg_net; function URL and key from vault BY NAME.
 3. Calibration: tests/fixtures/intake-pairs.json, two rewordings per
-   duplicate; fit weights and the semantic floor/ceiling. Weighted
-   blend, never RRF - see docs/KNOWLEDGE-MODEL.md.
+   duplicate. Weighted blend, never RRF - see KNOWLEDGE-MODEL.md.
 4. Owner waves: the 35 proposed links (script in ROADMAP-INTAKE.md),
-   then the 39 unlinked near-pairs.
+   the 39 unlinked near-pairs, and the 10 empty product areas the
+   Coverage panel lists.
+5. Use `affects` / `about`: unused, so cards show no roadmap context.
 
 ## Open decisions
 - Edge Function + gte-small: AGREED 2026-08-09. No key, 384 dims.
