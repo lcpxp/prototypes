@@ -17,6 +17,18 @@
 --   value      a value-proposition statement
 --   capability an area or feature the platform provides
 --   glance     an at-a-glance headline
+-- and, added 2026-08-09, three kinds of knowledge that had nowhere to
+-- live - the first four all answer "what does the platform DO", so
+-- material about how it is built, how it looks, or how it is sold was
+-- either left undistilled in work_documents or forced into 'capability'
+-- where it reads as a feature claim:
+--   technical    stack, database, dev style, deployment: what a session
+--                needs to answer "how is this built"
+--   styling      design values, component patterns, tone of voice:
+--                enough detail to spin a prototype that looks right
+--   positioning  how the platform is sold and to whom. Distinct from
+--                'value', a single value-proposition statement:
+--                positioning is the audience and the argument around it
 --
 -- maturity is the axis that separates what exists today from what is
 -- aspirational; it is what the roadmap gets contextualised against:
@@ -42,7 +54,8 @@ create table if not exists public.product_capabilities (
   title text not null,
   summary text,
   kind text not null default 'capability'
-    check (kind in ('overview', 'value', 'capability', 'glance')),
+    check (kind in ('overview', 'value', 'capability', 'glance',
+                    'technical', 'styling', 'positioning')),
   maturity text not null default 'planned'
     check (maturity in ('live', 'partial', 'planned', 'exploratory')),
   verified boolean not null default false,

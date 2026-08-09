@@ -36,6 +36,32 @@ work_notes (kind 'fact') complete the picture. Together these are the
 context the roadmap synchronises against both ways every review - see
 the "Contextual synchronisation" section of docs/ROADMAP-PLAYBOOK.md.
 
+## Choosing a kind
+
+Seven kinds. The first four answer "what does the platform DO"; the
+last three, added 2026-08-09, cover knowledge that previously had
+nowhere to live and so either sat undistilled in work_documents or was
+forced into 'capability', where it reads as a feature claim.
+
+- overview - the top-level "what LaunchPad is". Usually one row.
+- value - a value-proposition statement: the benefit, stated once.
+- capability - an area or feature the platform provides. The bulk.
+- glance - an at-a-glance headline, for a summary strip.
+- technical - stack, database, dev style, deployment, integrations
+  approach. What a session needs to answer "how is this built" rather
+  than "what does it do". Redact endpoints and credentials as always.
+- styling - design values, component patterns, spacing and tone of
+  voice, at enough detail to spin a prototype that looks right.
+  LPio's own tokens live in assets/css/tokens.css; this kind is for
+  the PRODUCT's styling, which is a different thing.
+- positioning - how the platform is sold and to whom. Distinct from
+  'value': a value row is one proposition, a positioning row is the
+  audience and the argument around it (who it beats, on what).
+
+If a piece of material fits two kinds, split it into two rows rather
+than picking one - each row is a discrete fact, and the link graph
+(supabase/schema/33_links.sql) is how they stay connected.
+
 ## Ingestion protocol (drip-feed)
 
 When the owner supplies platform material in chat - a product
@@ -50,8 +76,8 @@ the session:
    missing area rather than forcing new knowledge into a mismatched
    one.
 3. Creates or updates product_capabilities rows linked to the source
-   document via source_document_id. Each row gets a kind (overview,
-   value, capability, glance). Default assumption: a comprehensive
+   document via source_document_id. Each row gets a kind (see "Choosing
+   a kind" below). Default assumption: a comprehensive
    "what the platform does today" overview describes shipped
    capability, not aspiration, so rows load as maturity 'live' and
    verified = true unless the source itself flags something as

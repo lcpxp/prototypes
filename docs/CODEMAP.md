@@ -84,7 +84,7 @@ document instead of walking the tree or reading whole files.
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
-| docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
+| docs/PLATFORM.md | 140 | Platform product-knowledge protocol |
 | docs/ROADMAP-INTAKE.md | 405 | Roadmap intake |
 | docs/ROADMAP-PLAYBOOK.md | 259 | Roadmap playbook |
 | docs/ROADMAP-REVIEW.md | 130 | Roadmap review |
@@ -158,10 +158,11 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260809131500_backfill_relates_to_id_into_knowledge_links.sql | 25 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809132000_roadmap_searchable_links.sql | 50 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809132500_knowledge_graph_symmetric_both_ends.sql | 34 | ------------------------------------------------------------------ |
+| supabase/migrations/20260809132501_roadmap_find_prune_stoplist.sql | 145 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809133000_drop_relates_to_id.sql | 44 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809133500_roadmap_find_returns_links.sql | 206 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 355 | ------------------------------------------------------------------ |
-| supabase/schema-snapshot.json | 970 |  |
+| supabase/schema-snapshot.json | 974 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
@@ -169,7 +170,7 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/31_roadmap_search.sql | 220 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
 | supabase/schema/33_links.sql | 344 | ------------------------------------------------------------------ |
-| supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
+| supabase/schema/40_platform.sql | 78 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
 | supabase/schema/50_review.sql | 394 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |

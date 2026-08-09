@@ -201,6 +201,10 @@
     {
       "name": "roadmap_find_prune_stoplist",
       "version": "20260809132501"
+    },
+    {
+      "name": "product_capability_knowledge_kinds",
+      "version": "20260809132701"
     }
   ],
   "policies": [
