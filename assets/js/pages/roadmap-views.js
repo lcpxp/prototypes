@@ -275,7 +275,7 @@
   // Coarse progress: a stored 0-100 snapped to checkpoints for a subtle
   // bar. Delivered work reads as complete regardless of the stored value.
   // The number itself is never shown at board level - progress is a
-  // subtle internal signal (see docs/ROADMAP-PROCESS.md).
+  // subtle internal signal (see docs/ROADMAP.md).
   var PROG_STOPS = [0, 25, 50, 75, 90, 100];
   var PROG_LABELS = {
     0: "Not started", 25: "Started", 50: "Halfway",

@@ -71,8 +71,8 @@ backlog list, a DevOps copy-paste, a sprint summary), the session:
    offers options, low mentions the neighbour without asking, none
    applies silently. The outcome is often not a new row: enrich the
    existing one, merge, promote, revive, associate or split. The full
-   procedure is docs/ROADMAP-PLAYBOOK.md, "Contextualising new work",
-   with the SQL in docs/ROADMAP-CONTEXT.md.
+   procedure, the band thresholds and the per-outcome SQL are all in
+   docs/ROADMAP-INTAKE.md.
 
    Documents are the highest-volume path into the backlog - a DevOps
    export or a sprint summary can carry twenty candidates at once - so

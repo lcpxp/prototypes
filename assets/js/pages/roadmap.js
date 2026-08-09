@@ -8,7 +8,7 @@
 // The pure HTML builders live in roadmap-views.js (App.roadmapView) so
 // they unit-test without a DOM. This file is the shell: fetch, switch,
 // route, print. Editing the roadmap is a database change (see
-// docs/ROADMAP.md and docs/ROADMAP-PROCESS.md).
+// docs/ROADMAP.md and docs/ROADMAP-PLAYBOOK.md).
 // ------------------------------------------------------------------
 
 (function () {

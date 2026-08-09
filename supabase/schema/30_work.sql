@@ -5,7 +5,7 @@
 -- Roadmap and backlog are ONE table, work_items. Every view - the
 -- Executive theme rollup, the Team roadmap, the Backlog master list -
 -- is a projection of the same rows, so moving work between views is a
--- single field edit (see docs/ROADMAP.md, docs/ROADMAP-PROCESS.md).
+-- single field edit (see docs/ROADMAP.md, docs/ROADMAP-PLAYBOOK.md).
 -- ------------------------------------------------------------------
 
 -- ---------------------------------------------------------------

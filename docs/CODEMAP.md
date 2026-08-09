@@ -8,13 +8,13 @@ document instead of walking the tree or reading whole files.
 |---|---:|---|
 | .claude/commands/app-review.md | 45 |  |
 | .claude/commands/roadmap-add.md | 42 |  |
-| .claude/commands/roadmap.md | 66 |  |
+| .claude/commands/roadmap.md | 39 |  |
 | .claude/settings.json | 49 |  |
 | .githooks/pre-commit | 29 |  |
 | .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 24 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 218 | CLAUDE.md |
+| CLAUDE.md | 242 | CLAUDE.md |
 | README.md | 17 | LPio |
 | assets/css/app-review-detail.css | 112 | app-review-detail.css - The application review detail drawer: the |
 | assets/css/app-review.css | 378 | app-review.css - The application review board and wave list. |
@@ -85,14 +85,14 @@ document instead of walking the tree or reading whole files.
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
-| docs/ROADMAP-CONTEXT.md | 241 | Contextualising new work |
-| docs/ROADMAP-PLAYBOOK.md | 360 | Roadmap playbook |
-| docs/ROADMAP-PROCESS.md | 154 | Roadmap process |
-| docs/ROADMAP.md | 199 | Roadmap |
+| docs/ROADMAP-INTAKE.md | 296 | Roadmap intake |
+| docs/ROADMAP-PLAYBOOK.md | 255 | Roadmap playbook |
+| docs/ROADMAP-REVIEW.md | 131 | Roadmap review |
+| docs/ROADMAP.md | 236 | Roadmap |
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 40 | Current state |
+| docs/STATE.md | 39 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
@@ -159,14 +159,14 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
-| tests/checks/roadmap-intake.test.js | 109 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
+| tests/checks/roadmap-intake.test.js | 137 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
-| tests/size-budget.json | 114 |  |
+| tests/size-budget.json | 91 |  |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |

@@ -1,13 +1,20 @@
 # Roadmap playbook
 
-The single operating manual for the roadmap. If you are an AI (or a person)
-about to add, update, review or present roadmap work, read this file and you
-have everything: the model, every field, the copy-paste operations, the
-quick-capture recipe and the review ritual. The one companion you will
-reach for is docs/ROADMAP-CONTEXT.md: the contextualisation protocol in
-full, with copy-paste SQL for every outcome. Deeper rendering detail is in
-docs/ROADMAP.md; taxonomy rationale in docs/ROADMAP-PROCESS.md; intake in
-docs/WORKFLOW.md; sprints in docs/SPRINTS.md. You rarely need them.
+The operating manual for the roadmap: the model, every field, the
+copy-paste operations and the quick-capture recipe. Read this and you can
+place, move and close work correctly.
+
+Three companions, one job each. Read the one you need:
+
+- **docs/ROADMAP-INTAKE.md** - the contextualisation protocol. How a new
+  request is placed against what already exists, the confidence bands (stated
+  there and nowhere else) and the SQL for every outcome. Read it before
+  writing any row.
+- **docs/ROADMAP-REVIEW.md** - the review ritual, wave by wave.
+- **docs/ROADMAP.md** - the two-level taxonomy, the levels and layouts, and
+  how the board renders.
+
+Sprints are in docs/SPRINTS.md; document and note intake in docs/WORKFLOW.md.
 
 The roadmap is data in Supabase (project ref `zlmkofbkobmhnslfnqsf`),
 rendered read-only by modules/roadmap/. Editing is a database write through
@@ -74,6 +81,8 @@ including done and dropped, with the text and a computed `is_hollow`) and
     select title, score, status, horizon, is_hollow
       from roadmap_find('currency swap on the summary page');
 
+Banding that score is the intake protocol's job: docs/ROADMAP-INTAKE.md.
+
 `shareholder_visible` is LEGACY: the Workstreams view is now the
 shareholder-facing surface (workstreams only, fixes and loose items
 excluded), so there is no need to set the flag on new work. It still exists
@@ -91,6 +100,7 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `category_id` | a `roadmap_categories` id (theme) | null | theme lane |
 | `department` | six business functions (sales_commercial, operations_onboarding, product_technology, finance_revenue, legal_compliance, risk_underwriting) plus core_launchpad | null | single accountable owner; core_launchpad = the platform itself, not a business function (see Ownership) |
 | `associated_departments` | text[] of the same department keys | `{}` | business area associations: extra departments that want visibility without owning; the department filter matches owner OR association |
+| `assignee` / `support_assignee` | text | null | named delivery owner and an optional second; drawer and timeline bar |
 | `horizon` | now, next, later, someday | someday | start band |
 | `end_horizon` | now, next, later, someday | null | spans to this band |
 | `status` | idea, planned, in_progress, blocked, done, dropped | idea | done=Delivered |
@@ -102,6 +112,7 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `summary` | text (Now-grade only) | null | card summary |
 | `effort` / `impact` | small/medium/large, low/medium/high | null | drawer |
 | `start_sprint` / `end_sprint` | `NN-NN` (e.g. 26-16) | null | drawer (docs/SPRINTS.md) |
+| `relates_to_id` | another item's id | null | soft, non-nesting association |
 | `resolution` | text | null | closing note (park/drop) |
 
 Items are never deleted. Close with `status='done'` or `'dropped'` plus a
@@ -190,7 +201,7 @@ department filter; until then it is the classification rule, in data only.
   not promote what it points at, so it costs nothing to record and it is
   how the next session learns that two pieces of work touch. Reach for it
   by default, not only for bugs; the outcome is `ASSOCIATE` in
-  docs/ROADMAP-CONTEXT.md.
+  docs/ROADMAP-INTAKE.md.
 - **A task or fix can nest or stand alone - your judgement.** It may be a
   nested work item under a workstream (a real step of that work), a
   standalone item, or a deliverable (drawer-only detail). Nothing forbids a
@@ -220,51 +231,14 @@ Add a theme only for a genuinely new workstream lane: insert a
 `roadmap_categories` row, then a `--rm-<key>` token pair and a `.rm-cat-<key>`
 rule in assets/css/tokens.css (else it renders neutral).
 
-## Contextualising new work
-
-New work is placed against what already exists, never written blind. The
-lookup is unconditional - it does not wait for the request to be phrased as
-an update, because the commonest failure is an add that is really an
-improvement to a row already there. Full procedure and copy-paste SQL for
-every outcome: docs/ROADMAP-CONTEXT.md.
-
-1. **Understand.** Name the surface, the actor, the behaviour and any
-   scheduling word - those are the search handles. If the request
-   enumerates three or more pieces of work, it is a `SPLIT`/`UMBRELLA`
-   candidate: ask, whatever the scores say. A heading matches everything
-   weakly and nothing strongly, so no score will catch it.
-2. **Gather.** `roadmap_find` on the headline and again on the full
-   request; take the better score per candidate. Search includes `done`
-   and `dropped` - parked is not gone. Add one narrow search on the rarest
-   handle over parked work; `REVIVE` cases score low by construction.
-3. **Band.** The band decides whether to speak at all:
-
-   | Band | Score | Behaviour |
-   | --- | --- | --- |
-   | High | >= 0.65 | Present the candidate, recommend an outcome, apply on one click |
-   | Medium | 0.40 - 0.65 | Present as options with the distinction spelled out; recommend, and say what would make it the other way |
-   | Low | 0.22 - 0.40 | Apply as new. Mention the neighbour in one line - do not ask |
-   | None | < 0.22 | Apply silently. Report one line |
-
-   A low-band match never generates a question; restraint is a feature. A
-   **hollow** candidate (`is_hollow`) in the medium band is a strong
-   `ENRICH` signal - hollow rows attract re-raises.
-4. **Recommend.** Always lead with one recommended outcome and its
-   reasoning, then the alternatives: `NEW`, `ENRICH`, `MERGE`, `PROMOTE`,
-   `REVIVE`, `ASSOCIATE`, `SPLIT`, `UMBRELLA`, `UNRELATED`. Never a bare
-   list - that moves the work back onto the owner. When the request is
-   better described than the row it matches, the description moves onto
-   the existing row: the owner's words are the asset.
-5. **Apply and record.** For anything other than `NEW`, write a
-   `work_notes` decision so the judgement is inherited, not re-derived.
-   Nothing is deleted - rows close with `status`, a `resolution` and a
-   back-link - so state the undo in the confirmation line.
-
 ## Quick capture / quick edit ("add X" / "update Y")
 
 A one-line request in chat should apply in one pass, not a research project:
 
-1. Contextualise (above). The outcome it returns drives everything below.
+1. **Contextualise first** - docs/ROADMAP-INTAKE.md, unconditionally,
+   whether the request is phrased as an add or an update. The commonest
+   failure is an add that is really an improvement to a row already there.
+   The outcome it returns drives everything below.
 2. Infer `category_id` (theme), `parent_id` (does it belong under a named
    workstream?), `department` and `horizon` from the words. Default
    `horizon='someday'` unless a scheduling word ("now", "this sprint",
@@ -278,82 +252,3 @@ A one-line request in chat should apply in one pass, not a research project:
    is most requests.
 4. Apply the outcome, then report one line: what changed, where it now
    sits, and how to reverse it.
-
-## Contextual synchronisation (both ways)
-
-The roadmap and the platform knowledge base are two views of one reality and
-must be kept in step, in BOTH directions, on every review and material edit.
-The context lives in `product_capabilities`, `domain_terms`,
-`journey_stages`, `integrations` and `work_notes` of kind `'fact'` - see
-docs/PLATFORM.md.
-
-- **Context -> roadmap.** Before proposing or confirming a change, pull the
-  context for the item's `area_id` and let it sharpen the item: a summary, a
-  dependency, a term it assumes, the lifecycle stage it touches, the
-  capability it extends. Offer these as concrete assertions to APPLY.
-- **Roadmap -> context.** When work moves - promoted, delivered, dropped,
-  rescoped - ask what it changes about the platform: a capability now live
-  or partial, a new integration, a term or stage that shifted.
-- **The golden rule: every assertion is owner-validated**, both directions,
-  as a clickable choice rather than a wall of text. Nothing lands on the
-  AI's own authority. Record what was confirmed: a `work_notes` decision,
-  plus provenance (source and date) on any context row.
-
-## The review ritual ("let's go through the roadmap", or /roadmap)
-
-A tight, clickable pass. Each wave is one AskUserQuestion with options you
-pre-compute from the data; each answer maps to a specific write above.
-
-- **Wave 0 - Orient** (no question): read `roadmap_current`; show Now and
-  Next, what changed since last review (max `updated_at`), and the counts.
-  Load the platform context for the areas in play (Contextual
-  synchronisation). Add two standing lines from the search surface: any
-  **hollow rows** in those areas, and any **high-band pair already in the
-  data** and not linked (both queries in docs/ROADMAP-CONTEXT.md). Report
-  them; ask nothing here.
-- **Wave 1 - Now integrity**: for each Now item, on track / done / slipping /
-  drop -> `status`, `progress`, `horizon`.
-- **Wave 2 - Capacity**: Now holds whatever is genuinely in flight - there
-  is no cap on how many items or workstreams sit there. Promote Next items
-  on evidence -> `horizon='now'`; demote when confidence drops.
-- **Wave 3 - New capture**: "anything new?" -> contextualise each line, and
-  the batch against itself as well as against history. Come back ONCE: the
-  clean items applied, the flagged ones grouped into a single pass. If they
-  would all land with `department`, `category_id` and `relates_to_id` null,
-  offer the classification in that same pass.
-- **Wave 4 - Context sync** (always, both ways): from the context loaded in
-  Wave 0, put forward as clickable validation (a) context->item enrichments
-  that sharpen items in play, and (b) item->context updates implied by this
-  session's moves and deliveries. Apply only what the owner confirms; skip
-  the wave only when there is genuinely nothing to sync, and say so.
-- **Wave 5 - Confirm**: summarise the edits, write one `work_notes` decision,
-  record any confirmed context updates with provenance, then stop. This is
-  the 2-5 minute core.
-
-Only after the core, offer deeper waves as further clickable options:
-reprioritise within a theme; review Later bets; revive parked/someday; scope
-a workstream into items; rebalance departments; delivered cleanup; and
-shareholder-ready export prep before a meeting.
-
-## Rules that keep it trustworthy
-
-- **Now reflects what is genuinely in flight**: size it to real capacity,
-  not a fixed count - there is no cap on the number of items or workstreams
-  in Now.
-- **Detail decays by column**: Now items are spec'd (summaries), Next are
-  validated problems, Later are one-line bets. Do not over-write Later rows.
-- **Never lose a decision**: every move gets a `resolution` and/or a
-  `work_notes` decision row.
-- **Nothing is written blind**: every new item is placed against what
-  already exists first (Contextualising new work), at review as well as at
-  capture - the duplicates found in July were both already in the data.
-- **Hollow rows attract re-raises**: a row with no `summary` and no
-  `details` gets re-requested by someone who cannot see it is covered.
-  Fill them while the area is in hand (`roadmap_searchable.is_hollow`).
-- **Keep context in step**: every review and material edit syncs both ways
-  with the platform knowledge base (Contextual synchronisation, docs/
-  PLATFORM.md) - source context into the work, feed delivery back into the
-  context - and every synced assertion is owner-validated before it lands.
-- **Public repo**: real merchant, partner and staff detail lives only in
-  Supabase, never in git, seed.sql, commit messages or docs. All DOM output
-  goes through `App.escape`.

@@ -28,13 +28,63 @@ in the database (no code change, no deploy).
 All of it remotely hosted and securely accessible from anywhere, with
 content in Supabase rather than in this public repo.
 
+## The two-level taxonomy
+
+Work is grouped as **themes over areas**:
+
+- **Themes** (`roadmap_categories`) are the top-level workstreams the
+  C-suite reads. There are 13: Core LaunchPad, Unity, Overhaul,
+  Integrations, Screening/Contracting/Fulfilment, Partners & PFAC,
+  Acquiring, APIs, Insights & Reporting, Automation & Approvals,
+  Sales & Commercial, Admin & Operations, Products & Pricing.
+- **Areas** (`work_areas`, `scope='product'`) are the finer development
+  areas beneath a theme (`work_areas.category_id`), shared with the
+  backlog and platform modules.
+- A **work item**'s own `category_id` is authoritative for where it
+  renders; when unset it inherits its area's theme. An area may feed
+  more than one theme, and an item with no theme renders under General.
+
+Keep the theme set small and stable. A genuinely new workstream earns a
+theme; most new work is an item under an existing theme, or a backlog
+entry until it firms up. Add a theme by inserting a `roadmap_categories`
+row and a matching `--rm-<key>` token pair + `.rm-cat-<key>` rule
+(otherwise it renders in a neutral tint).
+
+Do not confuse a workstream with a filing area: the workstream is the
+presentation container, the filing area is the internal taxonomy that
+intake, notes and documents share. An item's `level`/`parent_id` place it
+for presentation; its `area_id` files it. The full field reference and the
+operations that move work between these live in docs/ROADMAP-PLAYBOOK.md.
+
+## How work enters and moves
+
+1. **Capture** everything supplied in chat per docs/WORKFLOW.md:
+   verbatim to `work_documents`, distilled to `work_notes`, actionable
+   to `work_items` (horizon defaults to `someday` - an unscheduled
+   candidate). Nothing is lost. Contextualise before writing:
+   docs/ROADMAP-INTAKE.md.
+2. **Schedule** a candidate onto the roadmap by setting its `horizon` to
+   `later`, `next` or `now`, with a `category_id` (or an area whose
+   theme it should inherit) so it lands in the right lane. No copy.
+3. **Prioritise** by editing `priority` (leave gaps of 10 so items slot
+   between) and moving `horizon` (someday -> later -> next -> now) on
+   evidence.
+4. **Deliver** by setting `status='done'`; it joins the Delivered zone.
+   **Park** by setting `horizon='someday'` (or `status='dropped'`) with a
+   `resolution` sentence, so a decision is never lost.
+5. **Record the reasoning** as a `work_notes` decision so movement never
+   becomes informal drift.
+
+The discipline that keeps this trustworthy - Now sized to real capacity,
+detail decaying by column, movement on evidence - is in
+docs/ROADMAP-REVIEW.md, alongside the ritual that applies it.
+
 ## The roadmap home and its views
 
 modules/roadmap/ renders one home over the same `work_items` rows via
 two independent controls: a **level** (altitude/content) and a **layout**
 (how it is drawn). Nothing is stored per view; each cell derives from an
 item's own fields, so moving or extending an item is a plain field edit.
-The process and taxonomy rules live in docs/ROADMAP-PROCESS.md.
 
 Levels (switch labels in brackets where they differ):
 
@@ -163,34 +213,21 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
 - roadmap_milestones, work_item_dependencies: named targets and
   item-to-item ordering, for future timeline and waterfall views.
 
-## Working the board: Now-Next-Later discipline
-
-The format only stays trustworthy if the data is worked this way:
-
-- Now reflects genuine capacity, not aspiration: it holds whatever
-  work is actually in flight, with no cap on the number of items or
-  workstreams. Size Now to what is really being worked, not a fixed
-  count.
-- Detail decays by column: Now items are spec'd solutions with
-  summaries, Next items are validated problems, Later items are
-  one-line bets. Do not write Now-grade summaries for Later rows.
-- Movement is intentional: promote Later to Next to Now on evidence,
-  demote when confidence drops, and record the reasoning as a
-  work_notes row so movement never becomes informal drift.
-
 ## Working the roadmap with an AI assistant (Supabase access)
 
 The point of holding the roadmap in Supabase is that any Claude chat with
 Supabase access (project ref zlmkofbkobmhnslfnqsf) can read and overhaul it
-without touching the repo. The operating manual for that - the model, every
-field, the copy-paste operations, the quick-capture recipe and the review
-ritual - is **docs/ROADMAP-PLAYBOOK.md**; the `/roadmap` and `/roadmap-add`
-commands wrap it. A cold session reads the playbook, then
-`select * from roadmap_current;` (the whole roadmap joined and
-human-readable) plus open `work_notes`, and makes changes as ordinary
-`work_items` updates. Writes need the admin role, which the MCP/service
-context has; the browser page is read-only, and after a change the board and
-any snapshot reflect it on reload.
+without touching the repo. A cold session reads
+**docs/ROADMAP-PLAYBOOK.md** for the model, fields and operations, then
+`select * from roadmap_current;` plus open `work_notes`, and makes changes
+as ordinary `work_items` updates. Before writing any row it contextualises
+per **docs/ROADMAP-INTAKE.md**; a full pass over the board follows
+**docs/ROADMAP-REVIEW.md**. The `/roadmap-add` and `/roadmap` commands wrap
+those two.
+
+Writes need the admin role, which the MCP/service context has; the browser
+page is read-only, and after a change the board and any snapshot reflect it
+on reload.
 
 Keep real merchant, partner and staff detail out of the repo: the roadmap
 content lives only in Supabase. seed.sql carries generic samples only. Record

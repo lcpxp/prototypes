@@ -157,12 +157,15 @@ half-finished change.
 ## Adding common things
 
 - Roadmap work (add or update an item/workstream, review the roadmap):
-  follow docs/ROADMAP-PLAYBOOK.md - the single operating manual (model,
-  every field, copy-paste SQL, quick-capture recipe and the review
-  ritual). When the owner says any of "add this to the roadmap", "update
-  this item", or "let's go through the roadmap", route through the
-  playbook (the /roadmap and /roadmap-add commands wrap it). Database
-  writes only; the repo does not change.
+  three files, one job each. docs/ROADMAP-PLAYBOOK.md is the model,
+  every field and the copy-paste operations. docs/ROADMAP-INTAKE.md is
+  the contextualisation protocol, and the ONE home for the confidence
+  band thresholds - read them there, never from memory.
+  docs/ROADMAP-REVIEW.md is the review ritual. When the owner says "add
+  this to the roadmap" or "update this item", route through INTAKE then
+  PLAYBOOK (/roadmap-add wraps it); when they say "let's go through the
+  roadmap", run REVIEW (/roadmap wraps it). Database writes only; the
+  repo does not change.
 - Application review (a wave of merchant application triage, or
   screenshots of the LaunchPad list and mailbox threads): follow
   docs/APP-REVIEW.md - the wave lifecycle, the thirteen domain rules,

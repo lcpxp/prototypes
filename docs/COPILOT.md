@@ -154,7 +154,7 @@ The session prepares the answer for review and does not apply it:
    which is newer.
 5. Put the questions in **one** batched pass with a recommendation
    against each. Sequential questions are a failure even when every one
-   is correct - the same rule as docs/ROADMAP-CONTEXT.md.
+   is correct - the same rule as docs/ROADMAP-INTAKE.md.
 6. Apply only what the owner confirms. Record what was rejected and why.
 
 Anything the owner does not reach stays unapplied. A partial round is a
@@ -186,7 +186,7 @@ Confirmed material lands by kind, following the existing protocols:
 | A definition | `domain_terms`, with `source` naming the document and date |
 | A statement about what the platform does today | `product_capabilities`, per docs/PLATFORM.md, linked via `source_document_id` |
 | A standalone decision, fact, risk or question | `work_notes`, linked to its area or item |
-| Substance for an existing roadmap row | `work_items.summary` / `details`, via the ENRICH path in docs/ROADMAP-CONTEXT.md |
+| Substance for an existing roadmap row | `work_items.summary` / `details`, via the ENRICH path in docs/ROADMAP-INTAKE.md |
 | A new piece of work | `work_items`, contextualised first - never inserted straight |
 
 Set `verified = true` only on rows the owner confirmed in the gate; a

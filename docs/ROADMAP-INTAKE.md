@@ -1,26 +1,34 @@
-# Contextualising new work
+# Roadmap intake
 
-The procedure behind the playbook's "Contextualising new work" section:
-the five stages in full, the copy-paste SQL for every outcome, and the
-calibration the confidence bands rest on. Read the playbook first; come
-here for the SQL and the reasoning.
+The contextualisation protocol: how a new request is placed against what
+already exists before anything is written. This file is the ONE home for the
+five stages, the confidence bands, the calibration behind them, the outcome
+vocabulary and the copy-paste SQL for every outcome.
+
+Read docs/ROADMAP-PLAYBOOK.md first for the model and the fields; come here
+before writing a single row. The `/roadmap-add` command wraps this file, and
+the review ritual (docs/ROADMAP-REVIEW.md) runs it at Wave 3.
+
+**The thresholds in "Stage 3 - Band" below are stated here and nowhere
+else.** Every other document cites this file. A threshold restated in a
+second place is how they drifted before, and a test now fails on it.
 
 ## Why this exists
 
 Intake used to write what it was given. A batch of 14 items added on
 2026-07-27 turned out, on review, to contain 5 rows that already existed
 under different titles, 1 heading whose components had been created as
-separate rows in the same session, and 3 items that were correctly
-distinct but recorded no relationship to anything. All 14 landed with
-`department`, `category_id` and `relates_to_id` null. A whole batch
-sharing that signature is not fourteen lapses; it is a missing step.
+separate rows in the same session, and 3 items that were correctly distinct
+but recorded no relationship to anything. All 14 landed with `department`,
+`category_id` and `relates_to_id` null. A whole batch sharing that signature
+is not fourteen lapses; it is a missing step.
 
-Note what it was not: careless requests. Several of the new descriptions
-were better than the rows that already existed - one arrived with a clear
-scope against an existing row that had an empty summary and empty
-details. The right answer was to carry the description onto the existing
-row. Nothing could notice, so a second row was created and the good
-wording landed in the wrong place.
+Note what it was not: careless requests. Several of the new descriptions were
+better than the rows that already existed - one arrived with a clear scope
+against an existing row that had an empty summary and empty details. The
+right answer was to carry the description onto the existing row. Nothing
+could notice, so a second row was created and the good wording landed in the
+wrong place.
 
 ## Stage 1 - Understand
 
@@ -30,11 +38,11 @@ contract, admin tools), an **actor** (global admin, partner, merchant), a
 
 Decide the request's *shape* here, before any scoring:
 
-- If it enumerates three or more distinct pieces of work (a comma or
-  "and" list of noun phrases, or a sweep word - "sweep", "overhaul",
-  "everything") it is a `SPLIT` or `UMBRELLA` candidate. Ask, regardless
-  of score. **A heading matches everything weakly and nothing strongly,
-  so the score will never catch it** - this rule is what catches it.
+- If it enumerates three or more distinct pieces of work (a comma or "and"
+  list of noun phrases, or a sweep word - "sweep", "overhaul", "everything")
+  it is a `SPLIT` or `UMBRELLA` candidate. Ask, regardless of score. **A
+  heading matches everything weakly and nothing strongly, so the score will
+  never catch it** - this rule is what catches it.
 - Otherwise it is a single piece of work; go to Stage 2.
 
 ## Stage 2 - Gather candidates
@@ -50,13 +58,13 @@ Search all rows, including `done` and `dropped`, via `roadmap_find`:
       'currency swap on the summary page - global admin swaps all values '
       'to another currency, character swap only, no conversion', 8, 0.15);
 
-Run both. A bare headline is precise but thin; the full request is rich
-but dilutes rare handles across many common ones. Take the **higher**
-score per candidate - the two disagree often enough to matter.
+Run both. A bare headline is precise but thin; the full request is rich but
+dilutes rare handles across many common ones. Take the **higher** score per
+candidate - the two disagree often enough to matter.
 
-Then one narrow search on the rarest handle alone, restricted to parked
-work, because `REVIVE` cases score low by construction (the parked row
-is worded for the problem as it looked then, not as it looks now):
+Then one narrow search on the rarest handle alone, restricted to parked work,
+because `REVIVE` cases score low by construction (the parked row is worded
+for the problem as it looked then, not as it looks now):
 
     select title, score, status, horizon, resolution
       from roadmap_find('IVR', 5, 0.10)
@@ -73,18 +81,19 @@ Surface any parked hit from that search whatever its band.
 | Low | 0.22 - 0.40 | Apply as new. Mention the neighbour in one line of the confirmation - do not ask |
 | None | < 0.22 | Apply silently. Report one line |
 
-A low-band match never generates a question. Two adjustments on top:
+A low-band match never generates a question. Restraint is a feature: a system
+that questions every adjacent match gets switched off. Two adjustments on top:
 
 - A **hollow** candidate (`is_hollow` - no summary and no details) in the
   medium band is a strong `ENRICH` signal: recommend `ENRICH`, not `NEW`.
   Three of the five 2026-07-27 duplicates matched a hollow row.
-- A **parked** candidate found by the narrow search is surfaced at any
-  band, as a `REVIVE` option.
+- A **parked** candidate found by the narrow search is surfaced at any band,
+  as a `REVIVE` option.
 
 ### The calibration
 
-Bands were fitted against the 2026-07-27 batch replayed read-only, each
-item scored only against rows that existed before it. Best score per item:
+Bands were fitted against the 2026-07-27 batch replayed read-only, each item
+scored only against rows that existed before it. Best score per item:
 
     0.861  Currency Swap on summary page          -> duplicate
     0.794  Contract - Summary page: Sites/Totals  -> duplicate
@@ -101,27 +110,45 @@ item scored only against rows that existed before it. Best score per item:
     0.206  Date of birth output off by one day    -> new, deliberately unlinked
     0.186  New "Ad-hoc" billing frequency type    -> new
 
-0.65 is the highest threshold that keeps three duplicates in High with
-zero false positives. 0.40 is set just under the lowest true duplicate
-(0.427) and admits one genuine neighbour at 0.464 - which is a correct
-medium, not a false positive: the owner kept those two rows distinct and
-would want the relationship offered. 0.22 sits above the date-of-birth
-case (0.206), which must never fire: that is a timezone parse defect and
-"Fix date fields to handle UK standard inputs only" is input-format
-restriction. Same code region, different work, deliberately not linked.
+0.65 is the highest threshold that keeps three duplicates in High with zero
+false positives. 0.40 is set just under the lowest true duplicate (0.427) and
+admits one genuine neighbour at 0.464 - which is a correct medium, not a
+false positive: the owner kept those two rows distinct and would want the
+relationship offered. 0.22 sits above the date-of-birth case (0.206), which
+must never fire: that is a timezone parse defect and "Fix date fields to
+handle UK standard inputs only" is input-format restriction. Same code
+region, different work, deliberately not linked.
 
 The scorer weights query tokens by inverse document frequency, so a rare
 handle ("IVR", "currency") outweighs a ubiquitous one ("page",
 "application"), and damps queries under three informative tokens, so a
-one-word query ("CRM") does not score 1.0 against every row containing
-that word. Both were needed: without IDF, duplicates and noise overlap.
+one-word query ("CRM") does not score 1.0 against every row containing that
+word. Both were needed: without IDF, duplicates and noise overlap.
+
+### The known limit of a lexical score
+
+This calibration holds for a **lexical** scorer, and its weakness is
+measured, not theoretical. The same row, reworded once, collapses from High
+to Low - which is the band that applies silently:
+
+| Query | Score | Band |
+| --- | --- | --- |
+| "date of birth off by one" | 0.956 | High |
+| "customer birthday displaying a day earlier than entered" | 0.265 | Low |
+| "currency swap on the summary page" | 0.976 | High |
+| "let an admin change every amount to a different currency before signing" | 0.310 | Low |
+
+Duplicate work is reworded, not retitled, so the commonest duplicate is the
+one this scorer is least able to see. Until semantic recall lands, treat a
+Low-band result on a request that *reads* like an existing item as worth one
+manual `roadmap_find` on a synonym of the rarest handle.
 
 ## Stage 4 - Generate options and recommend
 
 Every response carries a recommended outcome with its reasoning, plus the
 credible alternatives. Never a bare list - an option list with no
-recommendation moves the work back onto the owner, which is the problem
-being solved.
+recommendation moves the work back onto the owner, which is the problem being
+solved.
 
 | Outcome | Use when |
 | --- | --- |
@@ -134,6 +161,9 @@ being solved.
 | `SPLIT` | The request contains more than one piece of work |
 | `UMBRELLA` | The request is a heading over work already captured |
 | `UNRELATED` | Adjacent but distinct; insert standalone, do not link |
+
+When the request is better described than the row it matches, the description
+moves onto the existing row: the owner's words are the asset.
 
 ## Stage 5 - Apply and record
 
@@ -179,8 +209,8 @@ being solved.
        set relates_to_id = (select id from work_items where title = 'Automation sweep: CRM submission, Daopay, screening and notifications')
      where title in ('Daopay: notifications to Daopay', 'Daopay: notifications to PXP account managers and PXP underwriting');
 
-For anything other than `NEW`, write the reasoning down so the next
-session inherits the judgement rather than re-deriving it:
+For anything other than `NEW`, write the reasoning down so the next session
+inherits the judgement rather than re-deriving it:
 
     insert into work_notes (kind, body, work_item_id)
     values ('decision',
@@ -188,17 +218,32 @@ session inherits the judgement rather than re-deriving it:
             'the new description was more specific, so it moved onto the existing row.',
             (select id from work_items where title = 'Adapt overall application currency on the Summary page (admin tool)'));
 
-State how to reverse the change in the confirmation line. Nothing is
-deleted, so every outcome has an undo: `ENRICH` restores the previous
-text, `MERGE` clears `status`, `resolution` and `relates_to_id` on the
-retired row, `PROMOTE` and `REVIVE` put the bands back.
+State how to reverse the change in the confirmation line. Nothing is deleted,
+so every outcome has an undo: `ENRICH` restores the previous text, `MERGE`
+clears `status`, `resolution` and `relates_to_id` on the retired row,
+`PROMOTE` and `REVIVE` put the bands back.
+
+## Recording associations
+
+`relates_to_id` is the general "related but distinct" mechanism. Any time
+work is genuinely its own item but sits beside something else, soft-link it.
+Unlike `parent_id` it does not roll up onto the gantt and does not promote
+what it points at, so it costs nothing to record and it is how the next
+session learns that two pieces of work touch. Reach for it by default, not
+only for bugs.
+
+Its known limits, both being addressed: it holds **one** relationship per
+row, and it is **untyped** - the same column carries "duplicate of",
+"component of", "superseded by" and "related to", so telling them apart means
+reading `resolution` prose. There is also no way to record that two rows are
+deliberately **not** the same, so an adjudicated non-match gets re-examined
+every review.
 
 ## Batches
 
-A batch is one conversation, not fourteen. Compare it against history
-**and against itself** - the 2026-07-27 umbrella and its own components
-were created side by side, unlinked, because nothing did the second
-comparison:
+A batch is one conversation, not fourteen. Compare it against history **and
+against itself** - the 2026-07-27 umbrella and its own components were
+created side by side, unlinked, because nothing did the second comparison:
 
     -- self-diff: score each new line against the others in the same batch
     select a.title, b.title, f.score
@@ -207,21 +252,21 @@ comparison:
            lateral roadmap_find(a.title, 5, 0.40) f
      where a.i < b.j and f.title = b.title;
 
-Then come back **once**: the clean items applied, the flagged ones
-grouped into a single pass. Fourteen sequential questions is a failure
-even if every one is correct.
+Then come back **once**: the clean items applied, the flagged ones grouped
+into a single pass. Fourteen sequential questions is a failure even if every
+one is correct.
 
-If a batch would land with `department`, `category_id` and
-`relates_to_id` uniformly null, the classification step has been skipped.
-Offer the classification as part of the same pass rather than writing
-unclassified rows.
+If a batch would land with `department`, `category_id` and `relates_to_id`
+uniformly null, the classification step has been skipped. Offer the
+classification as part of the same pass rather than writing unclassified rows.
 
-## At review time, too
+## The standing sweeps
 
-Contextualisation is not only an add-time step: the Unity enrolment pair
-were both already in the data when the duplicate was found. The standing
-sweep for high-band pairs that are not linked:
+Contextualisation is not only an add-time step: the Unity enrolment pair were
+both already in the data when the duplicate was found. Wave 0 of the review
+ritual runs both of these and reports them.
 
+    -- high-band pairs already in the data and not linked
     with live as (
       select id, title, concat_ws(' ', title, summary, details) q, relates_to_id, parent_id
         from work_items
@@ -234,7 +279,17 @@ sweep for high-band pairs that are not linked:
        and coalesce(w.parent_id,    '00000000-0000-0000-0000-000000000000') <> l.id
      order by f.score desc;
 
-And the hollow rows worth filling while the area is in hand:
-
+    -- hollow rows worth filling while the area is in hand
     select title, status, horizon, workstream_title from roadmap_searchable
      where is_hollow and status not in ('done', 'dropped') order by horizon, priority;
+
+Because the lexical scorer misses rewordings, a title-similarity sweep catches
+a class the score does not. It surfaces more noise, so it is a periodic pass
+rather than a per-review one:
+
+    select a.title, b.title, round(similarity(a.title, b.title)::numeric, 2) as trgm
+      from work_items a join work_items b on a.id < b.id
+     where similarity(a.title, b.title) >= 0.45
+       and coalesce(a.relates_to_id, b.id) <> b.id
+       and coalesce(b.relates_to_id, a.id) <> a.id
+     order by 3 desc;
