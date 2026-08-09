@@ -1,29 +1,18 @@
 {
-  "comment": "Line budgets per file type. soft = warning (plan a split); hard = test failure (split before extending). Grounded in published agent-workflow guidance: source files ~500 lines max so a single read stays cheap; agent-facing docs ~200-300 lines because instruction adherence degrades as context grows.",
+  "comment": "Line budgets per file type. soft = warning (plan a split); hard = test failure (split before extending). Source files ~500 so a single read stays cheap. Docs share that hard cap: line count is only a PROXY for what actually degrades instruction adherence, which is one concept stated in two places saying slightly different things. That is enforced directly by the one-home-per-concept gate in tests/checks/roadmap-intake.test.js. The old 200/300 doc cap forced splits that produced the very duplication the gate now catches - the confidence bands ended up stated in three files - and generated an exceptions block longer than several of the files it exempted.",
   "byExtension": {
     ".js":   { "soft": 300, "hard": 500 },
+    ".ts":   { "soft": 300, "hard": 500 },
     ".css":  { "soft": 300, "hard": 500 },
     ".html": { "soft": 250, "hard": 400 },
     ".sql":  { "soft": 300, "hard": 500 },
-    ".md":   { "soft": 200, "hard": 300 }
+    ".md":   { "soft": 300, "hard": 500 }
   },
   "generated": ["docs/CODEMAP.md", "llms.txt"],
   "exceptions": {
     "docs/STATE.md": {
       "hard": 40,
       "note": "Fixed-size current state; overwritten each checkpoint, never grown. The 40-line cap is the point."
-    },
-    "docs/HARNESS.md": {
-      "hard": 400,
-      "note": "Process reference, read on demand rather than every session."
-    },
-    "docs/COPILOT.md": {
-      "hard": 260,
-      "note": "One operating manual for a capture round, read start to finish before writing a request; splitting it means an agent reads half and writes the other half wrong. Grows by a few lines per round as each one teaches something about the request. Exit plan: if it passes 260, move 'Write the request' into docs/COPILOT-REQUEST.md - it is the self-contained section and the one that accretes, leaving measurement, gate and storage here."
-    },
-    "docs/ROADMAP-PLAYBOOK.md": {
-      "hard": 360,
-      "note": "The single operating manual: model, fields, operations, contextualisation, capture and review in one read. Splitting it is what it exists to avoid. The procedure detail and per-outcome SQL already live in docs/ROADMAP-CONTEXT.md. Exit plan: if it passes 360, move 'The review ritual' into docs/ROADMAP-REVIEW.md - it is the one self-contained section, and /roadmap already restates it."
     },
     "supabase/seed.sql": {
       "hard": 550,
@@ -96,18 +85,6 @@
     "tests/unit/roadmap-views.test.js": {
       "hard": 500,
       "note": "Over soft: one dataset (tests/lib/roadmap.js) drives the level/layout benchmarks together. The custom-view and department-filter cases are already split into roadmap-views-custom.test.js; the exec-board cases are the next split seam."
-    },
-    "docs/ARCHITECTURE.md": {
-      "hard": 320,
-      "note": "Architecture reference, read on demand rather than every session."
-    },
-    "docs/APP-REVIEW.md": {
-      "hard": 300,
-      "note": "The application-review operating manual: wave lifecycle, the thirteen domain rules, how to classify, and the copy-paste SQL in one read. Because the portal never writes this data, these rules cannot be enforced by a UI - this document IS the enforcement, so splitting it is what it exists to avoid. Exit plan: if it passes 300, move 'Operations' into docs/APP-REVIEW-SQL.md, which is the one self-contained section."
-    },
-    "docs/ROADMAP.md": {
-      "hard": 300,
-      "note": "Roadmap process reference, read on demand."
     }
   }
 }

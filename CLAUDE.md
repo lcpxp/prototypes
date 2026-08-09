@@ -53,6 +53,19 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
    is publicly readable via the anon key.
 6. Sample data in seed.sql must stay generic. No real payloads.
 
+## What "nothing is ever deleted" governs
+
+It governs ROWS: work items, notes and applications close with a
+status, a resolution and a back-link, so a decision is never lost and
+every outcome has an undo. State that undo in the confirmation line.
+
+It does NOT govern columns, tables, views, functions or files.
+Superseded schema is removed once nothing reads it, and git is its
+history. Keeping a dead column alive out of misplaced deference leaves
+two mechanisms for one job and forces every later session to work out
+which is live - the exact ambiguity the rule exists to remove. Applied
+migrations are the one exception: they are immutable once run.
+
 ## Git and GitHub practice
 
 - Clone shallow when starting fresh: git clone --depth 1 <url>. Deepen
@@ -87,8 +100,10 @@ deny rule blocks (force-push, git add -f, committing config.js).
   or a search first, then read only the lines needed.
 - Edit with precise string replacements rather than rewriting a file
   end to end. Rewrites churn diffs and risk losing content.
-- Keep files under roughly 500 lines. If a module approaches that,
-  split it before extending it.
+- Split a file before extending it once it passes its soft budget.
+  The numbers live in tests/size-budget.json and nowhere else - a
+  limit restated here would be a second home for one rule, which is
+  the thing these rules exist to prevent.
 - Never paste large file contents into commit messages, logs, or
   docs/STATE.md. Reference paths and line ranges instead.
 
@@ -206,10 +221,16 @@ half-finished change.
   change and the whole suite is green. Gates in tests/checks/
   enforce the security, structure, style and size rules above
   mechanically; the pre-commit hook runs them.
-- File size budgets: tests/size-budget.json (js/css soft 300 hard
-  500; html 250/400; md 200/300). Over soft = schedule a split;
-  over hard = split before extending. Exceptions are listed in the
-  JSON with an exit plan.
+- File size budgets: tests/size-budget.json is the one home for the
+  numbers (js/ts/css/sql/md soft 300 hard 500; html 250/400). Over
+  soft = schedule a split; over hard = split before extending.
+  Exceptions are listed in the JSON with an exit plan.
+- Line count is only a proxy. The rule it stands in for - one concept
+  documented in exactly one place, cited everywhere else - is
+  enforced directly by the one-home gate in
+  tests/checks/roadmap-intake.test.js. When the two disagree, the
+  one-home gate wins: a longer single file beats the same threshold
+  stated in three shorter ones.
 - Navigation: read docs/CODEMAP.md (generated file + symbol index)
   and jump to file:line rather than reading whole files. llms.txt
   is the entry point for external crawlers. Never hand-edit either.
