@@ -36,6 +36,8 @@
     "handle_new_user()",
     "has_module_access(key text)",
     "is_admin()",
+    "knowledge_link_duplicate_dropped()",
+    "knowledge_link_guard()",
     "own_role()",
     "review_revision_log()",
     "review_status_note_guard()",
@@ -171,6 +173,10 @@
     {
       "name": "schema_catchup_and_delete_guard",
       "version": "20260809125403"
+    },
+    {
+      "name": "knowledge_links_typed_vocabulary",
+      "version": "20260809130647"
     }
   ],
   "policies": [
@@ -303,8 +309,56 @@
       "table": "journey_stages"
     },
     {
+      "name": "knowledge_links: admins delete",
+      "table": "knowledge_links"
+    },
+    {
+      "name": "knowledge_links: admins insert",
+      "table": "knowledge_links"
+    },
+    {
+      "name": "knowledge_links: admins update",
+      "table": "knowledge_links"
+    },
+    {
+      "name": "knowledge_links: members read",
+      "table": "knowledge_links"
+    },
+    {
       "name": "launchpad_statuses: members read",
       "table": "launchpad_statuses"
+    },
+    {
+      "name": "link_entity_types: admins delete",
+      "table": "link_entity_types"
+    },
+    {
+      "name": "link_entity_types: admins insert",
+      "table": "link_entity_types"
+    },
+    {
+      "name": "link_entity_types: admins update",
+      "table": "link_entity_types"
+    },
+    {
+      "name": "link_entity_types: members read",
+      "table": "link_entity_types"
+    },
+    {
+      "name": "link_kinds: admins delete",
+      "table": "link_kinds"
+    },
+    {
+      "name": "link_kinds: admins insert",
+      "table": "link_kinds"
+    },
+    {
+      "name": "link_kinds: admins update",
+      "table": "link_kinds"
+    },
+    {
+      "name": "link_kinds: members read",
+      "table": "link_kinds"
     },
     {
       "name": "module_access: admins delete",
@@ -453,22 +507,6 @@
     {
       "name": "work_documents: members read",
       "table": "work_documents"
-    },
-    {
-      "name": "work_item_dependencies: admins delete",
-      "table": "work_item_dependencies"
-    },
-    {
-      "name": "work_item_dependencies: admins insert",
-      "table": "work_item_dependencies"
-    },
-    {
-      "name": "work_item_dependencies: admins update",
-      "table": "work_item_dependencies"
-    },
-    {
-      "name": "work_item_dependencies: members read",
-      "table": "work_item_dependencies"
     },
     {
       "name": "work_item_phases: admins delete",
@@ -622,6 +660,21 @@
       "title",
       "updated_at"
     ],
+    "knowledge_links": [
+      "confidence",
+      "created_at",
+      "from_id",
+      "from_type",
+      "id",
+      "kind",
+      "note",
+      "superseded_by_id",
+      "to_id",
+      "to_type",
+      "updated_at",
+      "valid_from",
+      "valid_to"
+    ],
     "launchpad_statuses": [
       "age_meaningful",
       "created_at",
@@ -631,6 +684,21 @@
       "requires_note",
       "sort_order",
       "updated_at"
+    ],
+    "link_entity_types": [
+      "key",
+      "label",
+      "sort_order",
+      "table_name"
+    ],
+    "link_kinds": [
+      "description",
+      "family",
+      "inverse_label",
+      "is_symmetric",
+      "key",
+      "label",
+      "sort_order"
     ],
     "module_access": [
       "allowed",
@@ -802,10 +870,6 @@
       "title",
       "updated_at"
     ],
-    "work_item_dependencies": [
-      "depends_on_id",
-      "item_id"
-    ],
     "work_item_phases": [
       "created_at",
       "end_tbc",
@@ -874,6 +938,8 @@
     ]
   },
   "views": [
+    "knowledge_graph",
+    "knowledge_links_orphans",
     "roadmap_current",
     "roadmap_searchable"
   ]

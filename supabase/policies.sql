@@ -108,7 +108,9 @@ alter table public.roadmap_milestones      enable row level security;
 alter table public.work_documents          enable row level security;
 alter table public.work_items              enable row level security;
 alter table public.work_item_phases        enable row level security;
-alter table public.work_item_dependencies  enable row level security;
+alter table public.knowledge_links         enable row level security;
+alter table public.link_kinds              enable row level security;
+alter table public.link_entity_types       enable row level security;
 alter table public.work_notes              enable row level security;
 alter table public.product_capabilities    enable row level security;
 alter table public.domain_terms            enable row level security;
@@ -137,7 +139,12 @@ begin
       ('work_documents',         '(select public.has_module_access(''backlog''))'),
       ('work_items',             '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
       ('work_item_phases',       '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
-      ('work_item_dependencies', '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      -- The knowledge graph reads behind the same grant as the rows it
+      -- links: a link is only meaningful to someone who can see both
+      -- ends, and work_items already gates on roadmap OR backlog.
+      ('knowledge_links',        '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('link_kinds',             '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('link_entity_types',      '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
       ('work_notes',             '(select public.has_module_access(''backlog''))'),
       ('product_capabilities', '(select public.has_module_access(''platform''))'),
       ('domain_terms',         '(select public.has_module_access(''platform''))'),

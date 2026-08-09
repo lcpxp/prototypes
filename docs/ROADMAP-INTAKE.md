@@ -223,21 +223,58 @@ so every outcome has an undo: `ENRICH` restores the previous text, `MERGE`
 clears `status`, `resolution` and `relates_to_id` on the retired row,
 `PROMOTE` and `REVIVE` put the bands back.
 
-## Recording associations
+## The link vocabulary
 
-`relates_to_id` is the general "related but distinct" mechanism. Any time
-work is genuinely its own item but sits beside something else, soft-link it.
-Unlike `parent_id` it does not roll up onto the gantt and does not promote
-what it points at, so it costs nothing to record and it is how the next
-session learns that two pieces of work touch. Reach for it by default, not
-only for bugs.
+Relationships are rows in `knowledge_links`, not a column on the item. Eight
+kinds, grouped on the W3C SKOS split between hierarchical and associative
+relations. `relates_to_id` is the general "related but distinct" mechanism it
+replaces: same intent, but typed, unlimited per row, dated, and readable from
+both ends.
 
-Its known limits, both being addressed: it holds **one** relationship per
-row, and it is **untyped** - the same column carries "duplicate of",
-"component of", "superseded by" and "related to", so telling them apart means
-reading `resolution` prose. There is also no way to record that two rows are
-deliberately **not** the same, so an adjudicated non-match gets re-examined
-every review.
+| Kind | Reads forward | Reads back | Use when |
+| --- | --- | --- | --- |
+| `duplicate_of` | Duplicate of | Has duplicate | Same work, recorded twice. The FROM row must be `dropped` - a constraint enforces it |
+| `supersedes` | Supersedes | Superseded by | Same territory, but the newer framing is the live one |
+| `part_of` | Part of | Includes | A component of a coordination row. Unlike `parent_id` it does NOT roll up onto the gantt |
+| `blocks` | Blocks | Blocked by | The FROM row must land before the TO row can proceed |
+| `relates_to` | Related to | Related to | Genuinely distinct but adjacent. The default; symmetric |
+| `distinct_from` | Distinct from | Distinct from | Adjudicated as NOT the same work. Symmetric |
+| `about` | About | Described by | A note, document, term or capability describes the TO row |
+| `affects` | Affects | Affected by | Delivering this work changed that capability |
+
+Reach for `relates_to` by default, not only for bugs: it does not promote what
+it points at, so it costs nothing to record and it is how the next session
+learns that two pieces of work touch.
+
+**`distinct_from` is the one that pays for the vocabulary.** It records that a
+pair was examined and judged different - "Automate enrolling partners to
+Unity" against "...to LaunchPad", "VFS partner flow" against "Xolvis partner
+flow" - so the standing sweeps **suppress** that pair from future candidate
+lists instead of raising it every review. Use it the moment a candidate is
+rejected, with the reason in `note`. An adjudication that is not recorded is
+one the owner has to make again.
+
+    -- ASSOCIATE, the common case
+    insert into knowledge_links (from_type, from_id, to_type, to_id, kind, note, confidence)
+    select 'work_item', (select id from work_items where title = 'Screening check toggles should work'),
+           'work_item', (select id from work_items where title = 'Harden screening checks'),
+           'relates_to', 'Same screening surface, different work.', 'confirmed';
+
+    -- Record a rejected candidate so it is never re-raised
+    insert into knowledge_links (from_type, from_id, to_type, to_id, kind, note, confidence)
+    select 'work_item', (select id from work_items where title = 'Automate enrolling partners to Unity'),
+           'work_item', (select id from work_items where title = 'Automate enrolling partners to LaunchPad'),
+           'distinct_from', 'Different target platforms; the enrolment flows do not share code.', 'confirmed';
+
+    -- Close a link rather than deleting it: the graph keeps what was believed, and when
+    update knowledge_links set valid_to = now()
+     where id = '...' and valid_to is null;
+
+Two rules the schema enforces, so they cannot quietly lapse: a pair may not
+hold both a hierarchical (`part_of`) and an associative (`relates_to`,
+`distinct_from`) link at once, and `duplicate_of` requires the retired row to
+be `dropped`. Every link carries `confidence`: a link written by an assistant
+is `proposed` until the owner confirms it.
 
 ## Batches
 

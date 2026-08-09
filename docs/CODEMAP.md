@@ -85,7 +85,7 @@ document instead of walking the tree or reading whole files.
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
-| docs/ROADMAP-INTAKE.md | 296 | Roadmap intake |
+| docs/ROADMAP-INTAKE.md | 333 | Roadmap intake |
 | docs/ROADMAP-PLAYBOOK.md | 255 | Roadmap playbook |
 | docs/ROADMAP-REVIEW.md | 131 | Roadmap review |
 | docs/ROADMAP.md | 236 | Roadmap |
@@ -154,19 +154,22 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260728120000_roadmap_searchable_and_find.sql | 190 | Contextualisation read surface: roadmap_searchable + roadmap_find. |
 | supabase/migrations/20260730120000_app_review.sql | 334 | --------------------------------------------------------------- |
 | supabase/migrations/20260809120000_schema_catchup_and_delete_guard.sql | 64 | ------------------------------------------------------------------ |
-| supabase/policies.sql | 339 | ------------------------------------------------------------------ |
-| supabase/schema-snapshot.json | 881 |  |
+| supabase/migrations/20260809130647_knowledge_links_typed_vocabulary.sql | 340 | ------------------------------------------------------------------ |
+| supabase/policies.sql | 355 | ------------------------------------------------------------------ |
+| supabase/schema-snapshot.json | 947 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
-| supabase/schema/30_work.sql | 447 | ------------------------------------------------------------------ |
+| supabase/schema/30_work.sql | 442 | ------------------------------------------------------------------ |
 | supabase/schema/31_roadmap_search.sql | 192 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
+| supabase/schema/33_links.sql | 335 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
 | supabase/schema/50_review.sql | 394 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 44 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
+| tests/checks/knowledge-links.test.js | 104 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/roadmap-intake.test.js | 137 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
@@ -627,6 +630,7 @@ document instead of walking the tree or reading whole files.
 | symbolsOf() | scripts/gen-codemap.js:41 |
 | sorted() | scripts/gen-snapshot.js:91 |
 | write() | scripts/gen-snapshot.js:101 |
+| seededKinds() | tests/checks/knowledge-links.test.js:22 |
 | cdnPages() | tests/checks/perf.test.js:17 |
 | sqlWithoutComments() | tests/checks/perf.test.js:22 |
 | schemaFiles() | tests/checks/schema-drift.test.js:32 |

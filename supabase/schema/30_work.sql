@@ -402,16 +402,11 @@ create trigger work_item_phases_updated_at
   before update on public.work_item_phases
   for each row execute function public.set_updated_at();
 
--- Item-to-item ordering for waterfall views (empty until used).
-create table if not exists public.work_item_dependencies (
-  item_id uuid not null references public.work_items (id) on delete cascade,
-  depends_on_id uuid not null references public.work_items (id) on delete cascade,
-  primary key (item_id, depends_on_id),
-  check (item_id <> depends_on_id)
-);
-
-create index if not exists work_item_dependencies_depends_on_idx
-  on public.work_item_dependencies (depends_on_id);
+-- work_item_dependencies was here. It held item-to-item ordering for a
+-- waterfall view, stayed empty for its whole life, and covered one
+-- relationship type. It is now the 'blocks' kind in knowledge_links
+-- (33_links.sql), so there is one mechanism for relationships rather
+-- than two. Dropped 2026-08-09 with no rows to migrate.
 
 -- ---------------------------------------------------------------
 -- work_notes: atomic distilled records (decisions, facts, risks,
