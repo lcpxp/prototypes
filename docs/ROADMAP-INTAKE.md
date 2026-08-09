@@ -120,10 +120,25 @@ handle UK standard inputs only" is input-format restriction. Same code
 region, different work, deliberately not linked.
 
 The scorer weights query tokens by inverse document frequency, so a rare
-handle ("IVR", "currency") outweighs a ubiquitous one ("page",
-"application"), and damps queries under three informative tokens, so a
-one-word query ("CRM") does not score 1.0 against every row containing that
-word. Both were needed: without IDF, duplicates and noise overlap.
+handle ("IVR" 3.977, "currency" 3.776) outweighs a ubiquitous one ("page"
+2.618, "merchant" 1.130), and damps queries under three informative tokens,
+so a one-word query ("CRM") does not score 1.0 against every row containing
+that word. Both were needed: without IDF, duplicates and noise overlap.
+
+A stoplist runs before the weighting. On 2026-08-09 it was pruned: it had
+been holding content words that carry real domain force here, and IDF had
+already measured them as MORE discriminating than words it kept - `new`
+2.563, `add` 2.203 and `set` 2.063 were discarded while `merchant` 1.130
+sailed through. "Add site endpoint" consequently scored 0.371, Low, applied
+in silence; with `add` restored it scores 0.540 and surfaces the three
+adjacent "Add ... site" rows that already existed.
+
+Replacing the list with a minimum-IDF floor was tried and rejected on the
+measurement: in this corpus function words and real handles interleave -
+`when` (2.618) and `should` (2.563) score exactly as high as `page` and
+`new`. At 239 documents, document frequency is too noisy a proxy for
+"function word", so the list stays; it simply holds only closed-class words
+now.
 
 ### The known limit of a lexical score
 

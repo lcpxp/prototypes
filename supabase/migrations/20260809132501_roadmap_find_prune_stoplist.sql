@@ -1,93 +1,18 @@
--- Roadmap search: the contextualisation read surface.
+-- ------------------------------------------------------------------
+-- Applied 2026-08-09. Prunes roadmap_find's stoplist to genuine
+-- function words. Rationale and the measurements are beside the list
+-- in supabase/schema/31_roadmap_search.sql.
 --
--- Split out of 30_work.sql, which is at its size budget.
---
--- roadmap_current cannot express a semantic match: it carries no summary,
--- details, links or resolution, so any comparison against it is a
--- title match - and duplicate work is usually titled differently. These two
--- objects are the read surface intake needs to place new work against what
--- already exists (docs/ROADMAP-PLAYBOOK.md, "Contextualising new work").
---
--- roadmap_current is deliberately untouched; the board depends on its shape.
-
-create extension if not exists pg_trgm with schema extensions;
-
--- ---------------------------------------------------------------
--- roadmap_searchable: every work_items row, no status filter, with the
--- text and the relationship fields a match has to be judged on, plus a
--- computed is_hollow flag (no summary AND no details) - a hollow row is
--- the strongest ENRICH signal there is. security_invoker, so it exposes
--- exactly what the caller's RLS already allows on the base tables.
--- ---------------------------------------------------------------
-
-drop view if exists public.roadmap_searchable;
-create view public.roadmap_searchable
-  with (security_invoker = on) as
-  select
-    wi.id,
-    wi.title,
-    wi.summary,
-    wi.details,
-    wi.level,
-    wi.status,
-    wi.horizon,
-    wi.end_horizon,
-    wi.type,
-    wi.priority,
-    wi.parent_id,
-    parent.title              as workstream_title,
-    rc.label                  as theme_label,
-    wa.title                  as filing_area,
-    wi.department,
-    wi.assignee,
-    -- Every open link on this item, from either end, already resolved to
-    -- the other end's title and the reading that applies from here. A
-    -- session banding a candidate needs to see that two rows were
-    -- already adjudicated `distinct_from` without a second query - that
-    -- is the whole point of recording the judgement.
-    coalesce((
-      select jsonb_agg(jsonb_build_object(
-               'kind', g.kind, 'reads', g.reads, 'family', g.family,
-               'other_type', g.dst_type, 'other_id', g.dst_id,
-               'other_title', other.title,
-               'note', g.note, 'confidence', g.confidence)
-             order by g.family, g.kind, other.title)
-        from public.knowledge_graph g
-        left join public.work_items other
-          on g.dst_type = 'work_item' and other.id = g.dst_id
-       where g.src_type = 'work_item' and g.src_id = wi.id
-    ), '[]'::jsonb)          as links,
-    wi.resolution,
-    wi.tags,
-    (coalesce(wi.summary, '') = '' and coalesce(wi.details, '') = '') as is_hollow,
-    wi.created_at,
-    wi.updated_at
-  from public.work_items wi
-  left join public.work_items parent      on parent.id = wi.parent_id
-  left join public.roadmap_categories rc  on rc.id = wi.category_id
-  left join public.work_areas wa          on wa.id = wi.area_id;
-
-grant select on public.roadmap_searchable to authenticated;
-
-comment on view public.roadmap_searchable is
-  'Every work_items row (including done and dropped) with the text and '
-  'relationship fields needed to judge a semantic match, plus is_hollow. '
-  'The read surface for contextualising intake; see docs/ROADMAP-PLAYBOOK.md.';
-
--- ---------------------------------------------------------------
--- roadmap_find(query): ranked candidates across title, summary, details
--- and resolution, over ALL rows - parked and dropped work is first-class,
--- because a need that was retired can return.
---
--- The score is a blend the caller can band on:
---   0.50 * IDF-weighted share of query tokens found in the row's text
---   0.30 * IDF-weighted share of query tokens found in the title
---   0.20 * trigram similarity of the whole query against the title
---   +0.25 if the row's text contains the query verbatim (ILIKE fallback)
--- all damped for queries under three informative tokens. Token share
--- carries the weight because duplicate work is reworded, not retitled:
--- trigram similarity alone misses it. Bands: see the playbook.
--- ---------------------------------------------------------------
+-- Effect, measured before and after on the same corpus:
+--   "add site endpoint"  0.371 -> 0.540  (Low -> Medium; it now
+--     surfaces three genuinely adjacent "Add ... site" rows that
+--     were previously applied past in silence)
+--   "set the default currency for a new application"  0.572 -> 0.420
+--     (still Medium; the query now carries more informative tokens,
+--     so a row matching only some of them takes a smaller share)
+--   every other probe unchanged, including both reworded cases.
+-- Applied migrations are immutable: do not re-apply or edit this file.
+-- ------------------------------------------------------------------
 
 create or replace function public.roadmap_find(
   query        text,

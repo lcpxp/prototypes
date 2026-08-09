@@ -197,6 +197,10 @@
     {
       "name": "roadmap_find_returns_links",
       "version": "20260809132014"
+    },
+    {
+      "name": "roadmap_find_prune_stoplist",
+      "version": "20260809132501"
     }
   ],
   "policies": [

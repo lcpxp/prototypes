@@ -85,7 +85,7 @@ document instead of walking the tree or reading whole files.
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/PLATFORM.md | 114 | Platform product-knowledge protocol |
-| docs/ROADMAP-INTAKE.md | 390 | Roadmap intake |
+| docs/ROADMAP-INTAKE.md | 405 | Roadmap intake |
 | docs/ROADMAP-PLAYBOOK.md | 259 | Roadmap playbook |
 | docs/ROADMAP-REVIEW.md | 130 | Roadmap review |
 | docs/ROADMAP.md | 236 | Roadmap |
@@ -161,12 +161,12 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260809133000_drop_relates_to_id.sql | 44 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809133500_roadmap_find_returns_links.sql | 206 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 355 | ------------------------------------------------------------------ |
-| supabase/schema-snapshot.json | 966 |  |
+| supabase/schema-snapshot.json | 970 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 437 | ------------------------------------------------------------------ |
-| supabase/schema/31_roadmap_search.sql | 205 | Roadmap search: the contextualisation read surface. |
+| supabase/schema/31_roadmap_search.sql | 220 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
 | supabase/schema/33_links.sql | 344 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 65 | ------------------------------------------------------------------ |
