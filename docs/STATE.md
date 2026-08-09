@@ -1,39 +1,38 @@
 # Current state
 
-Updated: 2026-08-09 (platform page shows everything; recall outstanding)
+Updated: 2026-08-09 (LaunchPad API reference rebuilt from source)
 
 ## In progress
-Knowledge layer overhaul, merged to main. Shipped: rule rewrites, docs
-to one home per concept, schema/DB reconciliation, the drift gate, the
-typed link graph with its 35-link backfill, front end on links,
-relates_to_id dropped, stoplist pruned, widened knowledge kinds,
-docs/KNOWLEDGE-MODEL.md, and the Platform page now rendering all 102
-knowledge rows (was 18) with a Coverage panel naming the gaps.
-215 tests green; 39 migrations in step with the ledger.
+Nothing mid-flight in code. Two open threads, both data/next work:
 
-NOT done, and it is what fixes the headline problem: semantic recall.
-A reworded request still collapses High to Low and applies in silence
-("customer birthday displaying a day earlier" scores 0.265 against the
-row it duplicates).
+1. LaunchPad API reference overhaul - done this session, database only.
+   Rebuilt spec 9080b0a1 (LaunchPad Partner Portal API) to v2.0 from the
+   PartnerPortal source: 16 tags, 9 topics, 212 endpoints, merchant-first
+   model, three-tenant scoping, new management/order/provisioning/
+   fulfilment surfaces; historic draft-era routes removed. The generic
+   sample spec 11111111 is now "LaunchPad Inbound Onboarding API
+   (planned)", design-stage. Rippled: 3 technical/planned capabilities,
+   11 glossary terms, 6 question notes, 5 typed links; v1.1 load record
+   superseded. Gaps flagged as endpoint badges + the "Open questions &
+   context gaps" topic + work_notes(kind question).
+
+2. Semantic recall (from before, NOT done): a reworded request still
+   collapses High to Low and applies in silence. Embeddings not built.
 
 ## Next steps
-1. Embeddings: pgvector, plus embedding / embedded_at /
-   embedding_hash on work_items, work_notes, product_capabilities.
-   Input = the corpus roadmap_find scores, cut to 2000 chars.
-   Staleness is FLAGGED, never blanked.
-2. Edge Function: supabase/functions/knowledge/index.ts, modes embed
-   and find, new Supabase.ai.Session('gte-small'). Add 'ts' to
-   isTextFile in tests/lib/repo.js the SAME commit (secret scanner).
-   pgmq + pg_cron + pg_net; function URL and key from vault BY NAME.
-3. Calibration: tests/fixtures/intake-pairs.json, two rewordings per
-   duplicate. Weighted blend, never RRF - see KNOWLEDGE-MODEL.md.
-4. Owner waves: the 35 proposed links (script in ROADMAP-INTAKE.md),
-   the 39 unlinked near-pairs, and the 10 empty product areas the
-   Coverage panel lists.
-5. Use `affects` / `about`: unused, so cards show no roadmap context.
+1. Context-accumulation pass on the API reference: work the "Open
+   questions & context gaps" register (13 items) - prod B2C, machine
+   credential, contributor link, question schema, business-size field -
+   dropping the assumption/unverified/gap badges as each is answered.
+2. Embeddings: pgvector + embedding cols on work_items/notes/
+   product_capabilities; Edge Function knowledge/index.ts (embed|find),
+   gte-small, 384 dims. Add 'ts' to isTextFile the same commit.
+3. Calibration fixtures + weighted blend, never RRF (KNOWLEDGE-MODEL.md).
+4. Owner waves: proposed links, unlinked near-pairs, empty product areas.
 
 ## Open decisions
+- Onboarding spec: sample 11111111 repurposed to the planned Inbound
+  Onboarding API (design-stage); the generic demo stays in seed.sql.
+  Decided by execution 2026-08-09; confirm with owner if unexpected.
 - Edge Function + gte-small: AGREED 2026-08-09. No key, 384 dims.
-- Two live rows block their duplicate_of links until resolved:
-  "Currency Swap on summary page", "Terminal financing admin toggles".
-- Inter via Google Fonts: AGREED. The one external stylesheet.
+- Two live rows block their duplicate_of links until resolved.
