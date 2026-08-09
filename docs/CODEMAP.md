@@ -14,8 +14,8 @@ document instead of walking the tree or reading whole files.
 | .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 24 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 242 | CLAUDE.md |
-| README.md | 17 | LPio |
+| CLAUDE.md | 256 | CLAUDE.md |
+| README.md | 29 | LPio |
 | assets/css/app-review-detail.css | 112 | app-review-detail.css - The application review detail drawer: the |
 | assets/css/app-review.css | 378 | app-review.css - The application review board and wave list. |
 | assets/css/base.css | 111 | base.css - Reset, typography and global element styles. |
@@ -80,7 +80,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 278 | Architecture |
-| docs/CHANGELOG.md | 244 | Changelog |
+| docs/CHANGELOG.md | 251 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -159,6 +159,7 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260809132000_roadmap_searchable_links.sql | 50 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809132500_knowledge_graph_symmetric_both_ends.sql | 34 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809132501_roadmap_find_prune_stoplist.sql | 145 | ------------------------------------------------------------------ |
+| supabase/migrations/20260809132701_product_capability_knowledge_kinds.sql | 15 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809133000_drop_relates_to_id.sql | 44 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809133500_roadmap_find_returns_links.sql | 206 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 355 | ------------------------------------------------------------------ |

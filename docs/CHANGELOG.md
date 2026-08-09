@@ -11,6 +11,13 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- The roadmap drawer now shows typed relationships instead of a single
+  "Related to" line: an item reads "Part of", "Related to" or "Distinct
+  from" against each of its neighbours, each clickable through to that
+  item, and hovering a link shows why the two were judged apart where a
+  reason was recorded. An item can now carry as many relationships as it
+  actually has, rather than one. JSON export carries the kind and reason
+  per link; CSV keeps its single column, now reading "kind: title".
 - App Review: a new area holding waves of merchant application triage. A
   wave reconciles the LaunchPad list against the mail trail, because
   LaunchPad status alone does not say what needs doing - a record showing

@@ -24,8 +24,11 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
     assets/css/           tokens.css (design tokens) plus layered stylesheets
     assets/js/core/       Shared runtime: config, supabase, registry, guard, ui, auth
     assets/js/pages/      One module per page (dashboard, reference, gallery, users)
-    supabase/             schema/ (per-domain), policies.sql, seed.sql, migrations/
-    docs/                 Architecture, security, sessions, design, setup, roadmap
+    supabase/             schema/ (per-domain), policies.sql, seed.sql,
+                          migrations/, functions/ (Edge Functions),
+                          schema-snapshot.json (generated; the drift gate reads it)
+    docs/                 Architecture, security, design, setup, roadmap,
+                          KNOWLEDGE-MODEL.md (why the model is shaped as it is)
 
     assets/js/core/registry.js is the single source of truth for
     modules, table names and roles. Navigation, dashboard cards and
@@ -198,6 +201,13 @@ half-finished change.
   the answer through the validation gate before storing anything.
   The request and the response both hold real material, so they live
   outside the repo.
+- Relationships between anything the system knows: one row in
+  knowledge_links, typed from the eight kinds - duplicate_of,
+  supersedes, part_of, blocks, relates_to, distinct_from, about,
+  affects. Never a new column. Links are closed (valid_to), never
+  deleted, and a link an assistant writes is `proposed` until the owner
+  confirms it. Vocabulary and SQL: docs/ROADMAP-INTAKE.md; reasoning:
+  docs/KNOWLEDGE-MODEL.md.
 - New table: schema in the right supabase/schema/ domain file,
   policies in supabase/policies.sql, both in the same commit, and
   the change applied to the live project as a migration.
@@ -210,6 +220,10 @@ half-finished change.
 - Relevant docs updated; a user-visible change adds one line under
   Unreleased in docs/CHANGELOG.md in the same commit; docs/STATE.md
   updated if any work is left in flight.
+- If schema, policies or migrations changed: supabase/schema-snapshot.json
+  regenerated (`npm run snapshot`, needs Supabase MCP access) and the
+  drift check green. The repo describing a database it cannot rebuild is
+  how two columns and five migrations went missing.
 - Committed to main; the GitHub Pages deploy workflow is green and the
   change is reviewable at the Pages URL.
 
