@@ -148,41 +148,8 @@ test("timeline (team) orders by start band, then span length, then priority", ()
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b), "rows are in band+span order");
 });
 
-test("exec is department-first: departments own categories with counts, no titles when compact", () => {
-  const V = loadView();
-  const html = V.timeline(sampleData(), "exec");
-  // Departments (registry order puts Sales before Product and Technology).
-  assert.match(html, /Sales &amp; Commercial/);
-  assert.match(html, /Product and Technology/);
-  assert.ok(html.indexOf("Sales &amp; Commercial") < html.indexOf("Product and Technology"),
-    "departments follow registry order");
-  // Category counts under a department (Core has delivered i1 + active i3).
-  assert.match(html, /rmv-exec-cat-name">Core<\/span><span class="rmv-exec-cat-count">2 items</);
-  assert.match(html, /rmv-exec-cat-name">Unity<\/span><span class="rmv-exec-cat-count">1 item</);
-  // Compact view names no items and shows no percentage.
-  assert.doesNotMatch(html, /Unity integration/, "compact exec names no items");
-  assert.doesNotMatch(html, /%/, "no percentage at the top level");
-  assert.doesNotMatch(html, /US market/, "parked work never reaches the exec rollup");
-});
-
-test("exec detailed lists items with a step summary, still no percentage", () => {
-  const V = loadView();
-  const html = V.timeline(sampleData(), "exec", { expanded: true });
-  assert.match(html, /rmv-exec-item-title">Unity integration/, "detailed exec names the items");
-  // i2 has two sub-steps, one done: a subtle count replaces the old NN% pill.
-  assert.match(html, /1 of 2 steps/);
-  assert.doesNotMatch(html, /rmv-prog-pill/, "the numeric progress pill is gone");
-  assert.doesNotMatch(html, /%/, "detailed exec still shows no percentage");
-});
-
-test("exec ignores layout: cascade renders the same department board", () => {
-  const V = loadView();
-  const html = V.cascade(sampleData(), "exec");
-  assert.match(html, /rmv-exec-dept/);
-  assert.match(html, /Product and Technology/);
-  assert.doesNotMatch(html, /rmv-band-head/, "exec is not banded");
-  assert.doesNotMatch(html, /Unity integration/, "compact exec names no items");
-});
+// The Executive (Categories) board benchmarks live in
+// roadmap-views-exec.test.js, split from here per the size-budget exit plan.
 
 test("team detailed adds a Category -> Area breakdown with department tags and deliverables", () => {
   const V = loadView();
@@ -428,6 +395,43 @@ test("showDelivered=false hides delivered work across timeline and cascade", () 
   // Executive drops delivered too: Core now has only its one active item.
   assert.match(V.timeline(data, "exec", { showDelivered: false }),
     /rmv-exec-cat-name">Core<\/span><span class="rmv-exec-cat-count">1 item</);
+});
+
+test("opts.wide widens the Timeline across levels; off by default", () => {
+  const V = loadView();
+  const data = sampleData();
+  data.items[1].level = "workstream"; // give the Workstreams level a bar to render
+  ["workstreams", "team", "backlog"].forEach((level) => {
+    assert.doesNotMatch(V.timeline(data, level), /rmv-tl--wide/,
+      `${level} is not wide by default`);
+    assert.doesNotMatch(V.timeline(data, level, { wide: false }), /rmv-tl--wide/,
+      `${level} stays narrow when wide is false`);
+    assert.match(V.timeline(data, level, { wide: true }), /rmv-tl--wide/,
+      `${level} widens when wide is true`);
+  });
+});
+
+test("a delivered bar/card keeps its theme as a dot; a themeless delivery does not crash", () => {
+  const V = loadView();
+  const data = sampleData();
+  // i1 (Core onboarding) is delivered with the Core theme; unmarked, so it
+  // lands in Previously. Its fill is dropped but it keeps a theme dot.
+  assert.match(V.timeline(data, "team"), /rmv-tl-bar--done[\s\S]*?rmv-theme-dot rm-cat-core/,
+    "the delivered timeline bar carries its theme dot");
+  assert.match(V.cascade(data, "team"), /rm-card--previously[\s\S]*?rmv-theme-dot rm-cat-core/,
+    "the delivered cascade card carries its theme dot");
+  // A delivered item with no theme carries no dot - and must not throw.
+  const themeless = {
+    categories: [],
+    areas: [{ id: "a1", key: "svc", title: "Service", scope: "product", category_id: null, sort_order: 10 }],
+    items: [{ id: "d", area_id: "a1", category_id: null, title: "Unthemed delivery",
+      status: "done", horizon: "now", presentation: "sequenced", priority: 10, sort_order: 10 }],
+  };
+  const tl = V.timeline(themeless, "team");
+  assert.match(tl, /Unthemed delivery/, "the unthemed delivered item still renders");
+  assert.match(tl, /rmv-tl-bar--done/, "and reads as delivered");
+  assert.doesNotMatch(tl, /rmv-theme-dot/, "with no theme dot");
+  assert.doesNotThrow(() => V.cascade(themeless, "team"), "cascade handles a themeless delivery");
 });
 
 test("empty states name the work_items table", () => {

@@ -166,6 +166,8 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260809132701_product_capability_knowledge_kinds.sql | 15 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809133000_drop_relates_to_id.sql | 44 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809133500_roadmap_find_returns_links.sql | 206 | ------------------------------------------------------------------ |
+| supabase/migrations/20260810215935_work_items_historic_at_latch.sql | 15 | Delivered work splits into two columns on the board: Completed (a |
+| supabase/migrations/20260810220039_rename_historic_at_to_previously_completed_at.sql | 13 | The board's delivered columns are "Recently completed" and "Previously |
 | supabase/policies.sql | 355 | ------------------------------------------------------------------ |
 | supabase/schema-snapshot.json | 983 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
@@ -203,7 +205,8 @@ document instead of walking the tree or reading whole files.
 | tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
 | tests/unit/roadmap-detail.test.js | 340 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views-custom.test.js | 220 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
-| tests/unit/roadmap-views.test.js | 471 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
+| tests/unit/roadmap-views-exec.test.js | 49 | tests/unit/roadmap-views-exec.test.js - Benchmarks for the Executive |
+| tests/unit/roadmap-views.test.js | 475 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |

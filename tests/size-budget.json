@@ -106,7 +106,7 @@
     },
     "tests/unit/roadmap-views.test.js": {
       "hard": 500,
-      "note": "Over soft: one dataset (tests/lib/roadmap.js) drives the level/layout benchmarks together. The custom-view and department-filter cases are already split into roadmap-views-custom.test.js; the exec-board cases are the next split seam."
+      "note": "Over soft: one dataset (tests/lib/roadmap.js) drives the level/layout benchmarks together. The custom-view/department-filter cases are in roadmap-views-custom.test.js and the exec-board cases in roadmap-views-exec.test.js; the placement-ordering cases (bug sink, priority ties, parked theme clustering) are the next split seam."
     }
   }
 }
