@@ -231,6 +231,22 @@ test("toKpiItem and toCsvRoadmap carry the extended context", () => {
   assert.match(lines[1], /DEVOPS-123/);
 });
 
+test("the exports carry previously_completed_at as real delivered state", () => {
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  item.status = "done";
+  item.previously_completed_at = "2026-08-10T00:00:00Z";
+  const ctx = ctxOf(App, data);
+  const kpi = plain(App.roadmapDetail.toKpiItem(item, ctx));
+  assert.equal(kpi.previously_completed_at, "2026-08-10T00:00:00Z",
+    "the JSON export carries the latch");
+  const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctx);
+  const lines = csv.trim().split("\r\n");
+  assert.match(lines[0], /,previously_completed_at\b/, "the CSV names the latch column");
+  assert.match(lines[1], /2026-08-10T00:00:00Z/, "the CSV row carries the value");
+});
+
 test("drawerHtml escapes hostile content", () => {
   const App = load();
   const data = sample();

@@ -101,6 +101,7 @@
       external_ref: item.external_ref || null,
       resolution: item.resolution || null,
       resolved_at: item.resolved_at || null,
+      previously_completed_at: item.previously_completed_at || null,
       created_at: item.created_at || null,
       work_items: workItems.length ? workItems : null,
       deliverables: deliverables.length ? deliverables : null,
@@ -138,7 +139,7 @@
     "level", "type", "effort", "impact",
     "start_date", "end_date", "start_sprint", "end_sprint",
     "related_to", "requested_by", "source_document_id", "external_ref", "resolution", "details",
-    "tags", "created_at", "updated_at",
+    "tags", "created_at", "updated_at", "previously_completed_at",
   ];
 
   // One flat record per work item: the resolved, board-accurate values
@@ -197,6 +198,7 @@
       tags: item.tags || [],
       created_at: item.created_at || "",
       updated_at: item.updated_at || "",
+      previously_completed_at: item.previously_completed_at || "",
     };
     Object.keys(a).forEach(function (k) { rec["attr_" + k] = a[k]; });
     return rec;
