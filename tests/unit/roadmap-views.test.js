@@ -35,18 +35,33 @@ test("colStart/colEnd map horizon, span, done and dropped to the axis", () => {
   assert.equal(V.colEnd({ status: "planned", horizon: "next", end_horizon: "now" }), 3);
 });
 
-test("markRecency tags done work within the four-week window", () => {
+test("markRecency splits done work on the 90-day window", () => {
   const V = loadView();
-  const now = Date.parse("2026-07-21T00:00:00Z");
+  const now = Date.parse("2026-08-10T00:00:00Z");
   const items = [
-    { status: "done", resolved_at: "2026-07-14T00:00:00Z" },      // 7 days: recent
-    { status: "done", resolved_at: "2026-06-01T00:00:00Z" },      // >4 weeks: historic
-    { status: "done", updated_at: "2026-07-20T00:00:00Z" },       // no resolved_at, falls back
+    { status: "done", resolved_at: "2026-07-14T00:00:00Z" },      // 27 days: recent
+    { status: "done", resolved_at: "2026-04-01T00:00:00Z" },      // >90 days: historic
+    { status: "done", updated_at: "2026-08-01T00:00:00Z" },       // no resolved_at, falls back: recent
     { status: "done" },                                           // no timestamp: historic
-    { status: "in_progress", updated_at: "2026-07-20T00:00:00Z" },// not done
+    { status: "in_progress", updated_at: "2026-08-01T00:00:00Z" },// not done
   ];
   V.markRecency(items, now);
   assert.deepEqual(items.map((i) => i._recentDone), [true, false, true, false, false]);
+});
+
+test("markRecency latches a delivery to Previously via previously_completed_at", () => {
+  const V = loadView();
+  const now = Date.parse("2026-08-10T00:00:00Z");
+  const items = [
+    // Closed yesterday, so inside the window - but latched to Previously.
+    { status: "done", resolved_at: "2026-08-09T00:00:00Z",
+      previously_completed_at: "2026-08-10T00:00:00Z" },
+    // The same recent close with no latch reads as Recently completed.
+    { status: "done", resolved_at: "2026-08-09T00:00:00Z" },
+  ];
+  V.markRecency(items, now);
+  assert.deepEqual(items.map((i) => i._recentDone), [false, true],
+    "the latch pins a recent delivery to Previously; clearing it restores Recently");
 });
 
 test("isActive and isParked classify by the item's own fields", () => {

@@ -37,9 +37,10 @@
 
   // The continuous axis: previously(0) | recently(1) | now(2) | next(3) |
   // later(4) | parked(5). Delivered work splits by recency - shipped
-  // within RECENT_DAYS is Recently completed (a rolling list), older work
-  // Previously completed. Team/Executive show up to Later; Backlog adds
-  // Parked.
+  // within RECENT_DAYS (a 90-day rolling window) is Recently completed,
+  // older work Previously completed. A previously_completed_at latch
+  // (see markRecency) can pin a delivery to Previously regardless of age.
+  // Team/Executive show up to Later; Backlog adds Parked.
   var BANDS = [
     { key: "previously", label: "Previously completed" },
     { key: "recently", label: "Recently completed" },
@@ -50,17 +51,21 @@
   ];
   var ACTIVE_MAX = 4;
   var PARKED = 5;
-  var RECENT_DAYS = 28;
+  var RECENT_DAYS = 90;
 
   // Tag each done item as recently completed (within RECENT_DAYS) or not,
   // reading resolved_at (falling back to updated_at for rows closed before
-  // the stamp existed). "now" is injected once here so the pure placement
-  // builders stay deterministic; unmarked items default to Previously.
+  // the stamp existed). A previously_completed_at timestamp is a one-way
+  // latch: it pins the row to Previously completed regardless of age, so a
+  // closeout wave can be filed as history the moment it lands rather than
+  // ageing out of Recently over the next window. Clearing it (null) is the
+  // undo. "now" is injected once here so the pure placement builders stay
+  // deterministic; unmarked items default to Previously.
   function markRecency(items, now) {
     var cutoff = (now || Date.now()) - RECENT_DAYS * 864e5;
     (items || []).forEach(function (i) {
       var t = i.status === "done" ? (i.resolved_at || i.updated_at) : null;
-      i._recentDone = !!t && Date.parse(t) >= cutoff;
+      i._recentDone = !i.previously_completed_at && !!t && Date.parse(t) >= cutoff;
     });
     return items;
   }
