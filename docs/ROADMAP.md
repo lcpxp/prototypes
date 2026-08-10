@@ -114,9 +114,25 @@ Layouts:
 - **Cascade** - the same work as stacked stage bands; an item that spans
   Now -> Next appears under both the Now and the Next band.
 
-A **Hide delivered** toggle drops delivered work (and the Delivered
-column/band) from any view. It is a view-only preference kept in
+The Delivered zone splits into two columns: **Recently completed** (shipped
+within a rolling **90-day** window, read from `resolved_at`, falling back to
+`updated_at` for rows closed before that stamp existed) and **Previously
+completed** (older deliveries). A `previously_completed_at` timestamp is a
+one-way **latch** that pins a delivery to Previously completed regardless of
+age, so a closeout wave files as history the moment it lands instead of
+sitting in Recently for the whole window; clearing the column back to null
+is the undo. The latch is a database edit (see docs/ROADMAP-PLAYBOOK.md);
+the drawer surfaces it as a "Moved to Previously completed" row.
+
+A **Hide delivered** toggle drops delivered work (and both Delivered
+columns/bands) from any view. It is a view-only preference kept in
 localStorage; it changes nothing in the database.
+
+An **Expand board** toggle (the arrows-out control) widens the Timeline so
+every column keeps its full width and the board scrolls sideways rather than
+compressing to fit the viewport - room to read long titles and dense spans.
+Like Hide delivered and Detailed view, it is a view-only localStorage
+preference.
 
 Level and layout persist in the URL hash (`#team/cascade`) and
 localStorage, so a shared link opens the same view. The roadmap renders

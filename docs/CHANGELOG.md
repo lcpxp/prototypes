@@ -25,6 +25,11 @@ is the git history; what is unfinished is docs/STATE.md.
   design-stage "LaunchPad Inbound Onboarding API".
 
 ### Added
+- The roadmap Timeline gains an **Expand board** control: it widens every
+  column and scrolls the board sideways instead of compressing it to fit, so
+  long titles and dense spans read in full. Delivered bars and cards now keep
+  their theme colour as a solid dot (their fill is dropped for the
+  settled-history look), so the completed columns stay colour-coded.
 - The Platform page now shows the whole knowledge base, not just the
   capability catalogue. It previously rendered 18 capability rows while
   63 more sat in the database unseen: the 13-stage lead-to-live journey,
@@ -187,9 +192,11 @@ is the git history; what is unfinished is docs/STATE.md.
 - Export as PDF now prints whichever view is on screen (Categories remains
   the recommended C-suite one-pager); the printed board is bars only.
 - The roadmap's Delivered work now splits into two columns: Recently
-  completed (shipped in the last four weeks, a rolling list) and Previously
+  completed (shipped within a rolling 90-day window) and Previously
   completed (the older, historic record), so recent wins stand apart from
-  the long tail.
+  the long tail. A closeout can be pinned straight to Previously completed
+  regardless of age (the previously_completed_at latch, its undo a single
+  clear), and the item drawer shows when a delivery was moved there.
 - The roadmap stack now sinks bugs below other work in their band, groups
   equal-priority parked rows by theme lane, and tints parked bars with
   their lane hue so backlog items no longer read as detached.

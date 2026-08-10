@@ -205,6 +205,14 @@
     {
       "name": "product_capability_knowledge_kinds",
       "version": "20260809132701"
+    },
+    {
+      "name": "work_items_historic_at_latch",
+      "version": "20260810215935"
+    },
+    {
+      "name": "rename_historic_at_to_previously_completed_at",
+      "version": "20260810220039"
     }
   ],
   "policies": [
@@ -933,6 +941,7 @@
       "parent_id",
       "prd_status",
       "presentation",
+      "previously_completed_at",
       "priority",
       "progress",
       "project_status",

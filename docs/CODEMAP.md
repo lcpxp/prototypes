@@ -83,16 +83,16 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 278 | Architecture |
-| docs/CHANGELOG.md | 276 | Changelog |
+| docs/CHANGELOG.md | 283 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/KNOWLEDGE-MODEL.md | 187 | The knowledge model |
 | docs/PLATFORM.md | 163 | Platform product-knowledge protocol |
 | docs/ROADMAP-INTAKE.md | 405 | Roadmap intake |
-| docs/ROADMAP-PLAYBOOK.md | 259 | Roadmap playbook |
+| docs/ROADMAP-PLAYBOOK.md | 272 | Roadmap playbook |
 | docs/ROADMAP-REVIEW.md | 130 | Roadmap review |
-| docs/ROADMAP.md | 236 | Roadmap |
+| docs/ROADMAP.md | 252 | Roadmap |
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
@@ -167,11 +167,11 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260809133000_drop_relates_to_id.sql | 44 | ------------------------------------------------------------------ |
 | supabase/migrations/20260809133500_roadmap_find_returns_links.sql | 206 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 355 | ------------------------------------------------------------------ |
-| supabase/schema-snapshot.json | 974 |  |
+| supabase/schema-snapshot.json | 983 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 79 | ------------------------------------------------------------------ |
-| supabase/schema/30_work.sql | 437 | ------------------------------------------------------------------ |
+| supabase/schema/30_work.sql | 449 | ------------------------------------------------------------------ |
 | supabase/schema/31_roadmap_search.sql | 220 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
 | supabase/schema/33_links.sql | 345 | ------------------------------------------------------------------ |

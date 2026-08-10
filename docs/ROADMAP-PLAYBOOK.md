@@ -113,9 +113,16 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `effort` / `impact` | small/medium/large, low/medium/high | null | drawer |
 | `start_sprint` / `end_sprint` | `NN-NN` (e.g. 26-16) | null | drawer (docs/SPRINTS.md) |
 | `resolution` | text | null | closing note (park/drop) |
+| `previously_completed_at` | timestamptz | null | delivered latch: pins a done item to Previously completed (see below) |
 
 Items are never deleted. Close with `status='done'` or `'dropped'` plus a
 `resolution`; `resolved_at` is stamped by trigger. Reopening clears it.
+
+Delivered work splits into Recently and Previously completed by a 90-day
+freshness window on `resolved_at`. `previously_completed_at` overrides that:
+null means derive from the window; a timestamp latches the row to Previously
+completed regardless of age. It is set by hand (never a trigger), and
+clearing it back to null is the undo.
 
 ## Ownership: one accountable owner, many associations
 
@@ -174,6 +181,12 @@ department filter; until then it is the classification rule, in data only.
     select roadmap_move_workstream(
       (select id from work_items where title='Insights' and level='workstream'), 'now');
     update work_items set status='done' where title='Add site endpoint'; -- deliver
+    -- Latch a delivery to Previously completed (file a closeout as history
+    -- now rather than waiting out the 90-day window); set null to undo.
+    update work_items set previously_completed_at=now()
+      where status='done' and resolved_at < '2026-08-10';                -- latch to Previously
+    update work_items set previously_completed_at=null
+      where title='Add site endpoint';                                   -- undo the latch
     update work_items set horizon='someday', resolution='Deferred: no capacity'
       where title='Returns handling';                                    -- park (keep the reason)
     update work_items set progress=50 where title='Self Service API';     -- nudge progress

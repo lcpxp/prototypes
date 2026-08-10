@@ -278,6 +278,13 @@ create table if not exists public.work_items (
   -- Closing note; resolved_at is stamped by the trigger below.
   resolution text,
   resolved_at timestamptz,
+  -- A one-way latch (set by the roadmap tooling, never a trigger) that pins
+  -- a delivery to the Previously completed column regardless of age. Null
+  -- means derive Recently vs Previously from the freshness window on
+  -- resolved_at; a timestamp holds the row in Previously. Clearing it back
+  -- to null is the undo. See markRecency in assets/js/pages/roadmap-views.js
+  -- and the latch operation in docs/ROADMAP-PLAYBOOK.md.
+  previously_completed_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint work_items_parent_not_self check (parent_id is null or parent_id <> id),
@@ -305,6 +312,11 @@ create index if not exists work_items_associated_departments_idx
 create index if not exists work_items_assignee_idx
   on public.work_items (assignee)
   where assignee is not null;
+-- The Previously completed latch: partial, since only latched rows carry a
+-- value, and the board reads them to hold delivered work as history.
+create index if not exists work_items_previously_completed_idx
+  on public.work_items (previously_completed_at)
+  where previously_completed_at is not null;
 
 -- Deleting a work item is not an operation this system has. Rows close
 -- with status 'done' or 'dropped' plus a resolution (see the trigger
