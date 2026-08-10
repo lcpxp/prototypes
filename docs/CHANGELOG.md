@@ -12,17 +12,26 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ### Changed
 - The LaunchPad API reference has been rebuilt from the Partner Portal
-  source code (v2.0). It now documents 212 endpoints across 16 areas,
-  the merchant-first onboarding model (create a merchant, then start an
-  application against it), the three-tenant scoping scheme, and the
-  management, order, provisioning and fulfilment surfaces - with the
-  outdated draft-era endpoints removed so nothing stale lingers. Paths,
-  payload shapes, enums and business rules are now confirmed against
-  code rather than observed traffic, and every gap or assumption is
-  flagged inline (endpoint badges plus an "Open questions & context
-  gaps" section) for the next context-accumulation pass. The old
-  placeholder "Merchant Onboarding API" sample is now a clearly
-  design-stage "LaunchPad Inbound Onboarding API".
+  source code (v2.0). After a full audit against the source it now
+  documents 245 endpoints across 16 areas, the merchant-first onboarding
+  model (create a merchant, then start an application against it), the
+  three-tenant scoping scheme, and the management, order, provisioning
+  and fulfilment surfaces - with the outdated draft-era endpoints removed
+  so nothing stale lingers. Paths, payload shapes, enums and business
+  rules are now confirmed against code rather than observed traffic, and
+  every gap or assumption is flagged inline (endpoint badges plus an
+  "Open questions & context gaps" section) for the next
+  context-accumulation pass.
+- The design-stage "LaunchPad Inbound Onboarding API" has been built out
+  from a seven-endpoint sketch into a coherent framework: 29 endpoints in
+  9 groups (leads, complete submission, programmatic questionnaire,
+  screening, contracts, decision & fulfilment, status & events,
+  acquirer-routed submission, reference lookups) and 7 topics that model
+  what a lead is, the three ways in, how external systems trigger
+  LaunchPad to screen/contract/decide/fulfil, and the inbound conventions
+  (idempotency, correlation, async status, machine credential). Every
+  route names the proven portal endpoint it derives from or carries a
+  gap badge; the whole spec is still marked design-stage, not built.
 
 ### Added
 - The Platform page now shows the whole knowledge base, not just the
