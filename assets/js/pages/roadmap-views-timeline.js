@@ -50,7 +50,7 @@
   // has been filtered out upstream (bandVisible), so the column reads empty.
   // preordered keeps the caller's order (used to group child bars under
   // their parent); otherwise rows sort by timelineOrder.
-  function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick, preordered, hidden) {
+  function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick, preordered, hidden, wide) {
     var visible = showDelivered ? placed
       : placed.filter(function (p) { return p._e >= 2; });
     if (!visible.length) return emptyMsg;
@@ -80,6 +80,7 @@
         App.escape(p._catLabel) + "</span>" + bar + R.pickBox(p._id, pick) + "</div>";
     }).join("");
     return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") +
+      (wide ? " rmv-tl--wide" : "") +
       '" style="--tl-cols:' + (maxBand - first + 1) + '">' + head + body + "</div>";
   }
 
@@ -97,6 +98,11 @@
       cat = pCat;
       if (own && (!pCat || pCat.id !== own.id)) dot = own;
     }
+    // A delivered bar loses its lane fill (it reads as settled history: a
+    // quiet surface with the done accent), so its theme survives only as a
+    // dot at the bar's end - the completed columns stay colour-coded. A
+    // delivered item with no theme simply carries no dot.
+    if (i.status === "done" && !dot) dot = own;
     return { _s: R.colStart(i), _e: R.colEnd(i), _cat: cat, _dot: dot,
       _catLabel: cat ? cat.label : "General", _pri: i.priority, _so: i.sort_order,
       _bug: R.bugRank(i), _catSo: cat ? cat.sort_order : 1e9,
@@ -127,6 +133,7 @@
   function timeline(data, level, opts) {
     var show = !opts || opts.showDelivered !== false;
     var expanded = !!(opts && opts.expanded);
+    var wide = !!(opts && opts.wide);
     var hidden = (opts && opts.hiddenBands) || null;
     var pick = opts && opts.custom
       ? { custom: true, unpicked: opts.unpicked || {}, excluded: opts.excluded || {} } : null;
@@ -151,7 +158,7 @@
       var wsGrid = timelineGrid(wsList.map(function (i) { return placeItem(i, ctx); }),
         R.ACTIVE_MAX, show,
         '<p class="notice">No active workstreams. Mark a top-level item as a ' +
-        "workstream to show it here.</p>", pick, false, hidden);
+        "workstream to show it here.</p>", pick, false, hidden, wide);
       return wsGrid + (expanded ? R.breakdown(R.visibleDetail(wsList, show), ctx) : "") +
         R.freshnessHtml(all);
     }
@@ -160,7 +167,7 @@
       // nested work items indented beneath it.
       var grid = timelineGrid(
         placedWithChildren(tops, ctx, function (k) { return R.bandVisible(k, hidden); }),
-        R.PARKED, show, R.emptyNotice(), pick, true, hidden);
+        R.PARKED, show, R.emptyNotice(), pick, true, hidden, wide);
       return grid + (expanded ? R.breakdown(R.visibleDetail(tops, show), ctx) : "") +
         R.freshnessHtml(all);
     }
@@ -170,7 +177,7 @@
     var teamGrid = timelineGrid(placedWithChildren(teamTops, ctx,
       function (k) { return R.teamMember(k) && R.bandVisible(k, hidden); }), R.ACTIVE_MAX, show,
       '<p class="notice">No active roadmap work. Items wait in the Backlog ' +
-      "until scheduled (set a horizon of now, next or later).</p>", pick, true, hidden);
+      "until scheduled (set a horizon of now, next or later).</p>", pick, true, hidden, wide);
     return teamGrid + (expanded ? R.breakdown(R.visibleDetail(teamTops, show), ctx) : "") +
       R.freshnessHtml(all);
   }

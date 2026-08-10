@@ -57,15 +57,18 @@
   // placeItem in roadmap-views.js).
   function cardIn(item, ctx, pick, idx, isChild, parentTitle, parent) {
     var own = ctx.catById[R.themeIdOf(item, ctx)] || null;
-    var cat = own, dot = "";
+    var cat = own, dotFor = null;
     if (isChild && parent) {
       var pCat = ctx.catById[R.themeIdOf(parent, ctx)] || null;
       cat = pCat;
-      if (own && (!pCat || pCat.id !== own.id)) {
-        dot = '<span class="rmv-theme-dot rm-cat-' + App.escape(own.key) +
-          '" aria-hidden="true"></span>';
-      }
+      if (own && (!pCat || pCat.id !== own.id)) dotFor = own;
     }
+    // A delivered card loses its lane fill (settled-history styling), so its
+    // theme survives as a dot - mirrors the delivered timeline bar. A
+    // delivered card with no theme carries no dot.
+    if (item.status === "done" && !dotFor) dotFor = own;
+    var dot = dotFor ? '<span class="rmv-theme-dot rm-cat-' + App.escape(dotFor.key) +
+      '" aria-hidden="true"></span>' : "";
     return R.colStart(item) === idx
       ? fullCard(item, cat, pick, isChild, parentTitle, dot)
       : contCard(item, cat, isChild, dot);

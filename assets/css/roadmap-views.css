@@ -125,26 +125,51 @@
 /* Team timeline: priority-ranked rows, each a bar in its horizon
    column(s). Concurrent work stacks visibly in the same column. */
 .rmv-tl {
+  /* The grid tracks come from custom properties so both view controls
+     compose on one axis: --tl-gutter is the theme-label lane and --tl-col
+     a flexible data column (Expand board doubles both, below); the collapse
+     control overrides --tl-tracks per view to thin a hidden column to a
+     seam (roadmap-views.css further down). */
+  --tl-gutter: 11rem;
+  --tl-col: minmax(6rem, 1fr);
   display: flex;
   flex-direction: column;
   gap: var(--s-1);
   overflow-x: auto;
 }
 
+/* Expand board: the label lane and every data column roughly double, so the
+   grid overflows the viewport and .rmv-tl (already overflow-x: auto) becomes
+   a horizontal scroller - room to read long titles and dense spans in full
+   rather than truncated. */
+.rmv-tl--wide {
+  --tl-gutter: 22rem;
+  --tl-col: minmax(12rem, 1fr);
+}
+
 /* The visible data-column count (--tl-cols) is set per view on .rmv-tl:
    Team/Executive show up to Later; Backlog adds the Parked column;
-   hiding Delivered drops one. The grid follows it so every view lines
-   up on one axis. */
+   hiding Delivered drops one. --tl-tracks, when set, lists the tracks
+   explicitly so a collapsed column can shrink to a seam; otherwise the
+   grid falls back to --tl-cols equal columns so every view lines up. */
 .rmv-tl-head,
 .rmv-tl-row {
   display: grid;
-  grid-template-columns: 11rem repeat(var(--tl-cols, 4), minmax(6rem, 1fr));
+  grid-template-columns:
+    var(--tl-gutter) var(--tl-tracks, repeat(var(--tl-cols, 4), var(--tl-col)));
   gap: var(--s-2);
   align-items: center;
   /* Shared inline inset: head and rows stay column-aligned, bars clear
      the row track's edges. */
   padding-inline: var(--s-2);
-  min-inline-size: calc(11rem + var(--tl-cols, 4) * 8rem);
+  min-inline-size:
+    calc(var(--tl-gutter) + var(--tl-full, var(--tl-cols, 4)) * 8rem + var(--tl-seams, 0) * 2rem);
+}
+
+.rmv-tl--wide .rmv-tl-head,
+.rmv-tl--wide .rmv-tl-row {
+  min-inline-size:
+    calc(var(--tl-gutter) + var(--tl-full, var(--tl-cols, 4)) * 16rem + var(--tl-seams, 0) * 2.5rem);
 }
 
 .rmv-tl-head {
@@ -319,6 +344,18 @@
 }
 .rm-card--child .rmv-theme-dot { top: var(--s-2); transform: none; }
 
+/* On a delivered bar/card the dot is the ONLY theme signal - the lane fill
+   is dropped for the settled-history treatment - so it reads as a solid 8px
+   marker rather than the faint 6px mismatch flag it plays on a live nested
+   bar. The completed columns stay colour-coded by theme. */
+.rmv-tl-bar--done .rmv-theme-dot,
+.rm-card--previously .rmv-theme-dot,
+.rm-card--recently .rmv-theme-dot {
+  width: 8px;
+  height: 8px;
+  opacity: 1;
+}
+
 .rmv-ws-tag {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -346,7 +383,8 @@
    the horizon axis stays aligned. */
 body.rm-custom .rmv-tl-head,
 body.rm-custom .rmv-tl-row {
-  grid-template-columns: 11rem repeat(var(--tl-cols, 4), minmax(6rem, 1fr)) 1.5rem;
+  grid-template-columns:
+    var(--tl-gutter) var(--tl-tracks, repeat(var(--tl-cols, 4), var(--tl-col))) 1.5rem;
 }
 body.rm-custom .rmv-tl-row .rmv-pick { grid-column: -2 / -1; }
 
