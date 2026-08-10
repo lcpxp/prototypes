@@ -38,6 +38,7 @@
   var PICK_STORE = "roadmap-unpicked";
   var HIDEFIXES_STORE = "roadmap-hidefixes";
   var HIDDEN_STORE = "roadmap-hidden-bands";
+  var WIDE_STORE = "roadmap-wide";
   // The stages the Hide control can drop from the board. Keys match the
   // Now/Next/Later bands in roadmap-views.js (BANDS); delivered and parked
   // are never hideable here.
@@ -48,6 +49,7 @@
   var layout = "timeline";
   var showDelivered = true;
   var expanded = false;
+  var wide = false;
   var department = "";
   var customOn = false;
   var unpicked = {};
@@ -83,6 +85,14 @@
   // into its child items.
   function readExpanded() {
     try { return window.localStorage.getItem(EXPAND_STORE) === "expanded"; }
+    catch (e) { return false; }
+  }
+
+  // Expand board (wide) is a view-only preference (localStorage), not part
+  // of the shareable hash: it widens the Timeline grid so the board scrolls
+  // sideways rather than compressing every column to fit.
+  function readWide() {
+    try { return window.localStorage.getItem(WIDE_STORE) === "on"; }
     catch (e) { return false; }
   }
 
@@ -156,7 +166,8 @@
       Object.keys(drop).forEach(function (id) { if (!unpicked[id]) excluded[id] = true; });
     }
     var opts = { showDelivered: showDelivered, expanded: expanded, custom: customOn,
-      unpicked: unpicked, excluded: excluded, hideFixes: hideFixes, hiddenBands: hiddenBands };
+      unpicked: unpicked, excluded: excluded, hideFixes: hideFixes, hiddenBands: hiddenBands,
+      wide: wide };
     var vd = viewData();
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(vd, current, opts)
@@ -190,14 +201,15 @@
     btn.setAttribute("title", label);
   }
 
-  // Download a JSON object as a file (the KPI-ready export), via the
-  // shared App.download helper.
-  function downloadJson(name, obj) {
-    App.download(name, JSON.stringify(obj, null, 2), "application/json");
-  }
-  function safeName(s) {
-    return String(s || "item").toLowerCase().replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "").slice(0, 40) || "item";
+  // The Expand board control is icon-only (arrows-out), so its state reads
+  // through aria-pressed plus an aria-label/title rather than a text swap.
+  // Pressed means the board is currently expanded; pressing it fits the
+  // board back to the viewport width.
+  function renderWideToggle(btn) {
+    var label = wide ? "Fit board to width" : "Expand board";
+    btn.setAttribute("aria-pressed", String(wide));
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("title", label);
   }
 
   function tabs(list, activeKey, cls) {
@@ -239,6 +251,7 @@
     readState();
     showDelivered = readDelivered();
     expanded = readExpanded();
+    wide = readWide();
     department = readDepartment();
     customOn = readCustom();
     unpicked = readUnpicked();
@@ -313,45 +326,22 @@
       });
     }
 
-    // Export: a single trigger opens a menu of the three formats, mirroring
-    // the account menu's dropdown pattern (toggle on the trigger, dismiss on
-    // an outside click or Escape). Picking a format then lets the click
-    // bubble to the document listener, which closes the menu.
-    var exportTrigger = document.getElementById("roadmap-export-trigger");
-    var exportMenu = document.getElementById("roadmap-export-menu");
-    function setExportOpen(open) {
-      exportMenu.hidden = !open;
-      exportTrigger.setAttribute("aria-expanded", open ? "true" : "false");
-    }
-    if (exportTrigger && exportMenu) {
-      exportTrigger.addEventListener("click", function (event) {
-        event.stopPropagation();
-        setExportOpen(exportMenu.hidden);
-      });
-      document.addEventListener("click", function () {
-        if (!exportMenu.hidden) setExportOpen(false);
-      });
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && !exportMenu.hidden) {
-          setExportOpen(false);
-          exportTrigger.focus();
-        }
+    var wideBtn = document.getElementById("roadmap-wide");
+    if (wideBtn) {
+      renderWideToggle(wideBtn);
+      wideBtn.addEventListener("click", function () {
+        wide = !wide;
+        try { window.localStorage.setItem(WIDE_STORE, wide ? "on" : "off"); }
+        catch (e) { /* ignore */ }
+        renderWideToggle(wideBtn);
+        render(host);
       });
     }
 
-    var exportBtn = document.getElementById("roadmap-export-json");
-    if (exportBtn) exportBtn.addEventListener("click", function () {
-      downloadJson("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(exportRows(), ctx));
-    });
-
-    var csvBtn = document.getElementById("roadmap-export-csv");
-    if (csvBtn) csvBtn.addEventListener("click", function () {
-      App.download("roadmap-export.csv",
-        App.roadmapDetail.toCsvRoadmap(exportRows(), ctx), "text/csv");
-    });
-
-    var dlBtn = document.getElementById("roadmap-download");
-    if (dlBtn) dlBtn.addEventListener("click", function () { window.print(); });
+    // Export: the dropdown wiring and the three format handlers live in
+    // roadmap-export.js; it reads the rows and ctx at click time so the
+    // export always reflects the current department/custom selection.
+    App.roadmapExport.wire(function () { return { rows: exportRows(), ctx: ctx }; });
 
     // Detail drawer: any element carrying a data-item-id opens the item.
     // The drawer's open/close, deep-link URL sync and in-drawer navigation
@@ -361,7 +351,8 @@
       lookup: function (id) { return itemsById[id]; },
       getCtx: function () { return ctx; },
       download: function (item) {
-        downloadJson("roadmap-item-" + safeName(item.title) + ".json",
+        App.roadmapExport.downloadJson(
+          "roadmap-item-" + App.roadmapExport.safeName(item.title) + ".json",
           App.roadmapDetail.toKpiItem(item, ctx));
       },
     });
@@ -425,7 +416,8 @@
           "assignee, support_assignee, status, horizon, end_horizon, " +
           "presentation, priority, effort, impact, department, associated_departments, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
-          "sort_order, created_at, updated_at, resolution, resolved_at, requested_by, external_ref, tags")
+          "sort_order, created_at, updated_at, resolution, resolved_at, previously_completed_at, " +
+          "requested_by, external_ref, tags")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItemPhases)

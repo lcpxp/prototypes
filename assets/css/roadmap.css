@@ -23,7 +23,8 @@ body[data-module="roadmap"] .page { max-inline-size: min(96rem, 100%); }
 /* Hide fixes: an icon-only toggle (a bug). Selected (fixes shown) reads
    in the danger tint - a bug icon in its "on" colour - unselected
    (fixes hidden) falls back to a neutral outline. */
-.rm-bug-toggle {
+.rm-bug-toggle,
+.rm-wide-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -40,12 +41,21 @@ body[data-module="roadmap"] .page { max-inline-size: min(96rem, 100%); }
     border-color var(--dur-fast) var(--ease);
 }
 
-.rm-bug-toggle:hover { color: var(--muted); border-color: var(--faint); }
+.rm-bug-toggle:hover,
+.rm-wide-toggle:hover { color: var(--muted); border-color: var(--faint); }
 
 .rm-bug-toggle[aria-pressed="true"] {
   color: var(--danger);
   background: var(--danger-soft);
   border-color: var(--danger);
+}
+
+/* Expand board: pressed (board is wide) reads in the accent tint, matching
+   the other active view states. */
+.rm-wide-toggle[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }
 
 /* Export: a single trigger with a dropdown of the three formats, in the

@@ -90,7 +90,7 @@
     },
     "assets/js/pages/roadmap.js": {
       "hard": 540,
-      "note": "Over soft (fetch, switcher, board click/change wiring). The drawer surface is now in roadmap-drawer.js; the export dropdown wiring is the next extract seam if it grows again."
+      "note": "Over soft (fetch, switcher, board click/change wiring). The drawer surface is in roadmap-drawer.js and the export dropdown wiring is now in roadmap-export.js; the data fetch and the note/phase/link enrichment block in onAuthed are the next extract seam (roadmap-data.js) if it grows again."
     },
     "assets/js/pages/roadmap-detail.js": {
       "hard": 500,
