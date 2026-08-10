@@ -30,6 +30,12 @@ is the git history; what is unfinished is docs/STATE.md.
   long titles and dense spans read in full. Delivered bars and cards now keep
   their theme colour as a solid dot (their fill is dropped for the
   settled-history look), so the completed columns stay colour-coded.
+- Any roadmap column can now be **collapsed** by clicking its header: it
+  drops that band's work and shrinks the column to a thin labelled seam so
+  the other columns reclaim the width (the Cascade collapses it to a struck
+  heading). Every column collapses this way now - Previously and Recently
+  completed and Parked, not just Now/Next/Later - and a fully collapsed board
+  keeps its headers so a column can always be brought back.
 - The Platform page now shows the whole knowledge base, not just the
   capability catalogue. It previously rendered 18 capability rows while
   63 more sat in the database unseen: the 13-stage lead-to-live journey,

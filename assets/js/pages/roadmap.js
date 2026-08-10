@@ -39,10 +39,11 @@
   var HIDEFIXES_STORE = "roadmap-hidefixes";
   var HIDDEN_STORE = "roadmap-hidden-bands";
   var WIDE_STORE = "roadmap-wide";
-  // The stages the Hide control can drop from the board. Keys match the
-  // Now/Next/Later bands in roadmap-views.js (BANDS); delivered and parked
-  // are never hideable here.
-  var HIDEABLE = [{ key: "now", label: "Now" }, { key: "next", label: "Next" }, { key: "later", label: "Later" }];
+  // Every board column can be collapsed by clicking its header: it drops
+  // that band's work and shrinks the column to a seam. Keys match the BANDS
+  // in roadmap-views.js. Only these known keys are honoured from storage, so
+  // a stale or hand-edited value can never hide something unexpected.
+  var HIDEABLE = ["previously", "recently", "now", "next", "later", "parked"];
 
   var data = { categories: [], areas: [], items: [] };
   var current = "workstreams";
@@ -124,15 +125,15 @@
   // and the print pruning); the markup itself comes from the builders.
   function syncCustomBody() { document.body.classList.toggle("rm-custom", customOn); }
 
-  // Hidden stages are a view-only preference (localStorage), not part of the
-  // shareable hash: a map of band key -> true for each stage the owner took
-  // off the board. Only known Now/Next/Later keys are honoured, so a stale
-  // or hand-edited value can never hide anything unexpected.
+  // Collapsed columns are a view-only preference (localStorage), not part of
+  // the shareable hash: a map of band key -> true for each column the owner
+  // took off the board. Only known band keys are honoured, so a stale or
+  // hand-edited value can never hide anything unexpected.
   function readHiddenBands() {
     var out = {};
     try {
       var raw = JSON.parse(window.localStorage.getItem(HIDDEN_STORE) || "{}") || {};
-      HIDEABLE.forEach(function (b) { if (raw[b.key]) out[b.key] = true; });
+      HIDEABLE.forEach(function (k) { if (raw[k]) out[k] = true; });
     } catch (e) { /* ignore */ }
     return out;
   }
@@ -358,8 +359,9 @@
     });
 
     host.addEventListener("click", function (e) {
-      // A stage header (Now/Next/Later) toggles that stage off, then on:
-      // the header stays put with a strike-through so it can be clicked back.
+      // A column header toggles that column off, then on: it stays put -
+      // struck through in the cascade, shrunk to a labelled seam in the
+      // timeline - so a second click brings the column back.
       var toggle = e.target.closest ? e.target.closest("[data-band]") : null;
       if (toggle) {
         var key = toggle.getAttribute("data-band");

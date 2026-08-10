@@ -136,6 +136,24 @@ button.rmv-band-head {
   text-decoration: line-through;
 }
 
+/* A collapsed Timeline column: the builder shrinks its track to a seam
+   (--tl-seam), so the header turns to read vertically and stays clickable
+   to restore. Strike-through and dim come from rmv-band-toggle--off above;
+   the height is capped so a long label clips (its full text stays in the
+   title tooltip and for assistive tech) rather than stretching the header. */
+.rmv-tl-col--seam {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  align-self: center;
+  max-block-size: 6rem;
+  overflow: hidden;
+  padding-block: var(--s-1);
+}
+
+/* Every column collapsed: a one-line hint below the (still clickable) struck
+   headers, so the board is never a dead end. */
+.rmv-tl-allhidden { margin-block-start: var(--s-3); }
+
 /* Cascade: a stage toggled off collapses to just its (struck) heading. */
 .rmv-band--off { margin-block-end: var(--s-4); }
 

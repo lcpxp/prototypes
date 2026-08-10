@@ -27,20 +27,19 @@
       (a._catSo - b._catSo) || (a._so - b._so);
   }
 
-  // Now, Next and Later are the stages the reader can toggle off by
-  // clicking their header; Delivered and Parked are structural and stay.
-  function isHideable(key) { return key === "now" || key === "next" || key === "later"; }
-
-  // One timeline header cell for band index b. A hideable stage renders as
-  // a button (data-band drives the toggle in roadmap.js); a hidden stage
-  // keeps its struck-through header so a second click brings it back.
+  // Every column header is a collapse toggle (data-band drives the toggle in
+  // roadmap.js): clicking one strikes its label through, drops the work that
+  // begins in that band, and shrinks the column to a seam so its neighbours
+  // reclaim the width. A collapsed header turns vertical (rmv-tl-col--seam)
+  // and stays clickable - with a title tooltip - to bring the column back.
   function bandHeadCell(b, hidden) {
     var band = R.BANDS[b];
-    if (!isHideable(band.key)) return '<span class="rmv-tl-col">' + App.escape(band.label) + "</span>";
     var off = !!(hidden && hidden[band.key]);
     return '<button type="button" class="rmv-tl-col rmv-band-toggle' +
-      (off ? " rmv-band-toggle--off" : "") + '" data-band="' + band.key +
-      '" aria-pressed="' + (off ? "true" : "false") + '">' + App.escape(band.label) + "</button>";
+      (off ? " rmv-band-toggle--off rmv-tl-col--seam" : "") + '" data-band="' + band.key +
+      '" aria-pressed="' + (off ? "true" : "false") + '"' +
+      (off ? ' title="Show ' + App.escape(band.label) + '"' : "") + ">" +
+      App.escape(band.label) + "</button>";
   }
 
   // Shared grid renderer over pre-placed rows. maxBand caps the axis
@@ -53,8 +52,23 @@
   function timelineGrid(placed, maxBand, showDelivered, emptyMsg, pick, preordered, hidden, wide) {
     var visible = showDelivered ? placed
       : placed.filter(function (p) { return p._e >= 2; });
-    if (!visible.length) return emptyMsg;
     var first = showDelivered ? 0 : 2;
+    // Per-column tracks: a collapsed band shrinks to a seam (--tl-seam) while
+    // the visible data columns share the freed 1fr space; --tl-full/--tl-seams
+    // let min-inline-size follow so the board reclaims the width too. The
+    // grid-column line numbers on bars are unchanged, so a spanning bar just
+    // pinches across a collapsed column rather than shifting off its axis.
+    var tracks = [], seams = 0;
+    for (var bi = first; bi <= maxBand; bi++) {
+      var offCol = !!(hidden && hidden[R.BANDS[bi].key]);
+      tracks.push(offCol ? "var(--tl-seam)" : "var(--tl-col)");
+      if (offCol) seams++;
+    }
+    var cols = maxBand - first + 1;
+    // Nothing to show: if a column is collapsed, still render the header so
+    // its struck toggle stays clickable to restore - never a dead-end empty
+    // board. Otherwise defer to the caller's empty message.
+    if (!visible.length && !seams) return emptyMsg;
     var head = '<div class="rmv-tl-head"><span class="rmv-tl-label"></span>' +
       R.BANDS.slice(first, maxBand + 1).map(function (b, k) {
         return bandHeadCell(first + k, hidden); }).join("") + "</div>";
@@ -79,9 +93,17 @@
       return '<div class="' + rowCls + '"><span class="rmv-tl-label">' +
         App.escape(p._catLabel) + "</span>" + bar + R.pickBox(p._id, pick) + "</div>";
     }).join("");
+    if (!visible.length) {
+      body = '<p class="notice rmv-tl-allhidden">Every column is hidden. ' +
+        "Click a struck heading to bring one back.</p>";
+    }
+    var style = "--tl-cols:" + cols;
+    if (seams) {
+      style += ";--tl-tracks:" + tracks.join(" ") +
+        ";--tl-full:" + (cols - seams) + ";--tl-seams:" + seams;
+    }
     return '<div class="rmv-tl' + (showDelivered ? "" : " rmv-tl--nodelivered") +
-      (wide ? " rmv-tl--wide" : "") +
-      '" style="--tl-cols:' + (maxBand - first + 1) + '">' + head + body + "</div>";
+      (wide ? " rmv-tl--wide" : "") + '" style="' + style + '">' + head + body + "</div>";
   }
 
   // Place one item as a timeline row (bar = title). child marks an
@@ -145,8 +167,12 @@
     var all = level === "backlog" ? (data.items || [])
       : R.productItems(data.items || [], ctx.scopeByArea);
     if (opts && opts.hideFixes) all = all.filter(function (i) { return !R.isFix(i); });
+    // A collapsed column filters its start-band work out, so an all-collapsed
+    // board would otherwise short-circuit to the empty notice and lose the
+    // header toggles that restore it. Fall through when any band is hidden.
+    var anyHidden = !!(hidden && Object.keys(hidden).some(function (k) { return hidden[k]; }));
     all = all.filter(function (i) { return R.bandVisible(i, hidden); });
-    if (!all.length) return R.emptyNotice();
+    if (!all.length && !anyHidden) return R.emptyNotice();
     if (level === "exec") {
       return R.execBoard(all, ctx, show, expanded) + R.freshnessHtml(all);
     }

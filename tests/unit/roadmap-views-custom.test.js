@@ -138,11 +138,12 @@ test("custom view: a child of an unpicked parent dims and loses its own box", ()
     "the excluded child dims with its family");
 });
 
-// --- Stage toggles: clicking a Now/Next/Later header hides that stage ---
-// The Now/Next/Later labels at the top of each Timeline column (and the
-// Cascade band headings) are toggle buttons: clicking one strikes it
-// through and drops the work that begins in that stage, across levels and
-// layouts. It is a view-only filter (hiddenBands), no database change.
+// --- Column collapse: clicking any header hides and collapses that column ---
+// Every column header at the top of each Timeline column (and every Cascade
+// band heading) is a toggle button: clicking one strikes it through, drops
+// the work that begins in that band, and - on the Timeline - shrinks the
+// column to a seam so its neighbours reclaim the width. A view-only filter
+// (hiddenBands), no database change, across levels and layouts.
 
 test("stage headers are clickable toggles that strike through and hide the stage's work", () => {
   const V = loadView();
@@ -168,13 +169,49 @@ test("stage headers are clickable toggles that strike through and hide the stage
   assert.match(cas, /Growth bet/, "Later work still shows in cascade");
 });
 
-test("only Now/Next/Later are toggles; Delivered and Parked stay plain headers", () => {
+test("every column is a collapse toggle, Delivered and Parked included", () => {
   const V = loadView();
   const data = sampleData();
   const html = V.timeline(data, "backlog");
-  assert.match(html, /data-band="next"/, "Next is a toggle");
-  assert.match(html, /rmv-tl-col">Parked</, "Parked is a plain, non-clickable header");
-  assert.match(html, /rmv-tl-col">Previously completed</, "Delivered columns stay plain headers");
+  ["previously", "recently", "now", "next", "later", "parked"].forEach((key) => {
+    assert.match(html, new RegExp('data-band="' + key + '"'), key + " is a collapse toggle");
+  });
+  // The labels are unchanged; no column is left as a plain, non-clickable span.
+  assert.match(html, /data-band="parked"[^>]*>Parked</, "Parked keeps its label on its toggle");
+  assert.match(html, /data-band="previously"[^>]*>Previously completed</, "so does Previously");
+  assert.doesNotMatch(html, /<span class="rmv-tl-col">/, "no column is a plain span header");
+});
+
+test("collapsing a column shrinks it to a labelled seam and reclaims the width", () => {
+  const V = loadView();
+  const data = sampleData();
+  const html = V.timeline(data, "backlog", { hiddenBands: { previously: true } });
+  // The collapsed header turns into a seam and carries a restore tooltip.
+  assert.match(html, /rmv-band-toggle--off rmv-tl-col--seam[^>]*data-band="previously"/,
+    "the hidden column's header becomes a seam");
+  assert.match(html, /data-band="previously"[^>]*title="Show Previously completed"/,
+    "and keeps a restore tooltip");
+  // The grid emits an explicit track list with one seam and five full columns,
+  // so the visible columns share the freed 1fr space.
+  assert.match(html, /--tl-tracks:var\(--tl-seam\) var\(--tl-col\)/, "the seam track leads the list");
+  assert.match(html, /--tl-full:5;--tl-seams:1/, "one seam, five full columns");
+  // A view with nothing collapsed carries no explicit track list.
+  assert.doesNotMatch(V.timeline(data, "backlog"), /--tl-tracks/,
+    "no seam plumbing when nothing is collapsed");
+});
+
+test("collapsing every column still renders the headers so a column can be restored", () => {
+  const V = loadView();
+  const data = sampleData();
+  const all = { previously: true, recently: true, now: true, next: true, later: true, parked: true };
+  const html = V.timeline(data, "backlog", { hiddenBands: all });
+  // No dead end: the header row (six struck seam toggles) stays, plus a hint.
+  assert.match(html, /rmv-tl-head/, "the header row survives an all-collapsed board");
+  assert.match(html, /data-band="now"[^>]*aria-pressed="true"/, "every toggle is restorable");
+  assert.match(html, /rmv-tl-allhidden/, "a hint explains how to bring a column back");
+  // The cascade keeps every struck band header too.
+  const cas = V.cascade(data, "backlog", { hiddenBands: all });
+  assert.match(cas, /rmv-band--off/, "cascade collapses each band to its struck header");
 });
 
 test("hiding a middle stage strikes only that header and keeps its neighbours live", () => {
@@ -210,10 +247,11 @@ test("hiding a stage also drops a nested child that starts in it", () => {
   assert.match(cas, /Later child/);
 });
 
-test("hiding every stage never touches Delivered or Parked work", () => {
+test("hiding the active stages leaves Delivered and Parked work in place", () => {
   const V = loadView();
   const data = sampleData();
   const html = V.timeline(data, "backlog", { hiddenBands: { now: true, next: true, later: true } });
-  assert.match(html, /US market/, "a parked item survives - it starts in no hideable stage");
-  assert.match(html, /rmv-tl-col">Parked</, "the Parked column stays");
+  assert.match(html, /US market/, "a parked item survives - it starts in no hidden stage");
+  assert.match(html, /data-band="parked"[^>]*aria-pressed="false"[^>]*>Parked</,
+    "the Parked column stays open (its own toggle, not pressed)");
 });

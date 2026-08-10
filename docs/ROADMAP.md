@@ -134,6 +134,15 @@ compressing to fit the viewport - room to read long titles and dense spans.
 Like Hide delivered and Detailed view, it is a view-only localStorage
 preference.
 
+**Collapsing a column:** click any column header to take that band off the
+board. It drops the work that begins there and, on the Timeline, shrinks the
+column to a thin labelled seam so the remaining columns share the reclaimed
+width; the Cascade collapses the band to just its struck heading. Click the
+seam (or struck heading) again to bring the column back - and if every column
+is collapsed the header row stays put, so the board is never a dead end.
+Every column collapses this way - Previously and Recently completed, Now,
+Next, Later and Parked - and it is a view-only localStorage preference.
+
 Level and layout persist in the URL hash (`#team/cascade`) and
 localStorage, so a shared link opens the same view. The roadmap renders
 product scope only; portal work (`work_areas.scope='portal'`) stays in

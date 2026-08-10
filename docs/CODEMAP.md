@@ -30,8 +30,8 @@ document instead of walking the tree or reading whole files.
 | assets/css/pxp-sim.css | 191 | pxp-sim.css - The simulation layer for the Daopay replica: the toast |
 | assets/css/pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype |
 | assets/css/roadmap-detail.css | 325 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
-| assets/css/roadmap-views.css | 435 | roadmap-views.css - The roadmap home's level views (Executive theme |
-| assets/css/roadmap.css | 404 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
+| assets/css/roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme |
+| assets/css/roadmap.css | 422 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
 | assets/css/tokens.css | 444 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
@@ -74,16 +74,16 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-drawer.js | 76 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
 | assets/js/pages/roadmap-export.js | 76 | roadmap-export.js - The roadmap home's export dropdown wiring and the |
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
-| assets/js/pages/roadmap-views-cascade.js | 204 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
+| assets/js/pages/roadmap-views-cascade.js | 206 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
-| assets/js/pages/roadmap-views-timeline.js | 187 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
+| assets/js/pages/roadmap-views-timeline.js | 213 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
 | assets/js/pages/roadmap-views.js | 413 | roadmap-views.js - Pure HTML builders for the roadmap home |
-| assets/js/pages/roadmap.js | 530 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
+| assets/js/pages/roadmap.js | 532 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
 | dashboard.html | 61 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 278 | Architecture |
-| docs/CHANGELOG.md | 283 | Changelog |
+| docs/CHANGELOG.md | 289 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -92,7 +92,7 @@ document instead of walking the tree or reading whole files.
 | docs/ROADMAP-INTAKE.md | 405 | Roadmap intake |
 | docs/ROADMAP-PLAYBOOK.md | 272 | Roadmap playbook |
 | docs/ROADMAP-REVIEW.md | 130 | Roadmap review |
-| docs/ROADMAP.md | 252 | Roadmap |
+| docs/ROADMAP.md | 261 | Roadmap |
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
@@ -204,7 +204,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
 | tests/unit/roadmap-detail.test.js | 340 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
-| tests/unit/roadmap-views-custom.test.js | 220 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
+| tests/unit/roadmap-views-custom.test.js | 258 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
 | tests/unit/roadmap-views-exec.test.js | 49 | tests/unit/roadmap-views-exec.test.js - Benchmarks for the Executive |
 | tests/unit/roadmap-views.test.js | 475 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
@@ -546,15 +546,14 @@ document instead of walking the tree or reading whole files.
 | contCard() | assets/js/pages/roadmap-views-cascade.js:22 |
 | fullCard() | assets/js/pages/roadmap-views-cascade.js:33 |
 | cardIn() | assets/js/pages/roadmap-views-cascade.js:58 |
-| isHideable() | assets/js/pages/roadmap-views-cascade.js:80 |
-| bandHead() | assets/js/pages/roadmap-views-cascade.js:81 |
-| offBand() | assets/js/pages/roadmap-views-cascade.js:90 |
-| themeSection() | assets/js/pages/roadmap-views-cascade.js:95 |
-| inBandFn() | assets/js/pages/roadmap-views-cascade.js:103 |
-| bandsSimple() | assets/js/pages/roadmap-views-cascade.js:109 |
-| bandsGrouped() | assets/js/pages/roadmap-views-cascade.js:134 |
-| block() | assets/js/pages/roadmap-views-cascade.js:157 |
-| cascade() | assets/js/pages/roadmap-views-cascade.js:171 |
+| bandHead() | assets/js/pages/roadmap-views-cascade.js:80 |
+| offBand() | assets/js/pages/roadmap-views-cascade.js:88 |
+| themeSection() | assets/js/pages/roadmap-views-cascade.js:93 |
+| inBandFn() | assets/js/pages/roadmap-views-cascade.js:101 |
+| bandsSimple() | assets/js/pages/roadmap-views-cascade.js:107 |
+| bandsGrouped() | assets/js/pages/roadmap-views-cascade.js:132 |
+| block() | assets/js/pages/roadmap-views-cascade.js:155 |
+| cascade() | assets/js/pages/roadmap-views-cascade.js:169 |
 | execLive() | assets/js/pages/roadmap-views-exec.js:20 |
 | execDeptGroups() | assets/js/pages/roadmap-views-exec.js:30 |
 | countLabel() | assets/js/pages/roadmap-views-exec.js:50 |
@@ -563,12 +562,11 @@ document instead of walking the tree or reading whole files.
 | execDeptSection() | assets/js/pages/roadmap-views-exec.js:79 |
 | execBoard() | assets/js/pages/roadmap-views-exec.js:89 |
 | timelineOrder() | assets/js/pages/roadmap-views-timeline.js:22 |
-| isHideable() | assets/js/pages/roadmap-views-timeline.js:32 |
-| bandHeadCell() | assets/js/pages/roadmap-views-timeline.js:37 |
-| timelineGrid() | assets/js/pages/roadmap-views-timeline.js:53 |
-| placeItem() | assets/js/pages/roadmap-views-timeline.js:93 |
-| placedWithChildren() | assets/js/pages/roadmap-views-timeline.js:118 |
-| timeline() | assets/js/pages/roadmap-views-timeline.js:133 |
+| bandHeadCell() | assets/js/pages/roadmap-views-timeline.js:35 |
+| timelineGrid() | assets/js/pages/roadmap-views-timeline.js:52 |
+| placeItem() | assets/js/pages/roadmap-views-timeline.js:115 |
+| placedWithChildren() | assets/js/pages/roadmap-views-timeline.js:140 |
+| timeline() | assets/js/pages/roadmap-views-timeline.js:155 |
 | markRecency() | assets/js/pages/roadmap-views.js:64 |
 | presentationLabel() | assets/js/pages/roadmap-views.js:73 |
 | hzIdx() | assets/js/pages/roadmap-views.js:76 |
@@ -615,31 +613,31 @@ document instead of walking the tree or reading whole files.
 | teamList() | assets/js/pages/roadmap-views.js:369 |
 | visibleDetail() | assets/js/pages/roadmap-views.js:375 |
 | breakdown() | assets/js/pages/roadmap-views.js:380 |
-| find() | assets/js/pages/roadmap.js:61 |
-| readState() | assets/js/pages/roadmap.js:64 |
-| stored() | assets/js/pages/roadmap.js:69 |
-| hashFor() | assets/js/pages/roadmap.js:74 |
-| readDelivered() | assets/js/pages/roadmap.js:78 |
-| readExpanded() | assets/js/pages/roadmap.js:86 |
-| readWide() | assets/js/pages/roadmap.js:94 |
-| readDepartment() | assets/js/pages/roadmap.js:102 |
-| readCustom() | assets/js/pages/roadmap.js:112 |
-| readUnpicked() | assets/js/pages/roadmap.js:115 |
-| persistUnpicked() | assets/js/pages/roadmap.js:119 |
-| syncCustomBody() | assets/js/pages/roadmap.js:125 |
-| readHiddenBands() | assets/js/pages/roadmap.js:131 |
-| persistHidden() | assets/js/pages/roadmap.js:139 |
-| viewData() | assets/js/pages/roadmap.js:146 |
-| exportRows() | assets/js/pages/roadmap.js:152 |
-| render() | assets/js/pages/roadmap.js:159 |
-| renderDelivered() | assets/js/pages/roadmap.js:177 |
-| renderExpanded() | assets/js/pages/roadmap.js:182 |
-| renderToggle() | assets/js/pages/roadmap.js:189 |
-| renderBugToggle() | assets/js/pages/roadmap.js:197 |
-| renderWideToggle() | assets/js/pages/roadmap.js:208 |
-| tabs() | assets/js/pages/roadmap.js:215 |
-| renderControls() | assets/js/pages/roadmap.js:224 |
-| set() | assets/js/pages/roadmap.js:238 |
+| find() | assets/js/pages/roadmap.js:62 |
+| readState() | assets/js/pages/roadmap.js:65 |
+| stored() | assets/js/pages/roadmap.js:70 |
+| hashFor() | assets/js/pages/roadmap.js:75 |
+| readDelivered() | assets/js/pages/roadmap.js:79 |
+| readExpanded() | assets/js/pages/roadmap.js:87 |
+| readWide() | assets/js/pages/roadmap.js:95 |
+| readDepartment() | assets/js/pages/roadmap.js:103 |
+| readCustom() | assets/js/pages/roadmap.js:113 |
+| readUnpicked() | assets/js/pages/roadmap.js:116 |
+| persistUnpicked() | assets/js/pages/roadmap.js:120 |
+| syncCustomBody() | assets/js/pages/roadmap.js:126 |
+| readHiddenBands() | assets/js/pages/roadmap.js:132 |
+| persistHidden() | assets/js/pages/roadmap.js:140 |
+| viewData() | assets/js/pages/roadmap.js:147 |
+| exportRows() | assets/js/pages/roadmap.js:153 |
+| render() | assets/js/pages/roadmap.js:160 |
+| renderDelivered() | assets/js/pages/roadmap.js:178 |
+| renderExpanded() | assets/js/pages/roadmap.js:183 |
+| renderToggle() | assets/js/pages/roadmap.js:190 |
+| renderBugToggle() | assets/js/pages/roadmap.js:198 |
+| renderWideToggle() | assets/js/pages/roadmap.js:209 |
+| tabs() | assets/js/pages/roadmap.js:216 |
+| renderControls() | assets/js/pages/roadmap.js:225 |
+| set() | assets/js/pages/roadmap.js:239 |
 | notice() | assets/js/pages/users.js:15 |
 | roleBadge() | assets/js/pages/users.js:24 |
 | roleCell() | assets/js/pages/users.js:30 |

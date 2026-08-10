@@ -74,13 +74,11 @@
       : contCard(item, cat, isChild, dot);
   }
 
-  // Now/Next/Later render as clickable toggles (data-band drives the toggle
-  // in roadmap.js); Delivered/Recently/Parked stay plain headings. A hidden
-  // stage keeps its struck header so a second click restores it.
-  function isHideable(key) { return key === "now" || key === "next" || key === "later"; }
+  // Every band heading is a collapse toggle (data-band drives the toggle in
+  // roadmap.js); clicking one takes that band off the board. A hidden band
+  // collapses to just its struck header, still clickable to restore.
   function bandHead(label, key, off) {
     var cls = "rmv-band-head rmv-band-head--" + App.escape(key);
-    if (!isHideable(key)) return '<h2 class="' + cls + '">' + App.escape(label) + "</h2>";
     return '<button type="button" class="' + cls + " rmv-band-toggle" +
       (off ? " rmv-band-toggle--off" : "") + '" data-band="' + App.escape(key) +
       '" aria-pressed="' + (off ? "true" : "false") + '">' + App.escape(label) + "</button>";
@@ -180,8 +178,12 @@
     var all = level === "backlog" ? (data.items || [])
       : R.productItems(data.items || [], ctx.scopeByArea);
     if (opts && opts.hideFixes) all = all.filter(function (i) { return !R.isFix(i); });
+    // Any hidden band collapses to its struck header, which is how it is
+    // restored - so fall through (rather than short-circuit to the empty
+    // notice) whenever a band is hidden, even if nothing else remains.
+    var anyHidden = !!(hidden && Object.keys(hidden).some(function (k) { return hidden[k]; }));
     all = all.filter(function (i) { return R.bandVisible(i, hidden); });
-    if (!all.length) return R.emptyNotice();
+    if (!all.length && !anyHidden) return R.emptyNotice();
     if (level === "exec") {
       return R.execBoard(all, ctx, show, expanded) + R.freshnessHtml(all);
     }

@@ -132,6 +132,7 @@
      seam (roadmap-views.css further down). */
   --tl-gutter: 11rem;
   --tl-col: minmax(6rem, 1fr);
+  --tl-seam: 2rem;
   display: flex;
   flex-direction: column;
   gap: var(--s-1);
@@ -145,6 +146,7 @@
 .rmv-tl--wide {
   --tl-gutter: 22rem;
   --tl-col: minmax(12rem, 1fr);
+  --tl-seam: 2.5rem;
 }
 
 /* The visible data-column count (--tl-cols) is set per view on .rmv-tl:
@@ -163,13 +165,15 @@
      the row track's edges. */
   padding-inline: var(--s-2);
   min-inline-size:
-    calc(var(--tl-gutter) + var(--tl-full, var(--tl-cols, 4)) * 8rem + var(--tl-seams, 0) * 2rem);
+    calc(var(--tl-gutter) + var(--tl-full, var(--tl-cols, 4)) * 8rem
+         + var(--tl-seams, 0) * var(--tl-seam));
 }
 
 .rmv-tl--wide .rmv-tl-head,
 .rmv-tl--wide .rmv-tl-row {
   min-inline-size:
-    calc(var(--tl-gutter) + var(--tl-full, var(--tl-cols, 4)) * 16rem + var(--tl-seams, 0) * 2.5rem);
+    calc(var(--tl-gutter) + var(--tl-full, var(--tl-cols, 4)) * 16rem
+         + var(--tl-seams, 0) * var(--tl-seam));
 }
 
 .rmv-tl-head {

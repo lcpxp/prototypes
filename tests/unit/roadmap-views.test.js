@@ -111,7 +111,7 @@ test("timeline (workstreams) surfaces a workstream with no filing area under Gen
 test("timeline (team) spans active bars, hides parked/portal, nests sub-items under their parent", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team");
-  // Delivered heads are plain spans; Now/Next/Later are toggle buttons.
+  // Every band head is a collapse toggle; the labels read in axis order.
   assert.match(html, />Previously completed<.*>Recently completed<.*>Now<.*>Next<.*>Later</s);
   assert.doesNotMatch(html, />Parked</, "Team has no Parked column");
   // i1 is delivered but unmarked here, so it lands in Previously (band 0).
