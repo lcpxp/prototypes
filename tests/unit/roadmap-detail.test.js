@@ -123,6 +123,19 @@ test("drawerHtml renders the facts, phases and an export button", () => {
   assert.match(html, /id="rmd-export"[^>]*>Export JSON</);
 });
 
+test("drawerHtml surfaces the previously_completed_at latch only when set", () => {
+  const App = load();
+  const data = sample();
+  const bare = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
+  assert.doesNotMatch(bare, /Moved to Previously completed/,
+    "no latch row when the column is null");
+  const latched = Object.assign({}, data.items[0],
+    { status: "done", previously_completed_at: "2026-08-10T00:00:00Z" });
+  const html = App.roadmapDetail.drawerHtml(latched, ctxOf(App, data));
+  assert.match(html, /Moved to Previously completed<\/dt><dd>2026-08-10<\/dd>/,
+    "the latch row shows the date the delivery was pinned to Previously");
+});
+
 test("drawerHtml surfaces the full stored context: details, classifiers, links, resolution and notes", () => {
   const App = load();
   const data = sample();

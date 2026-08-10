@@ -70,7 +70,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail-export.js | 221 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
-| assets/js/pages/roadmap-detail.js | 361 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
+| assets/js/pages/roadmap-detail.js | 365 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-drawer.js | 76 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
 | assets/js/pages/roadmap-export.js | 76 | roadmap-export.js - The roadmap home's export dropdown wiring and the |
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
@@ -201,7 +201,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
-| tests/unit/roadmap-detail.test.js | 311 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
+| tests/unit/roadmap-detail.test.js | 324 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views-custom.test.js | 220 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
 | tests/unit/roadmap-views.test.js | 471 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |

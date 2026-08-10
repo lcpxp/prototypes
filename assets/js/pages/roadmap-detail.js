@@ -310,7 +310,11 @@
       row("External ref", esc(item.external_ref || "")) +
       row("Tags", (item.tags || []).map(esc).join(", ")) +
       row("Created", esc(day(item.created_at))) +
-      row("Updated", esc(day(item.updated_at)));
+      row("Updated", esc(day(item.updated_at))) +
+      // The latch that pins a delivery to Previously completed (work_items.
+      // previously_completed_at). Shown only when set, so nothing is
+      // stored-but-invisible; clearing the column removes the row.
+      row("Moved to Previously completed", esc(day(item.previously_completed_at)));
     var prd = a.prd_link
       ? '<a class="button secondary" href="' + esc(a.prd_link) +
         '" target="_blank" rel="noopener">Open PRD</a>' : "";
