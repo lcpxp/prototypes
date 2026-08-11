@@ -110,6 +110,32 @@
   display: inline-flex;
 }
 
+/* External tool links (tools.js). The slot is empty until the
+   portal_links rows load. .nav is a flex row with its own gap, so an
+   empty slot would still be a flex item and leave a phantom gap beside
+   the theme switch - hence :empty removing it from the layout until
+   there is something to show. */
+.nav-tools {
+  display: inline-flex;
+  gap: var(--s-1);
+}
+
+.nav-tools:empty {
+  display: none;
+}
+
+/* Each tool link is an anchor, so opening a new tab stays a plain
+   navigation rather than a scripted popup - but it wears the
+   icon-button chrome, never link colour or an underline. */
+a.nav-icon-btn {
+  color: var(--chrome-muted);
+}
+
+a.nav-icon-btn:hover {
+  color: var(--chrome-ink);
+  text-decoration: none;
+}
+
 .nav-account-menu {
   position: fixed;
   inset-block-start: calc(var(--nav-height) + var(--s-1));

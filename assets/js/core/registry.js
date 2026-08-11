@@ -89,6 +89,7 @@
       prototypes: "prototypes",
       futurePrototypes: "future_prototypes",
       integrations: "integrations",
+      portalLinks: "portal_links",
       workAreas: "work_areas",
       workItemPhases: "work_item_phases",
       roadmapCategories: "roadmap_categories",

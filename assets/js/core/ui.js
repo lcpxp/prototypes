@@ -185,6 +185,11 @@
         '<div class="nav-search-results" id="nav-search-results" role="listbox" hidden></div>' +
         "</div>";
     }
+    // External tool links: an empty slot filled by tools.js once the
+    // portal_links rows load, so a page without tools.js - or a read
+    // that returns nothing - shows no button at all.
+    if (App.tools) html += '<span class="nav-tools" id="nav-tools"></span>';
+
     // Theme switch: a moon/sun icon button seated next to the profile
     // icon. It shows a sun in dark mode (press to go light) and a moon
     // in light mode (press to go dark); keeps id "theme-toggle".
@@ -216,6 +221,7 @@
     host.innerHTML = html;
 
     if (App.search) App.search.attach();
+    if (App.tools) App.tools.attach();
 
     // Account dropdown: toggle on the profile icon, close on an outside
     // click or Escape. Clicks inside the menu (the theme switch) keep it

@@ -47,6 +47,9 @@ a shared window.App namespace:
     core/registry.js      App.registry: modules, tables, roles
     core/guard.js         App.requireAuth promise, App.onAuthed(fn)
     core/ui.js            nav rendering, App.escape, badges, copy
+    core/search.js        App.search: the nav's global search
+    core/tools.js         App.tools: the nav's links out to external
+                          tools, built from portal_links rows
     pages/<module>.js     waits on App.onAuthed before fetching
 
 supabase.js carries the public project URL and anon key, so the site

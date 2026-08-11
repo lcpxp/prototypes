@@ -1,17 +1,20 @@
 # Current state
 
-Updated: 2026-08-10 (roadmap board: 90-day window, latch, wide + collapse)
+Updated: 2026-08-11 (nav Splunk link; roadmap board overhaul before it)
 
 ## In progress
-Nothing mid-flight in code. The roadmap board overhaul is done and on main:
-- Delivered work splits Recently/Previously on a 90-day window, with a
-  previously_completed_at latch (schema + 2 recovered migrations + snapshot;
-  drift gate green). Drawer and KPI JSON/CSV exports carry it.
-- roadmap.js split: the export dropdown moved to roadmap-export.js.
-- Expand board (wide, sideways scroll) and per-column collapse (any column
-  clicks to a labelled seam, neighbours reclaim the width, never a dead end).
-- Delivered bars/cards keep their theme as a solid dot.
-222 tests green (size/style/structure/drift gates).
+Nothing mid-flight in code. Newest first:
+
+- Nav bug icon opens the Splunk error sweep in a new tab. New
+  portal_links table (schema + policies + migration + snapshot, drift
+  gate green) holds host, search and display params, so no internal URL
+  enters this public repo; assets/js/core/tools.js builds the URL.
+
+- Roadmap board overhaul landed before it: 90-day Recently/Previously
+  split with a previously_completed_at latch, roadmap-export.js split,
+  Expand board and per-column collapse.
+
+232 tests green (size/style/structure/drift gates).
 
 Two data/next threads carry over from before (both database, not code):
 

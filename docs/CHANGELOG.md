@@ -25,6 +25,10 @@ is the git history; what is unfinished is docs/STATE.md.
   design-stage "LaunchPad Inbound Onboarding API".
 
 ### Added
+- A **bug icon** in the top navigation opens the Splunk error sweep in a new
+  tab, with the saved search already applied and its results laid out on the
+  statistics tab. The search is held as a row rather than in the site, so
+  retuning it takes effect everywhere without a deploy.
 - The roadmap Timeline gains an **Expand board** control: it widens every
   column and scrolls the board sideways instead of compressing it to fit, so
   long titles and dense spans read in full. Delivered bars and cards now keep

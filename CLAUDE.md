@@ -146,9 +146,10 @@ half-finished change.
   agreement from the repo owner recorded in docs/STATE.md open decisions.
 - Every new protected page loads its scripts from <head>, each with
   defer, in this order: the Supabase CDN script, then core/supabase.js,
-  core/registry.js, core/guard.js, core/ui.js, core/search.js, then its
-  own page module(s) from assets/js/pages/. defer keeps them off the
-  first-paint path and preserves execution order. core/theme.js is the
+  core/registry.js, core/guard.js, core/ui.js, core/search.js,
+  core/tools.js, then its own page module(s) from assets/js/pages/.
+  defer keeps them off the first-paint path and preserves execution
+  order. core/theme.js is the
   one exception: it stays render-blocking in <head> to apply the theme
   before paint. Pages below the repo root set data-root on body.
   (supabase.js carries the public config; there is no separate config.js
@@ -179,6 +180,11 @@ half-finished change.
 - New prototype: create the page under modules/prototypes/, follow
   the script include order above, then insert a registry row into the
   prototypes table. Do not hand-edit navigation.
+- New nav tool link (a saved Splunk search, another external tool):
+  one portal_links row - key, label, icon, base_url, query, params.
+  The target never enters this repo (docs/SECURITY.md); tools.js turns
+  the row into a URL. Add an icon to assets/js/core/tools.js only when
+  a row names one the nav cannot yet draw.
 - New module: folder under modules/ with an index.html, a page module
   in assets/js/pages/, and an entry in assets/js/core/registry.js.
   Navigation and dashboard cards follow from the registry entry.
