@@ -1,6 +1,6 @@
 -- ------------------------------------------------------------------
--- 20_portal.sql - Portal content domains: the integrations overview
--- and the prototype gallery registry.
+-- 20_portal.sql - Portal content domains: the integrations overview,
+-- the prototype gallery registry and the nav's outbound tool links.
 -- ------------------------------------------------------------------
 
 -- ---------------------------------------------------------------
@@ -75,4 +75,41 @@ create table if not exists public.future_prototypes (
 drop trigger if exists future_prototypes_updated_at on public.future_prototypes;
 create trigger future_prototypes_updated_at
   before update on public.future_prototypes
+  for each row execute function public.set_updated_at();
+
+-- ---------------------------------------------------------------
+-- portal_links: one row per icon button the top nav offers as a link
+-- out to an external tool (assets/js/core/tools.js renders them).
+--
+-- The rows live here rather than in the repo because that is where
+-- the sensitive half of a link is. This repo is public, and a tool's
+-- host, the log indexes a saved search names and the API routes it
+-- filters on are all "live internal endpoint URL" material under
+-- docs/SECURITY.md. Holding them as rows means the search can also be
+-- retuned without a commit or a deploy.
+--
+-- base_url is everything up to the query string (origin plus the
+-- tool's search path). query is the search itself, stored exactly as
+-- it would be pasted into the tool's own search bar - tools.js adds
+-- any leading command the URL form needs. params is a flat JSONB
+-- object of the remaining query parameters (time range, display
+-- options), appended verbatim, so retuning a link never needs code.
+-- icon names an SVG that tools.js knows how to draw.
+-- ---------------------------------------------------------------
+
+create table if not exists public.portal_links (
+  key text primary key,
+  label text not null,
+  icon text not null default 'bug',
+  base_url text not null,
+  query text,
+  params jsonb not null default '{}'::jsonb,
+  sort_order integer not null default 100,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists portal_links_updated_at on public.portal_links;
+create trigger portal_links_updated_at
+  before update on public.portal_links
   for each row execute function public.set_updated_at();

@@ -213,6 +213,10 @@
     {
       "name": "rename_historic_at_to_previously_completed_at",
       "version": "20260810220039"
+    },
+    {
+      "name": "portal_links",
+      "version": "20260811220737"
     }
   ],
   "policies": [
@@ -411,6 +415,22 @@
     {
       "name": "module_access: users read own",
       "table": "module_access"
+    },
+    {
+      "name": "portal_links: admins delete",
+      "table": "portal_links"
+    },
+    {
+      "name": "portal_links: admins insert",
+      "table": "portal_links"
+    },
+    {
+      "name": "portal_links: admins update",
+      "table": "portal_links"
+    },
+    {
+      "name": "portal_links: members read",
+      "table": "portal_links"
     },
     {
       "name": "product_capabilities: admins delete",
@@ -741,6 +761,17 @@
       "module_key",
       "updated_at",
       "user_id"
+    ],
+    "portal_links": [
+      "base_url",
+      "created_at",
+      "icon",
+      "key",
+      "label",
+      "params",
+      "query",
+      "sort_order",
+      "updated_at"
     ],
     "product_capabilities": [
       "area_id",

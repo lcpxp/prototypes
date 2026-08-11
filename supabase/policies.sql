@@ -100,6 +100,7 @@ alter table public.api_endpoints           enable row level security;
 alter table public.api_tags                enable row level security;
 alter table public.api_topics              enable row level security;
 alter table public.integrations            enable row level security;
+alter table public.portal_links            enable row level security;
 alter table public.prototypes              enable row level security;
 alter table public.future_prototypes       enable row level security;
 alter table public.work_areas              enable row level security;
@@ -127,6 +128,11 @@ begin
       ('api_tags',             '(select public.has_module_access(''reference''))'),
       ('api_topics',           '(select public.has_module_access(''reference''))'),
       ('integrations',         '(select public.has_module_access(''integrations''))'),
+      -- portal_links is the one content table with no owning module:
+      -- it drives icon buttons in the top nav, which every signed-in
+      -- user sees on every page, so there is no grant to gate the read
+      -- on. Writes stay admin-only like everything else here.
+      ('portal_links',         'true'),
       ('prototypes',           '(select public.has_module_access(''prototypes''))'),
       ('future_prototypes',    '(select public.has_module_access(''prototypes''))'),
       -- work_areas and work_items are shared: readable behind either
