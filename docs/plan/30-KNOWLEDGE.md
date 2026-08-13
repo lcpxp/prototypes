@@ -156,9 +156,10 @@ owner; the status change is the owner's.
 
 ## The link graph, and one schema change
 
-50 live links, 43 of them work_item→work_item. The graph exists but is
-almost entirely one shape, which is why the portal has been able to
-get away with renderers that only understand that shape (40-SURFACING.md
+50 live links: 43 work_item→work_item, 3 capability→capability, and
+four others that render on no page at all. The graph is almost
+entirely one shape because the renderers understand two shapes out of
+a possible 49 - cause and effect, not coincidence (40-SURFACING.md
 fixes the rendering; this fixes the content).
 
 Seven entity types are registered: work_item, note, capability, term,

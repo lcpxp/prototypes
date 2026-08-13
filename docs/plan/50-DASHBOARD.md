@@ -54,8 +54,9 @@ Rules that keep it a summary rather than a second roadmap:
 
 - Workstreams only. Items and deliverables never appear here.
 - Now shows all of them; Next caps at six with "and N more" linking to
-  the roadmap's Next band. There are 76 items at `now` and 85 at
-  `next` today, across 37 workstreams - the cap matters.
+  the roadmap's Next band. Today that is **2 active workstreams at
+  `now` and 18 at `next`** (37 workstreams exist in total, 8 done), so
+  Now is short and Next needs the cap.
 - A workstream with no open children and status done drops out; it
   belongs in Delivered, on the roadmap.
 - Blocked workstreams sort first within their band and say so. One
@@ -75,8 +76,8 @@ One card per spec, from `api_specs`, ordered by family then title:
 - title, version, status badge, family label;
 - endpoint count and tag count;
 - **coverage** - the figure from `supabase/reference-coverage.json`
-  (20-API-REFERENCE.md), read as a static asset, not a query: "60% of
-  552 routes documented, 12 to correct". For a spec with no source to
+  (20-API-REFERENCE.md), read as a static asset, not a query: "56% of
+  552 routes accounted for, 12 to correct". For a spec with no source to
   compare against, it reads "not verifiable against source" rather
   than a fake percentage;
 - open gaps - the count of `gap` and `unverified` badges;

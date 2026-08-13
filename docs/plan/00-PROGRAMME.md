@@ -27,25 +27,32 @@ Three inputs, read directly, not summarised from memory.
 
 **Pxp.PartnerPortalApi** - the LaunchPad API. .NET onion architecture
 (Domain / Application / Infrastructure / Presentation / Host), 2,854
-files, 37 feature folders, URL-segment API versioning. 53 controller
-files carry **552 route attributes**: 376 on `[ApiVersion("1.0")]`,
-150 on `[ApiVersion("2.0")]`, 26 on controllers with no version
-attribute at all (these serve unversioned `/api/...` paths and are the
-single most misdocumented group).
+files of which 2,600 are C#, four layered feature trees of 31 to 38
+folders each, URL-segment API versioning. **51 controller files carry
+552 route attributes**, every one distinct after normalisation: 376 on
+`[ApiVersion("1.0")]`, 150 on `[ApiVersion("2.0")]`, and 26 on
+controllers with no version attribute at all - these serve unversioned
+`/api/...` paths and are the single most misdocumented group. There
+are no minimal-API endpoints, no controller with two route bases and
+no action with stacked verb attributes, so a composed extractor sees
+the whole surface.
 
 **Pxp.PartnerPortal** - the LaunchPad front end. Angular 20, 785
 files, Azure MSAL / B2C auth, two tenants (`/pxp` for system admin,
 `/app/:tenantId` for partners), CUBE CSS with Every Layout, a single
 compiled stylesheet, and a written CSS ruleset at
-`src/styles/styling-rules.md`. It issues **366 distinct method+URL
-calls** - the consumer's view of the API, and a third opinion to
-reconcile against the other two.
+`src/styles/styling-rules.md`. It issues HTTP from **405 call sites
+across 88 files** - the consumer's view of the API, and a third
+opinion to reconcile against the other two. Note for the tooling: 212
+of those declare their base URL outside the calling file, so full-path
+resolution needs the environment and config files read too. A
+single-file extractor resolves fewer than half.
 
-**launchpadreviewboard_1.html** - the wave 4 review board. 40 areas in
-five parts, ~183 recorded entries across five waves, a standing brief
-with ten standing asks, and a closing statement. Content to be
-discarded; structure and method to be kept. Modelled in
-60-PORTAL-REVIEW.md.
+**launchpadreviewboard_1.html** - the wave 4 review board. **39 areas
+in six parts** (8 / 14 / 7 / 2 / 2 / 6), **183 recorded entries**
+across five waves, a standing brief with ten standing asks, and a
+closing statement. Content to be discarded; structure and method to be
+kept. Modelled in 60-PORTAL-REVIEW.md.
 
 Against those, the live database (project `zlmkofbkobmhnslfnqsf`) and
 this repository at every commit up to `4c0bf7b`.
@@ -57,13 +64,13 @@ estimated.
 
 | Surface | Now | Reality it should match |
 |---|---|---|
-| Reference: LaunchPad Partner Portal API 2.0 | 245 endpoints | 552 routes in code |
-| Endpoints in code with no reference row | **319** | 0, or explicitly excluded |
+| Reference: LaunchPad Partner Portal API 2.0 | 245 endpoints, no duplicates | 552 routes in code |
+| Endpoints in code with no reference row | **319**, of which 219 are real gaps | 0, or explicitly excluded |
 | Reference rows with no matching route | **12** | 0 |
 | Reference: Unity Acquiring API 2.0 | 151 endpoints | no source supplied - unverifiable |
 | Reference: Inbound Onboarding (planned) | 29 endpoints | design intent, not code |
 | Platform capabilities | 21 rows | 0 of kind `styling`, 0 `positioning`, 2 `technical` |
-| Knowledge links, live | 50 | 43 are work_item→work_item; 7 cross-type links render nowhere |
+| Knowledge links, live | 50 | the two renderers express 2 of 49 possible type pairs; 4 links render nowhere |
 | Work notes | 174 | **20 orphans** anchored to nothing, visible on no page |
 | Roadmap milestones / item phases | 0 / 0 | dead schema and a dead drawer section |
 | `work_item_dependencies` | documented in ARCHITECTURE.md | **does not exist in the database** |
@@ -72,8 +79,8 @@ estimated.
 | Future prototypes | 14 rows, 3 columns | no status, priority, plan or promotion path |
 | Dashboard | 8 count cards, a meter, 8 activity rows | says nothing about workstreams, reference, tools or reviews |
 
-Two things follow from that table. The reference is roughly 44%
-complete against the code and wrong in twelve places. And the system
+Two things follow from that table. The reference accounts for 56% of
+the route surface and is wrong in twelve places. And the system
 has become good at *storing* knowledge some time before it became good
 at *showing* it - which is the burying problem, stated as data.
 
@@ -118,8 +125,9 @@ independently of each other; phase 4 depends on both.
 **Phase 1 - Ground truth (10, 20).** Extract the three endpoint
 inventories, generate the coverage report, fix the twelve wrong rows,
 and land the drift gate that keeps the reference honest from then on.
-Nothing else in this programme is safe to build on a reference that is
-44% complete, because the knowledge workstream will cite it.
+Nothing else in this programme is safe to build on a reference that
+accounts for 56% of the surface, because the knowledge workstream will
+cite it.
 
 **Phase 2 - Show what we hold (40, 50).** The surfacing work and the
 dashboard. These are pure repository changes against data that already
@@ -168,6 +176,16 @@ A reasonable order of first commits:
   close with a status, a resolution and a back-link. Dead columns,
   dead tables and dead renderer branches are removed - milestones and
   phases are the first two candidates.
+- **The browser reads; sessions write.** Every content change in this
+  portal is made in a Claude Code session over the service connection,
+  never through a form on a page. Settled by the owner, 13 Aug 2026,
+  and binding on all eight workstreams: no workstream may propose a
+  front-end write path, an editor, an inline control that mutates a
+  row, or a "narrow" write policy for one column. Browser policies
+  stay select-only for content tables; admin insert/update/delete
+  policies exist for the service connection alone. This is what keeps
+  the portal a rendering surface and the session the single point at
+  which judgement is applied.
 - **The repo stays public and empty of substance.** No merchant names,
   no live endpoints, no credentials, no internal hosts. Every worked
   example in these eight files uses generic values. The LaunchPad
@@ -179,7 +197,10 @@ A reasonable order of first commits:
 ## Decisions needed before phase 1 closes
 
 These change what gets built; everything else is a judgement call a
-session should make and record.
+session should make and record. One further question - whether the
+portal should grow a front-end write path - was **settled by the owner
+on 13 Aug 2026: it should not.** It is recorded as a binding principle
+above rather than as an open decision.
 
 1. **Reference scope.** Does the LaunchPad Partner Portal API spec
    aim for all 552 routes, or a curated surface with the remainder

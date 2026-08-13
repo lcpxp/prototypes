@@ -15,20 +15,19 @@ Alignment is not one thing. A row can be right about its path and
 wrong about everything else, so the work is graded and the coverage
 report reports each level separately.
 
-1. **Existence.** Every route in the code has a row, or is explicitly
-   excluded with a reason. No row exists without a route.
-2. **Shape.** Method, path, path parameters, query parameters,
-   required headers and the response status set match the controller
-   signature and its `ActionResult<T>`.
-3. **Semantics.** Summary and description describe what the endpoint
-   does, in the vocabulary the code uses, with its authorisation
-   requirement (`[Authorize]`, role, tenant scope) stated.
-4. **Values.** Enumerations - statuses, risk levels, categories,
-   currencies - match the SmartEnum or constant file they come from,
-   and are stated once in the spec's "Accepted values and field rules"
+1. **Existence.** Every route has a row, or is explicitly excluded
+   with a reason. No row exists without a route.
+2. **Shape.** Method, path, path and query parameters, required
+   headers and the response status set match the controller signature
+   and its `ActionResult<T>`.
+3. **Semantics.** Summary and description say what the endpoint does,
+   in the code's own vocabulary, with its authorisation requirement
+   (`[Authorize]`, role, tenant scope) stated.
+4. **Values.** Enumerations match the SmartEnum or constant file they
+   come from, stated once in the "Accepted values and field rules"
    topic rather than repeated per endpoint.
-5. **Narrative.** The topics (runbooks, conventions, data model,
-   business logic, gap register) reflect current behaviour, and the
+5. **Narrative.** The topics - runbooks, conventions, data model,
+   business logic, gap register - reflect current behaviour, and the
    gap register shrinks as waves land.
 
 Level 1 is mechanical and gets a gate. Levels 2 to 5 are judgement and
@@ -47,18 +46,21 @@ supplied snapshot: 376 v1, 150 v2, 26 unversioned.
 for the LaunchPad Partner Portal API.
 
 **Inventory C - the consumers.** From the Angular front end, one entry
-per `HttpClient` call with its URL template resolved against the
-service's `baseUrl`. **366 distinct method+URL pairs.** C is what
-turns a flat gap list into a priority list: a route with no consumer
-is either admin-only tooling, dead, or used by something outside the
-front end - each a different answer, and worth knowing before writing
-219 rows.
+per `HttpClient` call. **405 call sites across 88 files.** C turns a
+flat gap list into a priority list: a route with no consumer is
+admin-only tooling, dead, or used outside the front end - each a
+different answer, worth knowing before writing 219 rows. One
+requirement falls out of building it: **212 of the 405 declare their
+base URL outside the calling file**, so the extractor must read
+`src/config/` and the environment files too. A single-file regex
+resolves fewer than half and silently collapses the rest onto one
+token.
 
 ## Normalisation rules
 
 Getting these wrong produces a diff that is confidently wrong, which
-is worse than no diff. Each rule below was needed to make the real
-comparison come out right.
+is worse than no diff. Each was needed to make the real comparison
+come out right.
 
 - **Compose, never read the action attribute alone.** Controller
   `[Route]` plus action route on a single slash; an empty action route
@@ -71,9 +73,8 @@ comparison come out right.
   `{...}` to `{}` before comparing; keep the real name in the row.
 - **Compare case-insensitively.** `/api/Dropdown/CountryCodes` and
   `/api/dropdown/countrycodes` are one route.
-- **Anchor the attribute match to line start.** `//     [HttpGet]` is
-  a comment. Two controllers and seven v2 actions exist only as
-  comments; an unanchored pattern documents them as live.
+- **Anchor the attribute match to line start.** `//   [HttpGet]` is a
+  comment; two controllers and seven v2 actions exist only as comments.
 - **No `[ApiVersion]` means unversioned, not v1.** Twenty-six routes
   serve `/api/...` with no version segment. Assuming v1 is the single
   largest source of wrong paths in the current reference.
@@ -86,24 +87,27 @@ comparison come out right.
 | Routes in code | 552 | inventory A |
 | Documented, matching a route | 233 | correct rows |
 | Documented, no matching route | **12** | wrong or aspirational rows |
-| Undocumented, a declared scope variant | 100 | covered by convention |
+| Undocumented, a **declared** v2 scope variant | 78 | covered by the badged convention |
+| Undocumented, an **undeclared** v1 mirror | 22 | the same collapse, nowhere stated |
 | Undocumented, genuinely absent | **219** | the writing job |
 
-Accounted for: 333 of 552, **60%**. That is the honest number, and it
-is better than the raw 245/552 because of the scope-variant
-convention, which is a good decision that needs finishing.
+Accounted for by the declared convention: **311 of 552, 56%**. Accept
+the undeclared v1 mirror and it is 333, 60% - but an undeclared
+convention is how a reader ends up guessing, which is why the two
+lines are separate.
 
-**The scope-variant convention.** Thirty-nine v2 endpoints carry the
-badge `3 scope variants` and a note explaining that the same operation
-exists under three prefixes - unscoped (admin), `/partners/{partnerId}/`
-and `/sales-teams/{salesTeamId}/` - with identical shapes and
-different visibility. Documenting one row and naming the variants is
-right. Two things are unfinished: the badge sits on 39 endpoints while
-the prefixes carry 47 routes each, leaving **8 scope-prefixed routes
-with no unscoped twin**; and the equivalent v1 collapse
-(`/v1/merchants/{}` against `/v1/partner/merchant/...` and
-`/v1/admin/merchant/...`) is not declared at all, which is why those
-three groups show 74 gaps between them.
+**The scope-variant convention.** Thirty-nine v2 endpoints carry a
+`3 scope variants` badge and a note: the same operation exists under
+three prefixes - unscoped (admin), `/partners/{partnerId}/` and
+`/sales-teams/{salesTeamId}/` - identical shapes, different
+visibility. Documenting one row and naming the variants is right; two
+things are unfinished. The code carries **95** v2 scope-prefixed
+routes (48 partner, 47 team) against 39 badged endpoints, so **17 have
+no documented unscoped twin** - only one lacks a twin in the code
+itself. And the equivalent v1 collapse (`/v1/merchants/{}` against
+`/v1/partner/merchant/...` and `/v1/admin/merchant/...`) is declared
+nowhere, which is why those three groups show 74 gaps between them,
+22 of them pure mirrors a declared convention would absorb.
 
 ## The twelve rows that are wrong, and their fixes
 
@@ -116,16 +120,14 @@ actively mislead.
 | `PATCH /api/v1/admin/price-sheets/{}` | Action lives in `AdminMerchantController`, base `admin/merchant` | Repath to `/api/v1/admin/merchant/price-sheets/{priceSheetId}` |
 | `GET /api/v2/merchant-applications/{}/merchant/banks` · `/persons` · `/sites` (3 rows) | Commented-out planning stubs | Retire the rows; record the three in the spec's gap-register topic as designed-not-built |
 | `GET,PUT /api/v1/service-fees/{}` and `/{}/questions` (4 rows) | Reference invents a `{category}` parameter; the code has literal segments | Replace with ten rows: `pos`, `pos-plus`, `ecom` (config + questions), `merchant`, `card-service` |
-| `DELETE /api/v1/acquirers/{}/onboarding-flows/{}` | No such action on `AcquirerOnboardingFlowsController` | Verify against a running instance; retire if absent |
+| `DELETE /api/v1/acquirers/{}/onboarding-flows/{}` | **Filed under the wrong resource.** That controller's only delete is `{id}/contracts/{contractId}`; deleting a flow is `DELETE /api/v1/onboarding-flows/{id}` on the standalone controller | Repath it, and document the standalone controller's 19 routes (gap 3 below) |
 
-That is nine changes covering twelve rows, plus five to ten new rows.
-It is a single session's work and it removes every known falsehood
-from the reference.
+Nine changes covering twelve rows, plus five to ten new rows: a single
+session's work that removes every known falsehood from the reference.
 
 ## The 219 gaps, in priority order
 
-Priority is set by consumer evidence (inventory C) and by what the
-portal's own users act on, not by group size.
+Priority comes from consumer evidence (inventory C), not group size.
 
 1. **`/v1/merchant-applications/{}` - 26.** The v1 application surface
    the front end still calls. Highest traffic, most consequential.
@@ -140,7 +142,8 @@ portal's own users act on, not by group size.
 5. **`/v1/service-fees/*` - 14.** Follows directly from the four wrong
    rows above; Tim owns service fees and the roadmap carries several
    items against them.
-6. **The 8 scope-prefixed v2 routes with no unscoped twin.**
+6. **The 17 scope-prefixed v2 routes with no documented unscoped
+   twin**, and the declaration of the v1 collapse that absorbs 22 more.
 7. **`/v1/partner/users` - 6, `/v1/product-definitions/{}` - 6,
    `/v2/product-definitions/{}` - 4, `/v1/eit-management/*` - 6.**
 8. **Webhooks and listeners - `adobe-webhooks/adobe-sign` (2),
@@ -160,23 +163,21 @@ most of it.
 
 - `summary` - one line, sentence case, verb first. "Approve an
   application, optionally overriding contract checks."
-- `description` - what it does, what it requires, what it changes.
-  Name the guard behaviour. State the environment if it differs.
+- `description` - what it does, requires and changes. Name the guard
+  behaviour; state the environment if it differs.
 - `params` - one entry per path and query parameter, named exactly as
-  the controller declares it, with type, required flag and a
-  description.
-- `request_headers` - only where a header is genuinely required
-  beyond the standard bearer token.
-- `request_example` - from the request DTO's shape, with generic
-  values. Never a real payload.
+  the controller declares it, with type, required flag, description.
+- `request_headers` - only where one is required beyond the bearer.
+- `request_example` - from the request DTO's shape, generic values.
 - `responses` - the status set the action can actually return,
-  including the failure statuses the `Result` pattern produces, each
-  with an example where the shape is not obvious.
+  including the failures the `Result` pattern produces, each with an
+  example where the shape is not obvious.
 - `auth_required` - true unless `[AllowAnonymous]`.
-- `badges` - the existing vocabulary, extended only with cause:
-  `admin only` (84 in use), `PROD` / `DEV` / `TEST` (143), `3 scope
-  variants` (39), `planned` (29), `active-merchant gate` (25),
-  `async`, `idempotent`, `GraphQL`, `Step N` (journey stage), and the
+- `badges` - the existing vocabulary, extended only with cause.
+  Counts across the whole reference: `admin only` 84, `PROD` / `DEV` /
+  `TEST` 143, `3 scope variants` 39, `planned` 29 (all of them on the
+  Inbound spec - this spec has none), `active-merchant gate` 25, plus
+  `async`, `idempotent`, `GraphQL`, `Step N` (journey stage) and the
   two provenance badges below.
 - `notes` - the thing a reader could not infer: a gotcha, a
   precondition, a cross-reference to another endpoint.
@@ -240,8 +241,7 @@ diff itself honest, and it needs no LaunchPad source to run.
 
 ## Per-wave procedure
 
-Each code-review wave (10-CODE-REVIEW.md) closes with a reference
-pass over its slice.
+Each code-review wave closes with a reference pass over its slice.
 
 1. Filter the coverage report to the slice's route prefixes.
 2. Read each controller action: signature, attributes, `Result`
@@ -275,15 +275,15 @@ id is what deep links point at.
 supplied, so nothing in it can be graded above `stated`. Add a
 spec-level note saying so, badge the endpoints `unverified` until a
 Unity source or live Swagger arrives, and keep its gap register as the
-list of what to ask for. Do not let it inherit the confidence the
+list of what to ask for. It must not inherit the confidence the
 LaunchPad spec earns.
 
 **LaunchPad Inbound Onboarding API (29 endpoints, draft 0.3.0).**
-Design intent, not code - it describes the spin-out surface, and the
-Partner Portal spec already carries a "Spin-out roadmap" topic
-pointing at it. Keep it draft, keep the `planned` badges, and link it
-to its roadmap workstream through `knowledge_links` so the reference
-and the roadmap stop being two unconnected accounts of the same plan.
+Design intent, not code - the spin-out surface, which the Partner
+Portal spec already points at from its "Spin-out roadmap" topic. Keep
+it draft, keep its 29 `planned` badges, and link it to its roadmap
+workstream so the reference and the roadmap stop being two
+unconnected accounts of one plan.
 
 ## Done when
 

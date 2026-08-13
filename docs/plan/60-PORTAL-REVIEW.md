@@ -1,7 +1,7 @@
 # Portal review, as a feature
 
 The wave 4 review board is the most effective thing in the supplied
-material. It ran five waves, recorded roughly 180 findings, and ended
+material. It ran five waves, recorded 183 findings, and ended
 with a production release that came back clean. It is also a
 single 1,300-line HTML file with its content compiled into a JavaScript
 constant, which means every wave was a rebuild and nothing it learned
@@ -21,12 +21,14 @@ read-only in the browser, every write from a session.
 
 Read out of the file itself, not remembered.
 
-**A stable map of the thing being reviewed.** Forty areas in five
-parts - "Where you land, as an admin" (9), "The onboarding flow, step
-by step" (14), "Configuration" (7), "Stepping back" (2), "As an agent,
-and partner teams" (6). The map outlived every wave, and walking it in
-order is what stopped the review becoming a list of whatever was most
-annoying that day.
+**A stable map of the thing being reviewed.** Thirty-nine areas in six
+parts - "Where you land, as an admin" (8), "The onboarding flow, step
+by step" (14), "Configuration" (7), "Integrations and automation" (2),
+"Stepping back" (2), "As an agent, and partner teams" (6). Areas 01
+and 02 were merged once they turned out to be one screen, so the codes
+run to 34 across 33 numbered areas. The map outlived every wave, and
+walking it in order stopped the review becoming a list of whatever was
+most annoying that day.
 
 **Waves as lenses, not repeats.** Wave 3 was explicitly "a different
 lens rather than another sweep: the portal seen as a logged-in agent".
@@ -35,18 +37,17 @@ agent's eyes became evidence on the existing entry, never a new one.
 
 **Coverage made visible.** A rail with a dot per area - hollow for
 never walked, one colour per wave walked - a per-part "N of M walked"
-line, and an amber badge counting open items per area. The reviewer
-could see what was left without thinking about it.
+line, and an amber badge counting open items per area.
 
 **A walker.** "Next area" stepped through unwalked areas in order,
 skipping anything done. Trivial mechanically; it is what made a
-forty-area sweep finishable.
+thirty-nine-area sweep finishable.
 
 **Four states per finding, treated differently.** Open items lead;
-fixed items collapse into "verify (N)"; closed items into "not
-proceeding (N)" so they cannot be raised again; things that worked
-well into their own list - and recording those mattered, because a
-review that only records faults reads as a worse system than it is.
+fixed collapse into "verify (N)"; closed into "not proceeding (N)" so
+they cannot be raised again; things that worked well into their own
+list - and recording those mattered, because a review that records
+only faults reads as a worse system than it is.
 
 **Verification as a distinct act.** "Anything answered done is
 verified by Luke, not taken on trust." A developer marking something
@@ -57,12 +58,12 @@ shape as `confirmed_at` in application review, for the same reason.
 item still matters".
 
 **A standing brief.** Ten standing asks carried into every wave until
-delivered or closed by the owner, plus settled decisions and "what has
-left the review" - one place, always one click away.
+delivered or closed by the owner, plus settled decisions and what has
+left the review - one place, always one click away.
 
 **Findings tied to roadmap work.** Each area listed the roadmap items
-touching it and each entry its related workstreams; findings lifted
-out to the roadmap stayed visible, marked with where they went.
+touching it and each entry its related workstreams; lifted-out
+findings stayed visible, marked with where they went.
 
 **Provenance on answers.** Every response carried who gave it.
 
@@ -73,16 +74,14 @@ pipeline. The document was the deliverable when the reader was a
 developer outside the system; here the portal *is* the deliverable and
 the roadmap is where the output lands.
 
-Also drop the compiled-in content model: `MODEL`, `REVIEW`, `BRIEF`,
-`PASS2`, `PASS3` and `WAVE` all become rows.
+Also drop the compiled-in content model: `MODEL`, `REVIEW`, `BRIEF`, `PASS2`, `PASS3` and `WAVE` all become rows.
 
 ## The schema
 
 Extends `supabase/schema/50_review.sql` rather than starting a new
-domain, because waves, verification and revisions are the same
-concepts. Consider splitting the file at the same time - it is at its
-budget exception already and the two guard functions are the declared
-seam.
+domain: waves, verification and revisions are the same concepts. Split
+the file at the same time - it is at its budget exception already and
+the two guard functions are the declared seam.
 
 **`review_waves` gains one column.**
 
@@ -92,8 +91,8 @@ seam.
 
 `portal` is a walkthrough wave; `code` is a wave of findings from a
 code-review slice (10-CODE-REVIEW.md). Same table, same lifecycle,
-same `carried_from_wave_id`. `review_waves.notes` carries the standing
-brief - no new column.
+same `carried_from_wave_id`; `review_waves.notes` carries the standing
+brief, so no new column.
 
 **`review_areas`** - the durable map, not per-wave.
 
@@ -135,32 +134,31 @@ Design notes, each earning its column:
 
 - **`state` and `disposition` are different questions**, and
   collapsing them is the mistake application review learned not to
-  make. `state` is where the finding stands with the developers;
-  `disposition` is what the review decided to do with it at close.
-  A finding can be `state = 'closed'` and `disposition = 'promoted'`.
+  make. `state` is where the finding stands with the developers,
+  `disposition` what the review decided at close; a finding can be
+  `closed` and `promoted` at once.
 - **`verified_at` is never set by a session.** Same rule as
   `confirmed_at`: a developer says done, the reviewer verifies. The
   strongest position a session may take is `state = 'answered'`.
 - **`environment`** exists because the review lost real time to
   environment behaviour read as defects - screening on returned
-  contracts, the underwriting email, Pending Merchant Signature. A
-  finding that turned out to be configuration records the environment
-  rather than being deleted.
+  contracts, the underwriting email, Pending Merchant Signature. One
+  that turns out to be configuration records where, not deleted.
 - **`blocks`** is the typed-block bag, rendered by the shared renderer
   from 40-SURFACING.md, so a finding can carry a table, a values list
   or a code snippet without a schema change. This is the answer to
   "no matter what new content is added it will always be shown".
 - **`visibility`** replaces the board's `roadmapOnly` and `chatOnly`
-  flags: `roadmap_only` is a finding deliberately kept out of the
-  developer conversation, `internal` is for the call only.
-- **`raised_count`** carries the re-raise signal across waves.
+  flags: `roadmap_only` is kept out of the developer conversation,
+  `internal` is for the call only. **`raised_count`** carries the
+  re-raise signal across waves.
 
 **`review_finding_revisions`** - written by trigger on every change to
-`state`, `disposition`, `emphasis` or `response`, exactly like
-`review_revisions`. The caller cannot skip it.
+`state`, `disposition`, `emphasis` or `response`, like
+`review_revisions`, so the caller cannot skip it.
 
 **Two new link entity types**, so findings join the graph rather than
-growing their own reference columns:
+growing reference columns of their own:
 
     insert into link_entity_types (key, table_name, label, sort_order)
     values ('finding', 'review_findings', 'Review finding', 90),
@@ -168,20 +166,20 @@ growing their own reference columns:
 
 Then the board's `rel` array is `finding → work_item` links of kind
 `relates_to`, and the per-area "roadmap items touching this area" line
-is `review_area → work_item`. Both were arrays of title strings in the
-old board and could not be navigated. Now they are links.
+is `review_area → work_item`. Both were unnavigable title strings in
+the old board.
 
-**Policies.** Read behind a `portal-review` module grant, admin writes
-via separate insert/update policies wrapped in scalar subselects, no
-`for all`. Written out one by one in `policies.sql` as that file
-requires. Add the module key to `assets/js/core/registry.js` - it is
-the source of truth for module keys and access keys.
+**Policies.** Browser reads only, behind a `portal-review` module
+grant. Writes are separate insert/update policies for the service
+connection, wrapped in scalar subselects, no `for all`, never
+reachable from a browser session. Written out one by one in
+`policies.sql` as that file requires. Add the module key to
+`assets/js/core/registry.js`, the source of truth for access keys.
 
 ## The protocol document
 
-`docs/PORTAL-REVIEW.md`, the sibling of docs/APP-REVIEW.md, and its
-`/portal-review` command in `.claude/commands/`. It holds, and is the
-one home for:
+`docs/PORTAL-REVIEW.md`, sibling of docs/APP-REVIEW.md, plus its
+`/portal-review` command. It is the one home for:
 
 - what a portal wave is and how it differs from an application wave;
 - the lens convention - a wave is a lens, and nothing already raised
@@ -203,18 +201,17 @@ docs/ROADMAP-REVIEW.md does. Add it to the `CITERS` list in
 
 ## The session workflow
 
-This is the ask in the owner's words: spam findings into a chat, have
-them land accurately, keep them rolling fresh, then review the lot.
+The ask in the owner's words: spam findings into a chat, have them
+land accurately, keep them rolling fresh, then review the lot.
 
-1. **Open a wave.** `/portal-review start "<name>" --lens "<what this
-   pass is looking at>"`. Carries forward standing asks and any
-   unresolved `watch`-equivalent findings from the previous wave, each
-   with `carried_from_finding_id` and `raised_count + 1`.
+1. **Open a wave.** `/portal-review start "<name>" --lens "<the pass>"`.
+   Carries forward standing asks and unresolved findings from the
+   previous wave, each with `carried_from_finding_id` and
+   `raised_count + 1`.
 2. **Walk and dictate.** The owner narrates; the session writes each
-   finding as it is made, into the area it belongs to. Areas get a
-   pass row as they are walked. The session states back, per area,
-   what it recorded - the board's discipline of showing a short table
-   for sign-off before writing.
+   finding as it is made, into the area it belongs to, and stamps the
+   pass row. It states back per area what it recorded - the board's
+   discipline of a short table for sign-off before writing.
 3. **Fold in developer answers.** A response sets `state='answered'`
    with `response_by`. Never `verified`.
 4. **Verify.** The owner walks the answered list and says which hold.
@@ -275,17 +272,20 @@ uses: coverage percentages, open counts per area, the three-way
 grouping, the walker's queue, and the raise-count emphasis are all
 computed at render time from the rows.
 
-## Open decision
+## The triage view is a reading surface
 
-The board is read-only in the browser, like application review, with
-every write from a session. That is the safe default and it matches
-the existing module. The alternative is a narrow admin write path for
-one column - `disposition` - so the owner can triage by clicking
-rather than by dictating. It is a small blast radius and it makes the
-promotion pass considerably faster.
+Settled: the board never writes. `triage.html` renders the closing
+wave grouped by proposed disposition, with counts, so the owner can
+read the whole set in one pass and say what changes; the session
+applies it. No buttons that mutate a row, no inline disposition
+picker, no "narrow" write policy for one column - see the principle in
+00-PROGRAMME.md.
 
-Recommendation: ship read-only, run one wave, then decide with
-evidence. Recorded here as a decision to take, not one taken.
+That constraint shapes the view rather than limiting it: because the
+page is only ever a rendering of state, it can afford to show
+everything at once - every finding, its area, its emphasis, its links,
+its raise count, and the disposition proposed for it. An editable
+board would trade that density for controls.
 
 ## Done when
 

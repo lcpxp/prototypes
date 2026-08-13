@@ -14,9 +14,10 @@ assumes it.
 In scope, because the source is on hand:
 
 - `Pxp.PartnerPortalApi` - the LaunchPad API. Onion architecture with
-  four source layers plus `Host`, and three test projects (`Unit`,
-  `Integration` with SpecFlow-style step definitions, `E2E` with a
-  screenplay-pattern structure - Actors, Abilities, Tasks, Questions).
+  four source layers plus `Host`, and three test projects: `Unit`,
+  `Integration` (feature files plus step definitions) and `E2E`, whose
+  folders - Actors, Abilities, Tasks, Questions, Drivers - are the
+  screenplay pattern.
 - `Pxp.PartnerPortal` - the Angular 20 front end.
 
 Out of scope, and must be labelled `stated` wherever it appears:
@@ -193,7 +194,8 @@ Seed entries, verified while writing this plan:
 | `ServiceFeesController` uses literal category segments, not a parameter | verified-code | Reference invents a `{category}` path parameter that does not exist |
 | `admin/price-sheets` is really `admin/merchant/price-sheets` | verified-code | One wrong path in the reference |
 | No unit test suite on the front end, by decision | verified-code | Type-check with `npx ngc -p tsconfig.app.json --noEmit`; QA's Playwright suite is external and depends on `data-testid` |
-| Front end issues 366 distinct calls against 552 routes | verified-code | ~186 routes have no known consumer; candidates for admin-only, dead, or external use |
+| The reference files the onboarding-flow delete under the acquirer path | verified-code | The real one is `DELETE /api/v1/onboarding-flows/{id}` on the standalone controller, whose 19 routes the reference does not cover at all |
+| Front end HTTP comes from 405 call sites in 88 files | verified-code | 212 declare their base URL outside the calling file, so the consumer inventory needs config and environment resolution |
 
 ## Schema change this workstream needs
 

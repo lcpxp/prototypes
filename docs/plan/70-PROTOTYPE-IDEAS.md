@@ -80,9 +80,10 @@ Each column earning its place:
 
 A trigger stamps `resolved_at` when status moves to `promoted` or
 `dropped`, mirroring `set_work_item_resolution` in
-`supabase/schema/30_work.sql`. Policies: read behind the `prototypes`
-grant, admin writes as separate insert/update policies. RLS is already
-enabled on the table; the new columns inherit it.
+`supabase/schema/30_work.sql`. Policies: browser reads behind the
+`prototypes` grant; writes are separate insert/update policies for the
+service connection only. RLS is already enabled on the table and the
+new columns inherit it.
 
 ## Two link entity types
 

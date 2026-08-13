@@ -12,15 +12,18 @@ defect.** Not a backlog item - a defect, caught by a test.
 
 Each of these was found in the current code and data, not supposed.
 
-**Cross-type links render nowhere.** `assets/js/pages/roadmap.js`
-fetches `knowledge_links` selecting `from_id, to_id, kind, note,
-confidence` - **without `from_type` or `to_type`** - and resolves the
-other end through a work-items map. A link from a work item to a
-capability, a term, a stage or a document therefore renders as
-nothing at all. `assets/js/pages/platform.js` has the mirror bug: it
-resolves only capability→capability, so a capability's link to the
-roadmap item that changes it is invisible from the platform page.
-Seven of the fifty live links are cross-type. Both ends are dark.
+**The link renderers understand two shapes out of forty-nine.**
+`assets/js/pages/roadmap.js` fetches `knowledge_links` selecting
+`from_id, to_id, kind, note, confidence` - **without `from_type` or
+`to_type`** - and resolves the other end through a work-items map, so
+it can only render work_item→work_item.
+`assets/js/pages/platform.js` has the mirror limitation: capability→
+capability only. Seven entity types are registered, giving 49 ordered
+pairs; **two of them render**. Today that hides four links - a term
+about a work item, a term superseding a term, a document about an
+area, a document about a capability - which sounds small until you
+notice it is also the reason the graph has not grown: there is no
+point writing a link that cannot be seen.
 
 **Unknown block kinds are silently dropped.** `blockHtml` exists twice
 - `platform.js:94` and `reference-topics.js:69` - both implementing
