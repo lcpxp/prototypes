@@ -1,0 +1,23 @@
+{
+  "comment": "Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands.",
+  "specs": {
+    "LaunchPad Partner Portal API": {
+      "phantom": 12,
+      "absent": 219,
+      "undeclared_mirrors": 22,
+      "unverified_badges": 3,
+      "gap_badges": 0,
+      "note": "Baseline taken 2026-08-13 from the supplied snapshot. phantom: the twelve wrong rows catalogued in docs/plan/20-API-REFERENCE.md, each traced to source - drive to 0 first, they are the rows that actively mislead. absent: the 219 genuinely undocumented routes, prioritised in the same file. undeclared_mirrors: v1 partner/merchant and admin/merchant routes that mirror a documented /merchants row under a collapse the reference never declares - fixed by declaring it, not by writing 22 rows."
+    },
+    "Unity Acquiring API": {
+      "unverified_badges": 1,
+      "gap_badges": 0,
+      "note": "No source supplied, so the spec is not comparable and carries no phantom or absent figure. Nothing in it can be graded above 'stated' until a Unity source or live Swagger arrives; the single unverified badge understates that and should rise, deliberately, when the spec is graded honestly."
+    },
+    "LaunchPad Inbound Onboarding API (planned)": {
+      "unverified_badges": 0,
+      "gap_badges": 8,
+      "note": "Design intent, not code, so it is not comparable by design. The eight gap badges are its open questions and shrink as the spin-out design settles."
+    }
+  }
+}
