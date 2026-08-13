@@ -324,12 +324,20 @@ create policy "review_revisions: members read"
   using ((select public.has_module_access('app-review')));
 
 -- ---------------------------------------------------------------
--- dashboard_counts() (defined in schema/90_dashboard.sql) is the one read RPC:
--- callable by signed-in users only, never by anon.
+-- The dashboard read RPCs (defined in schema/90_dashboard.sql):
+-- callable by signed-in users only, never by anon. Both are SECURITY
+-- INVOKER, so every figure they return is already filtered by the
+-- policies above to what the caller may read.
+--
+-- dashboard_counts() is superseded by dashboard_summary() and stays
+-- only until nothing calls it.
 -- ---------------------------------------------------------------
 
 revoke execute on function public.dashboard_counts() from public, anon;
 grant execute on function public.dashboard_counts() to authenticated;
+
+revoke execute on function public.dashboard_summary() from public, anon;
+grant execute on function public.dashboard_summary() to authenticated;
 
 -- ---------------------------------------------------------------
 -- Roadmap search surface (schema/31_roadmap_search.sql).

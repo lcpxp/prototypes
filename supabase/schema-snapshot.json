@@ -33,6 +33,7 @@
   ],
   "functions": [
     "dashboard_counts()",
+    "dashboard_summary()",
     "handle_new_user()",
     "has_module_access(key text)",
     "is_admin()",
@@ -217,6 +218,10 @@
     {
       "name": "portal_links",
       "version": "20260811220737"
+    },
+    {
+      "name": "dashboard_summary",
+      "version": "20260813223937"
     }
   ],
   "policies": [
@@ -765,6 +770,7 @@
     "portal_links": [
       "base_url",
       "created_at",
+      "description",
       "icon",
       "key",
       "label",

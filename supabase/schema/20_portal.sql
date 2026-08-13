@@ -95,6 +95,11 @@ create trigger future_prototypes_updated_at
 -- object of the remaining query parameters (time range, display
 -- options), appended verbatim, so retuning a link never needs code.
 -- icon names an SVG that tools.js knows how to draw.
+--
+-- description is one sentence saying what the tool does and when to
+-- use it. The nav shows icons with tooltips and explains nothing; the
+-- dashboard's tools grid needs prose, and prose about an internal
+-- tool belongs beside the URL it describes rather than in this repo.
 -- ---------------------------------------------------------------
 
 create table if not exists public.portal_links (
@@ -104,6 +109,7 @@ create table if not exists public.portal_links (
   base_url text not null,
   query text,
   params jsonb not null default '{}'::jsonb,
+  description text,
   sort_order integer not null default 100,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
