@@ -1,39 +1,38 @@
 # Current state
 
-Updated: 2026-08-13 (alignment programme planned and verified)
+Updated: 2026-08-13 (phase 1 of the alignment programme shipped)
 
 ## In progress
-Nothing mid-flight in code; 232 tests green. Instead, docs/plan/ holds
-an eight-part programme planned against the supplied LaunchPad source
-(API + Angular portal), the wave 4 review board, the live database and
-this repo. Start at docs/plan/00-PROGRAMME.md: evidence base,
-provenance ladder, sequencing, the five decisions. None of it started.
+Nothing mid-flight. 277 tests green. The programme is docs/plan/;
+start at 00-PROGRAMME.md. Phase 1 (ground truth) and the first of
+phase 2 have landed on main:
 
-Verified, then re-verified in a pass that corrected fourteen figures:
-- 552 routes (376 v1, 150 v2, 26 unversioned) from 51 controllers vs
-  245 rows: 233 match, 12 wrong, 78 declared v2 scope variants, 22
-  undeclared v1 mirrors, 219 absent. 56% accounted for.
-- The link renderers express 2 of 49 entity-type pairs, so 4 live
-  links render nowhere and the graph cannot grow.
-- 20 orphan work_notes; 0 milestones and 0 phases behind live schema;
-  work_item_dependencies documented but absent; 0 'styling' rows.
-
-The API gap register is now 20-API-REFERENCE.md. Embeddings unchanged
-and still not built.
+- scripts/extract-routes.js: the route inventory, seven normalisation
+  rules, 12 benchmarks against synthetic fixtures. Reproduces 552
+  routes / 51 controllers from the supplied snapshot.
+- supabase/reference-coverage.json + npm run coverage: counts and a
+  digest only, no paths. tests/checks/reference-drift.test.js is a
+  ratchet against tests/reference-budget.json and fails both ways.
+- The twelve wrong reference rows corrected. phantom 12 to 0,
+  coverage 56.3% to 60.5%, rows 245 to 256, absent 219 to 196.
+- assets/js/core/links.js: knowledge links render for all 49 entity
+  type pairs, not two. Destinations for note/term/stage/document/area
+  are still missing, so those render as name plus type.
 
 ## Next steps
-1. Route extractor, coverage artefact, drift gate, then the 12 wrong
-   reference rows (20-API-REFERENCE.md).
-2. Entity-aware links and the shared detail panel (40-SURFACING.md),
-   then the dashboard rebuild (50-DASHBOARD.md).
-3. First code-review wave and the style load (10, 30).
+1. The shared detail panel and App.blocks (40-SURFACING.md), including
+   the anchors that give terms, stages and documents a destination.
+2. Dashboard rebuild (50-DASHBOARD.md).
+3. First code-review wave and the style capability load (10, 30).
 4. Portal review waves (60), prototype ideas (70).
 5. Embeddings: pgvector, knowledge/index.ts, gte-small, 384 dims.
 
 ## Open decisions
-- The five in 00-PROGRAMME.md: reference scope, Unity grading,
-  commented-out routes, removing milestones/phases, and whether a
-  promoted finding creates or merges into a work item.
+- Four of the five in 00-PROGRAMME.md remain: reference scope, Unity
+  grading, commented-out routes, and whether a promoted finding
+  creates or merges into a work item. Removing the empty
+  milestones/phases schema is agreed in the plan but not yet done -
+  it is a destructive migration and wants an explicit go-ahead.
 - Edge Function + gte-small: AGREED 2026-08-09. No key, 384 dims.
 - Front-end writes: CLOSED 13 Aug at Luke's direction. The browser
-  reads; every content change is made in a Claude session. Resolved.
+  reads; every content change is made in a Claude session.

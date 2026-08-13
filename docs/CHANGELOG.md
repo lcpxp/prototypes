@@ -11,6 +11,19 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The **API reference** has been reconciled against the LaunchPad
+  source: twelve rows that documented paths the API does not serve are
+  corrected, three that documented commented-out endpoints are retired
+  into the gap register, and the four templated `service-fees` rows are
+  replaced by the sixteen real endpoints they were hiding. It now
+  documents 256 endpoints and accounts for 60.5% of the 552 routes in
+  the code, up from 56.3%, with the remainder tracked rather than
+  guessed at.
+- **Knowledge links** now render between any two kinds of thing. A work
+  item's link to a capability, a glossary term or a journey stage used
+  to show nothing at all; only work-item-to-work-item and
+  capability-to-capability were visible. Targets with their own page
+  are links, the rest name what they are.
 - The LaunchPad API reference has been rebuilt from the Partner Portal
   source code (v2.0). It now documents 212 endpoints across 16 areas,
   the merchant-first onboarding model (create a merchant, then start an
