@@ -23,6 +23,7 @@ function loadView() {
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
   vm.runInContext(read("assets/js/core/blocks.js"), sandbox, { filename: "blocks.js" });
+  vm.runInContext(read("assets/js/core/detail.js"), sandbox, { filename: "detail.js" });
   sandbox.App.onAuthed = function () {};
   vm.runInContext(read("assets/js/pages/platform.js"), sandbox,
     { filename: "platform.js" });
@@ -99,6 +100,37 @@ test("capabilityCard renders the maturity chip, marks unverified rows, escapes c
     id: "c9", title: "Anchored", maturity: "live", verified: true, blocks: [],
   });
   assert.ok(anchored.includes('id="capability-c9"'));
+});
+
+test("a capability card shows everything stored against the row", () => {
+  // The completeness contract on the platform card
+  // (docs/plan/40-SURFACING.md). `tags` was stored and shown nowhere;
+  // more to the point, a column added to product_capabilities tomorrow
+  // lands here rather than nowhere.
+  const V = loadView();
+  const html = V.capabilityCard({
+    id: "c1", title: "Risk routing", maturity: "live", verified: true, blocks: [],
+    tags: ["screening", "risk"], created_at: "2026-06-01T00:00:00Z",
+    updated_at: "2026-08-01T09:00:00Z", owner_team: "Risk",
+  });
+  assert.match(html, /<dt>Tags<\/dt><dd>screening, risk<\/dd>/);
+  assert.match(html, /<dt>Recorded<\/dt><dd>2026-06-01<\/dd>/);
+  assert.match(html, /<dt>Updated<\/dt><dd>2026-08-01<\/dd>/);
+  assert.match(html, /Also recorded against this capability/);
+  assert.match(html, /<dt>Owner team<\/dt><dd>Risk<\/dd>/,
+    "a column no part of this page was written for still appears");
+});
+
+test("a capability card adds no fact list when there is nothing to add", () => {
+  const V = loadView();
+  const html = V.capabilityCard({
+    id: "c1", title: "Risk routing", maturity: "live", verified: true,
+    blocks: [], key: "risk-routing", sort_order: 10, area_id: "a1", summary: "S",
+  });
+  assert.doesNotMatch(html, /detail-facts/,
+    "the columns the card lays out by hand must not repeat as fact rows");
+  assert.doesNotMatch(html, /risk-routing|<dd>10<\/dd>|a1/,
+    "no key, sort order or raw id reaches the card");
 });
 
 test("groupByArea groups capability rows by area and sorts by sort_order", () => {

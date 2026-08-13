@@ -39,7 +39,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
-const { ROOT, read } = require("../lib/repo.js");
+const { ROOT, read, trackedFiles } = require("../lib/repo.js");
 
 // --- the vocabularies, read out of the schema ----------------------
 
@@ -250,6 +250,9 @@ test("an anchored destination is actually reachable on its page", () => {
 const CONTRACT_ADOPTERS = [
   "assets/js/pages/integrations.js",
   "assets/js/pages/roadmap-detail.js",
+  "assets/js/pages/platform.js",
+  "assets/js/pages/backlog.js",
+  "assets/js/pages/appreview-detail.js",
 ];
 
 test("a surface that adopted the completeness contract still uses it", () => {
@@ -261,6 +264,40 @@ test("a surface that adopted the completeness contract still uses it", () => {
     assert.doesNotMatch(src, /Object\.keys\(detail\)\.forEach/,
       `${file} must not walk the detail bag by hand alongside the contract`);
   }
+});
+
+test("every page that renders a whole row loads the contract", () => {
+  // A page whose module calls App.detail.facts and whose HTML does not
+  // include core/detail.js throws on first render, and the failure is
+  // invisible to a suite that loads modules directly into a vm.
+  // Every page under modules/, not just index.html: the app-review
+  // drawer lives on wave.html, and scanning only index pages would have
+  // called that one clean while it threw on first render.
+  const pages = trackedFiles().filter((f) => /^modules\/.+\.html$/.test(f));
+  const needs = new Set();
+  for (const file of CONTRACT_ADOPTERS.concat(["assets/js/pages/users.js"])) {
+    needs.add(file.split("/").pop());
+  }
+  for (const page of pages) {
+    const html = read(page);
+    const uses = [...needs].filter((mod) => html.includes("pages/" + mod));
+    if (!uses.length) continue;
+    assert.match(html, /core\/detail\.js/,
+      `${page} loads ${uses.join(", ")}, which render through App.detail. ` +
+      "Without core/detail.js the page throws on first render.");
+  }
+});
+
+test("a table that grows its own columns keeps deriving them", () => {
+  // The contract in a table (users.js): the header ends with whatever
+  // the rows carry, not with a hard-coded final column.
+  const src = read("assets/js/pages/users.js");
+  assert.match(src, /App\.detail\.labelOf\(/,
+    "an unnamed column must derive a readable label rather than being dropped");
+  assert.match(src, /trailing\.forEach/,
+    "both the header and every row must walk the same derived column list");
+  assert.doesNotMatch(src, /head \+= "<th>Added<\/th>"/,
+    "a hard-coded final header is how a column added to profiles lands nowhere");
 });
 
 test("the completeness contract renders what it was not told about", () => {

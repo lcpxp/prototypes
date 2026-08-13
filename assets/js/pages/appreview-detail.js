@@ -109,33 +109,66 @@
       "<dt>Until</dt><dd>" + App.escape(trigger.label || "") + "</dd></dl>";
   }
 
+  // Columns the drawer or the board renders somewhere other than the
+  // Record block, each for a stated reason. Everything not here and not
+  // named below appears anyway (docs/plan/40-SURFACING.md).
+  var RECORD_HIDDEN = [
+    // Identity, filing and ordering.
+    "id", "wave_id", "display_order",
+    // A soft-deleted record is filtered out of every query, so it is
+    // never a value on a row the reader can see.
+    "deleted_at",
+    // The drawer heading and sub-line.
+    "merchant_name", "triage_category",
+    // Their own blocks, further up this drawer.
+    "action_text", "rationale_text", "evidence_confidence",
+    "launchpad_status_note", "next_trigger_type", "next_trigger_date",
+    "confirmed_by", "confirmed_at",
+    // Board flags and the findings list (appreview-render.js).
+    "is_draft", "manual_pipeline", "blocker_scope",
+  ];
+
+  function dateRow(value) { return App.escape(day(value)); }
+
   function metadataHtml(app, statuses, age) {
     var status = statuses[app.launchpad_status];
-    var pairs = [
-      ["LaunchPad status", status ? status.label : app.launchpad_status],
-      ["Application id", app.launchpad_application_id],
-      ["Partner", app.partner_name],
-      ["Acquirer", app.acquirer],
-      ["Risk level", app.risk_level],
-      ["Raised by", app.raised_by],
-      ["Created in LaunchPad", day(app.created_in_launchpad_at)],
-      ["Last updated", day(app.launchpad_last_updated_at)],
-      ["Last updated by", app.launchpad_last_updated_by],
-    ];
-    if (age.days !== null) {
-      // Say what the age means, not just what it is. On a dormant
-      // draft the number is real but carries no signal, and leaving
-      // that unsaid is what made these records look stale before.
-      pairs.push(["Age", age.isSignal
-        ? age.days + " days" + (age.isStale ? " - past the point of chasing" : "")
-        : age.days + " days - not a staleness signal at this status"]);
-    }
-    var rows = pairs.filter(function (pair) { return pair[1]; })
-      .map(function (pair) {
-        return "<dt>" + App.escape(pair[0]) + "</dt><dd>" +
-          App.escape(pair[1]) + "</dd>";
-      }).join("");
-    return '<dl class="kv">' + rows + "</dl>";
+    return App.detail.facts(app, {
+      fields: [
+        { key: "launchpad_status", label: "LaunchPad status", html: function (value) {
+          return App.escape(status ? status.label : value);
+        } },
+        { key: "launchpad_application_id", label: "Application id" },
+        { key: "partner_name", label: "Partner" },
+        { key: "acquirer", label: "Acquirer" },
+        { key: "risk_level", label: "Risk level" },
+        { key: "raised_by", label: "Raised by" },
+        { key: "created_in_launchpad_at", label: "Created in LaunchPad", html: dateRow },
+        { key: "launchpad_last_updated_at", label: "Last updated", html: dateRow },
+        { key: "launchpad_last_updated_by", label: "Last updated by" },
+        // Say what the age means, not just what it is. On a dormant
+        // draft the number is real but carries no signal, and leaving
+        // that unsaid is what made these records look stale before.
+        { key: "_age", label: "Age", html: function () {
+          if (age.days === null) return "";
+          return App.escape(age.isSignal
+            ? age.days + " days" + (age.isStale ? " - past the point of chasing" : "")
+            : age.days + " days - not a staleness signal at this status");
+        } },
+        // The id points at a record in an earlier wave, which this page
+        // never loads, so the fact is what can be told truthfully - a
+        // raw uuid would be a value the reader cannot act on.
+        { key: "carried_from_application_id", label: "Carried forward",
+          html: function (value) {
+            return value ? "Carried from an earlier wave" : "";
+          } },
+        { key: "resolved_at", label: "Resolved", html: dateRow },
+        { key: "created_at", label: "Recorded", html: dateRow },
+        { key: "updated_at", label: "Updated", html: dateRow },
+      ],
+      hidden: RECORD_HIDDEN,
+      overflowLabel: "Also recorded against this application",
+      markup: { wrap: function (inner) { return '<dl class="kv">' + inner + "</dl>"; } },
+    });
   }
 
   // ctx: { categories, statuses, evidence, dupes }

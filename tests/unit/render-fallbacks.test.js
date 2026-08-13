@@ -34,6 +34,7 @@ function sandboxWith(files) {
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
   vm.runInContext(read("assets/js/core/registry.js"), sandbox, { filename: "registry.js" });
+  vm.runInContext(read("assets/js/core/detail.js"), sandbox, { filename: "detail.js" });
   // The page modules boot on authentication; a no-op keeps them inert.
   sandbox.App.onAuthed = function () {};
   for (const file of files) vm.runInContext(read(file), sandbox, { filename: file });
@@ -74,6 +75,42 @@ test("a hostile role cannot inject markup", () => {
   const html = users.roleBadge('"><img src=x onerror=alert(1)>');
   assert.doesNotMatch(html, /<img/);
   assert.match(html, /&lt;img/);
+});
+
+test("a column added to profiles becomes a column in the register", () => {
+  // The completeness contract, in a table. The header used to end with
+  // a hard-coded "Added"; a column added to profiles was fetched and
+  // then had nowhere to land.
+  const columns = users.trailingColumns([
+    { id: "u1", email: "a@b.c", display_name: "A", role: "admin",
+      created_at: "2026-01-01T00:00:00Z", last_seen_at: "2026-08-01T00:00:00Z" },
+  ]);
+  // Array.from, not .map: a value built inside the vm is structurally
+  // equal to one built here but never reference-equal.
+  assert.deepEqual(Array.from(columns, (c) => c.key), ["created_at", "last_seen_at"],
+    "named fields lead, then anything else the rows carry");
+  assert.equal(columns[0].label, "Added", "the named field keeps its own label");
+  assert.equal(columns[1].label, "Last seen at",
+    "and an unnamed one derives a readable label from the key");
+});
+
+test("the register's extra columns are the union across rows, sorted", () => {
+  // One row carrying a column and another not must still produce one
+  // header, and the order must not depend on which row came first.
+  const columns = users.trailingColumns([
+    { id: "u1", email: "a@b.c", display_name: "A", role: "admin", zeta: 1 },
+    { id: "u2", email: "d@e.f", display_name: "D", role: "member", alpha: 2 },
+  ]);
+  assert.deepEqual(Array.from(columns, (c) => c.key), ["created_at", "alpha", "zeta"]);
+});
+
+test("the register never prints the columns it lays out by hand", () => {
+  const keys = users.trailingColumns([
+    { id: "u1", email: "a@b.c", display_name: "A", role: "admin" },
+  ]).map((c) => c.key);
+  for (const handled of ["id", "email", "display_name", "role"]) {
+    assert.ok(!keys.includes(handled), `${handled} already has its own column`);
+  }
 });
 
 // --- review_applications.blocker_scope -----------------------------

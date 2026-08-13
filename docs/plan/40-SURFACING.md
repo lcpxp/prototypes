@@ -106,9 +106,38 @@ rows rather than one, which is what typed links are. Its 36 fact rows
 are now a declared field list, and a column added to `work_items`
 tomorrow renders with no edit to `roadmap-detail.js`.
 
-Still to adopt: the platform card, the backlog document view, users,
-and the review board. Each is a mechanical change now that the
-contract and its benchmarks exist.
+The remaining four followed the same day, and each turned up a column
+that was genuinely buried rather than only theoretically at risk:
+
+- **Platform card.** `tags` was neither fetched nor shown. The fetch
+  named eleven columns; it is now `select("*")`, because a card that
+  renders everything it is handed has no reason to be handed less.
+- **Backlog.** Two hand-written pair lists, sixteen labels and six.
+  `work_documents.supersedes_id` was stored and shown nowhere - a
+  replaced document kept its back-link and no reader could see it,
+  which is the whole point of never deleting the row. `content` is the
+  one column hidden for a reason other than "shown elsewhere": it is
+  unbounded pasted material and the page loads every document.
+- **Users.** A table, not a panel, so the contract applies to its
+  header: named columns lead, then whatever else the rows carry, each
+  labelled through `App.detail.labelOf`. The header used to end in a
+  hard-coded "Added".
+- **Review board drawer.** Nine hand-written pairs against a
+  twenty-eight column table. Four columns were fetched (the board
+  selects `*`) and rendered nowhere:
+  `carried_from_application_id`, `resolved_at`, `created_at`,
+  `updated_at`.
+
+Two gates hold the set. `CONTRACT_ADOPTERS` fails if an adopter goes
+back to a hand-written list; and every page under `modules/` that
+loads an adopting module must load `core/detail.js`, which caught
+`app-review/wave.html` - the drawer lives there, not on `index.html`,
+so a gate scanning only index pages would have called it clean while
+it threw on first render.
+
+The roadmap's own fetch named all 39 `work_items` columns by hand,
+which capped the guarantee at whatever that line remembered; it is now
+`select("*")` - the same payload today, and a live contract tomorrow.
 
 ### 2. One block renderer, unknown kinds render generically - DONE
 
@@ -231,12 +260,12 @@ Links to one render as name plus type, flat.
 | Surface | Change |
 |---|---|
 | Roadmap drawer | DONE for facts, links and the overflow. Left: typed blocks, inbound references |
-| Backlog | Notes against documents; document detail as a panel, not a two-field modal; adopt the same panel |
-| Platform | Cross-type links; adopt the panel for a capability; keep the Coverage panel, add "links to nothing" to it |
+| Backlog | DONE for both modals. Left: notes rendered against a document |
+| Platform | DONE for links and the capability card. Left: "links to nothing" in the Coverage panel |
 | Reference | Adopt `App.blocks`; endpoint panel gains typed links once `endpoint` is a linkable type; show spec-level provenance and coverage |
 | Integrations | Detail modal becomes the panel; `detail` jsonb rendered through `App.detail.facts`, so a new key appears without a code change |
-| Users | Panel for a profile: grants, role, and the module access matrix in one place |
-| App review | Already close to this shape; align its drawer to the five zones and reuse `App.drawer` |
+| Users | DONE: the register derives its trailing columns. A per-profile panel is not needed - profiles has five columns and the table shows them all |
+| App review | DONE for the Record block. Left: align the drawer to the five zones and reuse `App.drawer` |
 | Prototypes | Panel for a prototype and for an idea (70-PROTOTYPE-IDEAS.md) |
 | Global search | Add every remaining source; see below |
 

@@ -58,9 +58,35 @@
       '"><span class="track" aria-hidden="true"></span></label>';
   }
 
+  // Columns the table lays out by hand: the row anchor, and the three
+  // leading cells.
+  var PROFILE_HANDLED = ["id", "display_name", "email", "role"];
+  // Then the columns it names, in this order, before anything else.
+  var PROFILE_FIELDS = [{ key: "created_at", label: "Added", html: function (value) {
+    return App.escape(value ? new Date(value).toLocaleDateString() : "");
+  } }];
+
+  // The completeness contract, in a table (docs/plan/40-SURFACING.md):
+  // a column added to profiles becomes a column here rather than a value
+  // nobody can see. The named fields lead, then anything else the rows
+  // carry, sorted so the table reads the same way twice.
+  function trailingColumns(profiles) {
+    var named = PROFILE_HANDLED.concat(PROFILE_FIELDS.map(function (f) { return f.key; }));
+    var seen = {};
+    profiles.forEach(function (profile) {
+      Object.keys(profile).forEach(function (key) {
+        if (named.indexOf(key) === -1) seen[key] = true;
+      });
+    });
+    return PROFILE_FIELDS.concat(Object.keys(seen).sort().map(function (key) {
+      return { key: key, label: App.detail.labelOf(key) };
+    }));
+  }
+
   function render(profiles, deniedMap) {
     var admin = App.access.admin;
     var modules = App.registry.modules;
+    var trailing = trailingColumns(profiles);
 
     var head = "<th>Name</th><th>Email</th><th>Role</th>";
     if (admin) {
@@ -68,13 +94,10 @@
         head += "<th>" + App.escape(mod.title) + "</th>";
       });
     }
-    head += "<th>Added</th>";
+    trailing.forEach(function (col) { head += "<th>" + App.escape(col.label) + "</th>"; });
 
     var body = "";
     profiles.forEach(function (profile) {
-      var added = profile.created_at
-        ? new Date(profile.created_at).toLocaleDateString()
-        : "";
       body += '<tr id="user-' + App.escape(profile.id) + '"><td>' +
         App.escape(profile.display_name || "") + "</td>" +
         '<td class="mono">' + App.escape(profile.email || "") + "</td>" +
@@ -84,7 +107,11 @@
           body += "<td>" + toggleCell(profile, mod, deniedMap) + "</td>";
         });
       }
-      body += "<td>" + App.escape(added) + "</td></tr>";
+      trailing.forEach(function (col) {
+        var value = profile[col.key];
+        body += "<td>" + (col.html ? col.html(value) : App.detail.valueHtml(value)) + "</td>";
+      });
+      body += "</tr>";
     });
 
     host.innerHTML = '<div class="table-wrap"><table><thead><tr>' +
@@ -162,7 +189,7 @@
 
   // Pure builder, exported so tests/unit/render-fallbacks.test.js can
   // hold the role rendering without a DOM or a session.
-  App.usersView = { roleBadge: roleBadge };
+  App.usersView = { roleBadge: roleBadge, trailingColumns: trailingColumns };
 
   App.onAuthed(function (authedSession) {
     session = authedSession;

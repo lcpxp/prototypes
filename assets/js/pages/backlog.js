@@ -41,57 +41,99 @@
     return value ? new Date(value).toLocaleDateString() : "";
   }
 
-  function kvHtml(pairs) {
-    var html = '<dl class="kv">';
-    pairs.forEach(function (pair) {
-      if (!pair[1]) return;
-      html += "<dt>" + App.escape(pair[0]) + "</dt><dd>" + pair[1] + "</dd>";
-    });
-    return html + "</dl>";
-  }
-
   function badges(list) {
     return (list || []).map(function (tag) {
       return '<span class="badge">' + App.escape(tag) + "</span>";
     }).join(" ");
   }
 
+  // Both modals go through App.detail.facts (docs/plan/40-SURFACING.md):
+  // the named fields lead, and any column neither named nor hidden still
+  // appears under its own heading. A hand-written pair list renders the
+  // columns that existed the day it was written and drops the rest with
+  // no error to notice.
+  //
+  // Only two columns are hidden for a reason other than "shown
+  // elsewhere on this modal": work_items.attributes, which the roadmap
+  // drawer lays out properly and this compact modal would flatten, and
+  // work_documents.content, the raw pasted material - deliberately not
+  // fetched, because it is unbounded and this list loads every row.
+  var ITEM_HIDDEN = ["id", "title", "area_id", "source_document_id",
+    "parent_id", "sort_order", "attributes"];
+  var DOC_HIDDEN = ["id", "title", "area_id", "supersedes_id", "content"];
+
+  function dateCell(value) { return App.escape(fmtDate(value)); }
+
+  // Pure builders: row plus a lookup context, HTML out, no DOM. That is
+  // what lets tests/unit/backlog-detail.test.js hold them.
+  // names = { areaTitle, docTitle }
+  function itemFactsHtml(item, names) {
+    names = names || {};
+    var areas = names.areaTitle || {};
+    var docs = names.docTitle || {};
+    return App.detail.facts(item, {
+      fields: [
+        { key: "horizon", label: "Band", also: ["end_horizon"],
+          html: function () { return App.escape(BAND_LABEL[bandOf(item)]); } },
+        { key: "_horizon", label: "Horizon", html: function () { return App.escape(item.horizon || ""); } },
+        { key: "type", label: "Type" },
+        { key: "department", label: "Department",
+          html: function (v) { return App.escape(App.departmentLabel(v)); } },
+        { key: "_area", label: "Area", html: function () { return App.escape(areas[item.area_id] || ""); } },
+        { key: "status", label: "Status", html: function (v) { return App.statusBadge(v); } },
+        { key: "priority", label: "Priority" },
+        { key: "summary", label: "Summary" },
+        { key: "details", label: "Details" },
+        { key: "external_ref", label: "External ref" },
+        { key: "requested_by", label: "Requested by" },
+        { key: "_source", label: "Source",
+          html: function () { return App.escape(docs[item.source_document_id] || ""); } },
+        { key: "tags", label: "Tags", html: function (v) { return badges(v); } },
+        { key: "created_at", label: "Raised", html: dateCell },
+        { key: "resolved_at", label: "Resolved", html: dateCell },
+        { key: "resolution", label: "Resolution" },
+      ],
+      hidden: ITEM_HIDDEN,
+      overflowLabel: "Also recorded against this item",
+    });
+  }
+
+  function documentFactsHtml(doc, names) {
+    names = names || {};
+    var areas = names.areaTitle || {};
+    var docs = names.docTitle || {};
+    return App.detail.facts(doc, {
+      fields: [
+        { key: "kind", label: "Kind" },
+        { key: "_area", label: "Area", html: function () { return App.escape(areas[doc.area_id] || ""); } },
+        { key: "status", label: "Status", html: function (v) { return App.statusBadge(v); } },
+        { key: "captured_on", label: "Captured", html: dateCell },
+        { key: "summary", label: "Summary" },
+        { key: "tags", label: "Tags", html: function (v) { return badges(v); } },
+        // A superseded document keeps its row and its back-link, so the
+        // replaced version is never lost. It was stored and shown
+        // nowhere until now.
+        { key: "_supersedes", label: "Supersedes",
+          html: function () { return App.escape(docs[doc.supersedes_id] || ""); } },
+      ],
+      hidden: DOC_HIDDEN,
+      overflowLabel: "Also recorded against this document",
+    }) +
+    '<p class="card-meta">The full raw content is kept in the ' +
+    "work_documents table.</p>";
+  }
+
+  function names() { return { areaTitle: areaTitle, docTitle: docTitle }; }
+
   function openItemModal(item) {
-    var band = bandOf(item);
     modalTitle.textContent = item.title;
-    modalBody.innerHTML = kvHtml([
-      ["Band", App.escape(BAND_LABEL[band])],
-      ["Horizon", App.escape(item.horizon || "")],
-      ["Type", App.escape(item.type || "")],
-      ["Department", App.escape(App.departmentLabel(item.department))],
-      ["Area", App.escape(areaTitle[item.area_id] || "")],
-      ["Status", App.statusBadge(item.status)],
-      ["Priority", App.escape(String(item.priority))],
-      ["Summary", App.escape(item.summary || "")],
-      ["Details", App.escape(item.details || "")],
-      ["External ref", App.escape(item.external_ref || "")],
-      ["Requested by", App.escape(item.requested_by || "")],
-      ["Source", App.escape(docTitle[item.source_document_id] || "")],
-      ["Tags", badges(item.tags)],
-      ["Raised", App.escape(fmtDate(item.created_at))],
-      ["Resolved", App.escape(fmtDate(item.resolved_at))],
-      ["Resolution", App.escape(item.resolution || "")],
-    ]);
+    modalBody.innerHTML = itemFactsHtml(item, names());
     modal.showModal();
   }
 
   function openDocumentModal(doc) {
     modalTitle.textContent = doc.title;
-    modalBody.innerHTML = kvHtml([
-      ["Kind", App.escape(doc.kind)],
-      ["Area", App.escape(areaTitle[doc.area_id] || "")],
-      ["Status", App.statusBadge(doc.status)],
-      ["Captured", App.escape(fmtDate(doc.captured_on))],
-      ["Summary", App.escape(doc.summary || "")],
-      ["Tags", badges(doc.tags)],
-    ]) +
-    '<p class="card-meta">The full raw content is kept in the ' +
-    "work_documents table.</p>";
+    modalBody.innerHTML = documentFactsHtml(doc, names());
     modal.showModal();
   }
 
@@ -278,13 +320,17 @@
         .order("sort_order", { ascending: true }),
       App.db
         .from(App.registry.tables.workDocuments)
-        .select("id, title, kind, area_id, summary, status, captured_on, tags")
+        // Every column except `content`, which is the raw pasted
+        // material: unbounded, and this loads every document. It is the
+        // one column named in DOC_HIDDEN for a reason other than being
+        // shown elsewhere on the modal.
+        .select("id, title, kind, area_id, summary, status, captured_on, " +
+          "tags, supersedes_id, created_at, updated_at")
         .order("captured_on", { ascending: false }),
       App.db
         .from(App.registry.tables.workItems)
-        .select("id, parent_id, area_id, source_document_id, type, department, title, summary, details, " +
-          "status, horizon, end_horizon, priority, external_ref, requested_by, " +
-          "tags, resolution, resolved_at, created_at, sort_order")
+        // The modal renders everything on the row (App.detail.facts).
+        .select("*")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
     ]);
@@ -328,4 +374,9 @@
     // destination in name only.
     App.deepLinkScroll();
   });
+
+  App.backlogView = {
+    itemFactsHtml: itemFactsHtml,
+    documentFactsHtml: documentFactsHtml,
+  };
 })();

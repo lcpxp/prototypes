@@ -32,6 +32,7 @@ function load() {
   vm.runInContext(read("assets/js/core/blocks.js"), sandbox, { filename: "blocks.js" });
   vm.runInContext(read("assets/js/core/registry.js"), sandbox, { filename: "registry.js" });
   vm.runInContext(read("assets/js/core/links.js"), sandbox, { filename: "links.js" });
+  vm.runInContext(read("assets/js/core/detail.js"), sandbox, { filename: "detail.js" });
   sandbox.App.onAuthed = function () {};
   vm.runInContext(read("assets/js/pages/platform-knowledge.js"), sandbox,
     { filename: "platform-knowledge.js" });

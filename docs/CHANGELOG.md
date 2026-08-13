@@ -17,6 +17,12 @@ is the git history; what is unfinished is docs/STATE.md.
   "Also recorded against this item", so new information added to an
   item in future is visible the day it is added rather than the day
   someone edits the page for it.
+- The same guarantee now covers the **platform capability cards**, both
+  **backlog** detail views, the **user register** and the **review
+  board** drawer. Four things that were recorded but shown nowhere are
+  now visible: a capability's tags, which earlier document a document
+  replaced, and on an application, whether it was carried forward from
+  an earlier wave and when it was resolved, recorded and last updated.
 - A roadmap item now shows the **milestone** it is targeted at, with its
   date. The column was stored and fetched but rendered nowhere, so the
   first milestone anybody set would have been invisible.

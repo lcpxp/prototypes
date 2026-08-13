@@ -51,12 +51,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/tools.js | 103 | tools.js - The nav's outbound links to external tools, rendered as |
 | assets/js/core/ui.js | 312 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
-| assets/js/pages/appreview-detail.js | 174 | appreview-detail.js - The drawer body for one application. A pure |
+| assets/js/pages/appreview-detail.js | 207 | appreview-detail.js - The drawer body for one application. A pure |
 | assets/js/pages/appreview-findings.js | 145 | appreview-findings.js - The cross-record half of the review model: |
 | assets/js/pages/appreview-model.js | 240 | appreview-model.js - What the board derives from a single row: its |
 | assets/js/pages/appreview-render.js | 292 | appreview-render.js - The board's HTML builders. Data in, string |
 | assets/js/pages/appreview-waves.js | 163 | appreview-waves.js - The wave list for modules/app-review/index.html, |
-| assets/js/pages/backlog.js | 332 | backlog.js - The master work list for modules/backlog/. |
+| assets/js/pages/backlog.js | 383 | backlog.js - The master work list for modules/backlog/. |
 | assets/js/pages/daopay-app.js | 275 | daopay-app.js - The application summary page in the Daopay replica: |
 | assets/js/pages/daopay-data.js | 251 | daopay-data.js - Fixture data and the role switch for the Daopay EU |
 | assets/js/pages/daopay-list.js | 114 | daopay-list.js - The Applications list in the Daopay replica. |
@@ -71,7 +71,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/pci-portal.js | 302 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
 | assets/js/pages/pci-reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
 | assets/js/pages/platform-knowledge.js | 202 | platform-knowledge.js - The parts of the platform knowledge base the |
-| assets/js/pages/platform.js | 299 | platform.js - The platform product-knowledge viewer for |
+| assets/js/pages/platform.js | 327 | platform.js - The platform product-knowledge viewer for |
 | assets/js/pages/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 47 | reference-topics.js - Pure HTML builders for api_topics rows: the |
@@ -85,12 +85,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
 | assets/js/pages/roadmap-views-timeline.js | 213 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
 | assets/js/pages/roadmap-views.js | 413 | roadmap-views.js - Pure HTML builders for the roadmap home |
-| assets/js/pages/roadmap.js | 538 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
-| assets/js/pages/users.js | 180 | users.js - User and access management for modules/users/. |
+| assets/js/pages/roadmap.js | 539 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
+| assets/js/pages/users.js | 207 | users.js - User and access management for modules/users/. |
 | dashboard.html | 65 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 347 | Changelog |
+| docs/CHANGELOG.md | 359 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -110,7 +110,7 @@ document instead of walking the tree or reading whole files.
 | docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
 | docs/plan/20-API-REFERENCE.md | 300 | Aligning API reference 2.0 with the code |
 | docs/plan/30-KNOWLEDGE.md | 238 | Writing verified findings into the system |
-| docs/plan/40-SURFACING.md | 274 | Nothing buried, anywhere in the portal |
+| docs/plan/40-SURFACING.md | 316 | Nothing buried, anywhere in the portal |
 | docs/plan/50-DASHBOARD.md | 237 | Rebuilding the dashboard |
 | docs/plan/60-PORTAL-REVIEW.md | 300 | Portal review, as a feature |
 | docs/plan/70-PROTOTYPE-IDEAS.md | 200 | Prototype ideas and plans |
@@ -119,10 +119,10 @@ document instead of walking the tree or reading whole files.
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
 | index.html | 76 | Sign in - LPio / LaunchPad IO |
 | modules/app-review/index.html | 78 | Application review - LPio / LaunchPad IO |
-| modules/app-review/wave.html | 102 | Wave - Application review - LPio / LaunchPad IO |
-| modules/backlog/index.html | 97 | Backlog - LPio / LaunchPad IO |
+| modules/app-review/wave.html | 103 | Wave - Application review - LPio / LaunchPad IO |
+| modules/backlog/index.html | 98 | Backlog - LPio / LaunchPad IO |
 | modules/integrations/index.html | 67 | Integrations - LPio / LaunchPad IO |
-| modules/platform/index.html | 66 | Platform - LPio / LaunchPad IO |
+| modules/platform/index.html | 67 | Platform - LPio / LaunchPad IO |
 | modules/prototypes/daopay/application.html | 55 | Application summary - PXP replica - LPio |
 | modules/prototypes/daopay/applications.html | 54 | Applications - PXP replica - LPio |
 | modules/prototypes/daopay/daopay-flow.svg | 171 |  |
@@ -137,7 +137,7 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/website-screening/index.html | 54 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 80 | API reference - LPio / LaunchPad IO |
 | modules/roadmap/index.html | 137 | Roadmap - LPio / LaunchPad IO |
-| modules/users/index.html | 59 | Users - LPio / LaunchPad IO |
+| modules/users/index.html | 60 | Users - LPio / LaunchPad IO |
 | package.json | 15 |  |
 | scripts/audit.js | 145 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
@@ -204,7 +204,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/reference-drift.test.js | 128 | tests/checks/reference-drift.test.js - Keeps the API reference from |
-| tests/checks/render-coverage.test.js | 297 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
+| tests/checks/render-coverage.test.js | 334 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | tests/checks/roadmap-intake.test.js | 142 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
@@ -230,12 +230,13 @@ document instead of walking the tree or reading whole files.
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/links.test.js | 200 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
-| tests/unit/platform-knowledge.test.js | 248 | tests/unit/platform-knowledge.test.js - The stores the capability |
-| tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
+| tests/unit/platform-knowledge.test.js | 249 | tests/unit/platform-knowledge.test.js - The stores the capability |
+| tests/unit/platform-render.test.js | 167 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
-| tests/unit/render-fallbacks.test.js | 126 | tests/unit/render-fallbacks.test.js - Two renderers that handled the |
+| tests/unit/render-fallbacks.test.js | 163 | tests/unit/render-fallbacks.test.js - Two renderers that handled the |
 | tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
+| tests/unit/roadmap-detail-export.test.js | 211 | tests/unit/roadmap-detail-export.test.js - Benchmarks for the |
 | tests/unit/roadmap-detail.test.js | 376 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views-custom.test.js | 258 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
 | tests/unit/roadmap-views-exec.test.js | 49 | tests/unit/roadmap-views-exec.test.js - Benchmarks for the Executive |
@@ -342,8 +343,9 @@ document instead of walking the tree or reading whole files.
 | findingsHtml() | assets/js/pages/appreview-detail.js:66 |
 | trailHtml() | assets/js/pages/appreview-detail.js:77 |
 | triggerHtml() | assets/js/pages/appreview-detail.js:104 |
-| metadataHtml() | assets/js/pages/appreview-detail.js:112 |
-| App.appReviewDetail | assets/js/pages/appreview-detail.js:142 |
+| dateRow() | assets/js/pages/appreview-detail.js:131 |
+| metadataHtml() | assets/js/pages/appreview-detail.js:133 |
+| App.appReviewDetail | assets/js/pages/appreview-detail.js:175 |
 | duplicateKeys() | assets/js/pages/appreview-findings.js:27 |
 | duplicateKeyOf() | assets/js/pages/appreview-findings.js:39 |
 | partnerBlockers() | assets/js/pages/appreview-findings.js:47 |
@@ -376,17 +378,20 @@ document instead of walking the tree or reading whole files.
 | wavesHtml() | assets/js/pages/appreview-waves.js:87 |
 | bandOf() | assets/js/pages/backlog.js:34 |
 | fmtDate() | assets/js/pages/backlog.js:40 |
-| kvHtml() | assets/js/pages/backlog.js:44 |
-| badges() | assets/js/pages/backlog.js:53 |
-| openItemModal() | assets/js/pages/backlog.js:59 |
-| openDocumentModal() | assets/js/pages/backlog.js:83 |
-| filteredItems() | assets/js/pages/backlog.js:98 |
-| ordered() | assets/js/pages/backlog.js:114 |
-| toCsvRecord() | assets/js/pages/backlog.js:130 |
-| exportCsv() | assets/js/pages/backlog.js:155 |
-| renderItems() | assets/js/pages/backlog.js:162 |
-| renderDocuments() | assets/js/pages/backlog.js:199 |
-| fillFilters() | assets/js/pages/backlog.js:235 |
+| badges() | assets/js/pages/backlog.js:44 |
+| dateCell() | assets/js/pages/backlog.js:65 |
+| itemFactsHtml() | assets/js/pages/backlog.js:70 |
+| documentFactsHtml() | assets/js/pages/backlog.js:101 |
+| names() | assets/js/pages/backlog.js:126 |
+| openItemModal() | assets/js/pages/backlog.js:128 |
+| openDocumentModal() | assets/js/pages/backlog.js:134 |
+| filteredItems() | assets/js/pages/backlog.js:140 |
+| ordered() | assets/js/pages/backlog.js:156 |
+| toCsvRecord() | assets/js/pages/backlog.js:172 |
+| exportCsv() | assets/js/pages/backlog.js:197 |
+| renderItems() | assets/js/pages/backlog.js:204 |
+| renderDocuments() | assets/js/pages/backlog.js:241 |
+| fillFilters() | assets/js/pages/backlog.js:277 |
 | save() | assets/js/pages/daopay-app.js:31 |
 | stamp() | assets/js/pages/daopay-app.js:33 |
 | pad() | assets/js/pages/daopay-app.js:35 |
@@ -508,13 +513,15 @@ document instead of walking the tree or reading whole files.
 | blockHtml() | assets/js/pages/platform.js:45 |
 | maturityChips() | assets/js/pages/platform.js:49 |
 | capabilityLinks() | assets/js/pages/platform.js:63 |
-| capabilityCard() | assets/js/pages/platform.js:86 |
-| byOrder() | assets/js/pages/platform.js:99 |
-| groupByArea() | assets/js/pages/platform.js:103 |
-| sectionHeading() | assets/js/pages/platform.js:118 |
-| renderUnknown() | assets/js/pages/platform.js:130 |
-| pageHtml() | assets/js/pages/platform.js:147 |
-| rows() | assets/js/pages/platform.js:255 |
+| day() | assets/js/pages/platform.js:92 |
+| capabilityFacts() | assets/js/pages/platform.js:100 |
+| capabilityCard() | assets/js/pages/platform.js:112 |
+| byOrder() | assets/js/pages/platform.js:125 |
+| groupByArea() | assets/js/pages/platform.js:129 |
+| sectionHeading() | assets/js/pages/platform.js:144 |
+| renderUnknown() | assets/js/pages/platform.js:156 |
+| pageHtml() | assets/js/pages/platform.js:173 |
+| rows() | assets/js/pages/platform.js:283 |
 | sanitize() | assets/js/pages/proto-svg.js:22 |
 | fallback() | assets/js/pages/proto-svg.js:51 |
 | openOverlay() | assets/js/pages/proto-svg.js:59 |
@@ -689,10 +696,11 @@ document instead of walking the tree or reading whole files.
 | roleBadge() | assets/js/pages/users.js:28 |
 | roleCell() | assets/js/pages/users.js:34 |
 | toggleCell() | assets/js/pages/users.js:50 |
-| render() | assets/js/pages/users.js:61 |
-| load() | assets/js/pages/users.js:94 |
-| saveToggle() | assets/js/pages/users.js:129 |
-| saveRole() | assets/js/pages/users.js:148 |
+| trailingColumns() | assets/js/pages/users.js:73 |
+| render() | assets/js/pages/users.js:86 |
+| load() | assets/js/pages/users.js:121 |
+| saveToggle() | assets/js/pages/users.js:156 |
+| saveRole() | assets/js/pages/users.js:175 |
 | row() | scripts/audit.js:12 |
 | head() | scripts/audit.js:13 |
 | testTotals() | scripts/audit.js:17 |
@@ -753,14 +761,18 @@ document instead of walking the tree or reading whole files.
 | load() | tests/unit/links.test.js:23 |
 | load() | tests/unit/pci-ixopay.test.js:16 |
 | load() | tests/unit/platform-knowledge.test.js:22 |
-| sample() | tests/unit/platform-knowledge.test.js:43 |
+| sample() | tests/unit/platform-knowledge.test.js:44 |
 | loadView() | tests/unit/platform-render.test.js:15 |
-| sampleData() | tests/unit/platform-render.test.js:32 |
+| sampleData() | tests/unit/platform-render.test.js:33 |
 | loadApp() | tests/unit/reference-render.test.js:13 |
 | loadApp() | tests/unit/registry.test.js:12 |
 | sandboxWith() | tests/unit/render-fallbacks.test.js:27 |
 | familyData() | tests/unit/roadmap-child-order.test.js:20 |
 | order() | tests/unit/roadmap-child-order.test.js:41 |
+| load() | tests/unit/roadmap-detail-export.test.js:17 |
+| sample() | tests/unit/roadmap-detail-export.test.js:39 |
+| ctxOf() | tests/unit/roadmap-detail-export.test.js:65 |
+| plain() | tests/unit/roadmap-detail-export.test.js:66 |
 | load() | tests/unit/roadmap-detail.test.js:16 |
 | sample() | tests/unit/roadmap-detail.test.js:38 |
 | ctxOf() | tests/unit/roadmap-detail.test.js:64 |

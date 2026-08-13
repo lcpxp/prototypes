@@ -414,12 +414,13 @@
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
-        .select("id, parent_id, area_id, category_id, milestone_id, source_document_id, title, summary, details, type, level, " +
-          "assignee, support_assignee, status, horizon, end_horizon, " +
-          "presentation, priority, effort, impact, department, associated_departments, starts_on, ends_on, progress, " +
-          "prd_status, project_status, start_sprint, end_sprint, attributes, " +
-          "sort_order, created_at, updated_at, resolution, resolved_at, previously_completed_at, " +
-          "requested_by, external_ref, tags")
+        // The drawer renders every column it is handed and names the
+        // ones it does not lay out by hand (App.detail.facts), so the
+        // fetch has no reason to be narrower than the table. The
+        // hand-written list this replaces named all 39 columns anyway -
+        // same payload, but a column added tomorrow now arrives instead
+        // of needing this line edited before it could ever be seen.
+        .select("*")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItemPhases)

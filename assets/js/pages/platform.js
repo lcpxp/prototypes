@@ -83,6 +83,32 @@
     return parts.length ? '<p class="cap-links">' + parts.join("") + "</p>" : "";
   }
 
+  // Columns the card renders somewhere other than a fact row: identity
+  // and ordering, the chips, the heading, the summary, the typed blocks
+  // and the resolved source title.
+  var CAP_HIDDEN = ["id", "area_id", "source_document_id", "key", "title",
+    "summary", "kind", "maturity", "verified", "blocks", "sort_order"];
+
+  function day(value) {
+    return value ? App.escape(String(value).slice(0, 10)) : "";
+  }
+
+  // Everything else stored against the capability. `tags` was fetched by
+  // nobody and shown nowhere; more to the point, a column added to
+  // product_capabilities tomorrow lands here rather than nowhere
+  // (docs/plan/40-SURFACING.md).
+  function capabilityFacts(cap) {
+    return App.detail.facts(cap, {
+      fields: [
+        { key: "tags", label: "Tags" },
+        { key: "created_at", label: "Recorded", html: day },
+        { key: "updated_at", label: "Updated", html: day },
+      ],
+      hidden: CAP_HIDDEN,
+      overflowLabel: "Also recorded against this capability",
+    });
+  }
+
   function capabilityCard(cap, ctx) {
     var html = '<article class="card cap-card"' +
       (cap.id ? ' id="capability-' + App.escape(cap.id) + '"' : "") + ">" +
@@ -93,7 +119,7 @@
     html += capabilityLinks(cap, ctx);
     var src = ctx && ctx.docById ? ctx.docById[cap.source_document_id] : null;
     if (src) html += '<p class="cap-source">Source: ' + App.escape(src.title) + "</p>";
-    return html + "</article>";
+    return html + capabilityFacts(cap) + "</article>";
   }
 
   function byOrder(a, b) { return a.sort_order - b.sort_order; }
@@ -226,8 +252,10 @@
         .eq("scope", "product")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.productCapabilities)
-        .select("id, area_id, key, title, summary, kind, maturity, verified, " +
-          "blocks, sort_order, source_document_id")
+        // The card renders everything on the row (App.detail.facts), so
+        // this fetches everything: the usual "select only what you
+        // render" rule and this one agree here.
+        .select("*")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.journeyStages)
         .select("id, stage_no, key, title, actor, description")
