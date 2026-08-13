@@ -241,6 +241,36 @@ test("an anchored destination is actually reachable on its page", () => {
   }
 });
 
+// Surfaces that render a whole row through App.detail.facts. Adopting
+// the contract is what makes a per-column check unnecessary there: the
+// builder shows every key it was not told to hide, so a column added
+// tomorrow appears without anyone editing the page. The risk is
+// regression - somebody replacing it with a hand-written list, which
+// is how the invisible-column problem started.
+const CONTRACT_ADOPTERS = ["assets/js/pages/integrations.js"];
+
+test("a surface that adopted the completeness contract still uses it", () => {
+  for (const file of CONTRACT_ADOPTERS) {
+    const src = read(file);
+    assert.match(src, /App\.detail\.facts\(/,
+      `${file} adopted App.detail.facts and must keep using it. A hand-written ` +
+      "field list renders the columns that existed the day it was written.");
+    assert.doesNotMatch(src, /Object\.keys\(detail\)\.forEach/,
+      `${file} must not walk the detail bag by hand alongside the contract`);
+  }
+});
+
+test("the completeness contract renders what it was not told about", () => {
+  // The guarantee itself, asserted against the source: remove the
+  // overflow branch and every unnamed column silently disappears again.
+  const src = read("assets/js/core/detail.js");
+  assert.match(src, /overflowLabel/,
+    "the overflow section is the contract - without it this is just a " +
+    "field list with extra steps");
+  assert.match(src, /return !seen\[key\] && !isEmpty\(record\[key\]\)/,
+    "everything not named and not empty must reach the output");
+});
+
 test("the block renderer has a fallback, so no kind is dropped", () => {
   const src = read("assets/js/core/blocks.js");
   assert.match(src, /default:\s*\n\s*return unknownBlock\(block\)/,

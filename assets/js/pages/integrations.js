@@ -16,32 +16,41 @@
     return /^https?:\/\//i.test(String(url || "")) ? url : null;
   }
 
+  // Built through App.detail.facts, so the named fields lead and
+  // ANYTHING else on the row still appears. The old version listed five
+  // columns by hand: a column added to the integrations table was
+  // fetched and then silently dropped here, which is the exact failure
+  // docs/plan/40-SURFACING.md exists to remove.
   function modalHtml(row) {
-    var pairs = [
-      ["Category", App.escape(row.category)],
-      ["Purpose", App.escape(row.purpose || "")],
-      ["Direction", App.escape(row.direction)],
-      ["Status", App.statusBadge(row.status)],
-      ["Owner", App.escape(row.owner || "")],
-    ];
-    var detail = row.detail || {};
-    Object.keys(detail).forEach(function (key) {
-      pairs.push([key, App.escape(String(detail[key]))]);
+    return App.detail.facts(row, {
+      fields: [
+        { key: "category", label: "Category" },
+        { key: "purpose", label: "Purpose" },
+        { key: "direction", label: "Direction" },
+        { key: "status", label: "Status",
+          html: function (value) { return App.statusBadge(value); } },
+        { key: "owner", label: "Owner" },
+        { key: "created_at", label: "Recorded", html: function (value) {
+          return value ? App.escape(String(value).slice(0, 10)) : "";
+        } },
+        { key: "updated_at", label: "Updated", html: function (value) {
+          return value ? App.escape(String(value).slice(0, 10)) : "";
+        } },
+        { key: "docs_url", label: "Documentation", html: function (value) {
+          var url = safeUrl(value);
+          return url
+            ? '<a href="' + App.escape(url) + '" target="_blank" rel="noopener">' +
+              App.escape(url) + "</a>"
+            : "";
+        } },
+      ],
+      // The detail bag is flat label/value pairs by design, so its keys
+      // read as rows of their own.
+      flatten: ["detail"],
+      // id is the row's handle and name is the modal's title; neither is
+      // a fact about the integration.
+      hidden: ["id", "name", "sort_order"],
     });
-    var url = safeUrl(row.docs_url);
-    if (url) {
-      pairs.push([
-        "Documentation",
-        '<a href="' + App.escape(url) + '" target="_blank" rel="noopener">' +
-          App.escape(url) + "</a>",
-      ]);
-    }
-    var html = '<dl class="kv">';
-    pairs.forEach(function (pair) {
-      if (!pair[1]) return;
-      html += "<dt>" + App.escape(pair[0]) + "</dt><dd>" + pair[1] + "</dd>";
-    });
-    return html + "</dl>";
   }
 
   function openModal(row) {
@@ -85,7 +94,10 @@
 
     var result = await App.db
       .from(App.registry.tables.integrations)
-      .select("id, name, category, purpose, direction, status, docs_url, owner, detail")
+      // The modal renders everything on the row (App.detail.facts), so
+      // this fetches everything: the usual "select only what you render"
+      // rule and this one agree here. Fourteen rows, no heavy column.
+      .select("*")
       .order("sort_order", { ascending: true })
       .order("name", { ascending: true });
 

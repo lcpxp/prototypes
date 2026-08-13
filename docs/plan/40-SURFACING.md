@@ -57,7 +57,7 @@ richest narrative content in the system is unfindable from the nav.
 
 Three mechanisms, in order of how much they buy.
 
-### 1. A shared detail panel with a known-fields map and an overflow
+### 1. A shared detail panel with a known-fields map and an overflow - LANDED
 
 `assets/js/pages/roadmap-detail.js` already has the right idea in one
 place: `KNOWN_ATTRS` names the attribute keys the drawer renders by
@@ -77,11 +77,25 @@ New shared module `assets/js/core/detail.js`, providing:
 `App.detail.facts` takes the row and an ordered field map. It renders
 the mapped fields with their labels and formatters, then walks every
 remaining key on the row and renders it generically - label from the
-key, value stringified, arrays joined, objects shown as nested pairs.
-An explicit `hidden` list covers the genuinely internal (`id`,
-`sort_order`, foreign keys already rendered as their resolved title).
-Everything not mapped and not hidden **appears**, under a heading that
-says what it is: "Also recorded against this".
+key, arrays joined, nested objects shown as their own pairs rather
+than as `[object Object]`, booleans as Yes and No because `false` is a
+fact and not an absence. An explicit `hidden` list covers the
+genuinely internal (`id`, `sort_order`, a key already rendered as its
+resolved title). Everything not mapped and not hidden **appears**,
+under a heading that says what it is: "Also recorded against this".
+
+Landed 2026-08-13 with thirteen benchmarks, the first of which is the
+ask itself: give the builder a key no spec has ever heard of and
+require it in the output. The first adopter is the integrations detail
+modal, which listed five columns by hand - so a column added to that
+table was fetched and then silently dropped. It now fetches the whole
+row, because a page that renders everything it fetches has no reason
+to fetch less. A gate holds the adoption, and removing the overflow
+branch fails five benchmarks.
+
+Still to adopt: the roadmap drawer, the platform card, the backlog
+document view, users, and the review board. Each is a mechanical
+change now that the contract and its benchmarks exist.
 
 ### 2. One block renderer, unknown kinds render generically - DONE
 

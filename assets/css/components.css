@@ -439,7 +439,8 @@ dialog.modal::backdrop {
 }
 
 /* Key-value detail grid used inside modals */
-.kv {
+.kv,
+.detail-facts {
   display: grid;
   grid-template-columns: max-content 1fr;
   gap: var(--s-2) var(--s-4);
@@ -447,12 +448,30 @@ dialog.modal::backdrop {
   margin: 0;
 }
 
-.kv dt {
+.kv dt,
+.detail-facts dt {
   color: var(--muted);
   font-weight: var(--weight-medium);
 }
 
-.kv dd {
+.kv dd,
+.detail-facts dd {
   margin: 0;
   overflow-wrap: anywhere;
 }
+
+/* Everything the caller's field list did not name (assets/js/core/detail.js).
+   Set apart so a reader can tell curated facts from whatever else the
+   row happens to carry - the alternative was not showing them at all. */
+.detail-overflow-head {
+  margin-block-start: var(--s-3);
+  padding-block-start: var(--s-3);
+  border-block-start: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.detail-pair { display: block; }
+.detail-pair b { color: var(--muted); font-weight: var(--weight-medium); }

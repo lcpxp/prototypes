@@ -11,6 +11,11 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- The **integrations detail** now shows everything recorded against an
+  integration, not just the six fields the view was written around.
+  Anything else on the record appears under "Also recorded against
+  this", so a new fact is a database edit rather than a code change -
+  and nothing can be stored against an integration and stay invisible.
 - A link between two things now shows when it is **proposed** rather
   than confirmed. Links an assistant records stay proposed until you
   confirm them, and until now that distinction was stored but never
