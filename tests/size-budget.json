@@ -114,7 +114,11 @@
     },
     "tests/unit/roadmap-detail.test.js": {
       "hard": 500,
-      "note": "Over soft before this session (340) and grown to 387 by the cross-type link benchmarks. One fixture drives the drawer and the export builders together. Exit plan: the KPI/CSV export cases are the clean seam - they already use their own helpers and would move to roadmap-detail-export.test.js whole."
+      "note": "Over soft: the drawer benchmarks against one fixture. The exit plan was taken on 2026-08-13 - the KPI/CSV export cases moved to roadmap-detail-export.test.js when the completeness benchmarks pushed this past its hard cap. Next seam: the cross-type link cases, which need only the fixture and App.links."
+    },
+    "tests/unit/roadmap-detail-export.test.js": {
+      "hard": 500,
+      "note": "Over soft on arrival: the KPI/CSV export cases split out of roadmap-detail.test.js on 2026-08-13, carrying the shared fixture with them. Exit plan: the CSV cases would split again from the KPI ones, but both read the same fixture, so a third copy of it costs more than it saves."
     }
   }
 }

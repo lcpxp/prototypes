@@ -1,8 +1,11 @@
 // ------------------------------------------------------------------
 // tests/unit/roadmap-detail.test.js - Benchmarks for the item detail
-// drawer and the AI-optimised JSON export (App.roadmapDetail). Loaded in
-// a Node vm alongside ui.js, sprints.js and roadmap-views.js. Sandbox
-// objects are JSON round-tripped into this realm before comparison.
+// drawer (App.roadmapDetail.drawerHtml). Loaded in a Node vm alongside
+// ui.js, detail.js, sprints.js and roadmap-views.js.
+//
+// The KPI/CSV export builders share this fixture and are benchmarked in
+// roadmap-detail-export.test.js; they came out when this file passed
+// its hard line budget.
 // ------------------------------------------------------------------
 "use strict";
 const test = require("node:test");
@@ -22,6 +25,7 @@ function load() {
     "assets/js/core/registry.js",
     "assets/js/core/links.js",
     "assets/js/core/ui.js",
+    "assets/js/core/detail.js",
     "assets/js/core/sprints.js",
     "assets/js/pages/roadmap-views.js",
     "assets/js/pages/roadmap-views-breakdown.js",
@@ -58,58 +62,6 @@ function sample() {
 }
 
 function ctxOf(App, data) { return App.roadmapView.context(data); }
-function plain(o) { return JSON.parse(JSON.stringify(o)); }
-
-test("toKpiItem resolves theme, band and statuses into a lean object", () => {
-  const App = load();
-  const data = sample();
-  const item = plain(App.roadmapDetail.toKpiItem(data.items[0], ctxOf(App, data)));
-  assert.equal(item.theme, "Unity");
-  assert.equal(item.department, "Product and Technology");
-  assert.equal(item.band, "Now to Next");
-  assert.equal(item.status, "In progress");
-  assert.equal(item.prd_status, "Approved");
-  assert.equal(item.project_status, "In progress");
-  assert.equal(item.progress, 45);
-  assert.equal(item.progress_label, "Halfway");
-  assert.equal(item.start_sprint, "26-16");
-  assert.equal(item.end_sprint, "26-18");
-  assert.equal(item.team, "Core");
-  assert.deepEqual(item.region, ["EU", "UK"]);
-  assert.equal(item.prd_link, "https://example.com/prd");
-});
-
-test("toKpiItem sorts phases and omits null fields", () => {
-  const App = load();
-  const data = sample();
-  const item = plain(App.roadmapDetail.toKpiItem(data.items[0], ctxOf(App, data)));
-  assert.equal(item.phases.length, 2);
-  assert.equal(item.phases[0].phase, "Discovery"); // sorted before Build
-  assert.equal(item.phases[1].phase, "Build");
-  assert.equal(item.phases[1].end_tbc, true);
-  assert.ok(!("end" in item.phases[1]), "a null phase end is omitted");
-});
-
-test("toKpiItem on a bare item carries no empty keys", () => {
-  const App = load();
-  const data = sample();
-  const item = plain(App.roadmapDetail.toKpiItem(data.items[1], ctxOf(App, data)));
-  assert.equal(item.title, "Portal tooling");
-  assert.ok(!("team" in item), "unset attributes are omitted");
-  assert.ok(!("phases" in item), "no phases key when there are none");
-  assert.ok(!("start_sprint" in item));
-  assert.ok(!("department" in item), "an unset department is omitted");
-});
-
-test("toKpiRoadmap excludes portal scope and carries sprint context", () => {
-  const App = load();
-  const data = sample();
-  const out = plain(App.roadmapDetail.toKpiRoadmap(data.items, ctxOf(App, data), "2026-07-17"));
-  assert.equal(out.count, 1);
-  assert.equal(out.items[0].id, "i2");
-  assert.equal(out.sprint_context.anchor, "2025-12-22");
-  assert.equal(out.sprint_context.current_sprint, "26-15");
-});
 
 test("drawerHtml renders the facts, phases and an export button", () => {
   const App = load();
@@ -263,6 +215,54 @@ test("a link to a type with no page renders flat, not as a dead link", () => {
   assert.doesNotMatch(html, /href="[^"]*note-n1"/, "no anchor is invented for it");
 });
 
+test("a column no field list knows about still reaches the drawer", () => {
+  // The ask, on the surface it was asked about: "no matter what new
+  // information is added to a roadmap item in the future, it will
+  // always be showing all the information available". Add a column to
+  // work_items and it renders here with no edit to roadmap-detail.js.
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  item.risk_rating = "amber";
+  item.owner_email = "ops@example.com";
+  const html = App.roadmapDetail.drawerHtml(item, ctxOf(App, data));
+  assert.match(html, /Also recorded against this item/,
+    "and it is grouped, so a reader can tell it from a curated fact");
+  assert.match(html, /<dt>Risk rating<\/dt><dd>amber<\/dd>/);
+  assert.match(html, /<dt>Owner email<\/dt><dd>ops@example\.com<\/dd>/);
+});
+
+test("a column the drawer already renders is not repeated in the overflow", () => {
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  const html = App.roadmapDetail.drawerHtml(item, ctxOf(App, data));
+  assert.doesNotMatch(html, /Also recorded against this item/,
+    "a fully-mapped row overflows nothing");
+  // The pairs one row speaks for: an end date belongs to Dates, an end
+  // horizon to Band, a support assignee to Assignee. Declaring them as
+  // `also` is what stops each turning up twice.
+  for (const label of ["Ends on", "End horizon", "End sprint", "Support assignee"]) {
+    assert.doesNotMatch(html, new RegExp("<dt>" + label + "</dt>"),
+      `${label} is folded into another row, not repeated`);
+  }
+  assert.match(html, /<dt>Dates<\/dt><dd>2026-07-20 to 2026-09-01<\/dd>/,
+    "and the row it folds into still shows both ends");
+});
+
+test("the drawer's fact rows keep their declared order", () => {
+  const App = load();
+  const data = sample();
+  const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
+  const order = ["Theme", "Department", "Band", "Status", "Progress", "Dates", "Sprints"];
+  let at = -1;
+  for (const label of order) {
+    const next = html.indexOf("<dt>" + label + "</dt>");
+    assert.ok(next > at, `${label} must follow the row before it`);
+    at = next;
+  }
+});
+
 test("a set milestone renders, with its date where it has one", () => {
   // roadmap_milestones holds no rows today and is kept deliberately
   // (docs/plan/00-PROGRAMME.md). Keeping it makes milestone_id a live
@@ -329,54 +329,6 @@ test("drawerHtml tags a workstream and stays lean on a bare item", () => {
   assert.doesNotMatch(ws, /Resolution/, "no resolution section without one");
 });
 
-test("toKpiItem and toCsvRoadmap carry the extended context", () => {
-  const App = load();
-  const data = sample();
-  const item = data.items[0];
-  item.type = "feature";
-  item.effort = "large";
-  item.impact = "high";
-  item.details = "Context";
-  item.resolution = "Kept";
-  item.requested_by = "COO";
-  item.external_ref = "DEVOPS-123";
-  item.tags = ["q3"];
-  item.attributes.legacy_priority_tags = ["P1"];
-  item.notes = [{ kind: "decision", body: "Why", created_at: "2026-07-18T09:00:00Z" }];
-  const ctx = ctxOf(App, data);
-  const kpi = plain(App.roadmapDetail.toKpiItem(item, ctx));
-  assert.equal(kpi.type, "feature");
-  assert.equal(kpi.effort, "large");
-  assert.equal(kpi.impact, "high");
-  assert.equal(kpi.priority, 20);
-  assert.equal(kpi.details, "Context");
-  assert.equal(kpi.resolution, "Kept");
-  assert.equal(kpi.requested_by, "COO");
-  assert.deepEqual(kpi.attributes, { legacy_priority_tags: ["P1"] }, "unknown attrs survive in the export");
-  assert.deepEqual(kpi.notes, [{ kind: "decision", date: "2026-07-18", body: "Why" }]);
-  const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctx);
-  const lines = csv.trim().split("\r\n");
-  assert.match(lines[0], /,level,type,effort,impact,/, "the CSV names the new columns");
-  assert.match(lines[0], /,related_to,requested_by,source_document_id,external_ref,resolution,details,/);
-  assert.match(lines[1], /DEVOPS-123/);
-});
-
-test("the exports carry previously_completed_at as real delivered state", () => {
-  const App = load();
-  const data = sample();
-  const item = data.items[0];
-  item.status = "done";
-  item.previously_completed_at = "2026-08-10T00:00:00Z";
-  const ctx = ctxOf(App, data);
-  const kpi = plain(App.roadmapDetail.toKpiItem(item, ctx));
-  assert.equal(kpi.previously_completed_at, "2026-08-10T00:00:00Z",
-    "the JSON export carries the latch");
-  const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctx);
-  const lines = csv.trim().split("\r\n");
-  assert.match(lines[0], /,previously_completed_at\b/, "the CSV names the latch column");
-  assert.match(lines[1], /2026-08-10T00:00:00Z/, "the CSV row carries the value");
-});
-
 test("drawerHtml escapes hostile content", () => {
   const App = load();
   const data = sample();
@@ -421,49 +373,3 @@ test("drawerHtml splits a workstream's work items from its deliverables", () => 
   assert.doesNotMatch(itemUl, /Spec doc/, "the deliverable is not in the work-items list");
 });
 
-test("toCsvRoadmap emits a row per product item with resolved labels and attribute columns", () => {
-  const App = load();
-  const data = sample();
-  const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctxOf(App, data));
-  const lines = csv.trim().split("\r\n");
-  assert.match(lines[0], /^id,parent_id,parent_title,title,theme,area,department,business_areas,assignee,support_assignee,band,/);
-  // Attributes are spread as attr_<key> columns, derived dynamically so a
-  // new KPI field would appear with no code change.
-  assert.match(lines[0], /attr_team/);
-  assert.match(lines[0], /attr_pnl_vertical/);
-  // Only i2 is product scope (i6 is portal), so one data row.
-  assert.equal(lines.length, 2);
-  assert.match(lines[1], /Unity integration/);
-  assert.match(lines[1], /Product and Technology/);
-  assert.match(lines[1], /Now to Next/);
-  assert.equal(csv.endsWith("\r\n"), true);
-});
-
-test("toCsvRoadmap includes sub-items as their own rows with parent context and roll-up", () => {
-  const App = load();
-  const data = sample();
-  data.items.push({ id: "i2c", parent_id: "i2", area_id: "a3", category_id: "c2",
-    title: "Settlement", status: "planned", horizon: "now", presentation: "sequenced",
-    priority: 30, sort_order: 30, attributes: {} });
-  const csv = App.roadmapDetail.toCsvRoadmap(data.items, ctxOf(App, data));
-  const lines = csv.trim().split("\r\n");
-  assert.equal(lines.length, 3, "parent and child are both rows");
-  const childLine = lines.find((l) => /Settlement/.test(l));
-  assert.match(childLine, /^i2c,i2,Unity integration,Settlement,/);
-  // Parent reports the sub-step roll-up: 1 total, 0 done (child is planned).
-  const parentLine = lines.find((l) => /,Unity integration,/.test(l));
-  assert.match(parentLine, /,Halfway,1,0,/);
-});
-
-test("csvFromRows unions keys and escapes RFC-4180 special characters", () => {
-  const App = load();
-  const csv = App.csvFromRows([
-    { a: "plain", b: "has, comma" },
-    { a: 'quote "x"', c: "new\nline" },
-  ], ["a"]);
-  const lines = csv.split("\r\n");
-  assert.equal(lines[0], "a,b,c", "preferred column leads, union follows alphabetically");
-  assert.equal(lines[1], 'plain,"has, comma",');
-  assert.equal(lines[2], '"quote ""x""",,"new\nline"');
-  assert.equal(csv.endsWith("\r\n"), true);
-});

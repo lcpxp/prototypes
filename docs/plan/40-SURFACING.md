@@ -42,8 +42,9 @@ six more are anchored to a document; the backlog page reads documents
 but renders no notes against them.
 
 **Dead surfaces sit beside live ones.** `roadmap_milestones` has zero
-rows and `work_items.milestone_id` is never rendered in the drawer at
-all. `work_item_phases` has zero rows and gets a whole drawer section.
+rows and `work_items.milestone_id` was never rendered in the drawer at
+all - FIXED 2026-08-13, once the table was kept rather than dropped.
+`work_item_phases` has zero rows and gets a whole drawer section.
 `work_item_dependencies` is described in docs/ARCHITECTURE.md and does
 not exist.
 
@@ -93,9 +94,21 @@ row, because a page that renders everything it fetches has no reason
 to fetch less. A gate holds the adoption, and removing the overflow
 branch fails five benchmarks.
 
-Still to adopt: the roadmap drawer, the platform card, the backlog
-document view, users, and the review board. Each is a mechanical
-change now that the contract and its benchmarks exist.
+The roadmap drawer followed on the same day - the surface the ask names
+directly. It keeps its own row layout (a bordered two-column grid per
+row), which it could not have done if adopting the contract meant
+adopting `.detail-facts`; so the builder took a `markup` skin, and two
+further options the drawer needed and every later adopter will:
+`also`, naming the further columns one row already speaks for (Dates
+renders `starts_on` AND `ends_on`, so `ends_on` must not also appear
+in the overflow), and `multi`, for a field that emits zero or many
+rows rather than one, which is what typed links are. Its 36 fact rows
+are now a declared field list, and a column added to `work_items`
+tomorrow renders with no edit to `roadmap-detail.js`.
+
+Still to adopt: the platform card, the backlog document view, users,
+and the review board. Each is a mechanical change now that the
+contract and its benchmarks exist.
 
 ### 2. One block renderer, unknown kinds render generically - DONE
 
@@ -217,7 +230,7 @@ Links to one render as name plus type, flat.
 
 | Surface | Change |
 |---|---|
-| Roadmap drawer | Adopt `App.detail`; entity-aware links; overflow row; blocks; inbound references; drop the phases section with its table |
+| Roadmap drawer | DONE for facts, links and the overflow. Left: typed blocks, inbound references |
 | Backlog | Notes against documents; document detail as a panel, not a two-field modal; adopt the same panel |
 | Platform | Cross-type links; adopt the panel for a capability; keep the Coverage panel, add "links to nothing" to it |
 | Reference | Adopt `App.blocks`; endpoint panel gains typed links once `endpoint` is a linkable type; show spec-level provenance and coverage |

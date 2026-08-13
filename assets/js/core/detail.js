@@ -14,11 +14,20 @@
 // appears and the exception - `hidden` - has to be written down.
 //
 // App.detail.facts(row, spec):
-//   fields   ordered known fields, each {key, label, html?}
+//   fields   ordered known fields, each {key, label, html?, also?, multi?}
+//            `also` names further columns this one row already renders
+//            (Dates renders starts_on AND ends_on), which is a
+//            different thing from hiding them and reads as one.
+//            `multi` means the builder returns whole rows itself -
+//            typed links are zero or many rows, not one.
 //   flatten  object-valued keys whose own keys become their own rows
 //   hidden   keys deliberately not shown (ids, sort orders, keys
 //            already rendered as a resolved title elsewhere)
 //   overflowLabel  heading for everything the spec did not name
+//   markup   optional {row, head, wrap} so a surface with its own
+//            layout adopts the contract without adopting its CSS.
+//            Without this the drawer could only have the guarantee by
+//            being restyled, which is a reason not to take it.
 // ------------------------------------------------------------------
 
 (function () {
@@ -58,13 +67,24 @@
     return esc(value);
   }
 
-  function row(label, html) {
-    return html ? "<dt>" + esc(label) + "</dt><dd>" + html + "</dd>" : "";
-  }
+  // The default skin: a flat definition list. A caller with its own
+  // row layout passes spec.markup instead; the contract is the walk,
+  // not the tags it emits.
+  var DEFAULT_MARKUP = {
+    row: function (label, html) {
+      return html ? "<dt>" + esc(label) + "</dt><dd>" + html + "</dd>" : "";
+    },
+    head: function (label) {
+      return '<dt class="detail-overflow-head" aria-hidden="true"></dt>' +
+        '<dd class="detail-overflow-head">' + esc(label) + "</dd>";
+    },
+    wrap: function (inner) { return '<dl class="detail-facts">' + inner + "</dl>"; },
+  };
 
   App.detail.labelOf = labelOf;
   App.detail.valueHtml = valueHtml;
   App.detail.isEmpty = isEmpty;
+  App.detail.markup = DEFAULT_MARKUP;
 
   App.detail.facts = function (record, spec) {
     record = record || {};
@@ -72,6 +92,10 @@
     var fields = spec.fields || [];
     var flatten = spec.flatten || [];
     var hidden = spec.hidden || [];
+    var skin = spec.markup || {};
+    var row = skin.row || DEFAULT_MARKUP.row;
+    var head = skin.head || DEFAULT_MARKUP.head;
+    var wrap = skin.wrap || DEFAULT_MARKUP.wrap;
     var seen = {};
     var html = "";
 
@@ -79,10 +103,11 @@
     //    `html` builder wins; otherwise the value renders generically.
     fields.forEach(function (field) {
       seen[field.key] = true;
+      (field.also || []).forEach(function (key) { seen[key] = true; });
       var value = record[field.key];
       var rendered = field.html ? field.html(value, record) : valueHtml(value);
       if (field.html ? !rendered : isEmpty(value)) return;
-      html += row(field.label || labelOf(field.key), rendered);
+      html += field.multi ? rendered : row(field.label || labelOf(field.key), rendered);
     });
 
     // 2. Objects the caller asked to lift, so a bag of label/value
@@ -109,11 +134,8 @@
     }).join("");
 
     if (overflow) {
-      html += '<dt class="detail-overflow-head" aria-hidden="true"></dt>' +
-        '<dd class="detail-overflow-head">' +
-        esc(spec.overflowLabel || "Also recorded against this") + "</dd>" +
-        overflow;
+      html += head(spec.overflowLabel || "Also recorded against this") + overflow;
     }
-    return html ? '<dl class="detail-facts">' + html + "</dl>" : "";
+    return html ? wrap(html) : "";
   };
 })();

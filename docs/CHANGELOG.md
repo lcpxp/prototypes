@@ -11,6 +11,12 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Opening a **roadmap item or workstream** now shows everything stored
+  against it, including values no part of the page was written for.
+  Anything the drawer does not have a designed row for appears under
+  "Also recorded against this item", so new information added to an
+  item in future is visible the day it is added rather than the day
+  someone edits the page for it.
 - A roadmap item now shows the **milestone** it is targeted at, with its
   date. The column was stored and fetched but rendered nowhere, so the
   first milestone anybody set would have been invisible.

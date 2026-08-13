@@ -224,6 +224,18 @@
 }
 .rmd-row dt { color: var(--faint); font-size: var(--text-sm); }
 .rmd-row dd { margin: 0; color: var(--ink); font-size: var(--text-sm); }
+/* The heading over everything the drawer's field list did not name
+   (assets/js/core/detail.js). Set apart so a reader can tell curated
+   facts from whatever else the row happens to carry - the alternative
+   was not showing them at all. */
+.rmd-row--overflow { padding-block-start: var(--s-4); border-top-color: transparent; }
+.rmd-row--overflow dd {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
 /* An in-drawer link (a related item) reads as a link and swaps the drawer
    to that item on click. */
 .rmd-link { color: var(--accent); text-decoration: underline; cursor: pointer; }

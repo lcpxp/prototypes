@@ -137,6 +137,60 @@ test("an empty row renders nothing at all, not an empty shell", () => {
   assert.equal(App.detail.facts({ a: "" }, {}), "");
 });
 
+test("`also` accounts for the columns one row already speaks for", () => {
+  // "Dates" renders starts_on AND ends_on. Without `also`, ends_on is a
+  // key nothing named, so it would turn up a second time under the
+  // overflow heading - the contract working against the reader.
+  const html = App.detail.facts(
+    { starts_on: "2026-01-01", ends_on: "2026-03-01", spare: "kept" },
+    { fields: [{ key: "starts_on", label: "Dates", also: ["ends_on"],
+      html: (v, r) => v + " to " + r.ends_on }] });
+  assert.match(html, /<dt>Dates<\/dt><dd>2026-01-01 to 2026-03-01<\/dd>/);
+  assert.doesNotMatch(html, /<dt>Ends on<\/dt>/, "the folded column is accounted for");
+  assert.match(html, /<dt>Spare<\/dt>/, "and everything else still overflows");
+});
+
+test("a `multi` field returns rows itself, rather than one row", () => {
+  // Typed relationships are zero or many rows depending on the graph,
+  // so the builder emits them whole. Wrapping that in another row would
+  // put a definition list inside a definition term.
+  const html = App.detail.facts(
+    { id: "x" },
+    { fields: [
+      { key: "_links", multi: true, html: () => "<dt>Part of</dt><dd>A</dd><dt>Blocks</dt><dd>B</dd>" },
+      { key: "_none", multi: true, html: () => "" },
+    ], hidden: ["id"] });
+  assert.match(html, /<dt>Part of<\/dt><dd>A<\/dd><dt>Blocks<\/dt><dd>B<\/dd>/);
+  assert.doesNotMatch(html, /<dt>_links<\/dt>|<dt>Links<\/dt>/,
+    "the field key never becomes a label of its own");
+  assert.doesNotMatch(html, /<dt>None<\/dt>/, "a multi field that emits nothing adds nothing");
+});
+
+test("a caller may bring its own markup and still get the guarantee", () => {
+  // The roadmap drawer has its own row layout. Without this it could
+  // only have the completeness guarantee by being restyled, which is a
+  // reason to decline the guarantee.
+  const html = App.detail.facts(
+    { name: "X", surprise: "kept" },
+    { fields: [{ key: "name" }], overflowLabel: "Also here", markup: {
+      row: (label, inner) => '<div class="r"><dt>' + label + "</dt><dd>" + inner + "</dd></div>",
+      head: (label) => '<div class="h">' + label + "</div>",
+      wrap: (inner) => '<dl class="mine">' + inner + "</dl>",
+    } });
+  assert.match(html, /^<dl class="mine">/);
+  assert.match(html, /<div class="r"><dt>Name<\/dt><dd>X<\/dd><\/div>/);
+  assert.match(html, /<div class="h">Also here<\/div>/);
+  assert.match(html, /<div class="r"><dt>Surprise<\/dt><dd>kept<\/dd><\/div>/,
+    "the overflow uses the caller's row too, not the default one");
+  assert.doesNotMatch(html, /detail-facts|detail-overflow-head/);
+});
+
+test("a partial markup falls back to the default for what it omits", () => {
+  const html = App.detail.facts({ a: "1" },
+    { fields: [{ key: "a" }], markup: { wrap: (i) => "<x>" + i + "</x>" } });
+  assert.equal(html, "<x><dt>A</dt><dd>1</dd></x>");
+});
+
 test("overflow is sorted, so the same row reads the same twice", () => {
   const html = App.detail.facts({ zebra: "z", apple: "a", mango: "m" }, {});
   assert.ok(html.indexOf("Apple") < html.indexOf("Mango"));

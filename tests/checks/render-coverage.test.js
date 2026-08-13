@@ -247,7 +247,10 @@ test("an anchored destination is actually reachable on its page", () => {
 // tomorrow appears without anyone editing the page. The risk is
 // regression - somebody replacing it with a hand-written list, which
 // is how the invisible-column problem started.
-const CONTRACT_ADOPTERS = ["assets/js/pages/integrations.js"];
+const CONTRACT_ADOPTERS = [
+  "assets/js/pages/integrations.js",
+  "assets/js/pages/roadmap-detail.js",
+];
 
 test("a surface that adopted the completeness contract still uses it", () => {
   for (const file of CONTRACT_ADOPTERS) {

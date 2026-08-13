@@ -30,7 +30,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
 | assets/css/pxp-sim.css | 191 | pxp-sim.css - The simulation layer for the Daopay replica: the toast |
 | assets/css/pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype |
-| assets/css/roadmap-detail.css | 335 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
+| assets/css/roadmap-detail.css | 347 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 422 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
 | assets/css/tokens.css | 444 | tokens.css - Design tokens for the LPio hub. |
@@ -38,7 +38,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/blocks.js | 139 | blocks.js - The typed-block renderer, in one place. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
 | assets/js/core/daopay-admin-tool.js | 182 | daopay-admin-tool.js - A nav icon that opens two browser-console |
-| assets/js/core/detail.js | 120 | detail.js - The completeness contract for rendering a row. |
+| assets/js/core/detail.js | 142 | detail.js - The completeness contract for rendering a row. |
 | assets/js/core/drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
 | assets/js/core/links.js | 144 | links.js - The typed knowledge graph, resolved for rendering. |
@@ -77,7 +77,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-topics.js | 47 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail-export.js | 223 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
-| assets/js/pages/roadmap-detail.js | 391 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
+| assets/js/pages/roadmap-detail.js | 461 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-drawer.js | 76 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
 | assets/js/pages/roadmap-export.js | 76 | roadmap-export.js - The roadmap home's export dropdown wiring and the |
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
@@ -85,12 +85,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
 | assets/js/pages/roadmap-views-timeline.js | 213 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
 | assets/js/pages/roadmap-views.js | 413 | roadmap-views.js - Pure HTML builders for the roadmap home |
-| assets/js/pages/roadmap.js | 529 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
+| assets/js/pages/roadmap.js | 538 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 180 | users.js - User and access management for modules/users/. |
 | dashboard.html | 65 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 344 | Changelog |
+| docs/CHANGELOG.md | 347 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -136,7 +136,7 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/pci/reports.html | 81 | Compliance reporting - PXP replica - LPio |
 | modules/prototypes/website-screening/index.html | 54 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 80 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 136 | Roadmap - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 137 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 59 | Users - LPio / LaunchPad IO |
 | package.json | 15 |  |
 | scripts/audit.js | 145 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
@@ -204,7 +204,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/reference-drift.test.js | 128 | tests/checks/reference-drift.test.js - Keeps the API reference from |
-| tests/checks/render-coverage.test.js | 294 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
+| tests/checks/render-coverage.test.js | 297 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | tests/checks/roadmap-intake.test.js | 142 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
@@ -220,13 +220,13 @@ document instead of walking the tree or reading whole files.
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 27 |  |
-| tests/size-budget.json | 121 |  |
+| tests/size-budget.json | 125 |  |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
 | tests/unit/blocks.test.js | 119 | tests/unit/blocks.test.js - The typed-block renderer. |
 | tests/unit/coverage-reconcile.test.js | 111 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
-| tests/unit/detail.test.js | 145 | tests/unit/detail.test.js - The completeness contract. |
+| tests/unit/detail.test.js | 199 | tests/unit/detail.test.js - The completeness contract. |
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/links.test.js | 200 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
@@ -236,7 +236,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/render-fallbacks.test.js | 126 | tests/unit/render-fallbacks.test.js - Two renderers that handled the |
 | tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
-| tests/unit/roadmap-detail.test.js | 415 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
+| tests/unit/roadmap-detail.test.js | 376 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views-custom.test.js | 258 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
 | tests/unit/roadmap-views-exec.test.js | 49 | tests/unit/roadmap-views-exec.test.js - Benchmarks for the Executive |
 | tests/unit/roadmap-views.test.js | 475 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
@@ -259,11 +259,10 @@ document instead of walking the tree or reading whole files.
 | copy() | assets/js/core/daopay-admin-tool.js:89 |
 | fallback() | assets/js/core/daopay-admin-tool.js:102 |
 | buildDialog() | assets/js/core/daopay-admin-tool.js:114 |
-| esc() | assets/js/core/detail.js:30 |
-| labelOf() | assets/js/core/detail.js:34 |
-| isEmpty() | assets/js/core/detail.js:39 |
-| valueHtml() | assets/js/core/detail.js:49 |
-| row() | assets/js/core/detail.js:61 |
+| esc() | assets/js/core/detail.js:39 |
+| labelOf() | assets/js/core/detail.js:43 |
+| isEmpty() | assets/js/core/detail.js:48 |
+| valueHtml() | assets/js/core/detail.js:58 |
 | App.drawer | assets/js/core/drawer.js:35 |
 | isOpen() | assets/js/core/drawer.js:45 |
 | focusable() | assets/js/core/drawer.js:49 |
@@ -566,16 +565,19 @@ document instead of walking the tree or reading whole files.
 | assigneeText() | assets/js/pages/roadmap-detail.js:116 |
 | priorityBand() | assets/js/pages/roadmap-detail.js:132 |
 | priorityLabel() | assets/js/pages/roadmap-detail.js:138 |
-| progressRow() | assets/js/pages/roadmap-detail.js:148 |
+| progressCell() | assets/js/pages/roadmap-detail.js:148 |
 | relatedRows() | assets/js/pages/roadmap-detail.js:173 |
-| sourceText() | assets/js/pages/roadmap-detail.js:211 |
-| parseDetails() | assets/js/pages/roadmap-detail.js:226 |
-| detailsHtml() | assets/js/pages/roadmap-detail.js:242 |
-| extraAttrRows() | assets/js/pages/roadmap-detail.js:253 |
-| noteRow() | assets/js/pages/roadmap-detail.js:267 |
-| notesHtml() | assets/js/pages/roadmap-detail.js:278 |
-| phasesHtml() | assets/js/pages/roadmap-detail.js:285 |
-| drawerHtml() | assets/js/pages/roadmap-detail.js:299 |
+| milestoneText() | assets/js/pages/roadmap-detail.js:213 |
+| sourceText() | assets/js/pages/roadmap-detail.js:223 |
+| parseDetails() | assets/js/pages/roadmap-detail.js:238 |
+| detailsHtml() | assets/js/pages/roadmap-detail.js:254 |
+| extraAttrRows() | assets/js/pages/roadmap-detail.js:265 |
+| noteRow() | assets/js/pages/roadmap-detail.js:279 |
+| notesHtml() | assets/js/pages/roadmap-detail.js:290 |
+| phasesHtml() | assets/js/pages/roadmap-detail.js:297 |
+| factFields() | assets/js/pages/roadmap-detail.js:340 |
+| factsHtml() | assets/js/pages/roadmap-detail.js:400 |
+| drawerHtml() | assets/js/pages/roadmap-detail.js:409 |
 | App.roadmapDrawer | assets/js/pages/roadmap-drawer.js:19 |
 | setItemParam() | assets/js/pages/roadmap-drawer.js:29 |
 | openDrawer() | assets/js/pages/roadmap-drawer.js:37 |
@@ -759,10 +761,9 @@ document instead of walking the tree or reading whole files.
 | sandboxWith() | tests/unit/render-fallbacks.test.js:27 |
 | familyData() | tests/unit/roadmap-child-order.test.js:20 |
 | order() | tests/unit/roadmap-child-order.test.js:41 |
-| load() | tests/unit/roadmap-detail.test.js:13 |
-| sample() | tests/unit/roadmap-detail.test.js:34 |
-| ctxOf() | tests/unit/roadmap-detail.test.js:60 |
-| plain() | tests/unit/roadmap-detail.test.js:61 |
+| load() | tests/unit/roadmap-detail.test.js:16 |
+| sample() | tests/unit/roadmap-detail.test.js:38 |
+| ctxOf() | tests/unit/roadmap-detail.test.js:64 |
 | familyData() | tests/unit/roadmap-views-custom.test.js:84 |
 | count() | tests/unit/roadmap-views.test.js:23 |
 | load() | tests/unit/search.test.js:15 |

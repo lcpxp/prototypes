@@ -145,15 +145,15 @@
   // fill width is a runtime value, so it is spliced in (never a static
   // inline style). Delivered work reads complete regardless of the stored
   // number.
-  function progressRow(item) {
+  function progressCell(item) {
     var prog = App.roadmapView.progressOf(item);
     var pct = item.status === "done" ? 100 : prog.pct;
     var label = item.status === "done" ? "Complete"
       : (pct > 0 ? pct + "% complete" : "Not started");
-    return '<div class="rmd-row"><dt>Progress</dt><dd class="rmd-progress-cell">' +
+    return '<span class="rmd-progress-cell">' +
       '<span class="rmd-progress"><span class="rmd-progress-fill" style="width:' +
       pct + '%"></span></span>' +
-      '<span class="rmd-progress-num">' + esc(label) + "</span></dd></div>";
+      '<span class="rmd-progress-num">' + esc(label) + "</span></span>";
   }
 
   // Typed relationships, one drawer row per reading ("Part of", then
@@ -308,52 +308,109 @@
     return '<section class="rmd-section"><h3>Phases</h3>' + rows + "</section>";
   }
 
+  // Columns the drawer accounts for somewhere OTHER than a fact row, so
+  // the overflow does not repeat them: identity and ordering scaffolding,
+  // the title and summary in the head, details and resolution as prose
+  // sections, notes and phases as their own sections, and the two
+  // attribute-bag keys extraAttrRows already walks.
+  // resolved_at is here because it renders as the date beside the
+  // Resolution heading, not as a row.
+  var FACTS_HIDDEN = ["id", "sort_order", "title", "summary", "details",
+    "resolution", "resolved_at", "notes", "phases", "attributes",
+    "children", "deliverables"];
+
+  // The drawer keeps its own row layout (a bordered two-column grid per
+  // row), so it passes that skin to the shared builder rather than
+  // adopting .detail-facts. What it gets in return is the guarantee: a
+  // column added to work_items tomorrow renders here with no edit to
+  // this file.
+  var FACTS_MARKUP = {
+    row: row,
+    head: function (label) {
+      return '<div class="rmd-row rmd-row--overflow"><dt aria-hidden="true"></dt>' +
+        "<dd>" + esc(label) + "</dd></div>";
+    },
+    wrap: function (inner) { return '<dl class="rmd-facts">' + inner + "</dl>"; },
+  };
+
+  // Every fact row, in reading order. A field with an `html` builder
+  // decides its own content and may return "" to omit itself; `also`
+  // names the further columns that row already speaks for, so an end
+  // date folded into "Dates" is accounted for rather than repeated.
+  function factFields(item, ctx) {
+    var V = App.roadmapView;
+    var a = attrs(item);
+    var region = Array.isArray(a.region) ? a.region.map(esc).join(", ") : esc(a.region || "");
+    return [
+      { key: "category_id", label: "Theme", html: function () { return esc(V.themeLabel(item, ctx)); } },
+      { key: "area_id", label: "Area", html: function () { return esc(V.areaTitleOf(item, ctx)); } },
+      { key: "parent_id", label: "Workstream", html: function () { return esc(titleOf(item.parent_id, ctx)); } },
+      { key: "_links", multi: true, html: function () { return relatedRows(item, ctx); } },
+      { key: "department", label: "Department", html: function () { return esc(App.departmentLabel(item.department)); } },
+      { key: "associated_departments", label: "Business areas",
+        html: function () { return businessAreaLabels(item).map(esc).join(", "); } },
+      { key: "assignee", label: "Assignee", also: ["support_assignee"],
+        html: function () { return assigneeText(item, ctx); } },
+      { key: "horizon", label: "Band", also: ["end_horizon"],
+        html: function () { return esc(bandText(item)); } },
+      { key: "status", label: "Status", html: function () { return esc(STATUS[item.status] || item.status); } },
+      { key: "level", label: "Level",
+        html: function () { return item.level && item.level !== "workstream" ? esc(cap(item.level)) : ""; } },
+      { key: "presentation", label: "Presentation", html: function () { return esc(V.presentationLabel(item.presentation)); } },
+      { key: "type", label: "Type", html: function () { return esc(cap(item.type)); } },
+      { key: "effort", label: "Effort", html: function () { return esc(cap(item.effort)); } },
+      { key: "impact", label: "Impact", html: function () { return esc(cap(item.impact)); } },
+      { key: "priority", label: "Priority", html: function () { return esc(priorityLabel(item)); } },
+      { key: "prd_status", label: "PRD status", html: function () { return esc(PRD_STATUS[item.prd_status] || ""); } },
+      { key: "project_status", label: "Project status", html: function () { return esc(PROJECT_STATUS[item.project_status] || ""); } },
+      { key: "progress", label: "Progress", html: function () { return progressCell(item); } },
+      { key: "milestone_id", label: "Milestone", html: function () { return milestoneText(item, ctx); } },
+      { key: "starts_on", label: "Dates", also: ["ends_on"],
+        html: function () { return esc(dateRange(item.starts_on, item.ends_on)); } },
+      { key: "start_sprint", label: "Sprints", also: ["end_sprint"], html: function () {
+        return item.end_sprint && item.end_sprint !== item.start_sprint
+          ? esc((item.start_sprint || "?") + " to " + item.end_sprint)
+          : esc(item.start_sprint ? sprintRange(item.start_sprint) : "");
+      } },
+      { key: "_vertical", label: "Vertical", html: function () { return esc(a.pnl_vertical || ""); } },
+      { key: "_team", label: "Team", html: function () { return esc(a.team || ""); } },
+      { key: "_region", label: "Region", html: function () { return region; } },
+      { key: "_customer", label: "Customer", html: function () { return esc(a.customer || ""); } },
+      { key: "_resources", label: "Resources", html: function () { return a.resources != null ? esc(String(a.resources)) : ""; } },
+      { key: "_cost", label: "Cost", html: function () { return a.cost != null ? esc(String(a.cost)) : ""; } },
+      { key: "_attrs", multi: true, html: function () { return extraAttrRows(a); } },
+      { key: "requested_by", label: "Requested by", html: function () { return esc(item.requested_by || ""); } },
+      { key: "source_document_id", label: "Source", html: function () { return sourceText(item, ctx); } },
+      { key: "external_ref", label: "External ref", html: function () { return esc(item.external_ref || ""); } },
+      { key: "tags", label: "Tags", html: function () { return (item.tags || []).map(esc).join(", "); } },
+      { key: "created_at", label: "Created", html: function () { return esc(day(item.created_at)); } },
+      { key: "updated_at", label: "Updated", html: function () { return esc(day(item.updated_at)); } },
+      // The latch that pins a delivery to Previously completed (work_items.
+      // previously_completed_at). Shown only when set, so nothing is
+      // stored-but-invisible; clearing the column removes the row.
+      { key: "previously_completed_at", label: "Moved to Previously completed",
+        html: function () { return esc(day(item.previously_completed_at)); } },
+    ];
+  }
+
+  // The whole fact list through the shared builder: the declared rows in
+  // the declared order, then every column nothing above spoke for. That
+  // last part is the guarantee - a column added to work_items tomorrow
+  // renders here with no edit to this file.
+  function factsHtml(item, ctx) {
+    return App.detail.facts(item, {
+      fields: factFields(item, ctx),
+      hidden: FACTS_HIDDEN,
+      markup: FACTS_MARKUP,
+      overflowLabel: "Also recorded against this item",
+    });
+  }
+
   function drawerHtml(item, ctx) {
     var V = App.roadmapView;
     var prog = V.progressOf(item);
     var a = attrs(item);
-    var region = Array.isArray(a.region) ? a.region.map(esc).join(", ") : esc(a.region || "");
-    var facts =
-      row("Theme", esc(V.themeLabel(item, ctx))) +
-      row("Area", esc(V.areaTitleOf(item, ctx))) +
-      row("Workstream", esc(titleOf(item.parent_id, ctx))) +
-      relatedRows(item, ctx) +
-      row("Department", esc(App.departmentLabel(item.department))) +
-      row("Business areas", businessAreaLabels(item).map(esc).join(", ")) +
-      row("Assignee", assigneeText(item, ctx)) +
-      row("Band", esc(bandText(item))) +
-      row("Status", esc(STATUS[item.status] || item.status)) +
-      row("Level", item.level && item.level !== "workstream" ? esc(cap(item.level)) : "") +
-      row("Presentation", esc(V.presentationLabel(item.presentation))) +
-      row("Type", esc(cap(item.type))) +
-      row("Effort", esc(cap(item.effort))) +
-      row("Impact", esc(cap(item.impact))) +
-      row("Priority", esc(priorityLabel(item))) +
-      row("PRD status", esc(PRD_STATUS[item.prd_status] || "")) +
-      row("Project status", esc(PROJECT_STATUS[item.project_status] || "")) +
-      progressRow(item) +
-      row("Milestone", milestoneText(item, ctx)) +
-      row("Dates", esc(dateRange(item.starts_on, item.ends_on))) +
-      row("Sprints", item.end_sprint && item.end_sprint !== item.start_sprint
-        ? esc((item.start_sprint || "?") + " to " + item.end_sprint)
-        : esc(item.start_sprint ? sprintRange(item.start_sprint) : "")) +
-      row("Vertical", esc(a.pnl_vertical || "")) +
-      row("Team", esc(a.team || "")) +
-      row("Region", region) +
-      row("Customer", esc(a.customer || "")) +
-      row("Resources", a.resources != null ? esc(String(a.resources)) : "") +
-      row("Cost", a.cost != null ? esc(String(a.cost)) : "") +
-      extraAttrRows(a) +
-      row("Requested by", esc(item.requested_by || "")) +
-      row("Source", sourceText(item, ctx)) +
-      row("External ref", esc(item.external_ref || "")) +
-      row("Tags", (item.tags || []).map(esc).join(", ")) +
-      row("Created", esc(day(item.created_at))) +
-      row("Updated", esc(day(item.updated_at))) +
-      // The latch that pins a delivery to Previously completed (work_items.
-      // previously_completed_at). Shown only when set, so nothing is
-      // stored-but-invisible; clearing the column removes the row.
-      row("Moved to Previously completed", esc(day(item.previously_completed_at)));
+    var facts = factsHtml(item, ctx);
     var prd = a.prd_link
       ? '<a class="button secondary" href="' + esc(a.prd_link) +
         '" target="_blank" rel="noopener">Open PRD</a>' : "";
@@ -375,7 +432,7 @@
         '" role="img" aria-label="Progress: ' + esc(prog.label) + '"><span></span></div></div>' +
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
       detailsHtml(item) +
-      '<dl class="rmd-facts">' + facts + "</dl>" +
+      facts +
       itemsSection +
       deliverablesSection +
       phasesHtml(item) +
