@@ -21,10 +21,14 @@
       : "";
   }
 
+  // Renders whatever role the row carries, rather than admin-or-member.
+  // The old binary printed "member" for ANY value that was not admin, so
+  // a third role added to the profiles.role constraint would have been
+  // silently mislabelled on every row - stored, shown, and wrong.
   function roleBadge(role) {
-    return role === App.registry.roles.admin
-      ? '<span class="badge admin">admin</span>'
-      : '<span class="badge">member</span>';
+    var value = String(role == null ? "" : role);
+    return '<span class="badge ' + App.escape(value) + '">' +
+      App.escape(value) + "</span>";
   }
 
   function roleCell(profile) {
@@ -155,6 +159,10 @@
     // of the always-on admin state, and a failure needs a reset.
     load();
   }
+
+  // Pure builder, exported so tests/unit/render-fallbacks.test.js can
+  // hold the role rendering without a DOM or a session.
+  App.usersView = { roleBadge: roleBadge };
 
   App.onAuthed(function (authedSession) {
     session = authedSession;

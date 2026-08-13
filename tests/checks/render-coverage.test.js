@@ -15,11 +15,19 @@
 // always the same: a value is added to a constraint, no renderer knows
 // it, and rows carrying it show blank or vanish with no error.
 //
-// A value may be covered two ways. `file` + `pattern` means a named
-// renderer must mention it, for vocabularies with a hand-written label
-// per value. `generic` means it renders without a per-value branch -
-// stated with the reason, so "it renders somehow" is a claim someone
-// made rather than an assumption nobody checked.
+// A value is covered one of four ways, each stated with its reason so
+// that "it renders somehow" is a claim someone made rather than an
+// assumption nobody checked:
+//
+//   file     a named renderer must mention every value, for
+//            vocabularies with a hand-written label per value
+//   generic  it renders without a per-value branch
+//   derived  it is never shown, but drives something that is
+//   hole     it renders nowhere, and that is a known debt
+//
+// Writing this map is what found two live defects: roleBadge printed
+// "member" for any role that was not admin, and blocker_scope 'record'
+// had no branch at all. Both are fixed; the reasons record it.
 //
 // Link KINDS are not checked here: tests/checks/knowledge-links.test.js
 // holds those against the schema seed, and one concept gets one home.
@@ -104,16 +112,16 @@ const COVERAGE = {
   "integrations.direction": { generic: "the integrations table prints the raw direction" },
   "product_capabilities.maturity": { generic: "App.statusBadge renders any maturity" },
   "work_areas.scope": { generic: "a filter, not a rendered label" },
-  "profiles.role": { generic: "the users page prints the raw role" },
+  "profiles.role": { generic: "roleBadge renders whatever role the row carries - it was a binary else-branch until 2026-08-13 and printed 'member' for anything not admin" },
   "link_kinds.family": { generic: "groups links in a drawer; never shown as text" },
   "review_waves.state": { generic: "the review board prints the raw state" },
-  "review_applications.evidence_confidence": { generic: "the review drawer prints it raw" },
-  "review_applications.blocker_scope": { generic: "the review drawer prints it raw" },
+  "review_applications.evidence_confidence": { generic: "a label map with a raw fallback, so an unmapped value still shows" },
+  "review_applications.blocker_scope": { generic: "the board flags any scope the row carries - 'record' had no branch at all until 2026-08-13 and carried no flag" },
   "review_applications.next_trigger_type": { generic: "the review board derives the trigger line from it" },
   "review_evidence.source": { generic: "the evidence list prints the raw source" },
   "review_evidence.direction": { generic: "the evidence list prints the raw direction" },
-  "review_evidence.signal": { generic: "the evidence list prints the raw signal" },
-  "triage_categories.group_key": { generic: "drives the three-way split; the label comes from the lookup row" },
+  "review_evidence.signal": { derived: "never shown as text: a typed signal drives the contradiction findings structurally, so its effect is visible rather than its value" },
+  "triage_categories.group_key": { file: "assets/js/pages/appreview-model.js" },
 
   // Not rendered anywhere, and that is a known hole rather than a
   // claim that it is fine. knowledge_links.confidence marks a link an
@@ -156,7 +164,7 @@ test("every hand-labelled value is named by its renderer", () => {
 test("a declared generic rendering says why it needs no branch", () => {
   for (const [key, rule] of Object.entries(COVERAGE)) {
     if (rule.file || rule.ownedBy) continue;
-    const reason = rule.generic || rule.hole;
+    const reason = rule.generic || rule.derived || rule.hole;
     assert.ok(reason && reason.length > 15,
       `${key}: a claim that it renders generically needs the reason with it.`);
   }

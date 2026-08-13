@@ -10,6 +10,16 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Fixed
+- The **users page** showed "member" against any role that was not
+  admin. With only two roles in use nothing looked wrong, but the label
+  was asserted rather than read, so a third role would have been
+  mislabelled on every row. It now shows whatever role the row carries.
+- An application blocked at **record scope** carried no blocker flag on
+  the review board, reading as though nothing were blocking it. Partner
+  and merchant scope were flagged; record was never given a branch. Any
+  scope now shows.
+
 ### Added
 - A **DaoPay admin** icon in the top-right nav opens a modal with two
   copyable browser-console snippets: one that creates a portal user

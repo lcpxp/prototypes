@@ -202,11 +202,14 @@
     if (app.manual_pipeline) {
       flags.push('<span class="ar-flag is-danger">Do not send digitally</span>');
     }
-    if (app.blocker_scope === "partner") {
-      flags.push('<span class="ar-flag">Partner blocker</span>');
-    }
-    if (app.blocker_scope === "merchant") {
-      flags.push('<span class="ar-flag">Merchant blocker</span>');
+    // Any scope the constraint allows, not just the two that were
+    // spelled out: blocker_scope also permits 'record', which carried no
+    // flag at all and so read as though nothing were blocking it.
+    if (app.blocker_scope) {
+      var scope = String(app.blocker_scope);
+      flags.push('<span class="ar-flag">' +
+        App.escape(scope.charAt(0).toUpperCase() + scope.slice(1)) +
+        " blocker</span>");
     }
     if (ctx.dupes[F.duplicateKeyOf(app)]) {
       flags.push('<span class="ar-flag is-info">Duplicate</span>');
@@ -276,6 +279,7 @@
   }
 
   App.appReviewRender = {
+    flagsHtml: flagsHtml,
     splitHtml: splitHtml,
     partnerPanelHtml: partnerPanelHtml,
     doNowHtml: doNowHtml,
