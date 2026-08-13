@@ -21,6 +21,8 @@
   <link rel="stylesheet" href="assets/css/layout.css">
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="assets/css/pages.css">
+  <link rel="stylesheet" href="assets/css/roadmap-themes.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
   <link rel="stylesheet" href="assets/css/console-tool.css">
   <script src="assets/js/core/theme.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
@@ -32,6 +34,8 @@
   <script defer src="assets/js/core/tools.js"></script>
   <script defer src="assets/js/core/send-tool.js"></script>
   <script defer src="assets/js/core/daopay-admin-tool.js"></script>
+  <script defer src="assets/js/pages/dashboard-strip.js"></script>
+  <script defer src="assets/js/pages/dashboard-cards.js"></script>
   <script defer src="assets/js/pages/dashboard.js"></script>
 </head>
 <body>
@@ -48,16 +52,77 @@
 
     <div id="page-notice"></div>
 
-    <div id="roadmap-meter" class="roadmap-meter"></div>
+    <!-- 1. What is being worked on now, and what is next. -->
+    <section class="ds-section" id="ds-now-next">
+      <div class="ds-head">
+        <h2>Now and next</h2>
+        <p class="ds-figure" id="ds-now-next-delivery"></p>
+      </div>
+      <div class="ds-strip" id="ds-now-next-body">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
 
-    <div class="card-grid dashboard-cards" id="module-cards">
-      <p class="notice">Loading</p>
-    </div>
+    <!-- 2. What reference material exists, and how complete it is. -->
+    <section class="ds-section" id="ds-reference">
+      <div class="ds-head">
+        <h2>API reference</h2>
+      </div>
+      <div id="ds-reference-body">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
 
-    <span class="eyebrow">Recent activity</span>
-    <div id="recent-activity" class="dashboard-activity">
-      <p class="notice">Loading</p>
-    </div>
+    <!-- 3. Is a review running, and what does it need. -->
+    <section class="ds-section" id="ds-reviews">
+      <div class="ds-head">
+        <h2>Reviews</h2>
+      </div>
+      <div id="ds-reviews-body">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
+
+    <!-- 4. What we know, and where the holes are. -->
+    <section class="ds-section" id="ds-knowledge">
+      <div class="ds-head">
+        <h2>Platform knowledge</h2>
+      </div>
+      <div id="ds-knowledge-body">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
+
+    <!-- 5. What the nav's tools are, and what each is for. -->
+    <section class="ds-section" id="ds-tools">
+      <div class="ds-head">
+        <h2>Tools</h2>
+        <p class="ds-figure">The external tools the nav carries as icons, explained.</p>
+      </div>
+      <div id="ds-tools-body">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
+
+    <!-- 6. The complete list of what exists, demoted below the substance. -->
+    <section class="ds-section ds-section--quiet" id="ds-modules">
+      <div class="ds-head">
+        <h2>Modules</h2>
+      </div>
+      <div id="ds-modules-body">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
+
+    <!-- 7. What changed most recently, across every module. -->
+    <section class="ds-section ds-section--quiet" id="ds-activity">
+      <div class="ds-head">
+        <h2>Recent activity</h2>
+      </div>
+      <div class="dashboard-activity" id="ds-activity-body">
+        <p class="notice">Loading</p>
+      </div>
+    </section>
   </main>
 
 </body>

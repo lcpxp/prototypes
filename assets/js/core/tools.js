@@ -82,6 +82,29 @@
     }).join("");
   };
 
+  // One read per page, memoised. The nav needs these rows on every
+  // page and the dashboard's tools grid needs the same rows with their
+  // descriptions; two fetches of one small table on one page is waste,
+  // and a second copy is a second thing to keep in step.
+  var pending = null;
+  App.tools.load = function () {
+    if (pending) return pending;
+    if (!App.db) return Promise.resolve([]);
+    pending = App.db
+      .from(App.registry.tables.portalLinks)
+      // The union of what the two consumers render: the nav draws an
+      // icon and a tooltip, the dashboard's tools grid adds the
+      // sentence. Named, not *, because this table's rows carry
+      // internal URLs and a fetch here should say exactly what it
+      // wants.
+      .select("key,label,icon,base_url,query,params,description")
+      .order("sort_order")
+      .then(function (result) {
+        return result.error || !result.data ? [] : result.data;
+      });
+    return pending;
+  };
+
   // Fill the nav slot once the rows are known. Nothing renders until
   // the read lands, so a signed-out session or a failed fetch leaves
   // the nav as it was rather than offering a link to nowhere.
@@ -89,14 +112,9 @@
     var host = document.getElementById("nav-tools");
     if (!host || !App.db || !App.onAuthed) return;
     App.onAuthed(function () {
-      App.db
-        .from(App.registry.tables.portalLinks)
-        .select("key,label,icon,base_url,query,params")
-        .order("sort_order")
-        .then(function (result) {
-          if (result.error || !result.data) return;
-          host.innerHTML = App.tools.render(result.data);
-        });
+      App.tools.load().then(function (rows) {
+        if (rows.length) host.innerHTML = App.tools.render(rows);
+      });
     });
   };
 })();

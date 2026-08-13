@@ -1,5 +1,9 @@
 # Rebuilding the dashboard
 
+**BUILT 2026-08-13.** What follows is the plan as written, with
+corrections where the build found the figures or the shape wrong.
+See the closing section for what actually landed.
+
 The dashboard was built when the hub was a set of modules with row
 counts. It is now a roadmap, a knowledge base, an API reference, a
 review system and a prototype registry, and the landing page says
@@ -54,9 +58,11 @@ Rules that keep it a summary rather than a second roadmap:
 
 - Workstreams only. Items and deliverables never appear here.
 - Now shows all of them; Next caps at six with "and N more" linking to
-  the roadmap's Next band. Today that is **2 active workstreams at
-  `now` and 18 at `next`** (37 workstreams exist in total, 8 done), so
-  Now is short and Next needs the cap.
+  the roadmap's Next band. Measured at build time: **8 workstreams sit
+  at `now` and 16 at `next`** (excluding dropped), of which 6 and 1 are
+  done with nothing open, so the strip renders **2 at now and 15 at
+  next** - Now is short and Next needs the cap. The plan's earlier
+  "2 and 18" counted the dropped and done rows into Next.
 - A workstream with no open children and status done drops out; it
   belongs in Delivered, on the roadmap.
 - Blocked workstreams sort first within their band and say so. One
@@ -234,3 +240,38 @@ Builders are pure and load in a Node vm for testing, the same pattern
 - Every builder has a unit benchmark; `npm test` green; a changelog
   line under Unreleased.
 - The tools section explains every tool the nav carries, from rows.
+
+## What landed, 2026-08-13
+
+Seven sections, in the order above, all seven grant-gated and all
+seven hidden rather than emptied when the grant is missing.
+
+- `dashboard_summary()` (migration `20260813223937`) returns counts,
+  the delivery split, the workstreams, the specs, the knowledge
+  figures with their gaps, and any **active** wave. Two round trips,
+  not one: the RPC, and the `portal_links` read the nav already makes -
+  `App.tools.load()` is now memoised so the nav and the tools grid
+  share one fetch rather than issuing two.
+- **Coverage got more honest than the plan asked for.** Summing the
+  gaps into one figure would have printed "3 gaps to close" on a spec
+  with **196 undocumented routes**, because the badge counts are small
+  and the absent count is not. The card now names each: routes not
+  documented, rows with no route, undeclared mirrors, gaps flagged,
+  rows unverified. A spec with no source still reports its badges -
+  it cannot be graded, but its gaps are real work.
+- **The tools section is external tools only.** The plan said to add
+  rows for the send tool and the search, but `portal_links` is
+  documented as "one row per icon button the nav offers as a link out
+  to an external tool", and the send and DaoPay tools are in-portal
+  consoles, not links out. Putting them in that table would have made
+  the table mean two things. The section header says "the external
+  tools the nav carries" instead of overclaiming.
+- `roadmap-themes.css` is new: the `.rm-cat-*` accent map, split out of
+  `roadmap.css` so the strip's 3px theme rail does not require shipping
+  the whole board stylesheet to the landing page.
+- Recent activity gained work notes as a source and now shows each
+  row's status or kind, with every link through `App.itemHref`.
+
+Still open from this plan: the portal-review card (60-PORTAL-REVIEW.md
+has to exist first), and the plan's "secondary links to a spec's topic
+list", which would be a second link on a card that is already a link.

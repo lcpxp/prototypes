@@ -1,0 +1,29 @@
+/* ------------------------------------------------------------------
+   roadmap-themes.css - The theme accent map: one rule per
+   roadmap_categories.key, each setting the accent and soft tint that
+   a lane label, card border, dot or rail reads.
+
+   Its own sheet because two pages need it and they need nothing else
+   from each other. The roadmap uses it with the whole board; the
+   dashboard's now/next strip uses it for a 3px rail, and pulling the
+   entire board stylesheet onto the landing page to colour that rail
+   would ship the board's layout to every user on arrival.
+
+   A category with no rule here inherits the neutral fallback each
+   consumer declares (var(--rm-a, ...)), so an unknown key reads as
+   absent rather than as a theme nobody recognises.
+   ------------------------------------------------------------------ */
+
+.rm-cat-core         { --rm-a: var(--rm-core);         --rm-s: var(--rm-core-soft); }
+.rm-cat-unity        { --rm-a: var(--rm-unity);        --rm-s: var(--rm-unity-soft); }
+.rm-cat-overhaul     { --rm-a: var(--rm-overhaul);     --rm-s: var(--rm-overhaul-soft); }
+.rm-cat-integrations { --rm-a: var(--rm-integrations); --rm-s: var(--rm-integrations-soft); }
+.rm-cat-pipeline     { --rm-a: var(--rm-pipeline);     --rm-s: var(--rm-pipeline-soft); }
+.rm-cat-partners     { --rm-a: var(--rm-partners);     --rm-s: var(--rm-partners-soft); }
+.rm-cat-acquiring    { --rm-a: var(--rm-acquiring);    --rm-s: var(--rm-acquiring-soft); }
+.rm-cat-apis         { --rm-a: var(--rm-apis);         --rm-s: var(--rm-apis-soft); }
+.rm-cat-insights     { --rm-a: var(--rm-insights);     --rm-s: var(--rm-insights-soft); }
+.rm-cat-automation   { --rm-a: var(--rm-automation);   --rm-s: var(--rm-automation-soft); }
+.rm-cat-sales        { --rm-a: var(--rm-sales);        --rm-s: var(--rm-sales-soft); }
+.rm-cat-admin        { --rm-a: var(--rm-admin);        --rm-s: var(--rm-admin-soft); }
+.rm-cat-products     { --rm-a: var(--rm-products);     --rm-s: var(--rm-products-soft); }

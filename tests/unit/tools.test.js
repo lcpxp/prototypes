@@ -128,48 +128,89 @@ test("render skips a row it cannot draw rather than emitting a dead control", ()
   assert.equal(T.render(null), "");
 });
 
-test("attach reads portal_links through the registry, ordered", () => {
+// A query builder that resolves like the real one: `then` hands the
+// result on and returns a real promise, so a caller may chain. The
+// earlier fake returned itself, which made a second `.then` re-deliver
+// the raw result - fine while nothing chained, wrong the moment
+// App.tools.load mapped rows out of it.
+function fakeDb(result, calls) {
+  calls = calls || {};
+  const builder = {
+    select(cols) { calls.select = cols; return builder; },
+    order(col) { calls.order = col; return builder; },
+    then(fn, rej) { return Promise.resolve(result).then(fn, rej); },
+  };
+  return { from(table) { calls.table = table; return builder; } };
+}
+
+test("attach reads portal_links through the registry, ordered", async () => {
   const calls = {};
   const host = { innerHTML: "" };
-  const builder = {
-    select(cols) { calls.select = cols; return this; },
-    order(col) { calls.order = col; return this; },
-    then(fn) {
-      fn({ data: [{ label: "Tool", icon: "bug", base_url: BASE, query: "index=x" }] });
-      return this;
-    },
-  };
   const App = load({
     document: {
       addEventListener() {},
       getElementById: (id) => (id === "nav-tools" ? host : null),
     },
-    db: { from(table) { calls.table = table; return builder; } },
+    db: fakeDb(
+      { data: [{ label: "Tool", icon: "bug", base_url: BASE, query: "index=x" }] },
+      calls),
   });
   App.onAuthed = (fn) => fn({});
   App.tools.attach();
+  await App.tools.load();
   assert.equal(calls.table, "portal_links");
   assert.equal(calls.table, App.registry.tables.portalLinks);
   assert.equal(calls.order, "sort_order");
   assert.ok(!/\*/.test(calls.select), "select named columns, never *");
+  assert.match(calls.select, /description/,
+    "the dashboard's tools grid renders the sentence, so the shared read fetches it");
   assert.match(host.innerHTML, /nav-icon-btn/);
 });
 
-test("attach leaves the nav untouched when the read fails", () => {
+test("attach leaves the nav untouched when the read fails", async () => {
   const host = { innerHTML: "" };
-  const builder = {
-    select() { return this; },
-    order() { return this; },
-    then(fn) { fn({ error: { message: "denied" } }); return this; },
-  };
   const App = load({
     document: {
       addEventListener() {},
       getElementById: (id) => (id === "nav-tools" ? host : null),
     },
-    db: { from() { return builder; } },
+    db: fakeDb({ error: { message: "denied" } }),
   });
   App.onAuthed = (fn) => fn({});
   App.tools.attach();
+  await App.tools.load();
   assert.equal(host.innerHTML, "");
+});
+
+test("the rows are read once, however many consumers ask for them", async () => {
+  // The nav needs them on every page and the dashboard's tools grid
+  // needs the same rows. Two fetches of one small table on one page is
+  // waste, and a second copy is a second thing to keep in step.
+  let reads = 0;
+  const calls = {};
+  const db = fakeDb({ data: [{ label: "Tool", icon: "bug", base_url: BASE }] }, calls);
+  const from = db.from;
+  db.from = function (table) { reads++; return from(table); };
+  const App = load({
+    document: { addEventListener() {}, getElementById: () => ({ innerHTML: "" }) },
+    db: db,
+  });
+  App.onAuthed = (fn) => fn({});
+  App.tools.attach();
+  const a = await App.tools.load();
+  const b = await App.tools.load();
+  assert.equal(reads, 1);
+  assert.equal(a.length, 1);
+  assert.equal(b.length, 1);
+});
+
+test("a failed read resolves to no rows rather than rejecting", async () => {
+  // Every consumer treats the result as a list. A rejection here would
+  // have to be handled at each of them, and one forgotten handler is an
+  // unhandled rejection in the console on a page that otherwise works.
+  const App = load({
+    document: { addEventListener() {}, getElementById: () => null },
+    db: fakeDb({ error: { message: "denied" } }),
+  });
+  assert.deepEqual(Array.from(await App.tools.load()), []);
 });

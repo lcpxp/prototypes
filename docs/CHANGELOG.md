@@ -10,6 +10,18 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Changed
+- The **dashboard** is rebuilt around what is happening rather than
+  what exists. It now opens with the workstreams at now and next -
+  each with its theme, progress, open-item count and a click straight
+  through to its detail - then the API specs with how much of each is
+  actually verified against the code, any open review wave and the
+  single next thing it needs, the platform knowledge figures with the
+  gaps in them, and a card per external tool saying what it is for.
+  Module cards and recent activity are still there, below the
+  substance. Recent activity now says what changed, not only that
+  something did, and links to the row rather than the module.
+
 ### Added
 - Opening a **roadmap item or workstream** now shows everything stored
   against it, including values no part of the page was written for.
