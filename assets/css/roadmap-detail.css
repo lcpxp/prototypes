@@ -227,6 +227,16 @@
 /* An in-drawer link (a related item) reads as a link and swaps the drawer
    to that item on click. */
 .rmd-link { color: var(--accent); text-decoration: underline; cursor: pointer; }
+/* A link whose far end has no page yet: it still names the thing and
+   its type, because a relationship is a fact even when it cannot be
+   opened. Reads as text, not as a broken link. */
+.rmd-link--flat { color: var(--ink); text-decoration: none; cursor: default; }
+.rmd-link-type {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+  text-transform: lowercase;
+}
 /* The rank suffix on the assignee line ("- 1st of 5") sits quieter than
    the name it qualifies. */
 .rmd-rank { color: var(--muted); }

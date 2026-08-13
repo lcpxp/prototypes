@@ -126,6 +126,25 @@
       about:         { label: "About",         inverse: "Described by",   family: "knowledge",   symmetric: false },
       affects:       { label: "Affects",       inverse: "Affected by",    family: "knowledge",   symmetric: false },
     },
+    // Link entity types: the display half of link_entity_types in
+    // supabase/schema/33_links.sql. The database is authoritative for
+    // which types exist; this mirrors the label and names the column
+    // that stands in for a title, so a page can render the far end of
+    // any link without a second lookup of the vocabulary itself.
+    // A type with no `module` has no page to open yet - the link still
+    // renders, as its label, rather than vanishing. Adding the missing
+    // destinations is the anchor work in docs/plan/40-SURFACING.md.
+    // tests/checks/knowledge-links.test.js holds these in step with the
+    // seed.
+    linkEntities: {
+      work_item:  { table: "work_items",           titleColumn: "title", label: "Work item",      module: "roadmap" },
+      note:       { table: "work_notes",           titleColumn: "body",  label: "Note" },
+      capability: { table: "product_capabilities", titleColumn: "title", label: "Capability",     module: "platform" },
+      term:       { table: "domain_terms",         titleColumn: "term",  label: "Glossary term" },
+      document:   { table: "work_documents",       titleColumn: "title", label: "Source document" },
+      stage:      { table: "journey_stages",       titleColumn: "title", label: "Journey stage" },
+      area:       { table: "work_areas",           titleColumn: "title", label: "Filing area" },
+    },
     // Spec families group api_specs rows into distinct reference
     // "sites" inside the reference module. Order here is display
     // order. Keys mirror the api_specs.family check constraint.
@@ -220,6 +239,26 @@
       default:
         return base;
     }
+  };
+
+  // Build a link to the far end of a knowledge_links row. Delegates to
+  // App.itemHref where the entity type has a module, so a link and a
+  // search result open the same place. Returns "" for a type with no
+  // page yet, which callers render as a label rather than a dead link -
+  // silence would hide the relationship, and a link to nowhere would
+  // lie about it.
+  App.linkHref = function (type, id, root) {
+    var entity = (App.registry.linkEntities || {})[type];
+    if (!entity || !entity.module || !id) return "";
+    var mod = App.registry.modules.find(function (m) {
+      return m.key === entity.module;
+    });
+    if (!mod) return "";
+    var previous = App.root;
+    if (root !== undefined) App.root = root;
+    var href = App.itemHref(mod, { id: id });
+    App.root = previous;
+    return href;
   };
 
   // Resolve a work_items.department key to its display label. Returns

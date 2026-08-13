@@ -136,6 +136,11 @@
   padding: 0 var(--s-2);
 }
 .cap-link-kind { color: var(--muted); }
+.cap-link-type {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
 .cap-source {
   color: var(--muted);
   font-size: var(--text-xs);

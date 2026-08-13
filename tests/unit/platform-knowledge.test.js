@@ -29,6 +29,8 @@ function load() {
   sandbox.window = sandbox;
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
+  vm.runInContext(read("assets/js/core/registry.js"), sandbox, { filename: "registry.js" });
+  vm.runInContext(read("assets/js/core/links.js"), sandbox, { filename: "links.js" });
   sandbox.App.onAuthed = function () {};
   vm.runInContext(read("assets/js/pages/platform-knowledge.js"), sandbox,
     { filename: "platform-knowledge.js" });
@@ -174,14 +176,57 @@ test("a capability card carries its links and its provenance", () => {
   const data = sample();
   const ctx = {
     docById: { d1: { id: "d1", title: "Capability overview" } },
-    linksByCapability: {
-      c1: [{ kind: "affects", reads: "Affected by", otherTitle: "Rate cards", note: "" }],
-    },
+    linkIndex: App.links.index([
+      { from_type: "work_item", from_id: "w1", to_type: "capability", to_id: "c1",
+        kind: "affects", note: "", confidence: "confirmed" },
+    ]),
+    linkTitles: { "work_item:w1": "Rate cards" },
   };
   const html = App.platformView.capabilityCard(data.capabilities[0], ctx);
-  assert.match(html, /cap-link-kind">Affected by<\/span> Rate cards/,
+  assert.match(html, /cap-link-kind">Affected by<\/span>/,
     "a capability must show what the roadmap is doing to it");
+  assert.match(html, /Rate cards/);
   assert.match(html, /cap-source">Source: Capability overview/);
+});
+
+test("a capability link out to another entity type renders and links", () => {
+  // The bug this replaced: platform.js resolved capability-to-capability
+  // only, so a capability's link to the roadmap item that changes it -
+  // the single most useful thing on the card - showed nothing at all.
+  const App = load();
+  const data = sample();
+  const ctx = {
+    linkIndex: App.links.index([
+      { from_type: "capability", from_id: "c1", to_type: "term", to_id: "t1",
+        kind: "about", note: "why they differ", confidence: "proposed" },
+      { from_type: "capability", from_id: "c1", to_type: "work_item", to_id: "w1",
+        kind: "relates_to", note: "", confidence: "confirmed" },
+    ]),
+    linkTitles: { "term:t1": "Rolling reserve", "work_item:w1": "Rate cards" },
+    root: "../..",
+  };
+  const html = App.platformView.capabilityCard(data.capabilities[0], ctx);
+  assert.match(html, /Rolling reserve/, "a term target must render");
+  assert.match(html, /cap-link-type">Glossary term/,
+    "a non-capability target says what kind of thing it is");
+  assert.match(html, /href="[^"]*modules\/roadmap\/index\.html\?item=w1"/,
+    "a target with a page is a real link");
+});
+
+test("a link whose target cannot be read still names its type", () => {
+  const App = load();
+  const data = sample();
+  const ctx = {
+    linkIndex: App.links.index([
+      { from_type: "capability", from_id: "c1", to_type: "stage", to_id: "s9",
+        kind: "part_of", note: "", confidence: "confirmed" },
+    ]),
+    linkTitles: {},
+  };
+  const html = App.platformView.capabilityCard(data.capabilities[0], ctx);
+  assert.match(html, /Journey stage \(not readable\)/,
+    "a relationship is a fact even when its far end is out of reach - " +
+    "silence was the old behaviour and it hid the graph");
 });
 
 test("all seven stored kinds have a place on the page", () => {

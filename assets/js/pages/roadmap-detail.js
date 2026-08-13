@@ -157,23 +157,41 @@
   }
 
   // Typed relationships, one drawer row per reading ("Part of", then
-  // "Related to", then "Distinct from"), each target a clickable link
-  // into its own drawer - the drawer body delegates data-item-id
-  // clicks. ctx.linksByItem is built in roadmap.js and already carries
-  // the reading that applies from THIS end, so nothing here has to know
-  // which way the row was stored. A `note` becomes the title attribute:
-  // on distinct_from that note is the reason the pair was judged apart,
+  // "Related to", then "Distinct from"). ctx.linkIndex is built in
+  // roadmap.js by App.links.index and already carries the reading that
+  // applies from THIS end, so nothing here has to know which way the
+  // row was stored. A `note` becomes the title attribute: on
+  // distinct_from that note is the reason the pair was judged apart,
   // which is the thing worth not losing.
+  //
+  // Every entity type renders, not just work items. Another work item
+  // opens in this drawer; a capability or anything else with a page
+  // gets a normal link; a type with no destination yet still shows its
+  // name and its type, because a relationship is a fact even when its
+  // far end has nowhere to go. Silence was the old behaviour and it hid
+  // every cross-type link in the graph.
   function relatedRows(item, ctx) {
-    var links = (ctx && ctx.linksByItem && ctx.linksByItem[item.id]) || [];
+    var index = (ctx && ctx.linkIndex) || {};
+    var links = index["work_item:" + item.id] || [];
+    var titles = (ctx && ctx.linkTitles) || {};
     var byReading = {};
     links.forEach(function (l) {
-      var t = titleOf(l.otherId, ctx);
-      if (!t) return;
-      var a = '<a class="rmd-link" href="?item=' + esc(l.otherId) +
-        '" data-item-id="' + esc(l.otherId) + '"' +
-        (l.note ? ' title="' + esc(l.note) + '"' : "") + ">" + esc(t) + "</a>";
-      (byReading[l.reads] = byReading[l.reads] || []).push(a);
+      var t = App.links.resolve(l, titles, ctx && ctx.root);
+      if (!t.title) return;
+      var title = l.note ? ' title="' + esc(l.note) + '"' : "";
+      var label = esc(t.title) + (l.otherType === "work_item" ? ""
+        : ' <span class="rmd-link-type">' + esc(t.typeLabel) + "</span>");
+      var html;
+      if (l.otherType === "work_item") {
+        html = '<a class="rmd-link" href="?item=' + esc(l.otherId) +
+          '" data-item-id="' + esc(l.otherId) + '"' + title + ">" + label + "</a>";
+      } else if (t.href) {
+        html = '<a class="rmd-link" href="' + esc(t.href) + '"' + title + ">" +
+          label + "</a>";
+      } else {
+        html = '<span class="rmd-link rmd-link--flat"' + title + ">" + label + "</span>";
+      }
+      (byReading[t.reads] = byReading[t.reads] || []).push(html);
     });
     return Object.keys(byReading).map(function (reads) {
       return row(reads, byReading[reads].join(", "));

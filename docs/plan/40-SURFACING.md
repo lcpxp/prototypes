@@ -12,18 +12,17 @@ defect.** Not a backlog item - a defect, caught by a test.
 
 Each of these was found in the current code and data, not supposed.
 
-**The link renderers understand two shapes out of forty-nine.**
-`assets/js/pages/roadmap.js` fetches `knowledge_links` selecting
-`from_id, to_id, kind, note, confidence` - **without `from_type` or
-`to_type`** - and resolves the other end through a work-items map, so
-it can only render work_item→work_item.
-`assets/js/pages/platform.js` has the mirror limitation: capability→
-capability only. Seven entity types are registered, giving 49 ordered
-pairs; **two of them render**. Today that hides four links - a term
-about a work item, a term superseding a term, a document about an
-area, a document about a capability - which sounds small until you
-notice it is also the reason the graph has not grown: there is no
-point writing a link that cannot be seen.
+**The link renderers understood two shapes out of forty-nine.**
+FIXED 2026-08-13. `roadmap.js` fetched `knowledge_links` without
+`from_type` or `to_type` and resolved the far end through a work-items
+map; `platform.js` resolved capability→capability only. Seven entity
+types give 49 ordered pairs and two rendered, which hid four live
+links and, more to the point, was why the graph had stopped growing -
+there is no point writing a link nobody can see. `App.links`
+(assets/js/core/links.js) now indexes any pair under both ends,
+fetches titles by id one query per type present, and renders a target
+with a page as a link, one without a page as its name and type, and
+one that cannot be read as its type alone. Never as silence.
 
 **Unknown block kinds are silently dropped.** `blockHtml` exists twice
 - `platform.js:94` and `reference-topics.js:69` - both implementing
@@ -158,26 +157,24 @@ Rules that keep it usable as content grows:
   own panel, built through `App.itemHref` - so the graph is walkable,
   not just visible.
 
-## Making links entity-aware
+## Making links entity-aware - DONE
 
-The specific fix, since it is small and unblocks the rest.
+Landed 2026-08-13 as `assets/js/core/links.js` plus
+`App.registry.linkEntities` and `App.linkHref`. `App.links.index`
+indexes each link under both ends carrying the type at each;
+`App.links.loadTitles` fetches display names by id, one query per
+entity type actually present, so a page with no cross-type links
+issues no extra request; `App.links.resolve` returns the reading, the
+target's name, its type label and an href where one exists.
 
-    App.db.from(App.registry.tables.knowledgeLinks)
-      .select("from_type, from_id, to_type, to_id, kind, note, confidence")
-      .is("valid_to", null);
+Both renderers use it, and 30 benchmarks hold it - including one that
+indexes all 49 ordered pairs, because two of them rendering was the
+whole bug.
 
-Index each link under both ends, carrying the type at each end. A
-resolver takes `(type, id)` and returns `{ title, href }` from
-whichever map is loaded, and falls back to the type's label plus a
-short id when the target is not in the current page's data - "Capability
-(not loaded)" as a link is still better than silence, and the href
-still works.
-
-`App.registry.linkKinds` already holds the readings; `link_entity_types`
-holds the labels. Neither needs a change. `App.itemHref` needs a case
-for each entity type - `note`, `term`, `stage` and `document` have no
-destination today, which is its own burying problem: add anchors on
-the platform and backlog pages so they can be addressed.
+What remains is destinations. `work_item` and `capability` have pages;
+`note`, `term`, `stage`, `document` and `area` do not, so they render
+as name plus type rather than as links. Adding those anchors to the
+platform and backlog pages is part of the detail-panel work above.
 
 ## Per-surface work
 

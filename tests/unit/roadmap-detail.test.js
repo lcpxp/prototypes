@@ -20,6 +20,7 @@ function load() {
   vm.createContext(sandbox);
   for (const f of [
     "assets/js/core/registry.js",
+    "assets/js/core/links.js",
     "assets/js/core/ui.js",
     "assets/js/core/sprints.js",
     "assets/js/pages/roadmap-views.js",
@@ -159,13 +160,14 @@ test("drawerHtml surfaces the full stored context: details, classifiers, links, 
   // from THIS end, so the drawer never has to know which way the row
   // was stored. Two kinds, to prove one row per reading.
   const ctx = ctxOf(App, data);
-  ctx.linksByItem = { [item.id]: [
-    { kind: "part_of", reads: "Part of", family: "hierarchy",
-      otherId: "ws1", note: "", confidence: "confirmed" },
-    { kind: "distinct_from", reads: "Distinct from", family: "association",
-      otherId: "ws1", note: "Different platform; no shared code.",
+  ctx.linkIndex = App.links.index([
+    { from_type: "work_item", from_id: item.id, to_type: "work_item", to_id: "ws1",
+      kind: "part_of", note: "", confidence: "confirmed" },
+    { from_type: "work_item", from_id: item.id, to_type: "work_item", to_id: "ws1",
+      kind: "distinct_from", note: "Different platform; no shared code.",
       confidence: "confirmed" },
-  ] };
+  ]);
+  ctx.linkTitles = { "work_item:ws1": "Unity programme" };
   const html = App.roadmapDetail.drawerHtml(item, ctx);
   assert.match(html, /Long-form context/, "details text renders");
   assert.match(html, /<dt>Type<\/dt><dd>Feature/);
@@ -186,6 +188,32 @@ test("drawerHtml surfaces the full stored context: details, classifiers, links, 
   assert.match(html, /Descoped after review/);
   assert.match(html, /Notes and decisions/);
   assert.match(html, /Promoted on partner deadline/);
+});
+
+test("a work item links out to entity types other than work items", () => {
+  // The bug: roadmap.js selected knowledge_links without from_type or
+  // to_type and resolved the far end through the work-items map, so a
+  // link to a capability, term, stage or document rendered as nothing
+  // at all - two of 49 ordered type pairs were visible.
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  const ctx = ctxOf(App, data);
+  ctx.linkIndex = App.links.index([
+    { from_type: "work_item", from_id: item.id, to_type: "capability", to_id: "c1",
+      kind: "affects", note: "", confidence: "confirmed" },
+    { from_type: "work_item", from_id: item.id, to_type: "term", to_id: "t1",
+      kind: "about", note: "", confidence: "proposed" },
+  ]);
+  ctx.linkTitles = { "capability:c1": "Screening", "term:t1": "Rolling reserve" };
+  const html = App.roadmapDetail.drawerHtml(item, ctx);
+  assert.match(html, /<dt>Affects<\/dt><dd><a class="rmd-link" href="[^"]*capability-c1"/,
+    "a capability target renders as a real link to the platform page");
+  assert.match(html, /Screening <span class="rmd-link-type">Capability<\/span>/,
+    "and says what kind of thing it is");
+  assert.match(html, /<dt>About<\/dt><dd><span class="rmd-link rmd-link--flat"/,
+    "a type with no page yet renders flat rather than as a dead link");
+  assert.match(html, /Rolling reserve <span class="rmd-link-type">Glossary term<\/span>/);
 });
 
 test("drawerHtml tags a workstream and stays lean on a bare item", () => {

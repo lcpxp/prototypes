@@ -122,13 +122,28 @@
   // so on its own card - that is the whole point of the link graph, and
   // reading it off the page is how "how does this feature work now"
   // stops being a question only the database can answer.
+  // Every entity type a capability links to, not just other
+  // capabilities. A capability's link to the roadmap item that changes
+  // it is the single most useful thing on this card, and it rendered
+  // nothing until the resolver learned the types.
   function capabilityLinks(cap, ctx) {
-    var links = (ctx && ctx.linksByCapability && ctx.linksByCapability[cap.id]) || [];
+    var index = (ctx && ctx.linkIndex) || {};
+    var links = index["capability:" + cap.id] || [];
     if (!links.length) return "";
-    return '<p class="cap-links">' + links.map(function (l) {
+    var titles = (ctx && ctx.linkTitles) || {};
+    var parts = links.map(function (l) {
+      var t = App.links.resolve(l, titles, ctx && ctx.root);
+      if (!t.title) return "";
+      var label = App.escape(t.title) +
+        (l.otherType === "capability" ? ""
+          : ' <span class="cap-link-type">' + App.escape(t.typeLabel) + "</span>");
+      var body = t.href
+        ? '<a href="' + App.escape(t.href) + '">' + label + "</a>"
+        : label;
       return '<span class="cap-link"><span class="cap-link-kind">' +
-        App.escape(l.reads) + "</span> " + App.escape(l.otherTitle) + "</span>";
-    }).join("") + "</p>";
+        App.escape(t.reads) + "</span> " + body + "</span>";
+    }).filter(Boolean);
+    return parts.length ? '<p class="cap-links">' + parts.join("") + "</p>" : "";
   }
 
   function capabilityCard(cap, ctx) {
@@ -187,7 +202,7 @@
 
   // The whole page as a string.
   // data = { areas, capabilities, stages, terms, facts, documents }
-  // ctx  = { docById, linksByCapability }  (both optional)
+  // ctx  = { docById, linkIndex, linkTitles, root }  (all optional)
   function pageHtml(data, ctx) {
     var capabilities = data.capabilities || [];
     var areas = data.areas || [];
@@ -301,27 +316,18 @@
     var capabilities = capsResult.data || [];
     var documents = rows(5).filter(function (d) { return d.kind === "platform"; });
 
-    // Link endpoints resolved to titles, indexed by capability id and
-    // read from both ends - a symmetric link is stored once, so reading
-    // only the `from` side would hide it from half the pairs it belongs
-    // to (the same trap the roadmap drawer hit).
-    var titleOf = {};
-    capabilities.forEach(function (c) { titleOf[c.id] = c.title; });
-    var ctx = { docById: {}, linksByCapability: {} };
+    // Links indexed under both ends and resolved by entity type: a
+    // symmetric link is stored once, so reading only the `from` side
+    // hides it from half the pairs it belongs to, and resolving only
+    // capability targets hid every link out to the roadmap.
+    var linkIndex = App.links.index(rows(6));
+    var ctx = { docById: {}, linkIndex: linkIndex, linkTitles: {}, root: App.root };
     rows(5).forEach(function (d) { ctx.docById[d.id] = d; });
-    rows(6).forEach(function (l) {
-      var K = App.registry.linkKinds[l.kind];
-      if (!K) return;
-      var push = function (type, id, otherType, otherId, reads) {
-        if (type !== "capability" || !titleOf[otherId] && otherType === "capability") return;
-        var other = titleOf[otherId];
-        if (!other) return;
-        (ctx.linksByCapability[id] = ctx.linksByCapability[id] || [])
-          .push({ kind: l.kind, reads: reads, otherTitle: other, note: l.note || "" });
-      };
-      push(l.from_type, l.from_id, l.to_type, l.to_id, K.label);
-      push(l.to_type, l.to_id, l.from_type, l.from_id, K.symmetric ? K.label : K.inverse);
-    });
+    capabilities.forEach(function (c) { ctx.linkTitles["capability:" + c.id] = c.title; });
+    rows(2).forEach(function (st) { ctx.linkTitles["stage:" + st.id] = st.title; });
+    rows(3).forEach(function (t) { ctx.linkTitles["term:" + t.id] = t.term; });
+    rows(0).forEach(function (a) { ctx.linkTitles["area:" + a.id] = a.title; });
+    rows(5).forEach(function (d) { ctx.linkTitles["document:" + d.id] = d.title; });
 
     host.innerHTML = pageHtml({
       areas: rows(0),
@@ -332,5 +338,20 @@
       documents: documents,
     }, ctx);
     App.deepLinkScroll();
+
+    // Whatever the links reach that this page did not already load -
+    // work items, most usefully - arrives after first paint and repaints
+    // the cards, so the page is never held up by a request for names it
+    // may not need.
+    App.links.loadTitles(linkIndex).then(function (titles) {
+      var added = Object.keys(titles).filter(function (k) { return !ctx.linkTitles[k]; });
+      if (!added.length) return;
+      added.forEach(function (k) { ctx.linkTitles[k] = titles[k]; });
+      host.innerHTML = pageHtml({
+        areas: rows(0), capabilities: capabilities, stages: rows(2),
+        terms: rows(3), facts: rows(4), documents: documents,
+      }, ctx);
+      App.deepLinkScroll();
+    });
   });
 })();

@@ -441,7 +441,7 @@
       // display: the map below indexes each link under BOTH item ids,
       // with the reading that applies from that end.
       App.db.from(App.registry.tables.knowledgeLinks)
-        .select("from_id, to_id, kind, note, confidence")
+        .select("from_type, from_id, to_type, to_id, kind, note, confidence")
         .is("valid_to", null),
     ]);
 
@@ -500,29 +500,26 @@
     // item pointed AT reads the inverse ("Includes" against "Part of").
     // Mirrors the knowledge_graph view in supabase/schema/33_links.sql;
     // the labels live here because the page never reads link_kinds.
-    ctx.linksByItem = {};
     var links = results[6] && !results[6].error ? results[6].data || [] : [];
-    links.forEach(function (l) {
-      var k = App.registry.linkKinds[l.kind];
-      if (!k) return;
-      var push = function (id, otherId, reads) {
-        if (!id || !otherId) return;
-        (ctx.linksByItem[id] = ctx.linksByItem[id] || []).push({
-          kind: l.kind, reads: reads, family: k.family,
-          otherId: otherId, note: l.note || "", confidence: l.confidence,
-        });
-      };
-      push(l.from_id, l.to_id, k.label);
-      push(l.to_id, l.from_id, k.symmetric ? k.label : k.inverse);
-    });
-    Object.keys(ctx.linksByItem).forEach(function (id) {
-      ctx.linksByItem[id].sort(function (a, b) {
-        return a.family.localeCompare(b.family) || a.kind.localeCompare(b.kind);
-      });
-    });
+    var linkIndex = App.links.index(links);
+    ctx.linkIndex = linkIndex;
+    // Work items already have their titles in memory; anything else a
+    // link reaches is fetched by id, one query per entity type present,
+    // so a board with no cross-type links issues no extra request.
+    ctx.linkTitles = {};
+    data.items.forEach(function (i) { ctx.linkTitles["work_item:" + i.id] = i.title; });
 
     renderControls(nav, layoutNav, host);
     render(host);
+
+    // Titles for the far end of cross-type links arrive after the board
+    // has painted; the drawer reads them when it opens, so nothing waits
+    // on a request it may not need.
+    App.links.loadTitles(linkIndex).then(function (titles) {
+      Object.keys(titles).forEach(function (key) {
+        if (!ctx.linkTitles[key]) ctx.linkTitles[key] = titles[key];
+      });
+    });
 
     // Deep link: ?item=<id> opens that work item's drawer on load.
     var requestedItem = new URLSearchParams(window.location.search).get("item");
