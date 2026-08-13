@@ -126,32 +126,32 @@
 
   function buildDialog() {
     var dialog = document.createElement("dialog");
-    dialog.className = "modal send-tool";
+    dialog.className = "modal console-tool";
     dialog.id = "send-tool-modal";
     dialog.innerHTML =
       '<div class="modal-head">' +
       "<h2>Acquirer send</h2>" +
       '<button class="button quiet" data-close type="button">Close</button>' +
       "</div>" +
-      '<p class="lede send-tool-lede">Open an application in the partner portal, ' +
+      '<p class="lede console-tool-lede">Open an application in the partner portal, ' +
       "paste this into the browser console and run it. It reads the application " +
       "id from the URL and fires both sends for it.</p>" +
-      '<div class="send-tool-block">' +
-      '<div class="send-tool-bar">' +
+      '<div class="console-tool-block">' +
+      '<div class="console-tool-bar">' +
       '<span class="eyebrow">Console snippet</span>' +
       '<button class="button quiet" data-copy="snippet" type="button">Copy</button>' +
       "</div>" +
-      '<pre class="send-tool-code" id="send-tool-snippet"></pre>' +
+      '<pre class="console-tool-code" id="send-tool-snippet"></pre>' +
       "</div>" +
-      '<details class="send-tool-details">' +
+      '<details class="console-tool-details">' +
       "<summary>Handover prompt</summary>" +
-      '<p class="send-tool-note">Paste this with the console output to get a ' +
+      '<p class="console-tool-note">Paste this with the console output to get a ' +
       "read on what happened.</p>" +
-      '<div class="send-tool-bar">' +
+      '<div class="console-tool-bar">' +
       '<span class="eyebrow">Prompt</span>' +
       '<button class="button quiet" data-copy="prompt" type="button">Copy</button>' +
       "</div>" +
-      '<pre class="send-tool-code" id="send-tool-prompt"></pre>' +
+      '<pre class="console-tool-code" id="send-tool-prompt"></pre>' +
       "</details>";
 
     // textContent, not innerHTML: the snippet is code and must never

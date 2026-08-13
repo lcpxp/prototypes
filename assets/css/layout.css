@@ -132,11 +132,13 @@
 }
 
 .nav-tools:empty,
-.nav-send:empty {
+.nav-send:empty,
+.nav-daopay-admin:empty {
   display: none;
 }
 
-.nav-send {
+.nav-send,
+.nav-daopay-admin {
   display: inline-flex;
 }
 

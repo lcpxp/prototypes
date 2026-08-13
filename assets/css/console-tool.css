@@ -1,28 +1,30 @@
 /* ------------------------------------------------------------------
-   send-tool.css - The modal behind the nav's send icon (send-tool.js).
-   Its own file rather than more of components.css, which is at its
-   size budget; linked only by pages that load send-tool.js.
+   console-tool.css - The modal shared by the nav's console-snippet
+   tools (send-tool.js and daopay-admin-tool.js): a wide dialog with a
+   header bar, a scrolling code block per snippet and a collapsed
+   details section. Its own file rather than more of components.css,
+   which is at its size budget; linked only by pages that load one of
+   those tools.
 ------------------------------------------------------------------ */
 /* ---------------------------------------------------------------
-   Send tool: the modal behind the nav's send icon. Wider than the
-   default modal because it shows code, and the code must not wrap
-   into something that is wrong when pasted - hence the horizontal
-   scroll on .send-tool-code rather than a soft wrap.
+   Wider than the default modal because it shows code, and the code
+   must not wrap into something that is wrong when pasted - hence the
+   horizontal scroll on .console-tool-code rather than a soft wrap.
 --------------------------------------------------------------- */
 
-dialog.modal.send-tool {
+dialog.modal.console-tool {
   inline-size: min(52rem, calc(100vw - 2 * var(--gutter)));
 }
 
-.send-tool-lede {
+.console-tool-lede {
   margin-block-end: var(--s-4);
 }
 
-.send-tool-block {
+.console-tool-block {
   margin-block-end: var(--s-4);
 }
 
-.send-tool-bar {
+.console-tool-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -30,7 +32,7 @@ dialog.modal.send-tool {
   margin-block-end: var(--s-2);
 }
 
-.send-tool-code {
+.console-tool-code {
   margin: 0;
   padding: var(--s-3);
   max-block-size: 22rem;
@@ -46,22 +48,22 @@ dialog.modal.send-tool {
   border-radius: var(--radius-sm);
 }
 
-.send-tool-details {
+.console-tool-details {
   border-block-start: 1px solid var(--line);
   padding-block-start: var(--s-4);
 }
 
-.send-tool-details summary {
+.console-tool-details summary {
   cursor: pointer;
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
 }
 
-.send-tool-details[open] summary {
+.console-tool-details[open] summary {
   margin-block-end: var(--s-3);
 }
 
-.send-tool-note {
+.console-tool-note {
   font-size: var(--text-sm);
   color: var(--muted);
   margin-block-end: var(--s-3);

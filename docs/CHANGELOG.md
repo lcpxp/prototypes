@@ -10,6 +10,14 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Added
+- A **DaoPay admin** icon in the top-right nav opens a modal with two
+  copyable browser-console snippets: one that creates a portal user
+  holding the DaoPay reviewer role, and one that lists who currently
+  holds it. A stopgap until the portal grows a UI for that role; the
+  snippets read the portal's host and scope from its own config at run
+  time and carry placeholder arguments the operator replaces.
+
 ### Changed
 - The **API reference** has been reconciled against the LaunchPad
   source: twelve rows that documented paths the API does not serve are

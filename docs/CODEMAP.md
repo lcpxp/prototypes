@@ -19,33 +19,36 @@ document instead of walking the tree or reading whole files.
 | assets/css/app-review-detail.css | 112 | app-review-detail.css - The application review detail drawer: the |
 | assets/css/app-review.css | 378 | app-review.css - The application review board and wave list. |
 | assets/css/base.css | 111 | base.css - Reset, typography and global element styles. |
-| assets/css/components.css | 447 | components.css - Reusable interface components: cards, forms, |
-| assets/css/layout.css | 393 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/components.css | 459 | components.css - Reusable interface components: cards, forms, |
+| assets/css/console-tool.css | 71 | console-tool.css - The modal shared by the nav's console-snippet |
+| assets/css/layout.css | 395 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
-| assets/css/platform.css | 144 | platform.css - The platform knowledge page (modules/platform/). |
+| assets/css/platform.css | 149 | platform.css - The platform knowledge page (modules/platform/). |
 | assets/css/prototype.css | 88 | prototype.css - Shared styles for a prototype's LPio-framed overview |
 | assets/css/pxp-daopay.css | 212 | pxp-daopay.css - The Daopay EU onboarding replica layered on the PXP |
 | assets/css/pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
 | assets/css/pxp-sim.css | 191 | pxp-sim.css - The simulation layer for the Daopay replica: the toast |
 | assets/css/pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype |
-| assets/css/roadmap-detail.css | 325 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
+| assets/css/roadmap-detail.css | 335 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 422 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
-| assets/css/send-tool.css | 69 | send-tool.css - The modal behind the nav's send icon (send-tool.js). |
 | assets/css/tokens.css | 444 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
+| assets/js/core/blocks.js | 139 | blocks.js - The typed-block renderer, in one place. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
+| assets/js/core/daopay-admin-tool.js | 182 | daopay-admin-tool.js - A nav icon that opens two browser-console |
 | assets/js/core/drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
-| assets/js/core/registry.js | 234 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/links.js | 131 | links.js - The typed knowledge graph, resolved for rendering. |
+| assets/js/core/registry.js | 273 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/send-tool.js | 195 | send-tool.js - A nav icon that opens the acquirer send snippet: a |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
 | assets/js/core/tools.js | 103 | tools.js - The nav's outbound links to external tools, rendered as |
-| assets/js/core/ui.js | 304 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/core/ui.js | 312 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
 | assets/js/pages/appreview-detail.js | 174 | appreview-detail.js - The drawer body for one application. A pure |
 | assets/js/pages/appreview-findings.js | 145 | appreview-findings.js - The cross-record half of the review model: |
@@ -67,13 +70,13 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/pci-portal.js | 302 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
 | assets/js/pages/pci-reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
 | assets/js/pages/platform-knowledge.js | 200 | platform-knowledge.js - The parts of the platform knowledge base the |
-| assets/js/pages/platform.js | 337 | platform.js - The platform product-knowledge viewer for |
+| assets/js/pages/platform.js | 292 | platform.js - The platform product-knowledge viewer for |
 | assets/js/pages/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
-| assets/js/pages/reference-topics.js | 112 | reference-topics.js - Pure HTML builders for api_topics rows: the |
+| assets/js/pages/reference-topics.js | 47 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail-export.js | 223 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
-| assets/js/pages/roadmap-detail.js | 365 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
+| assets/js/pages/roadmap-detail.js | 383 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-drawer.js | 76 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
 | assets/js/pages/roadmap-export.js | 76 | roadmap-export.js - The roadmap home's export dropdown wiring and the |
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
@@ -81,12 +84,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
 | assets/js/pages/roadmap-views-timeline.js | 213 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
 | assets/js/pages/roadmap-views.js | 413 | roadmap-views.js - Pure HTML builders for the roadmap home |
-| assets/js/pages/roadmap.js | 532 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
+| assets/js/pages/roadmap.js | 529 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
-| dashboard.html | 64 | Dashboard - LPio / LaunchPad IO |
+| dashboard.html | 65 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 300 | Changelog |
+| docs/CHANGELOG.md | 321 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -99,36 +102,46 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 40 | Current state |
+| docs/STATE.md | 39 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
+| docs/plan/00-PROGRAMME.md | 245 | Alignment programme |
+| docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
+| docs/plan/20-API-REFERENCE.md | 300 | Aligning API reference 2.0 with the code |
+| docs/plan/30-KNOWLEDGE.md | 238 | Writing verified findings into the system |
+| docs/plan/40-SURFACING.md | 238 | Nothing buried, anywhere in the portal |
+| docs/plan/50-DASHBOARD.md | 237 | Rebuilding the dashboard |
+| docs/plan/60-PORTAL-REVIEW.md | 300 | Portal review, as a feature |
+| docs/plan/70-PROTOTYPE-IDEAS.md | 200 | Prototype ideas and plans |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
 | index.html | 76 | Sign in - LPio / LaunchPad IO |
-| modules/app-review/index.html | 77 | Application review - LPio / LaunchPad IO |
-| modules/app-review/wave.html | 101 | Wave - Application review - LPio / LaunchPad IO |
-| modules/backlog/index.html | 96 | Backlog - LPio / LaunchPad IO |
-| modules/integrations/index.html | 65 | Integrations - LPio / LaunchPad IO |
-| modules/platform/index.html | 63 | Platform - LPio / LaunchPad IO |
-| modules/prototypes/daopay/application.html | 54 | Application summary - PXP replica - LPio |
-| modules/prototypes/daopay/applications.html | 53 | Applications - PXP replica - LPio |
+| modules/app-review/index.html | 78 | Application review - LPio / LaunchPad IO |
+| modules/app-review/wave.html | 102 | Wave - Application review - LPio / LaunchPad IO |
+| modules/backlog/index.html | 97 | Backlog - LPio / LaunchPad IO |
+| modules/integrations/index.html | 66 | Integrations - LPio / LaunchPad IO |
+| modules/platform/index.html | 66 | Platform - LPio / LaunchPad IO |
+| modules/prototypes/daopay/application.html | 55 | Application summary - PXP replica - LPio |
+| modules/prototypes/daopay/applications.html | 54 | Applications - PXP replica - LPio |
 | modules/prototypes/daopay/daopay-flow.svg | 171 |  |
-| modules/prototypes/daopay/index.html | 258 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
-| modules/prototypes/gdpr/index.html | 52 | GDPR compliance prototype - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 64 | Prototypes - LPio / LaunchPad IO |
-| modules/prototypes/pci/dashboard.html | 70 | Dashboard - PXP replica - LPio |
-| modules/prototypes/pci/demo.html | 90 | Merchant Prescreen and Quote - PXP replica - LPio |
-| modules/prototypes/pci/index.html | 159 | PCI compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/daopay/index.html | 259 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
+| modules/prototypes/gdpr/index.html | 53 | GDPR compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 65 | Prototypes - LPio / LaunchPad IO |
+| modules/prototypes/pci/dashboard.html | 71 | Dashboard - PXP replica - LPio |
+| modules/prototypes/pci/demo.html | 91 | Merchant Prescreen and Quote - PXP replica - LPio |
+| modules/prototypes/pci/index.html | 160 | PCI compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/pci/pci-workflow.svg | 62 |  |
-| modules/prototypes/pci/reports.html | 80 | Compliance reporting - PXP replica - LPio |
-| modules/prototypes/website-screening/index.html | 53 | Website screening prototype - LPio / LaunchPad IO |
-| modules/reference/index.html | 78 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 134 | Roadmap - LPio / LaunchPad IO |
-| modules/users/index.html | 58 | Users - LPio / LaunchPad IO |
-| package.json | 14 |  |
+| modules/prototypes/pci/reports.html | 81 | Compliance reporting - PXP replica - LPio |
+| modules/prototypes/website-screening/index.html | 54 | Website screening prototype - LPio / LaunchPad IO |
+| modules/reference/index.html | 80 | API reference - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 136 | Roadmap - LPio / LaunchPad IO |
+| modules/users/index.html | 59 | Users - LPio / LaunchPad IO |
+| package.json | 15 |  |
 | scripts/audit.js | 145 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
+| scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
+| scripts/gen-coverage.js | 170 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
 | scripts/gen-snapshot.js | 136 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
@@ -173,6 +186,7 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260810220039_rename_historic_at_to_previously_completed_at.sql | 13 | The board's delivered columns are "Recently completed" and "Previously |
 | supabase/migrations/20260811220737_portal_links.sql | 51 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 361 | ------------------------------------------------------------------ |
+| supabase/reference-coverage.json | 61 |  |
 | supabase/schema-snapshot.json | 1014 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
@@ -188,29 +202,41 @@ document instead of walking the tree or reading whole files.
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
+| tests/checks/reference-drift.test.js | 128 | tests/checks/reference-drift.test.js - Keeps the API reference from |
 | tests/checks/roadmap-intake.test.js | 142 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
+| tests/fixtures/controllers/ComposedController.cs | 22 |  |
+| tests/fixtures/controllers/NamedSlotsController.cs | 17 |  |
+| tests/fixtures/controllers/NotAController.cs | 10 |  |
+| tests/fixtures/controllers/RetiredController.cs | 18 |  |
+| tests/fixtures/controllers/TokenController.cs | 16 |  |
+| tests/fixtures/controllers/UnversionedWidgetsController.cs | 18 |  |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
+| tests/reference-budget.json | 24 |  |
 | tests/size-budget.json | 113 |  |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
+| tests/unit/blocks.test.js | 119 | tests/unit/blocks.test.js - The typed-block renderer. |
+| tests/unit/coverage-reconcile.test.js | 111 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
+| tests/unit/links.test.js | 147 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
-| tests/unit/platform-knowledge.test.js | 200 | tests/unit/platform-knowledge.test.js - The stores the capability |
+| tests/unit/platform-knowledge.test.js | 246 | tests/unit/platform-knowledge.test.js - The stores the capability |
 | tests/unit/platform-render.test.js | 135 | tests/unit/platform-render.test.js - Benchmarks for the platform |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
-| tests/unit/roadmap-detail.test.js | 340 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
+| tests/unit/roadmap-detail.test.js | 368 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-views-custom.test.js | 258 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
 | tests/unit/roadmap-views-exec.test.js | 49 | tests/unit/roadmap-views-exec.test.js - Benchmarks for the Executive |
 | tests/unit/roadmap-views.test.js | 475 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
+| tests/unit/route-extract.test.js | 108 | tests/unit/route-extract.test.js - Benchmarks for the route |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/tools.test.js | 176 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
@@ -220,6 +246,15 @@ document instead of walking the tree or reading whole files.
 
 | Symbol | Location |
 |---|---|
+| toneClass() | assets/js/core/blocks.js:34 |
+| defaultCodeblock() | assets/js/core/blocks.js:38 |
+| tableBlock() | assets/js/core/blocks.js:43 |
+| kvBlock() | assets/js/core/blocks.js:60 |
+| valuesBlock() | assets/js/core/blocks.js:70 |
+| unknownBlock() | assets/js/core/blocks.js:89 |
+| copy() | assets/js/core/daopay-admin-tool.js:89 |
+| fallback() | assets/js/core/daopay-admin-tool.js:102 |
+| buildDialog() | assets/js/core/daopay-admin-tool.js:114 |
 | App.drawer | assets/js/core/drawer.js:35 |
 | isOpen() | assets/js/core/drawer.js:45 |
 | focusable() | assets/js/core/drawer.js:49 |
@@ -232,9 +267,10 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:88 |
 | App.onAuthed | assets/js/core/guard.js:116 |
 | enforceModule() | assets/js/core/guard.js:124 |
-| App.moduleHref | assets/js/core/registry.js:178 |
-| App.itemHref | assets/js/core/registry.js:188 |
-| App.departmentLabel | assets/js/core/registry.js:227 |
+| App.moduleHref | assets/js/core/registry.js:197 |
+| App.itemHref | assets/js/core/registry.js:207 |
+| App.linkHref | assets/js/core/registry.js:250 |
+| App.departmentLabel | assets/js/core/registry.js:266 |
 | sources() | assets/js/core/search.js:24 |
 | canReach() | assets/js/core/search.js:47 |
 | moduleByKey() | assets/js/core/search.js:51 |
@@ -280,7 +316,7 @@ document instead of walking the tree or reading whole files.
 | isCurrentPage() | assets/js/core/ui.js:127 |
 | themeIcon() | assets/js/core/ui.js:135 |
 | renderNav() | assets/js/core/ui.js:152 |
-| App.onThemeChange | assets/js/core/ui.js:279 |
+| App.onThemeChange | assets/js/core/ui.js:287 |
 | param() | assets/js/pages/appreview-board.js:32 |
 | day() | assets/js/pages/appreview-board.js:36 |
 | renderAll() | assets/js/pages/appreview-board.js:46 |
@@ -460,22 +496,17 @@ document instead of walking the tree or reading whole files.
 | glossaryHtml() | assets/js/pages/platform-knowledge.js:134 |
 | factsHtml() | assets/js/pages/platform-knowledge.js:153 |
 | sourcesHtml() | assets/js/pages/platform-knowledge.js:177 |
-| kindsIn() | assets/js/pages/platform.js:39 |
-| toneClass() | assets/js/pages/platform.js:43 |
-| codeblock() | assets/js/pages/platform.js:47 |
-| tableBlock() | assets/js/pages/platform.js:52 |
-| kvBlock() | assets/js/pages/platform.js:69 |
-| valuesBlock() | assets/js/pages/platform.js:78 |
-| blockHtml() | assets/js/pages/platform.js:94 |
-| maturityChips() | assets/js/pages/platform.js:115 |
-| capabilityLinks() | assets/js/pages/platform.js:125 |
-| capabilityCard() | assets/js/pages/platform.js:134 |
-| byOrder() | assets/js/pages/platform.js:147 |
-| groupByArea() | assets/js/pages/platform.js:151 |
-| sectionHeading() | assets/js/pages/platform.js:163 |
-| renderUnknown() | assets/js/pages/platform.js:174 |
-| pageHtml() | assets/js/pages/platform.js:191 |
-| rows() | assets/js/pages/platform.js:299 |
+| kindsIn() | assets/js/pages/platform.js:38 |
+| blockHtml() | assets/js/pages/platform.js:45 |
+| maturityChips() | assets/js/pages/platform.js:49 |
+| capabilityLinks() | assets/js/pages/platform.js:63 |
+| capabilityCard() | assets/js/pages/platform.js:83 |
+| byOrder() | assets/js/pages/platform.js:96 |
+| groupByArea() | assets/js/pages/platform.js:100 |
+| sectionHeading() | assets/js/pages/platform.js:112 |
+| renderUnknown() | assets/js/pages/platform.js:123 |
+| pageHtml() | assets/js/pages/platform.js:140 |
+| rows() | assets/js/pages/platform.js:248 |
 | sanitize() | assets/js/pages/proto-svg.js:22 |
 | fallback() | assets/js/pages/proto-svg.js:51 |
 | openOverlay() | assets/js/pages/proto-svg.js:59 |
@@ -492,12 +523,8 @@ document instead of walking the tree or reading whole files.
 | groupByTag() | assets/js/pages/reference-render.js:204 |
 | matches() | assets/js/pages/reference-render.js:234 |
 | endpointsFromOpenApi() | assets/js/pages/reference-render.js:244 |
-| toneClass() | assets/js/pages/reference-topics.js:21 |
-| tableBlock() | assets/js/pages/reference-topics.js:25 |
-| kvBlock() | assets/js/pages/reference-topics.js:45 |
-| valuesBlock() | assets/js/pages/reference-topics.js:55 |
-| blockHtml() | assets/js/pages/reference-topics.js:69 |
-| topicBlock() | assets/js/pages/reference-topics.js:93 |
+| blockHtml() | assets/js/pages/reference-topics.js:22 |
+| topicBlock() | assets/js/pages/reference-topics.js:28 |
 | context() | assets/js/pages/reference.js:32 |
 | render() | assets/js/pages/reference.js:36 |
 | hydrate() | assets/js/pages/reference.js:90 |
@@ -531,15 +558,15 @@ document instead of walking the tree or reading whole files.
 | priorityBand() | assets/js/pages/roadmap-detail.js:132 |
 | priorityLabel() | assets/js/pages/roadmap-detail.js:138 |
 | progressRow() | assets/js/pages/roadmap-detail.js:148 |
-| relatedRows() | assets/js/pages/roadmap-detail.js:167 |
-| sourceText() | assets/js/pages/roadmap-detail.js:185 |
-| parseDetails() | assets/js/pages/roadmap-detail.js:200 |
-| detailsHtml() | assets/js/pages/roadmap-detail.js:216 |
-| extraAttrRows() | assets/js/pages/roadmap-detail.js:227 |
-| noteRow() | assets/js/pages/roadmap-detail.js:241 |
-| notesHtml() | assets/js/pages/roadmap-detail.js:252 |
-| phasesHtml() | assets/js/pages/roadmap-detail.js:259 |
-| drawerHtml() | assets/js/pages/roadmap-detail.js:273 |
+| relatedRows() | assets/js/pages/roadmap-detail.js:173 |
+| sourceText() | assets/js/pages/roadmap-detail.js:203 |
+| parseDetails() | assets/js/pages/roadmap-detail.js:218 |
+| detailsHtml() | assets/js/pages/roadmap-detail.js:234 |
+| extraAttrRows() | assets/js/pages/roadmap-detail.js:245 |
+| noteRow() | assets/js/pages/roadmap-detail.js:259 |
+| notesHtml() | assets/js/pages/roadmap-detail.js:270 |
+| phasesHtml() | assets/js/pages/roadmap-detail.js:277 |
+| drawerHtml() | assets/js/pages/roadmap-detail.js:291 |
 | App.roadmapDrawer | assets/js/pages/roadmap-drawer.js:19 |
 | setItemParam() | assets/js/pages/roadmap-drawer.js:29 |
 | openDrawer() | assets/js/pages/roadmap-drawer.js:37 |
@@ -664,9 +691,22 @@ document instead of walking the tree or reading whole files.
 | thenBalance() | scripts/audit.js:74 |
 | stalePaths() | scripts/audit.js:88 |
 | snapshotSummary() | scripts/audit.js:103 |
+| normalisePath() | scripts/extract-routes.js:38 |
+| routeKey() | scripts/extract-routes.js:46 |
+| controllerName() | scripts/extract-routes.js:50 |
+| baseRoute() | scripts/extract-routes.js:60 |
+| joinRoute() | scripts/extract-routes.js:74 |
+| lineOf() | scripts/extract-routes.js:80 |
+| extractFile() | scripts/extract-routes.js:87 |
+| walk() | scripts/extract-routes.js:107 |
+| digestOf() | scripts/extract-routes.js:120 |
+| extractDir() | scripts/extract-routes.js:125 |
 | firstLineMatching() | scripts/gen-codemap.js:22 |
 | purposeOf() | scripts/gen-codemap.js:30 |
 | symbolsOf() | scripts/gen-codemap.js:41 |
+| collapsedKeys() | scripts/gen-coverage.js:73 |
+| reconcile() | scripts/gen-coverage.js:86 |
+| build() | scripts/gen-coverage.js:110 |
 | sorted() | scripts/gen-snapshot.js:91 |
 | write() | scripts/gen-snapshot.js:101 |
 | seededKinds() | tests/checks/knowledge-links.test.js:22 |
@@ -693,21 +733,23 @@ document instead of walking the tree or reading whole files.
 | categories() | tests/unit/appreview-model.test.js:39 |
 | statuses() | tests/unit/appreview-model.test.js:55 |
 | app() | tests/unit/appreview-model.test.js:68 |
+| load() | tests/unit/blocks.test.js:18 |
 | load() | tests/unit/daopay-role.test.js:18 |
 | loadBuilder() | tests/unit/gallery-future.test.js:14 |
+| load() | tests/unit/links.test.js:23 |
 | load() | tests/unit/pci-ixopay.test.js:16 |
 | load() | tests/unit/platform-knowledge.test.js:22 |
-| sample() | tests/unit/platform-knowledge.test.js:40 |
+| sample() | tests/unit/platform-knowledge.test.js:43 |
 | loadView() | tests/unit/platform-render.test.js:15 |
-| sampleData() | tests/unit/platform-render.test.js:31 |
+| sampleData() | tests/unit/platform-render.test.js:32 |
 | loadApp() | tests/unit/reference-render.test.js:13 |
 | loadApp() | tests/unit/registry.test.js:12 |
 | familyData() | tests/unit/roadmap-child-order.test.js:20 |
 | order() | tests/unit/roadmap-child-order.test.js:41 |
 | load() | tests/unit/roadmap-detail.test.js:13 |
-| sample() | tests/unit/roadmap-detail.test.js:33 |
-| ctxOf() | tests/unit/roadmap-detail.test.js:59 |
-| plain() | tests/unit/roadmap-detail.test.js:60 |
+| sample() | tests/unit/roadmap-detail.test.js:34 |
+| ctxOf() | tests/unit/roadmap-detail.test.js:60 |
+| plain() | tests/unit/roadmap-detail.test.js:61 |
 | familyData() | tests/unit/roadmap-views-custom.test.js:84 |
 | count() | tests/unit/roadmap-views.test.js:23 |
 | load() | tests/unit/search.test.js:15 |
