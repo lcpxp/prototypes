@@ -24,13 +24,18 @@ fetches titles by id one query per type present, and renders a target
 with a page as a link, one without a page as its name and type, and
 one that cannot be read as its type alone. Never as silence.
 
-**Unknown block kinds are silently dropped.** `blockHtml` exists twice
-- `platform.js:94` and `reference-topics.js:69` - both implementing
-p, note, code, table, kv and values, and both skipping anything else.
-Skipping was a deliberate forward-compatibility choice so content
-could lead the code. It is exactly the wrong default for this ask: it
-means a new block kind ships to the database and shows nothing, with
-no error and no trace.
+**Unknown block kinds were silently dropped.** FIXED 2026-08-13.
+`blockHtml` existed twice - `platform.js` and `reference-topics.js` -
+both implementing p, note, code, table, kv and values, and both
+skipping anything else. Skipping was a deliberate forward-compatibility
+choice so content could lead the code; the cost was that a new kind
+shipped to the database and showed nothing, with no error and no
+trace. `assets/js/core/blocks.js` is now the single renderer, and an
+unrecognised kind renders its own keys as a definition list in a muted
+"provisional" treatment. Content still leads the code; it just lands
+visibly, and the muted treatment is the prompt to write a real
+renderer. Deleting the two copies took platform.js back under its soft
+line budget.
 
 **Twenty notes are anchored to nothing** and appear on no page. Forty-
 six more are anchored to a document; the backlog page reads documents
@@ -78,19 +83,18 @@ An explicit `hidden` list covers the genuinely internal (`id`,
 Everything not mapped and not hidden **appears**, under a heading that
 says what it is: "Also recorded against this".
 
-### 2. One block renderer, and unknown kinds render generically
+### 2. One block renderer, unknown kinds render generically - DONE
 
-Extract `blockHtml` to `assets/js/core/blocks.js`, delete both copies,
-and change the fallback: an unrecognised kind renders its `title` (or
-its kind name) and its contents as a definition list, in a muted
-"unrecognised block" treatment. Content can still lead the code - the
-point of the original decision - but it lands visibly, and the muted
-treatment is the prompt to write a proper renderer.
+Landed 2026-08-13 as `assets/js/core/blocks.js`, with both copies
+deleted and eleven benchmarks, including one that asserts neither page
+keeps a private copy of the vocabulary. `opts.codeblock` lets the
+reference viewer pass its richer code treatment; everything else
+renders identically on both surfaces.
 
-Add `App.blocks.render` to the reference viewer, the platform page,
-the roadmap drawer (so a work item can carry typed blocks), the review
-board and the prototype ideas page. One vocabulary, one renderer, six
-surfaces.
+Still to adopt it: the roadmap drawer (so a work item can carry typed
+blocks), the review board and the prototype ideas page. One
+vocabulary, one renderer, and the remaining surfaces inherit the
+generic fallback for free.
 
 ### 3. Gates that keep it true
 

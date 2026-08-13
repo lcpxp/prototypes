@@ -22,6 +22,7 @@ function loadView() {
   sandbox.window = sandbox;
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
+  vm.runInContext(read("assets/js/core/blocks.js"), sandbox, { filename: "blocks.js" });
   sandbox.App.onAuthed = function () {};
   vm.runInContext(read("assets/js/pages/platform.js"), sandbox,
     { filename: "platform.js" });
@@ -54,9 +55,8 @@ function sampleData() {
   };
 }
 
-test("blockHtml renders each kind, escapes content, skips unknown kinds", () => {
+test("blockHtml renders each kind and escapes content", () => {
   const V = loadView();
-  assert.equal(V.blockHtml({ kind: "mystery", text: "x" }), "");
   assert.ok(V.blockHtml({ kind: "p", text: "<i>hi</i>" }).includes("&lt;i&gt;"));
   assert.ok(V.blockHtml({ kind: "note", tone: "warn", text: "careful" })
     .includes("notice tone-warn"));

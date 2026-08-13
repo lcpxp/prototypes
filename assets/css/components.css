@@ -237,6 +237,18 @@ select:focus {
    Notices
 --------------------------------------------------------------- */
 
+/* A typed block whose kind no renderer knows yet. It renders rather
+   than vanishing (assets/js/core/blocks.js), and reads as provisional
+   so the muted treatment is itself the prompt to write a real one. */
+.block-unknown {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  padding: var(--s-3) var(--s-4);
+  margin-block: var(--s-3);
+  background: var(--paper);
+}
+.block-unknown > .eyebrow { color: var(--faint); }
+
 .notice {
   padding: var(--s-3) var(--s-4);
   font-size: var(--text-sm);

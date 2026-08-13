@@ -29,6 +29,7 @@ function load() {
   sandbox.window = sandbox;
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
+  vm.runInContext(read("assets/js/core/blocks.js"), sandbox, { filename: "blocks.js" });
   vm.runInContext(read("assets/js/core/registry.js"), sandbox, { filename: "registry.js" });
   vm.runInContext(read("assets/js/core/links.js"), sandbox, { filename: "links.js" });
   sandbox.App.onAuthed = function () {};

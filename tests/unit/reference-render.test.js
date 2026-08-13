@@ -23,6 +23,7 @@ function loadApp() {
   sandbox.window = sandbox;
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
+  vm.runInContext(read("assets/js/core/blocks.js"), sandbox, { filename: "blocks.js" });
   vm.runInContext(read("assets/js/pages/reference-render.js"), sandbox,
     { filename: "reference-render.js" });
   vm.runInContext(read("assets/js/pages/reference-topics.js"), sandbox,
@@ -175,9 +176,8 @@ test("groupByTag orders and describes tags from the catalogue", () => {
   assert.equal(bare.order.join(","), "Beta,Alpha,Stray");
 });
 
-test("topic blocks render each kind, escape content, skip unknown kinds", () => {
+test("topic blocks render each kind and escape content", () => {
   const T = loadApp().refTopics;
-  assert.equal(T.blockHtml({ kind: "mystery", text: "x" }), "");
   assert.ok(T.blockHtml({ kind: "p", text: "<i>hi</i>" }).includes("&lt;i&gt;"));
   assert.ok(T.blockHtml({ kind: "note", tone: "warn", text: "careful" })
     .includes("notice tone-warn"));
