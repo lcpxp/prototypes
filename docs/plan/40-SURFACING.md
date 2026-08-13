@@ -96,22 +96,34 @@ blocks), the review board and the prototype ideas page. One
 vocabulary, one renderer, and the remaining surfaces inherit the
 generic fallback for free.
 
-### 3. Gates that keep it true
+### 3. Gates that keep it true - LANDED
 
-`tests/checks/render-coverage.test.js`, repo-local, no network:
+`tests/checks/render-coverage.test.js`, repo-local, no network. It
+parses all 36 `check (... in (...))` constraints out of
+`supabase/schema/*.sql` and holds three vocabularies:
 
-- parse the `check (... in (...))` constraints out of
-  `supabase/schema/*.sql` for every table a page renders, and assert
-  each allowed value appears in a renderer's map or in a declared
-  exclusion list with a reason. This is the generalisation of the
-  existing platform-knowledge test, which was written after three
-  capability kinds rendered nowhere for a week;
-- assert every `link_entity_types` key has an href builder in
-  `App.itemHref` and a label in `App.registry.linkKinds`;
-- assert every column in the rendered tables appears in a field map or
-  a hidden list - so adding a column forces a decision about it in the
-  same commit;
-- assert `App.blocks.render` has a default branch.
+- **every constraint value has a declared home** - a named renderer
+  that must mention each value, or `generic` with the reason it needs
+  no per-value branch. A constraint with no entry at all fails, so
+  adding a vocabulary forces a decision in the same commit. Checked
+  both ways: a new value with no label, and a whole new constraint
+  nobody declared;
+- **every `link_entity_types` key** is mirrored in
+  `registry.linkEntities` with the same table, a label and a title
+  column, and every type with a page declares an anchor;
+- **`App.blocks.render` has a default branch**, and neither page keeps
+  a private copy of the block vocabulary.
+
+Two refinements the writing surfaced. A vocabulary already held by a
+stricter benchmark is delegated with `ownedBy` rather than checked
+twice, and the delegation is itself asserted. And one genuine hole is
+now named rather than assumed fine: `knowledge_links.confidence`
+carries the proposed/confirmed distinction through `App.links` and no
+page displays it, so a reader cannot tell an assistant's guess from
+the owner's decision. The gate caps declared holes at three.
+
+Still to come: the per-column check, which needs the field maps the
+shared detail panel introduces.
 
 `tests/unit/detail.test.js` benchmarks the overflow behaviour
 directly: given a row with a key no map knows, the panel contains it.
