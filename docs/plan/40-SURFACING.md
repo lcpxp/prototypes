@@ -231,11 +231,14 @@ seeing why a note matched is close to useless.
 Per CLAUDE.md: superseded schema goes once nothing reads it, and git
 is its history.
 
-- `roadmap_milestones`, `work_items.milestone_id` - zero rows, never
-  rendered. One migration, plus the schema file and the snapshot.
-- `work_item_phases` and the drawer's phases section - zero rows. If
-  phased delivery returns, it returns as `work_items` children, which
-  is the mechanism that is actually in use.
+- **`roadmap_milestones` and `work_item_phases`: LEFT ALONE, decided
+  2026-08-13 by the owner.** Both hold zero rows, `milestone_id` is
+  never rendered and the drawer's phases section renders nothing when
+  empty rather than breaking. Removing them changes nothing a user
+  sees and nothing a test checks, so the case for it was tidiness
+  rather than need - and a destructive migration wants a better reason
+  than that. If phased delivery is ever used, the section already
+  works. Do not re-propose this without a concrete problem it solves.
 - The `work_item_dependencies` paragraph in docs/ARCHITECTURE.md -
   describes a table that does not exist. `knowledge_links` with kind
   `blocks` is the live mechanism.

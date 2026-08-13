@@ -10,6 +10,14 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Added
+- A link between two things now shows when it is **proposed** rather
+  than confirmed. Links an assistant records stay proposed until you
+  confirm them, and until now that distinction was stored but never
+  shown, so a suggestion read exactly like a decision. Proposed links
+  carry a badge on the roadmap drawer and the platform card; confirmed
+  ones show nothing, because confirmed is the ordinary case.
+
 ### Fixed
 - The **users page** showed "member" against any role that was not
   admin. With only two roles in use nothing looked wrong, but the label

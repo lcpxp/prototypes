@@ -27,7 +27,9 @@
 //
 // Writing this map is what found two live defects: roleBadge printed
 // "member" for any role that was not admin, and blocker_scope 'record'
-// had no branch at all. Both are fixed; the reasons record it.
+// had no branch at all. Both are fixed; the reasons record it. Its one
+// declared `hole` - knowledge_links.confidence - is closed too, so the
+// category currently has no members and exists for the next one.
 //
 // Link KINDS are not checked here: tests/checks/knowledge-links.test.js
 // holds those against the schema seed, and one concept gets one home.
@@ -123,14 +125,14 @@ const COVERAGE = {
   "review_evidence.signal": { derived: "never shown as text: a typed signal drives the contradiction findings structurally, so its effect is visible rather than its value" },
   "triage_categories.group_key": { file: "assets/js/pages/appreview-model.js" },
 
-  // Not rendered anywhere, and that is a known hole rather than a
-  // claim that it is fine. knowledge_links.confidence marks a link an
-  // assistant proposed but the owner has not confirmed - exactly the
-  // thing a reader should be able to see. Picked up with the shared
-  // detail panel in docs/plan/40-SURFACING.md.
+  // Was the one declared hole in this file, closed 2026-08-13: a link
+  // an assistant proposed now carries a `proposed` badge in both the
+  // roadmap drawer and the platform card, so a reader can tell a
+  // suggestion from the owner's decision. `confirmed` is the
+  // unremarkable case and shows nothing.
   "knowledge_links.confidence": {
-    hole: "carried through App.links but never displayed; the proposed/confirmed " +
-      "distinction is invisible to a reader. Due with the detail panel.",
+    generic: "a proposed link is badged; confirmed shows nothing because it is " +
+      "the default reading, so both values are accounted for",
   },
 };
 
@@ -251,8 +253,9 @@ test("the block renderer has a fallback, so no kind is dropped", () => {
 });
 
 test("known holes are listed, not silently tolerated", () => {
-  // A hole is a declared debt with a reason. It fails nothing today; it
-  // exists so the list is short and visible rather than remembered.
+  // A hole is a declared debt with a reason. There are none right now;
+  // the cap exists so that if one is ever added the list stays short
+  // and visible rather than remembered.
   const holes = Object.entries(COVERAGE).filter(([, r]) => r.hole);
   assert.ok(holes.length <= 3,
     "More than three vocabularies render nowhere. Fix one before adding " +

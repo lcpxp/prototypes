@@ -74,8 +74,11 @@
       var body = t.href
         ? '<a href="' + App.escape(t.href) + '">' + label + "</a>"
         : label;
+      // Proposed by an assistant, not yet confirmed by the owner.
+      var pending = l.confidence === "proposed"
+        ? ' <span class="badge tone-warn">proposed</span>' : "";
       return '<span class="cap-link"><span class="cap-link-kind">' +
-        App.escape(t.reads) + "</span> " + body + "</span>";
+        App.escape(t.reads) + "</span> " + body + pending + "</span>";
     }).filter(Boolean);
     return parts.length ? '<p class="cap-links">' + parts.join("") + "</p>" : "";
   }

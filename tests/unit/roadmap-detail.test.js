@@ -216,6 +216,34 @@ test("a work item links out to entity types other than work items", () => {
   assert.match(html, /Rolling reserve <span class="rmd-link-type">Glossary term<\/span>/);
 });
 
+test("a proposed link is marked as proposed; a confirmed one is not", () => {
+  // knowledge_links.confidence was carried through App.links and shown
+  // nowhere, so a reader could not tell an assistant's suggestion from
+  // the owner's decision. It was the one declared hole in
+  // tests/checks/render-coverage.test.js.
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  const ctx = ctxOf(App, data);
+  ctx.linkIndex = App.links.index([
+    { from_type: "work_item", from_id: item.id, to_type: "capability", to_id: "c1",
+      kind: "affects", note: "", confidence: "proposed" },
+    { from_type: "work_item", from_id: item.id, to_type: "capability", to_id: "c2",
+      kind: "relates_to", note: "", confidence: "confirmed" },
+  ]);
+  ctx.linkTitles = { "capability:c1": "Screening", "capability:c2": "Pricing" };
+  const html = App.roadmapDetail.drawerHtml(item, ctx);
+  const marks = html.match(/badge tone-warn">proposed/g) || [];
+  assert.equal(marks.length, 1, "exactly one of the two links is proposed");
+  assert.match(html, /Screening[\s\S]{0,140}?badge tone-warn">proposed/,
+    "the proposed one is the Screening link, using the same badge an " +
+    "unverified row uses");
+  const confirmedRow = (html.match(/<dt>Related to<\/dt><dd>[\s\S]*?<\/dd>/) || [""])[0];
+  assert.match(confirmedRow, /Pricing/, "the confirmed link is in the Related to row");
+  assert.doesNotMatch(confirmedRow, /proposed/,
+    "a confirmed link carries no marker - confirmed is the unremarkable case");
+});
+
 test("a link to a type with no page renders flat, not as a dead link", () => {
   // `note` is the only type left without a destination: a note always
   // renders inside the thing it is about, so it has no page of its own.

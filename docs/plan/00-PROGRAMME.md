@@ -214,11 +214,10 @@ above rather than as an open decision.
    and seven v2 merchant sub-resources exist only as comments.
    Recommendation: a `planned` badge and a topic entry, never an
    endpoint row.
-4. **Milestones and phases.** Both tables are empty and one is
-   unrendered. Recommendation: remove `roadmap_milestones`,
-   `work_items.milestone_id` and `work_item_phases` in one migration
-   with the drawer branches, per the CLAUDE.md rule on superseded
-   schema.
+4. **Milestones and phases. CLOSED 2026-08-13: leave them.** Both
+   tables are empty, so removing them changes nothing a user sees and
+   nothing a test checks. The case was tidiness, and a destructive
+   migration wants a better reason. See 40-SURFACING.md.
 5. **Review findings and work items.** Should a promoted finding
    become a new `work_items` row, or fold into an existing one? The
    review board's own convention was "prefer merging into the older

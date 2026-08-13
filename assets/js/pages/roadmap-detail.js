@@ -179,6 +179,13 @@
       var t = App.links.resolve(l, titles, ctx && ctx.root);
       if (!t.title) return;
       var title = l.note ? ' title="' + esc(l.note) + '"' : "";
+      // A link an assistant wrote stays `proposed` until the owner
+      // confirms it (supabase/schema/33_links.sql). Showing nothing was
+      // the old behaviour, which left a reader unable to tell a
+      // suggestion from a decision - the same badge the platform page
+      // already uses for an unverified row.
+      var pending = l.confidence === "proposed"
+        ? ' <span class="badge tone-warn">proposed</span>' : "";
       var label = esc(t.title) + (l.otherType === "work_item" ? ""
         : ' <span class="rmd-link-type">' + esc(t.typeLabel) + "</span>");
       var html;
@@ -191,6 +198,7 @@
       } else {
         html = '<span class="rmd-link rmd-link--flat"' + title + ">" + label + "</span>";
       }
+      html += pending;
       (byReading[t.reads] = byReading[t.reads] || []).push(html);
     });
     return Object.keys(byReading).map(function (reads) {
