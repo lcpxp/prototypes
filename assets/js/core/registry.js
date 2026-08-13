@@ -164,6 +164,11 @@
       // outlives every wave and has its own home on the index.
       finding:    { table: "review_findings",      titleColumn: "title", label: "Review finding" },
       review_area:{ table: "review_areas",         titleColumn: "title", label: "Review area",     module: "portal-review", anchor: "area" },
+      // A prototype has its own page, so it routes through
+      // App.itemHref by `path` rather than by an anchor. An idea is a
+      // row on the ideas board.
+      prototype:  { table: "prototypes",           titleColumn: "title", label: "Prototype",       module: "prototypes" },
+      prototype_idea: { table: "future_prototypes", titleColumn: "name", label: "Prototype idea",  module: "prototypes", anchor: "idea", page: "ideas.html" },
     },
     // Spec families group api_specs rows into distinct reference
     // "sites" inside the reference module. Order here is display
@@ -279,8 +284,13 @@
     // An entity with an `anchor` addresses a row within its module's
     // page; without one it routes through App.itemHref, so a link and a
     // search result open the same place by the same rule.
+    // `page` names the page an entity's rows live on; index.html is the
+    // default. Without it every anchored type would have to put its
+    // rows on its module's index, which is why the prototype ideas
+    // board needed it.
     var href = entity.anchor
-      ? App.moduleHref(mod) + "index.html#" + entity.anchor + "-" + id
+      ? App.moduleHref(mod) + (entity.page || "index.html") +
+        "#" + entity.anchor + "-" + id
       : App.itemHref(mod, { id: id });
     App.root = previous;
     return href;

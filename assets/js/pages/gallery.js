@@ -7,26 +7,17 @@
 (function () {
   "use strict";
 
-  // Pure builder for the future-prototypes table: rows in, table
-  // string out, so it is unit-testable without Supabase or the DOM.
-  // Returns "" when there is nothing to show, letting the caller keep
-  // the section hidden.
+  // Pure builder for the ideas strip: rows in, string out, so it is
+  // unit-testable without Supabase or the DOM. Returns "" when there
+  // is nothing to show, letting the caller keep the section hidden.
+  //
+  // It was a two-column table of every row. It is now the top few by
+  // priority with a link through to the board (App.ideasView), because
+  // the gallery is where somebody lands and a fourteen-row table there
+  // was a list nobody read - the burying problem in miniature.
   App.futurePrototypesTable = function (rows) {
     if (!rows || !rows.length) return "";
-    var body = rows
-      .map(function (row) {
-        return (
-          "<tr><td>" + App.escape(row.name || "") + "</td>" +
-          "<td>" + App.escape(row.note || "") + "</td></tr>"
-        );
-      })
-      .join("");
-    return (
-      '<div class="table-wrap"><table>' +
-      "<thead><tr><th>Prototype</th><th>Note</th></tr></thead>" +
-      "<tbody>" + body + "</tbody>" +
-      "</table></div>"
-    );
+    return App.ideasView.stripHtml(rows, { href: "ideas.html", limit: 5 });
   };
 
   App.onAuthed(async function () {
@@ -111,9 +102,9 @@
 
     var result = await App.db
       .from(App.registry.tables.futurePrototypes)
-      .select("name, note, sort_order")
-      .order("sort_order", { ascending: true })
-      .order("name", { ascending: true });
+      .select("id, name, summary, status, priority, sort_order")
+      .order("priority", { ascending: true })
+      .order("sort_order", { ascending: true });
 
     if (result.error || !result.data || !result.data.length) return;
 

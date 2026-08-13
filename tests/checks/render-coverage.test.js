@@ -110,6 +110,8 @@ const COVERAGE = {
   "api_specs.status": { generic: "App.statusBadge renders any status" },
   "api_endpoints.method": { generic: "App.methodBadge renders any method, unknown ones unstyled" },
   "prototypes.status": { generic: "App.statusBadge renders any status" },
+  "future_prototypes.status": { file: "assets/js/pages/ideas-render.js" },
+  "future_prototypes.effort": { file: "assets/js/pages/ideas-render.js" },
   "integrations.status": { generic: "App.statusBadge renders any status" },
   "integrations.direction": { generic: "the integrations table prints the raw direction" },
   "product_capabilities.maturity": { generic: "App.statusBadge renders any maturity" },
@@ -209,13 +211,18 @@ test("every link entity type is declared, labelled and titled", () => {
   }
 });
 
+// Types whose rows have a page of their own, so App.itemHref already
+// builds a whole address for them and an anchor would be wrong. Every
+// other type with a module addresses a row WITHIN a page and needs
+// one - routing them all through App.itemHref would send a term to
+// #capability-<id>.
+const ROUTED = ["work_item", "prototype"];
+
 test("an anchored entity type has an anchor a link can address", () => {
-  // Routing every type through App.itemHref would send a term to
-  // #capability-<id>, so an entity with a page declares its own anchor.
   for (const line of linkEntitiesBlock().split("\n")) {
     if (!/module: "/.test(line)) continue;
     const key = line.trim().split(":")[0];
-    if (key === "work_item") continue; // routed by ?item=, not an anchor
+    if (ROUTED.includes(key)) continue;
     assert.match(line, /anchor: "/,
       `${key}: has a module but no anchor, so a link lands on the page and ` +
       "not on the row.");
@@ -236,7 +243,11 @@ test("an anchored destination is actually reachable on its page", () => {
     const anchored = /anchor: "/.test(line) && /module: "([\w-]+)"/.exec(line);
     if (!anchored) continue;
     const key = line.trim().split(":")[0];
-    const page = read(modules[anchored[1]] + "index.html");
+    // An entity may name the page its rows live on; index.html is only
+    // the default. The prototype ideas board is ideas.html, and the
+    // gate has to look where the rows actually are.
+    const named = /page: "([\w.-]+)"/.exec(line);
+    const page = read(modules[anchored[1]] + (named ? named[1] : "index.html"));
     const scripts = [...page.matchAll(/src="[^"]*assets\/js\/pages\/([\w-]+\.js)"/g)]
       .map((m) => "assets/js/pages/" + m[1]);
     assert.ok(scripts.length, `${key}: module ${anchored[1]} loads no page module`);

@@ -46,6 +46,7 @@
     "rls_auto_enable()",
     "roadmap_find(query text, p_limit integer, p_min_score numeric, p_exclude_id uuid)",
     "roadmap_move_workstream(p_workstream_id uuid, p_target_horizon text)",
+    "set_prototype_idea_resolution()",
     "set_updated_at()",
     "set_work_item_resolution()",
     "work_item_delete_guard()"
@@ -231,6 +232,10 @@
     {
       "name": "dashboard_summary_portal_waves",
       "version": "20260813233000"
+    },
+    {
+      "name": "prototype_ideas",
+      "version": "20260813234500"
     }
   ],
   "policies": [
@@ -713,12 +718,24 @@
       "verified"
     ],
     "future_prototypes": [
+      "area_id",
+      "blocks",
       "created_at",
+      "effort",
       "id",
       "name",
       "note",
+      "priority",
+      "promoted_prototype_id",
+      "requested_by",
+      "resolution",
+      "resolved_at",
       "sort_order",
-      "updated_at"
+      "status",
+      "summary",
+      "tags",
+      "updated_at",
+      "value_note"
     ],
     "integrations": [
       "category",

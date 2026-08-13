@@ -23,6 +23,18 @@ is the git history; what is unfinished is docs/STATE.md.
   something did, and links to the row rather than the module.
 
 ### Added
+- The prototypes module now has an **ideas and plans board**. The
+  fourteen-name "Future prototypes" table becomes a list you can
+  actually work: each idea can carry what it would prove, a priority
+  band, an effort, the area it belongs to, and a plan written against
+  it. An idea is never deleted - it closes with a reason, or becomes a
+  prototype and links to it. The gallery keeps a short strip of the
+  top few, linking through. Capture one in a Claude session with
+  `/prototype-idea`; it takes a single line.
+- A plan records what a prototype would be **built from** - the
+  capability rows, styling rows and endpoints it draws on. So a reader
+  can see whether to trust a prototype, and when one of those sources
+  changes, the links name every prototype now out of date.
 - **Portal review** is now a feature rather than a one-off HTML file.
   A wave can be opened, walked area by area, answered, verified,
   triaged and closed - the whole method from the wave 4 review board,

@@ -1,0 +1,91 @@
+/* ------------------------------------------------------------------
+   ideas.css - The prototype ideas board and the gallery strip that
+   points at it (docs/plan/70-PROTOTYPE-IDEAS.md). Tokens only.
+   ------------------------------------------------------------------ */
+
+/* The strip on the gallery: a pointer, not a second board. */
+.idea-strip {
+  margin: 0 0 var(--s-3);
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-2);
+}
+.idea-strip li {
+  padding-block-end: var(--s-2);
+  border-block-end: 1px solid var(--line);
+}
+.idea-line {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+
+/* The priority band, read the same way it is on the roadmap. */
+.idea-band {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+
+/* --- the board ------------------------------------------------------ */
+
+.idea-group { margin-block-end: var(--s-7); }
+.idea-group h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+.idea-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--faint);
+}
+.idea-note {
+  margin: var(--s-0) 0 var(--s-3);
+  font-size: var(--text-sm);
+  color: var(--faint);
+}
+
+.idea {
+  margin-block-end: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.idea-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+.idea-head h3 {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+.idea-meta {
+  margin: var(--s-1) 0 var(--s-2);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+.idea-summary { margin: 0 0 var(--s-2); }
+
+/* What it would prove: the field that stops a list of fourteen
+   becoming a list of forty nobody triages, so it reads as its own
+   statement rather than as another meta line. */
+.idea-value,
+.idea-resolution {
+  margin: var(--s-3) 0 0;
+  padding-inline-start: var(--s-3);
+  border-inline-start: 2px solid var(--line);
+  font-size: var(--text-sm);
+}
+.idea-value .eyebrow,
+.idea-resolution .eyebrow { display: block; }
+.idea-value { border-inline-start-color: var(--accent); }
+
+.idea-plan { margin-block-start: var(--s-3); }
+.idea-promoted { margin: var(--s-3) 0 0; font-size: var(--text-sm); }

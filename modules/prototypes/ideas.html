@@ -7,7 +7,7 @@
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://zlmkofbkobmhnslfnqsf.supabase.co" crossorigin>
-  <title>Prototypes - LPio / LaunchPad IO</title>
+  <title>Prototype ideas - LPio / LaunchPad IO</title>
   <script>
     (function() {
       var theme = localStorage.getItem("theme");
@@ -33,34 +33,29 @@
   <script defer src="../../assets/js/core/tools.js"></script>
   <script defer src="../../assets/js/core/send-tool.js"></script>
   <script defer src="../../assets/js/core/daopay-admin-tool.js"></script>
+  <script defer src="../../assets/js/core/blocks.js"></script>
+  <script defer src="../../assets/js/core/detail.js"></script>
   <script defer src="../../assets/js/pages/ideas-render.js"></script>
-  <script defer src="../../assets/js/pages/gallery.js"></script>
+  <script defer src="../../assets/js/pages/ideas.js"></script>
 </head>
 <body data-root="../.." data-module="prototypes">
   <header id="app-nav"></header>
 
   <main class="page">
     <div class="page-head">
-      <span class="eyebrow">Registry</span>
-      <h1>Prototypes</h1>
-      <p class="lede">The central directory of mocks, prototypes and working
-        designs for LPio, from small pieces of
-        functionality up to full portal replicas. Each entry is registered
-        in the prototypes table and its page files live in this
-        directory.</p>
+      <span class="eyebrow">Prototypes</span>
+      <h1>Ideas and plans</h1>
+      <p class="lede">What is worth building next, why it would be worth it, and
+        the plan where one has been written. Ideas are captured, prioritised and
+        promoted in a Claude session (see docs/PROTOTYPE-IDEAS.md); this page is
+        where you read the list. An idea is never deleted - it closes with a
+        reason, or becomes a prototype and links to it.</p>
+      <p class="card-meta" id="idea-count"></p>
     </div>
 
-    <div id="prototype-list">
-      <p class="notice">Loading</p>
-    </div>
+    <div id="page-notice"></div>
 
-    <section id="future-prototypes" hidden>
-      <h2 class="eyebrow eyebrow-heading">Ideas and plans</h2>
-      <p class="lede">What is worth building next. Each closes with a reason or
-        becomes a prototype and links to it.</p>
-      <div id="future-prototype-list"></div>
-      <p class="card-meta"><a href="ideas.html">Open the ideas board</a></p>
-    </section>
+    <div id="idea-board"><p class="notice">Loading</p></div>
   </main>
 
 </body>

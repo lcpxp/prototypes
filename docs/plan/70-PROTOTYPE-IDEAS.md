@@ -1,5 +1,8 @@
 # Prototype ideas and plans
 
+**BUILT 2026-08-13.** Schema, board, gallery strip, protocol and
+command all landed. What the build changed is at the end.
+
 The prototypes module holds five registered prototypes and a
 fourteen-row "Future prototypes" strip. The strip is the right idea
 with three columns: `name`, `note`, `sort_order`. There is no way to
@@ -197,3 +200,37 @@ obsolete as `dropped` with the reason rather than deleting them.
   a resolution and a back-link.
 - Every prototype records what it was built from, and the platform
   Coverage panel names the ones that do not.
+
+## What landed, 2026-08-13
+
+Everything above except the backfill and the Coverage-panel line.
+
+- **Schema** (migration `20260813234500`): the twelve columns, with
+  two constraints the plan implied and the database now enforces - a
+  `promoted` idea must name its prototype, a `dropped` one must carry
+  a resolution. `resolved_at` is stamped by a trigger and cleared when
+  an idea reopens, so the date always means "closed on".
+- **The gallery strip changed shape.** The plan said keep a short
+  strip; the old builder rendered every row as a two-column table.
+  Fourteen rows on the page somebody lands on was the burying problem
+  in miniature, so the strip is now the top five by priority with an
+  honest "N open ideas in all" and a link through.
+- **`linkEntities` gained a `page` field.** An anchored entity used to
+  be assumed to live on its module's `index.html`; the ideas board is
+  `ideas.html`. The gate that checks an anchor is reachable now looks
+  at the named page, which is what caught this.
+- **`prototype` is routed, not anchored.** A prototype has a page of
+  its own, so `App.itemHref` builds its whole address - the same case
+  as `work_item`, and the anchor gate now names both rather than
+  special-casing one.
+
+Left, and both are the owner's rather than a session's:
+
+- **The backfill.** The fourteen rows carry a name and nothing else. A
+  summary, an area, a value note and a priority are judgements, not
+  facts that can be derived, so inventing them would be exactly the
+  inference-written-as-fact this programme keeps refusing. They are
+  the first review pass.
+- **The Coverage-panel line** for prototypes with no built-from links.
+  It should wait until at least one prototype has them, or it will
+  read as a five-item defect list on the day it ships.

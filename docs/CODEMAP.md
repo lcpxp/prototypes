@@ -8,6 +8,7 @@ document instead of walking the tree or reading whole files.
 |---|---:|---|
 | .claude/commands/app-review.md | 45 |  |
 | .claude/commands/portal-review.md | 49 |  |
+| .claude/commands/prototype-idea.md | 43 |  |
 | .claude/commands/roadmap-add.md | 42 |  |
 | .claude/commands/roadmap.md | 39 |  |
 | .claude/settings.json | 49 |  |
@@ -23,6 +24,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/components.css | 478 | components.css - Reusable interface components: cards, forms, |
 | assets/css/console-tool.css | 71 | console-tool.css - The modal shared by the nav's console-snippet |
 | assets/css/dashboard.css | 218 | dashboard.css - The rebuilt landing page (docs/plan/50-DASHBOARD.md). |
+| assets/css/ideas.css | 92 | ideas.css - The prototype ideas board and the gallery strip that |
 | assets/css/layout.css | 395 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
@@ -46,7 +48,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
 | assets/js/core/links.js | 144 | links.js - The typed knowledge graph, resolved for rendering. |
-| assets/js/core/registry.js | 298 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/registry.js | 308 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/send-tool.js | 195 | send-tool.js - A nav icon that opens the acquirer send snippet: a |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
@@ -70,7 +72,9 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/dashboard-cards.js | 240 | dashboard-cards.js - The dashboard's four card sections: API |
 | assets/js/pages/dashboard-strip.js | 131 | dashboard-strip.js - The now/next strip, the dashboard's headline |
 | assets/js/pages/dashboard.js | 261 | dashboard.js - Fetches and orchestrates the landing page |
-| assets/js/pages/gallery.js | 124 | gallery.js - Prototype registry for modules/prototypes/. |
+| assets/js/pages/gallery.js | 115 | gallery.js - Prototype registry for modules/prototypes/. |
+| assets/js/pages/ideas-render.js | 175 | ideas-render.js - The prototype ideas board's builders |
+| assets/js/pages/ideas.js | 71 | ideas.js - modules/prototypes/ideas.html. Fetch and wiring; every |
 | assets/js/pages/integrations.js | 126 | integrations.js - Integration overview for modules/integrations/. |
 | assets/js/pages/pci-interstitial.js | 144 | pci-interstitial.js - The PCI compliance "checkout interstitial" for |
 | assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
@@ -101,13 +105,14 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 397 | Changelog |
+| docs/CHANGELOG.md | 409 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/KNOWLEDGE-MODEL.md | 187 | The knowledge model |
 | docs/PLATFORM.md | 201 | Platform product-knowledge protocol |
 | docs/PORTAL-REVIEW.md | 208 | Portal review playbook |
+| docs/PROTOTYPE-IDEAS.md | 150 | Prototype ideas and plans |
 | docs/ROADMAP-INTAKE.md | 405 | Roadmap intake |
 | docs/ROADMAP-PLAYBOOK.md | 272 | Roadmap playbook |
 | docs/ROADMAP-REVIEW.md | 130 | Roadmap review |
@@ -125,7 +130,7 @@ document instead of walking the tree or reading whole files.
 | docs/plan/40-SURFACING.md | 316 | Nothing buried, anywhere in the portal |
 | docs/plan/50-DASHBOARD.md | 278 | Rebuilding the dashboard |
 | docs/plan/60-PORTAL-REVIEW.md | 339 | Portal review, as a feature |
-| docs/plan/70-PROTOTYPE-IDEAS.md | 200 | Prototype ideas and plans |
+| docs/plan/70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
@@ -143,7 +148,8 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/daopay/daopay-flow.svg | 171 |  |
 | modules/prototypes/daopay/index.html | 259 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
 | modules/prototypes/gdpr/index.html | 53 | GDPR compliance prototype - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 65 | Prototypes - LPio / LaunchPad IO |
+| modules/prototypes/ideas.html | 63 | Prototype ideas - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 68 | Prototypes - LPio / LaunchPad IO |
 | modules/prototypes/pci/dashboard.html | 71 | Dashboard - PXP replica - LPio |
 | modules/prototypes/pci/demo.html | 91 | Merchant Prescreen and Quote - PXP replica - LPio |
 | modules/prototypes/pci/index.html | 160 | PCI compliance prototype - LPio / LaunchPad IO |
@@ -204,12 +210,13 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260813223937_dashboard_summary.sql | 126 | ------------------------------------------------------------------ |
 | supabase/migrations/20260813230545_portal_review.sql | 285 | ------------------------------------------------------------------ |
 | supabase/migrations/20260813233000_dashboard_summary_portal_waves.sql | 132 | The dashboard's Reviews section now covers both reviews. A wave |
+| supabase/migrations/20260813234500_prototype_ideas.sql | 73 | Prototype ideas and plans (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | supabase/policies.sql | 419 | ------------------------------------------------------------------ |
 | supabase/reference-coverage.json | 64 |  |
-| supabase/schema-snapshot.json | 1105 |  |
+| supabase/schema-snapshot.json | 1122 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
-| supabase/schema/20_portal.sql | 122 | ------------------------------------------------------------------ |
+| supabase/schema/20_portal.sql | 196 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 449 | ------------------------------------------------------------------ |
 | supabase/schema/31_roadmap_search.sql | 220 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 115 | ------------------------------------------------------------------ |
@@ -224,8 +231,8 @@ document instead of walking the tree or reading whole files.
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/reference-drift.test.js | 128 | tests/checks/reference-drift.test.js - Keeps the API reference from |
-| tests/checks/render-coverage.test.js | 340 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
-| tests/checks/roadmap-intake.test.js | 144 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
+| tests/checks/render-coverage.test.js | 351 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
+| tests/checks/roadmap-intake.test.js | 147 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
@@ -251,7 +258,8 @@ document instead of walking the tree or reading whole files.
 | tests/unit/dashboard-cards.test.js | 270 | tests/unit/dashboard-cards.test.js - The dashboard's four card |
 | tests/unit/dashboard-strip.test.js | 164 | tests/unit/dashboard-strip.test.js - The dashboard's headline strip |
 | tests/unit/detail.test.js | 199 | tests/unit/detail.test.js - The completeness contract. |
-| tests/unit/gallery-future.test.js | 55 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
+| tests/unit/gallery-future.test.js | 91 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
+| tests/unit/ideas.test.js | 164 | tests/unit/ideas.test.js - The prototype ideas board |
 | tests/unit/links.test.js | 203 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
 | tests/unit/platform-knowledge.test.js | 249 | tests/unit/platform-knowledge.test.js - The stores the capability |
@@ -301,10 +309,10 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:88 |
 | App.onAuthed | assets/js/core/guard.js:116 |
 | enforceModule() | assets/js/core/guard.js:124 |
-| App.moduleHref | assets/js/core/registry.js:217 |
-| App.itemHref | assets/js/core/registry.js:227 |
-| App.linkHref | assets/js/core/registry.js:270 |
-| App.departmentLabel | assets/js/core/registry.js:291 |
+| App.moduleHref | assets/js/core/registry.js:222 |
+| App.itemHref | assets/js/core/registry.js:232 |
+| App.linkHref | assets/js/core/registry.js:275 |
+| App.departmentLabel | assets/js/core/registry.js:301 |
 | sources() | assets/js/core/search.js:24 |
 | canReach() | assets/js/core/search.js:47 |
 | moduleByKey() | assets/js/core/search.js:51 |
@@ -491,10 +499,15 @@ document instead of walking the tree or reading whole files.
 | loadCoverage() | assets/js/pages/dashboard.js:213 |
 | showDeniedNotice() | assets/js/pages/dashboard.js:223 |
 | load() | assets/js/pages/dashboard.js:233 |
-| App.futurePrototypesTable | assets/js/pages/gallery.js:14 |
-| isPci() | assets/js/pages/gallery.js:56 |
-| card() | assets/js/pages/gallery.js:62 |
-| renderFuture() | assets/js/pages/gallery.js:107 |
+| App.futurePrototypesTable | assets/js/pages/gallery.js:18 |
+| isPci() | assets/js/pages/gallery.js:47 |
+| card() | assets/js/pages/gallery.js:53 |
+| renderFuture() | assets/js/pages/gallery.js:98 |
+| esc() | assets/js/pages/ideas-render.js:21 |
+| labelOf() | assets/js/pages/ideas-render.js:40 |
+| el() | assets/js/pages/ideas.js:13 |
+| prototypeHref() | assets/js/pages/ideas.js:15 |
+| load() | assets/js/pages/ideas.js:21 |
 | safeUrl() | assets/js/pages/integrations.js:15 |
 | modalHtml() | assets/js/pages/integrations.js:24 |
 | openModal() | assets/js/pages/integrations.js:56 |
@@ -831,7 +844,10 @@ document instead of walking the tree or reading whole files.
 | load() | tests/unit/dashboard-strip.test.js:16 |
 | ws() | tests/unit/dashboard-strip.test.js:30 |
 | load() | tests/unit/detail.test.js:20 |
-| loadBuilder() | tests/unit/gallery-future.test.js:14 |
+| loadBuilder() | tests/unit/gallery-future.test.js:21 |
+| idea() | tests/unit/gallery-future.test.js:37 |
+| load() | tests/unit/ideas.test.js:17 |
+| idea() | tests/unit/ideas.test.js:36 |
 | load() | tests/unit/links.test.js:23 |
 | load() | tests/unit/pci-ixopay.test.js:16 |
 | load() | tests/unit/platform-knowledge.test.js:22 |
