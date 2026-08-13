@@ -209,8 +209,10 @@
       "<th>Document</th><th>Kind</th><th>Area</th><th>Status</th><th>Captured</th>" +
       "</tr></thead><tbody>";
     documents.forEach(function (doc) {
+      // Anchored by id so a knowledge_links row pointing at a document
+      // has somewhere to land (assets/js/core/links.js).
       html +=
-        "<tr>" +
+        '<tr id="document-' + App.escape(doc.id) + '">' +
         '<td><button class="button quiet" type="button" data-doc="' +
         App.escape(doc.id) + '">' + App.escape(doc.title) + "</button></td>" +
         "<td>" + App.escape(doc.kind) + "</td>" +

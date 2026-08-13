@@ -111,11 +111,30 @@ test("a target that cannot be read still names its type", () => {
     "the caller can tell a real name from a placeholder");
 });
 
-test("a type with no page yet resolves to no href, never a dead link", () => {
-  const index = App.links.index([link({ to_type: "term", to_id: "t1" })]);
-  const out = App.links.resolve(index["work_item:w1"][0], { "term:t1": "MID" }, "");
-  assert.equal(out.title, "MID");
+test("a type with no page resolves to no href, never a dead link", () => {
+  // `note` is the only one left: a note always renders inside the thing
+  // it is about, so it has no standalone page to open.
+  const index = App.links.index([link({ to_type: "note", to_id: "n1" })]);
+  const out = App.links.resolve(index["work_item:w1"][0], { "note:n1": "A decision" }, "");
+  assert.equal(out.title, "A decision");
   assert.equal(out.href, "", "a link to nowhere would lie about the relationship");
+});
+
+test("each anchored type addresses its own row, not its module's default", () => {
+  // The trap: routing every type through App.itemHref would send a term
+  // to #capability-<id>, because that is what the platform module does
+  // for its primary entity.
+  const cases = {
+    term: /modules\/platform\/index\.html#term-x$/,
+    stage: /modules\/platform\/index\.html#stage-x$/,
+    area: /modules\/platform\/index\.html#area-x$/,
+    capability: /modules\/platform\/index\.html#capability-x$/,
+    document: /modules\/backlog\/index\.html#document-x$/,
+    work_item: /modules\/roadmap\/index\.html\?item=x$/,
+  };
+  for (const [type, pattern] of Object.entries(cases)) {
+    assert.match(App.linkHref(type, "x", "../.."), pattern, type);
+  }
 });
 
 test("a note rides along, because on distinct_from it is the reason", () => {

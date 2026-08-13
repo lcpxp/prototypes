@@ -109,8 +109,12 @@
     return byArea;
   }
 
-  function sectionHeading(title, description) {
-    var html = '<h2 class="eyebrow eyebrow-heading">' +
+  // id is optional: an area heading carries its row id so a
+  // knowledge_links row pointing at the area has a destination
+  // (assets/js/core/links.js). The Unfiled group has no row, so none.
+  function sectionHeading(title, description, id) {
+    var html = '<h2 class="eyebrow eyebrow-heading"' +
+      (id ? ' id="area-' + App.escape(id) + '"' : "") + ">" +
       App.escape(title) + "</h2>";
     if (description) html += '<p class="tag-description">' + App.escape(description) + "</p>";
     return html;
@@ -169,7 +173,7 @@
     areas.slice().sort(byOrder).forEach(function (area) {
       var caps = byArea[area.id];
       if (!caps || caps.length === 0) return;
-      areaHtml += sectionHeading(area.title, area.description) +
+      areaHtml += sectionHeading(area.title, area.description, area.id) +
         caps.map(function (c) { return capabilityCard(c, ctx); }).join("");
     });
     if (byArea._none && byArea._none.length) {

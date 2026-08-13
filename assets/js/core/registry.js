@@ -132,18 +132,19 @@
     // that stands in for a title, so a page can render the far end of
     // any link without a second lookup of the vocabulary itself.
     // A type with no `module` has no page to open yet - the link still
-    // renders, as its label, rather than vanishing. Adding the missing
-    // destinations is the anchor work in docs/plan/40-SURFACING.md.
+    // renders, as its label, rather than vanishing. `note` is the last
+    // one: a note is always shown inside the thing it is about, so it
+    // has no standalone home to link to.
     // tests/checks/knowledge-links.test.js holds these in step with the
     // seed.
     linkEntities: {
-      work_item:  { table: "work_items",           titleColumn: "title", label: "Work item",      module: "roadmap" },
+      work_item:  { table: "work_items",           titleColumn: "title", label: "Work item",       module: "roadmap" },
       note:       { table: "work_notes",           titleColumn: "body",  label: "Note" },
-      capability: { table: "product_capabilities", titleColumn: "title", label: "Capability",     module: "platform" },
-      term:       { table: "domain_terms",         titleColumn: "term",  label: "Glossary term" },
-      document:   { table: "work_documents",       titleColumn: "title", label: "Source document" },
-      stage:      { table: "journey_stages",       titleColumn: "title", label: "Journey stage" },
-      area:       { table: "work_areas",           titleColumn: "title", label: "Filing area" },
+      capability: { table: "product_capabilities", titleColumn: "title", label: "Capability",      module: "platform", anchor: "capability" },
+      term:       { table: "domain_terms",         titleColumn: "term",  label: "Glossary term",   module: "platform", anchor: "term" },
+      stage:      { table: "journey_stages",       titleColumn: "title", label: "Journey stage",   module: "platform", anchor: "stage" },
+      area:       { table: "work_areas",           titleColumn: "title", label: "Filing area",     module: "platform", anchor: "area" },
+      document:   { table: "work_documents",       titleColumn: "title", label: "Source document", module: "backlog",  anchor: "document" },
     },
     // Spec families group api_specs rows into distinct reference
     // "sites" inside the reference module. Order here is display
@@ -256,7 +257,12 @@
     if (!mod) return "";
     var previous = App.root;
     if (root !== undefined) App.root = root;
-    var href = App.itemHref(mod, { id: id });
+    // An entity with an `anchor` addresses a row within its module's
+    // page; without one it routes through App.itemHref, so a link and a
+    // search result open the same place by the same rule.
+    var href = entity.anchor
+      ? App.moduleHref(mod) + "index.html#" + entity.anchor + "-" + id
+      : App.itemHref(mod, { id: id });
     App.root = previous;
     return href;
   };

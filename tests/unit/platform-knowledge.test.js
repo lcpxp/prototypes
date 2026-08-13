@@ -118,7 +118,9 @@ test("lifecycleHtml renders stages in stage_no order with their actor", () => {
   assert.ok(html.indexOf("IVR screening") < html.indexOf("Related entities"),
     "stage 1 must render before stage 2 whatever order the rows arrive in");
   assert.match(html, /pk-stage-actor">Agent/);
-  assert.match(html, /id="stage-ivr-screening"/, "deep-linkable");
+  assert.match(html, /id="stage-s1"/,
+    "anchored by row id, because knowledge_links carries ids and an anchor "  +
+    "a link cannot address is not a destination");
 });
 
 test("glossaryHtml sorts alphabetically and flags unverified terms", () => {

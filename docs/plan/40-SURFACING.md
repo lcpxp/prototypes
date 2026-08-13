@@ -175,10 +175,17 @@ Both renderers use it, and 30 benchmarks hold it - including one that
 indexes all 49 ordered pairs, because two of them rendering was the
 whole bug.
 
-What remains is destinations. `work_item` and `capability` have pages;
-`note`, `term`, `stage`, `document` and `area` do not, so they render
-as name plus type rather than as links. Adding those anchors to the
-platform and backlog pages is part of the detail-panel work above.
+Destinations followed on the same day. `term`, `stage` and `area` are
+anchored on the platform page and `document` on the backlog page, each
+by row id rather than by key or slug - a link carries an id, and an
+anchor a link cannot address is not a destination. `linkEntities`
+gained an `anchor` per type so `App.linkHref` addresses the row rather
+than routing every type through `App.itemHref`, which would have sent
+a term to `#capability-<id>`.
+
+`note` is the only type left without a page, by design: a note always
+renders inside the thing it is about, so it has no standalone home.
+Links to one render as name plus type, flat.
 
 ## Per-surface work
 

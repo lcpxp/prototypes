@@ -119,7 +119,9 @@
     });
     if (!stages.length) return "";
     var body = '<ol class="pk-stages">' + stages.map(function (s) {
-      return '<li class="pk-stage" id="stage-' + esc(s.key) + '">' +
+      // Anchored by row id, not by key: knowledge_links carries ids,
+      // and an anchor a link cannot address is not a destination.
+      return '<li class="pk-stage" id="stage-' + esc(s.id) + '">' +
         '<span class="pk-stage-no">' + esc(String(s.stage_no)) + "</span>" +
         '<div class="pk-stage-body"><h3>' + esc(s.title) + "</h3>" +
         (s.actor ? '<p class="pk-stage-actor">' + esc(s.actor) + "</p>" : "") +
@@ -137,7 +139,7 @@
     });
     if (!terms.length) return "";
     var body = '<dl class="pk-glossary">' + terms.map(function (t) {
-      return '<div class="pk-term" id="term-' + esc(String(t.term).toLowerCase().replace(/[^a-z0-9]+/g, "-")) + '">' +
+      return '<div class="pk-term" id="term-' + esc(t.id) + '">' +
         "<dt>" + esc(t.term) +
         (t.expansion ? ' <span class="pk-expansion">' + esc(t.expansion) + "</span>" : "") +
         (t.verified ? "" : ' <span class="badge tone-warn">unverified</span>') +
@@ -178,7 +180,7 @@
     var docs = data.documents || [];
     if (!docs.length) return "";
     var body = '<ul class="pk-sources">' + docs.map(function (d) {
-      return '<li><strong>' + esc(d.title) + "</strong>" +
+      return '<li id="document-' + esc(d.id) + '"><strong>' + esc(d.title) + "</strong>" +
         (d.captured_on ? ' <span class="pk-date">' + esc(String(d.captured_on).slice(0, 10)) + "</span>" : "") +
         (d.status && d.status !== "active"
           ? ' <span class="badge tone-warn">' + esc(d.status) + "</span>" : "") +

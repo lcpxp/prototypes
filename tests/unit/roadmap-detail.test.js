@@ -211,9 +211,28 @@ test("a work item links out to entity types other than work items", () => {
     "a capability target renders as a real link to the platform page");
   assert.match(html, /Screening <span class="rmd-link-type">Capability<\/span>/,
     "and says what kind of thing it is");
-  assert.match(html, /<dt>About<\/dt><dd><span class="rmd-link rmd-link--flat"/,
-    "a type with no page yet renders flat rather than as a dead link");
+  assert.match(html, /<dt>About<\/dt><dd><a class="rmd-link" href="[^"]*#term-t1"/,
+    "a term now has an anchor on the platform page, so it is a real link");
   assert.match(html, /Rolling reserve <span class="rmd-link-type">Glossary term<\/span>/);
+});
+
+test("a link to a type with no page renders flat, not as a dead link", () => {
+  // `note` is the only type left without a destination: a note always
+  // renders inside the thing it is about, so it has no page of its own.
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  const ctx = ctxOf(App, data);
+  ctx.linkIndex = App.links.index([
+    { from_type: "work_item", from_id: item.id, to_type: "note", to_id: "n1",
+      kind: "relates_to", note: "", confidence: "confirmed" },
+  ]);
+  ctx.linkTitles = { "note:n1": "Agreed at the 10 Aug review" };
+  const html = App.roadmapDetail.drawerHtml(item, ctx);
+  assert.match(html, /<span class="rmd-link rmd-link--flat"/);
+  assert.match(html, /Agreed at the 10 Aug review <span class="rmd-link-type">Note<\/span>/,
+    "the relationship is a fact even with nowhere to open");
+  assert.doesNotMatch(html, /href="[^"]*note-n1"/, "no anchor is invented for it");
 });
 
 test("drawerHtml tags a workstream and stays lean on a bare item", () => {
