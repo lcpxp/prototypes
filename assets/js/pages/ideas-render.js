@@ -111,8 +111,10 @@
     ctx = ctx || {};
     var band = App.ideasView.band(row.priority);
     var area = ctx.areaTitle && ctx.areaTitle[row.area_id];
+    // The band is in the head; repeating it here would say the same
+    // thing twice on every row.
     var meta = [
-      band, labelOf(EFFORT, row.effort) && labelOf(EFFORT, row.effort) + " effort",
+      labelOf(EFFORT, row.effort) && labelOf(EFFORT, row.effort) + " effort",
       area, row.requested_by && "Asked for by " + row.requested_by,
     ].filter(Boolean).map(esc).join(" &middot; ");
     var promoted = row.promoted_prototype_id && ctx.prototypeHref

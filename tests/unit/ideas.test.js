@@ -99,7 +99,9 @@ test("an idea shows what it would prove, which is the field that matters", () =>
   }), { areaTitle: { a1: "Product and Pricing" } });
   assert.match(html, /What it would prove/);
   assert.match(html, /Proves the pricing engine/);
-  assert.match(html, /P10 &middot; Medium effort &middot; Product and Pricing &middot; Asked for by Sales/);
+  assert.match(html, /Medium effort &middot; Product and Pricing &middot; Asked for by Sales/);
+  assert.equal((html.match(/P10/g) || []).length, 1,
+    "the band is in the head; the meta line must not say it again");
 });
 
 test("the plan renders through the shared block renderer", () => {

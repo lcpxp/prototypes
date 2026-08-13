@@ -73,7 +73,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/dashboard-strip.js | 131 | dashboard-strip.js - The now/next strip, the dashboard's headline |
 | assets/js/pages/dashboard.js | 261 | dashboard.js - Fetches and orchestrates the landing page |
 | assets/js/pages/gallery.js | 115 | gallery.js - Prototype registry for modules/prototypes/. |
-| assets/js/pages/ideas-render.js | 175 | ideas-render.js - The prototype ideas board's builders |
+| assets/js/pages/ideas-render.js | 177 | ideas-render.js - The prototype ideas board's builders |
 | assets/js/pages/ideas.js | 71 | ideas.js - modules/prototypes/ideas.html. Fetch and wiring; every |
 | assets/js/pages/integrations.js | 126 | integrations.js - Integration overview for modules/integrations/. |
 | assets/js/pages/pci-interstitial.js | 144 | pci-interstitial.js - The PCI compliance "checkout interstitial" for |
@@ -259,7 +259,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/dashboard-strip.test.js | 164 | tests/unit/dashboard-strip.test.js - The dashboard's headline strip |
 | tests/unit/detail.test.js | 199 | tests/unit/detail.test.js - The completeness contract. |
 | tests/unit/gallery-future.test.js | 91 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
-| tests/unit/ideas.test.js | 164 | tests/unit/ideas.test.js - The prototype ideas board |
+| tests/unit/ideas.test.js | 166 | tests/unit/ideas.test.js - The prototype ideas board |
 | tests/unit/links.test.js | 203 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
 | tests/unit/platform-knowledge.test.js | 249 | tests/unit/platform-knowledge.test.js - The stores the capability |
