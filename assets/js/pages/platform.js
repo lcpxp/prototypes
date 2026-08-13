@@ -281,7 +281,7 @@
     // work items, most usefully - arrives after first paint and repaints
     // the cards, so the page is never held up by a request for names it
     // may not need.
-    App.links.loadTitles(linkIndex).then(function (titles) {
+    App.links.loadTitles(linkIndex, ctx.linkTitles).then(function (titles) {
       var added = Object.keys(titles).filter(function (k) { return !ctx.linkTitles[k]; });
       if (!added.length) return;
       added.forEach(function (k) { ctx.linkTitles[k] = titles[k]; });

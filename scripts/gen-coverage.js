@@ -37,6 +37,11 @@ select jsonb_pretty(jsonb_build_object(
       'status', s.status,
       'family', s.family,
       'endpoints', (select count(*) from api_endpoints e where e.spec_id = s.id),
+      'distinct_keys', (
+        select count(distinct upper(e.method) || ' ' ||
+          lower(regexp_replace(e.path, '\\{[^}]+\\}', '{}', 'g')))
+        from api_endpoints e where e.spec_id = s.id
+      ),
       'tags', (select count(*) from api_tags t where t.spec_id = s.id),
       'topics', (select count(*) from api_topics p where p.spec_id = s.id),
       'keys', (
@@ -130,9 +135,15 @@ function build(specs, inventory) {
     const rec = gradeable
       ? reconcile(routeKeys, spec.keys)
       : { documented: spec.endpoints };
+    // Two rows normalising to one path is invisible to the
+    // reconciliation - a spec with no source to compare against is not
+    // reconciled at all - so it is counted here for every spec. Unity
+    // carries two: {id} and {numId} forms of the same resource.
+    var distinct = spec.distinct_keys == null ? spec.endpoints : spec.distinct_keys;
     out.specs[spec.title] = Object.assign({
       version: spec.version, status: spec.status, family: spec.family,
       endpoints: spec.endpoints, tags: spec.tags, topics: spec.topics,
+      duplicates: Math.max(0, spec.endpoints - distinct),
       unverified_badges: spec.badges.unverified || 0,
       gap_badges: spec.badges.gap || 0,
       comparable: Boolean(gradeable),

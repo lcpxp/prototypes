@@ -75,10 +75,23 @@
   // entity type actually present, ids constrained, so a page with no
   // cross-type links issues no extra request at all. A type the
   // registry does not know is skipped rather than guessed at.
-  App.links.loadTitles = function (index) {
+  //
+  // `known` is whatever the caller already has in memory, keyed the
+  // same way. Ids in it are dropped before querying, and a type left
+  // with none is not queried at all - the roadmap knows every work
+  // item's title already, so without this it re-fetched forty rows it
+  // was holding to look up names it had.
+  App.links.loadTitles = function (index, known) {
     var byType = App.links.targets(index);
+    if (known) {
+      Object.keys(byType).forEach(function (type) {
+        byType[type] = byType[type].filter(function (id) {
+          return !known[type + ":" + id];
+        });
+      });
+    }
     var types = Object.keys(byType).filter(function (type) {
-      return App.registry.linkEntities[type];
+      return App.registry.linkEntities[type] && byType[type].length;
     });
     return Promise.all(types.map(function (type) {
       var entity = App.registry.linkEntities[type];

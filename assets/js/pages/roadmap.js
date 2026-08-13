@@ -515,7 +515,7 @@
     // Titles for the far end of cross-type links arrive after the board
     // has painted; the drawer reads them when it opens, so nothing waits
     // on a request it may not need.
-    App.links.loadTitles(linkIndex).then(function (titles) {
+    App.links.loadTitles(linkIndex, ctx.linkTitles).then(function (titles) {
       Object.keys(titles).forEach(function (key) {
         if (!ctx.linkTitles[key]) ctx.linkTitles[key] = titles[key];
       });

@@ -214,6 +214,31 @@ test("an anchored entity type has an anchor a link can address", () => {
   }
 });
 
+test("an anchored destination is actually reachable on its page", () => {
+  // An anchor nothing scrolls to is a destination in name only. The
+  // backlog page carried a #document-<id> anchor for a day without
+  // calling App.deepLinkScroll, so a link landed on the page and never
+  // reached the row.
+  const registry = read("assets/js/core/registry.js");
+  const modules = {};
+  for (const m of registry.matchAll(/key: "([\w-]+)",[\s\S]{0,200}?path: "([^"]+)"/g)) {
+    modules[m[1]] = m[2];
+  }
+  for (const line of linkEntitiesBlock().split("\n")) {
+    const anchored = /anchor: "/.test(line) && /module: "([\w-]+)"/.exec(line);
+    if (!anchored) continue;
+    const key = line.trim().split(":")[0];
+    const page = read(modules[anchored[1]] + "index.html");
+    const scripts = [...page.matchAll(/src="[^"]*assets\/js\/pages\/([\w-]+\.js)"/g)]
+      .map((m) => "assets/js/pages/" + m[1]);
+    assert.ok(scripts.length, `${key}: module ${anchored[1]} loads no page module`);
+    assert.ok(scripts.some((f) => /App\.deepLinkScroll\(\)/.test(read(f))),
+      `${key} anchors on the ${anchored[1]} page, but none of its page ` +
+      `modules (${scripts.join(", ")}) calls App.deepLinkScroll(). ` +
+      "The link would land on the page and never reach the row.");
+  }
+});
+
 test("the block renderer has a fallback, so no kind is dropped", () => {
   const src = read("assets/js/core/blocks.js");
   assert.match(src, /default:\s*\n\s*return unknownBlock\(block\)/,

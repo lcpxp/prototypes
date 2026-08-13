@@ -7,17 +7,20 @@
       "undeclared_mirrors": 22,
       "unverified_badges": 3,
       "gap_badges": 0,
-      "note": "Baseline 2026-08-13, tightened the same day. phantom is now 0 and must stay there: the twelve wrong rows catalogued in docs/plan/20-API-REFERENCE.md were each traced to source and corrected, so a phantom row appearing again means the reference has drifted from the code rather than merely lagging it. absent 196: the genuinely undocumented routes, prioritised in the same file - lower this as each group lands. undeclared_mirrors 22: v1 partner/merchant and admin/merchant routes that mirror a documented /merchants row under a collapse the reference never declares. Fixed by declaring the collapse, not by writing 22 rows."
+      "note": "Baseline 2026-08-13, tightened the same day. phantom is now 0 and must stay there: the twelve wrong rows catalogued in docs/plan/20-API-REFERENCE.md were each traced to source and corrected, so a phantom row appearing again means the reference has drifted from the code rather than merely lagging it. absent 196: the genuinely undocumented routes, prioritised in the same file - lower this as each group lands. undeclared_mirrors 22: v1 partner/merchant and admin/merchant routes that mirror a documented /merchants row under a collapse the reference never declares. Fixed by declaring the collapse, not by writing 22 rows.",
+      "duplicates": 0
     },
     "Unity Acquiring API": {
       "unverified_badges": 1,
       "gap_badges": 0,
-      "note": "No source supplied, so the spec is not comparable and carries no phantom or absent figure. Nothing in it can be graded above 'stated' until a Unity source or live Swagger arrives; the single unverified badge understates that and should rise, deliberately, when the spec is graded honestly."
+      "note": "No source supplied, so the spec is not comparable and carries no phantom or absent figure. Nothing in it can be graded above 'stated' until a Unity source or live Swagger arrives; the single unverified badge understates that and should rise, deliberately, when the spec is graded honestly. duplicates 2: GET merchant-setup/merchants/{} and GET settlements/.../settlement-capabilities are each documented twice, once with {id} and once with {numId}. Whether Unity really accepts both forms or one row is a stray cannot be settled without a source, so neither was deleted - the question is in the spec's gap register. Drop to 0 when it is answered.",
+      "duplicates": 2
     },
     "LaunchPad Inbound Onboarding API (planned)": {
       "unverified_badges": 0,
       "gap_badges": 8,
-      "note": "Design intent, not code, so it is not comparable by design. The eight gap badges are its open questions and shrink as the spin-out design settles."
+      "note": "Design intent, not code, so it is not comparable by design. The eight gap badges are its open questions and shrink as the spin-out design settles.",
+      "duplicates": 0
     }
   }
 }

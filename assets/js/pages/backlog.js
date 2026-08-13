@@ -321,5 +321,11 @@
       var deep = items.find(function (i) { return i.id === requestedItem; });
       if (deep) openItemModal(deep);
     }
+
+    // A knowledge_links row pointing at a document resolves to
+    // #document-<id> here (assets/js/core/links.js). Without this the
+    // link landed on the page and never reached the row, which is a
+    // destination in name only.
+    App.deepLinkScroll();
   });
 })();

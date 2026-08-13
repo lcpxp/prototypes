@@ -26,7 +26,7 @@ const budget = JSON.parse(read("tests/reference-budget.json"));
 
 // Every counted field a budget may cap. Adding one here without adding
 // it to the budget file is caught by the completeness test below.
-const CAPPED = ["phantom", "absent", "undeclared_mirrors",
+const CAPPED = ["phantom", "absent", "undeclared_mirrors", "duplicates",
   "unverified_badges", "gap_badges"];
 
 test("the coverage artefact is present and shaped", () => {

@@ -93,6 +93,40 @@ test("targets groups everything the index reaches, by type", () => {
   assert.deepEqual(targets.work_item.sort(), ["w1", "w2"]);
 });
 
+test("loadTitles skips ids the caller already holds", () => {
+  // The roadmap has every work item's title in memory. Without this it
+  // re-queried forty rows it was holding, to look up names it had.
+  const queried = [];
+  App.db = { from: (table) => ({ select: () => ({ in: (col, ids) => {
+    queried.push({ table, ids: ids.slice().sort() });
+    return Promise.resolve({ data: [] });
+  } }) }) };
+  const index = App.links.index([
+    link({ to_type: "work_item", to_id: "w9" }),
+    link({ to_type: "term", to_id: "t1" }),
+  ]);
+  return App.links.loadTitles(index, {
+    "work_item:w9": "already known", "work_item:w1": "also known",
+  }).then(() => {
+    const tables = queried.map((q) => q.table);
+    assert.ok(!tables.includes("work_items"),
+      "a type whose every id is already known must not be queried at all");
+    assert.deepEqual(tables, ["domain_terms"]);
+    assert.deepEqual(plain(queried[0].ids), ["t1"]);
+  });
+});
+
+test("loadTitles with nothing known still fetches everything", () => {
+  const queried = [];
+  App.db = { from: (table) => ({ select: () => ({ in: (col, ids) => {
+    queried.push(table);
+    return Promise.resolve({ data: [] });
+  } }) }) };
+  return App.links.loadTitles(App.links.index([link()])).then(() => {
+    assert.deepEqual(queried.sort(), ["product_capabilities", "work_items"]);
+  });
+});
+
 test("resolve names the target, its type and where it opens", () => {
   const index = App.links.index([link()]);
   const out = App.links.resolve(index["work_item:w1"][0],
