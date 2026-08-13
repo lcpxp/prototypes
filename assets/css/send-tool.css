@@ -1,0 +1,68 @@
+/* ------------------------------------------------------------------
+   send-tool.css - The modal behind the nav's send icon (send-tool.js).
+   Its own file rather than more of components.css, which is at its
+   size budget; linked only by pages that load send-tool.js.
+------------------------------------------------------------------ */
+/* ---------------------------------------------------------------
+   Send tool: the modal behind the nav's send icon. Wider than the
+   default modal because it shows code, and the code must not wrap
+   into something that is wrong when pasted - hence the horizontal
+   scroll on .send-tool-code rather than a soft wrap.
+--------------------------------------------------------------- */
+
+dialog.modal.send-tool {
+  inline-size: min(52rem, calc(100vw - 2 * var(--gutter)));
+}
+
+.send-tool-lede {
+  margin-block-end: var(--s-4);
+}
+
+.send-tool-block {
+  margin-block-end: var(--s-4);
+}
+
+.send-tool-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-block-end: var(--s-2);
+}
+
+.send-tool-code {
+  margin: 0;
+  padding: var(--s-3);
+  max-block-size: 22rem;
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  white-space: pre;
+  tab-size: 2;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.send-tool-details {
+  border-block-start: 1px solid var(--line);
+  padding-block-start: var(--s-4);
+}
+
+.send-tool-details summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.send-tool-details[open] summary {
+  margin-block-end: var(--s-3);
+}
+
+.send-tool-note {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin-block-end: var(--s-3);
+}

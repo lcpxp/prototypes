@@ -185,10 +185,21 @@
         '<div class="nav-search-results" id="nav-search-results" role="listbox" hidden></div>' +
         "</div>";
     }
+    // Icon cluster. Tools, the send tool, the theme switch and the
+    // account menu are one group with its own tight gap, so the nav's
+    // wider gap separates the cluster from the search box rather than
+    // spacing the icons out from each other. Enough of them now sit
+    // here to read as a toolbar, and they should look like one.
+    html += '<div class="nav-actions">';
+
     // External tool links: an empty slot filled by tools.js once the
     // portal_links rows load, so a page without tools.js - or a read
     // that returns nothing - shows no button at all.
     if (App.tools) html += '<span class="nav-tools" id="nav-tools"></span>';
+
+    // Send tool: an empty slot filled by send-tool.js. Same contract as
+    // the tools slot - a page without the script shows no button.
+    if (App.sendTool) html += '<span class="nav-send" id="nav-send"></span>';
 
     // Theme switch: a moon/sun icon button seated next to the profile
     // icon. It shows a sun in dark mode (press to go light) and a moon
@@ -217,11 +228,13 @@
       '<span class="nav-account-email" id="nav-user"></span>' +
       '<button class="button quiet" id="nav-signout" role="menuitem" type="button">Sign out</button>' +
       "</div></div>";
+    html += "</div>";
     html += "</nav>";
     host.innerHTML = html;
 
     if (App.search) App.search.attach();
     if (App.tools) App.tools.attach();
+    if (App.sendTool) App.sendTool.attach();
 
     // Account dropdown: toggle on the profile icon, close on an outside
     // click or Escape. Clicks inside the menu (the theme switch) keep it

@@ -115,13 +115,29 @@
    empty slot would still be a flex item and leave a phantom gap beside
    the theme switch - hence :empty removing it from the layout until
    there is something to show. */
+/* The icon cluster at the end of the nav: tools, the send tool, the
+   theme switch and the account menu. Its own gap is deliberately
+   tighter than .nav's, so the group reads as one toolbar and the
+   nav's wider gap does its real job of separating that toolbar from
+   the search box. */
+.nav-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
 .nav-tools {
   display: inline-flex;
   gap: var(--s-1);
 }
 
-.nav-tools:empty {
+.nav-tools:empty,
+.nav-send:empty {
   display: none;
+}
+
+.nav-send {
+  display: inline-flex;
 }
 
 /* Each tool link is an anchor, so opening a new tab stays a plain

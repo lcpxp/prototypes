@@ -20,7 +20,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/app-review.css | 378 | app-review.css - The application review board and wave list. |
 | assets/css/base.css | 111 | base.css - Reset, typography and global element styles. |
 | assets/css/components.css | 447 | components.css - Reusable interface components: cards, forms, |
-| assets/css/layout.css | 370 | layout.css - Navigation, page scaffold and grids. |
+| assets/css/layout.css | 393 | layout.css - Navigation, page scaffold and grids. |
 | assets/css/login.css | 163 | login.css - Sign-in page only. Loaded after the core layers on |
 | assets/css/pages.css | 308 | pages.css - The reference viewer ("swagger") page. Everything |
 | assets/css/platform.css | 144 | platform.css - The platform knowledge page (modules/platform/). |
@@ -32,6 +32,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/roadmap-detail.css | 325 | roadmap-detail.css - Coarse progress bars, the expanded Executive |
 | assets/css/roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 422 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
+| assets/css/send-tool.css | 69 | send-tool.css - The modal behind the nav's send icon (send-tool.js). |
 | assets/css/tokens.css | 444 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/config.example.js | 18 | config.example.js - OPTIONAL local override. |
@@ -39,10 +40,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
 | assets/js/core/registry.js | 234 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
+| assets/js/core/send-tool.js | 195 | send-tool.js - A nav icon that opens the acquirer send snippet: a |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
-| assets/js/core/ui.js | 291 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/core/tools.js | 103 | tools.js - The nav's outbound links to external tools, rendered as |
+| assets/js/core/ui.js | 304 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
 | assets/js/pages/appreview-detail.js | 174 | appreview-detail.js - The drawer body for one application. A pure |
 | assets/js/pages/appreview-findings.js | 145 | appreview-findings.js - The cross-record half of the review model: |
@@ -80,10 +83,10 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-views.js | 413 | roadmap-views.js - Pure HTML builders for the roadmap home |
 | assets/js/pages/roadmap.js | 532 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 172 | users.js - User and access management for modules/users/. |
-| dashboard.html | 62 | Dashboard - LPio / LaunchPad IO |
+| dashboard.html | 64 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 293 | Changelog |
+| docs/CHANGELOG.md | 300 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -96,33 +99,33 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 37 | Current state |
+| docs/STATE.md | 40 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
 | index.html | 76 | Sign in - LPio / LaunchPad IO |
-| modules/app-review/index.html | 75 | Application review - LPio / LaunchPad IO |
-| modules/app-review/wave.html | 99 | Wave - Application review - LPio / LaunchPad IO |
-| modules/backlog/index.html | 94 | Backlog - LPio / LaunchPad IO |
-| modules/integrations/index.html | 63 | Integrations - LPio / LaunchPad IO |
-| modules/platform/index.html | 61 | Platform - LPio / LaunchPad IO |
-| modules/prototypes/daopay/application.html | 52 | Application summary - PXP replica - LPio |
-| modules/prototypes/daopay/applications.html | 51 | Applications - PXP replica - LPio |
+| modules/app-review/index.html | 77 | Application review - LPio / LaunchPad IO |
+| modules/app-review/wave.html | 101 | Wave - Application review - LPio / LaunchPad IO |
+| modules/backlog/index.html | 96 | Backlog - LPio / LaunchPad IO |
+| modules/integrations/index.html | 65 | Integrations - LPio / LaunchPad IO |
+| modules/platform/index.html | 63 | Platform - LPio / LaunchPad IO |
+| modules/prototypes/daopay/application.html | 54 | Application summary - PXP replica - LPio |
+| modules/prototypes/daopay/applications.html | 53 | Applications - PXP replica - LPio |
 | modules/prototypes/daopay/daopay-flow.svg | 171 |  |
-| modules/prototypes/daopay/index.html | 256 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
-| modules/prototypes/gdpr/index.html | 50 | GDPR compliance prototype - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 62 | Prototypes - LPio / LaunchPad IO |
-| modules/prototypes/pci/dashboard.html | 68 | Dashboard - PXP replica - LPio |
-| modules/prototypes/pci/demo.html | 88 | Merchant Prescreen and Quote - PXP replica - LPio |
-| modules/prototypes/pci/index.html | 157 | PCI compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/daopay/index.html | 258 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
+| modules/prototypes/gdpr/index.html | 52 | GDPR compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 64 | Prototypes - LPio / LaunchPad IO |
+| modules/prototypes/pci/dashboard.html | 70 | Dashboard - PXP replica - LPio |
+| modules/prototypes/pci/demo.html | 90 | Merchant Prescreen and Quote - PXP replica - LPio |
+| modules/prototypes/pci/index.html | 159 | PCI compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/pci/pci-workflow.svg | 62 |  |
-| modules/prototypes/pci/reports.html | 78 | Compliance reporting - PXP replica - LPio |
-| modules/prototypes/website-screening/index.html | 51 | Website screening prototype - LPio / LaunchPad IO |
-| modules/reference/index.html | 76 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 132 | Roadmap - LPio / LaunchPad IO |
-| modules/users/index.html | 56 | Users - LPio / LaunchPad IO |
+| modules/prototypes/pci/reports.html | 80 | Compliance reporting - PXP replica - LPio |
+| modules/prototypes/website-screening/index.html | 53 | Website screening prototype - LPio / LaunchPad IO |
+| modules/reference/index.html | 78 | API reference - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 134 | Roadmap - LPio / LaunchPad IO |
+| modules/users/index.html | 58 | Users - LPio / LaunchPad IO |
 | package.json | 14 |  |
 | scripts/audit.js | 145 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
@@ -168,6 +171,7 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260809133500_roadmap_find_returns_links.sql | 206 | ------------------------------------------------------------------ |
 | supabase/migrations/20260810215935_work_items_historic_at_latch.sql | 15 | Delivered work splits into two columns on the board: Completed (a |
 | supabase/migrations/20260810220039_rename_historic_at_to_previously_completed_at.sql | 13 | The board's delivered columns are "Recently completed" and "Previously |
+| supabase/migrations/20260811220737_portal_links.sql | 51 | ------------------------------------------------------------------ |
 | supabase/policies.sql | 361 | ------------------------------------------------------------------ |
 | supabase/schema-snapshot.json | 1014 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
@@ -209,6 +213,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/roadmap-views.test.js | 475 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
+| tests/unit/tools.test.js | 176 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 
 ## JavaScript symbol index
@@ -245,6 +250,9 @@ document instead of walking the tree or reading whole files.
 | paint() | assets/js/core/search.js:153 |
 | setActive() | assets/js/core/search.js:162 |
 | run() | assets/js/core/search.js:174 |
+| copy() | assets/js/core/send-tool.js:102 |
+| fallback() | assets/js/core/send-tool.js:115 |
+| buildDialog() | assets/js/core/send-tool.js:127 |
 | pad2() | assets/js/core/sprints.js:31 |
 | iso() | assets/js/core/sprints.js:32 |
 | mod() | assets/js/core/sprints.js:35 |
@@ -260,6 +268,7 @@ document instead of walking the tree or reading whole files.
 | systemTheme() | assets/js/core/theme.js:34 |
 | current() | assets/js/core/theme.js:38 |
 | apply() | assets/js/core/theme.js:42 |
+| searchCommand() | assets/js/core/tools.js:40 |
 | App.escape | assets/js/core/ui.js:11 |
 | App.methodBadge | assets/js/core/ui.js:21 |
 | App.statusBadge | assets/js/core/ui.js:29 |
@@ -271,7 +280,7 @@ document instead of walking the tree or reading whole files.
 | isCurrentPage() | assets/js/core/ui.js:127 |
 | themeIcon() | assets/js/core/ui.js:135 |
 | renderNav() | assets/js/core/ui.js:152 |
-| App.onThemeChange | assets/js/core/ui.js:266 |
+| App.onThemeChange | assets/js/core/ui.js:279 |
 | param() | assets/js/pages/appreview-board.js:32 |
 | day() | assets/js/pages/appreview-board.js:36 |
 | renderAll() | assets/js/pages/appreview-board.js:46 |
@@ -703,6 +712,7 @@ document instead of walking the tree or reading whole files.
 | count() | tests/unit/roadmap-views.test.js:23 |
 | load() | tests/unit/search.test.js:15 |
 | loadSprints() | tests/unit/sprints.test.js:13 |
+| load() | tests/unit/tools.test.js:15 |
 | loadApp() | tests/unit/ui.test.js:13 |
 
 ## Conventions for agents

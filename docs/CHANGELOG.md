@@ -25,6 +25,13 @@ is the git history; what is unfinished is docs/STATE.md.
   design-stage "LaunchPad Inbound Onboarding API".
 
 ### Added
+- A **send icon** in the top navigation opens a panel with two copyable
+  blocks: a browser-console snippet that fires an open application's
+  document push and onboarding record from the partner portal, and a
+  collapsed handover prompt for reading back what happened. The snippet
+  holds no host or scope - it reads both from the portal's own config at
+  run time - so nothing internal enters the site. The nav's right-hand
+  icons now read as one toolbar.
 - A **bug icon** in the top navigation opens the Splunk error sweep in a new
   tab, with the saved search already applied and its results laid out on the
   statistics tab. The search is held as a row rather than in the site, so
