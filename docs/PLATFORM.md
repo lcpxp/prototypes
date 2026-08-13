@@ -87,8 +87,46 @@ the session:
 4. When a new overview replaces an earlier one, sets supersedes_id on
    the new work_documents row and status 'superseded' on the old one,
    same as any other document kind.
+5. Runs the block check below before finishing, and fixes anything it
+   reports.
 
 Database inserts only; the repo does not change for a content load.
+
+### The block check
+
+A typed block whose renderer finds nothing draws an empty shell - an
+`<h4>` with no heading, a `<tbody>` with no rows. That is worse than an
+unrecognised kind, which at least renders generically and says so
+(assets/js/core/blocks.js). It happens when a row is written with the
+wrong key name: `kv` reads `items`, not `pairs`; `values` reads
+`values` and `name`, not `items` and `label`. Neither mistake produces
+an error anywhere.
+
+The suite cannot catch this - it has no database access, by design -
+so it is a step in this protocol. Run it after any write that touches
+`blocks`, and expect every count after the first two columns to be zero:
+
+    with b as (
+      select c.key as cap, e.b
+      from product_capabilities c, jsonb_array_elements(c.blocks) e(b)
+    )
+    select b->>'kind' as block_kind, count(*) as n,
+      count(*) filter (where b->>'kind' not in
+        ('p','note','code','table','kv','values')) as unknown_kind,
+      count(*) filter (where b->>'kind' in ('p','note')
+        and coalesce(b->>'text','') = '') as empty_text,
+      count(*) filter (where b->>'kind' = 'code'
+        and coalesce(b->>'text','') = '' and not (b ? 'json')) as empty_code,
+      count(*) filter (where b->>'kind' = 'kv'
+        and coalesce(jsonb_array_length(b->'items'), 0) = 0) as empty_kv,
+      count(*) filter (where b->>'kind' = 'values'
+        and coalesce(jsonb_array_length(b->'values'), 0) = 0) as empty_values,
+      count(*) filter (where b->>'kind' = 'table'
+        and coalesce(jsonb_array_length(b->'rows'), 0) = 0) as empty_table
+    from b group by 1 order by 1;
+
+`api_topics.blocks` uses the same vocabulary; swap the two table names
+to check the reference the same way.
 
 ## What the page shows, and what it asks for
 

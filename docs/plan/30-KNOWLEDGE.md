@@ -1,5 +1,11 @@
 # Writing verified findings into the system
 
+**WAVE 1 RUN 2026-08-13: the style load is done.** Fifteen `styling`
+rows landed against the existing `core-frontend` area (no new area was
+needed - the intake lookup found "Front end" already there), with six
+work notes and twelve links. What the verification changed is recorded
+inline below.
+
 Where a fact goes once a code-review wave has established it, how it
 gets there, and how style knowledge - which the system currently holds
 none of - gets captured properly.
@@ -63,21 +69,60 @@ the `codereview` document holding the verbatim extract of
 | `style-colour` | Theme variables for text, labels and hints; tag colours come from the `TagColor` enum, not from CSS |
 | `style-icons` | One SVG sprite, referenced by `use`, coloured through `currentColor` on the parent |
 | `style-tone` | **Sentence case for all UI text** - titles, labels, buttons, column headers, nav items |
-| `style-testids` | The `data-testid` convention: kebab-case, `[name]-form`, `[control]-input`, `[action]-btn`, applied to forms, critical controls, action elements and dynamic content; an external Playwright suite depends on them, so they are contract, not decoration |
+| `style-testids` | The `data-testid` convention: kebab-case, `[name]-form`, `[control]-input`, `[action]-btn`, applied to forms, critical controls, action elements and dynamic content; an external Playwright suite depends on them, so they are contract, not decoration. **Landed `partial`, not `live`** - see below |
 
 Each row uses the typed `blocks` vocabulary the viewer already
 renders: a `p` for the statement, a `kv` for the named values, a
 `values` block for a closed set, a `code` block for the canonical
-markup, and a `note` for the trap. All fifteen are `maturity 'live'`
-and `verified = true`, because they are read from a ruleset that the
-codebase enforces - grade `verified-code`, citation in the source
-document.
+markup, and a `note` for the trap. Fourteen are `maturity 'live'` and
+all fifteen are `verified = true`, because they are read from a ruleset
+that the codebase enforces - grade `verified-code`, citation in the
+source document.
+
+The `values` block turned out to be the wrong shape for most of these:
+its renderer draws each value as a bare code chip, and every set here
+carries an explanation per value. They became a lead-in `p` plus a `kv`
+instead. Two key names were also wrong on the first write - `kv` reads
+`items`, not `pairs` - which renders an empty table with no error
+anywhere. docs/PLATFORM.md now carries the check that catches it.
+
+`style-testids` is the exception to `live`, and it is the wave's most
+useful finding. The convention is fully documented in
+`DATA-TEST-LOCATOR.md`, but **20 `data-testid` attributes exist across
+the whole front end** (15 `-btn`, 4 `-form`, 1 `-input`) against 339
+`.button` usages alone. Reading the document without counting would
+leave a session believing there is a stable locator surface to test
+against. There is a convention; there is not yet coverage - so the row
+is `partial`, and says why.
+
+Three other measurements sharpened a row rather than confirming it:
+
+- **Composition usage.** The ruleset says "prefer `.flow`" and cites
+  ~378 `.stack` usages. Counted across all templates: `.stack` 490,
+  `.cluster` 240, `.repel` 50, `.flow` 26, `.grid` 12, `.wrapper` 3,
+  `.switcher` 1, `.with-sidebar` 1. The gap between the advice and the
+  practice is widening, not closing.
+- **Icon colouring.** The ruleset says icon paths use `currentColor`.
+  They carry no `fill` at all; the mechanism is a global
+  `svg { fill: currentColor }` in the reset. Same outcome, but a path
+  pasted in *with* its own fill silently ignores the parent, which the
+  stated version does not warn about.
+- **Dialog sizes.** Confirmed exactly: seven steps, 400px to 1600px,
+  `m` (600px) the default.
 
 One caution worth its own `note` block: the ruleset describes a
 migration in progress. "There are no component stylesheets left" and
 "existing component stylesheets are being deleted module by module"
-appear in the same source. Record it as a rule with a migration state,
-not as a finished fact.
+appear in the same source.
+
+**Resolved by checking, 2026-08-13: the migration is finished.** The
+supplied checkout has zero `.scss` files outside `src/styles`, zero
+components using `styleUrl`, and no `blocks/_legacy.scss` at all - 53
+named block files and nothing else. The prose lags the code, so
+`style-no-component-css` records the rule as absolute and carries a
+note saying the source says otherwise. This is the general shape of
+what a wave is for: the document and the code disagreed, and only
+counting settled it.
 
 ## What the technical load contains
 

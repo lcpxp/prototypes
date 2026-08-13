@@ -23,6 +23,18 @@ is the git history; what is unfinished is docs/STATE.md.
   something did, and links to the row rather than the module.
 
 ### Added
+- The platform page now has a **Look and feel** section: fifteen rows
+  describing how the LaunchPad front end is actually styled - the
+  layer model, the eight layout compositions, spacing, buttons,
+  dialogs, tables, typography, colour, icons, UI tone and the test
+  locator contract. Every one is read from the code rather than from
+  a description of it, and three of them record where the written
+  rules and the code disagree. Enough to build something that looks
+  like the real thing without guessing.
+- Three roadmap items about lists and tables now carry notes from that
+  code review, including the one that changes the estimate: the
+  styling for sortable table headers already exists, written and
+  commented out, and cannot simply be uncommented.
 - Opening a **roadmap item or workstream** now shows everything stored
   against it, including values no part of the page was written for.
   Anything the drawer does not have a designed row for appears under
