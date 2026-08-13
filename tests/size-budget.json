@@ -107,6 +107,14 @@
     "tests/unit/roadmap-views.test.js": {
       "hard": 500,
       "note": "Over soft: one dataset (tests/lib/roadmap.js) drives the level/layout benchmarks together. The custom-view/department-filter cases are in roadmap-views-custom.test.js and the exec-board cases in roadmap-views-exec.test.js; the placement-ordering cases (bug sink, priority ties, parked theme clustering) are the next split seam."
+    },
+    "assets/css/roadmap-detail.css": {
+      "hard": 500,
+      "note": "Over soft before this session (325) and grown to 335 by the flat-link and link-type treatments that render a link whose target has no page. Exit plan: the drawer's notes and phases blocks are the seam - move them to roadmap-detail-notes.css, linked wherever roadmap-detail.css is."
+    },
+    "tests/unit/roadmap-detail.test.js": {
+      "hard": 500,
+      "note": "Over soft before this session (340) and grown to 387 by the cross-type link benchmarks. One fixture drives the drawer and the export builders together. Exit plan: the KPI/CSV export cases are the clean seam - they already use their own helpers and would move to roadmap-detail-export.test.js whole."
     }
   }
 }
