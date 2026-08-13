@@ -70,9 +70,9 @@ a session does not re-learn them, and they seed the findings register.
 
 Do these once per snapshot, before any reading. They are cheap,
 repeatable, and they turn "review the codebase" into a bounded task.
-Scripts live in `tools/` in this repo (new directory, see
-20-API-REFERENCE.md for the first of them) and read from a scratch
-checkout of the LaunchPad source - never from a committed copy.
+Scripts live in `scripts/` beside the other generators, and read from
+a scratch checkout of the LaunchPad source - never from a committed
+copy. `scripts/extract-routes.js` is the first of them.
 
 | Extraction | Source | Output | Used by |
 |---|---|---|---|

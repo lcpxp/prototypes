@@ -147,7 +147,7 @@ renderer instead of growing their own.
 
 A reasonable order of first commits:
 
-    1. tools/extract-routes.js and the coverage report      (20)
+    1. scripts/extract-routes.js and the coverage report    (20)
     2. reference corrections: the 12 wrong rows             (20)
     3. reference drift gate                                 (20)
     4. entity-aware knowledge links, everywhere             (40)
