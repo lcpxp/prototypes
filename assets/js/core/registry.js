@@ -56,6 +56,14 @@
         statTable: null,
       },
       {
+        key: "portal-review",
+        title: "Portal Review",
+        path: "modules/portal-review/",
+        heading: "Portal review",
+        description: "Walking the portal area by area, and what each wave found",
+        statTable: null,
+      },
+      {
         key: "prototypes",
         title: "Prototypes",
         path: "modules/prototypes/",
@@ -108,6 +116,10 @@
       reviewRevisions: "review_revisions",
       triageCategories: "triage_categories",
       launchpadStatuses: "launchpad_statuses",
+      reviewAreas: "review_areas",
+      reviewAreaPasses: "review_area_passes",
+      reviewFindings: "review_findings",
+      reviewFindingRevisions: "review_finding_revisions",
     },
     // Link kinds: the display half of the vocabulary in
     // supabase/schema/33_links.sql (link_kinds). The database is
@@ -145,6 +157,13 @@
       stage:      { table: "journey_stages",       titleColumn: "title", label: "Journey stage",   module: "platform", anchor: "stage" },
       area:       { table: "work_areas",           titleColumn: "title", label: "Filing area",     module: "platform", anchor: "area" },
       document:   { table: "work_documents",       titleColumn: "title", label: "Source document", module: "backlog",  anchor: "document" },
+      // A finding exists only inside its wave, and a link row carries
+      // no wave id - so there is no address that reaches it from the
+      // link alone. Like `note`, it renders as its name and its type
+      // rather than as a link to nowhere. The area map, by contrast,
+      // outlives every wave and has its own home on the index.
+      finding:    { table: "review_findings",      titleColumn: "title", label: "Review finding" },
+      review_area:{ table: "review_areas",         titleColumn: "title", label: "Review area",     module: "portal-review", anchor: "area" },
     },
     // Spec families group api_specs rows into distinct reference
     // "sites" inside the reference module. Order here is display

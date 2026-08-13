@@ -23,6 +23,20 @@ is the git history; what is unfinished is docs/STATE.md.
   something did, and links to the row rather than the module.
 
 ### Added
+- **Portal review** is now a feature rather than a one-off HTML file.
+  A wave can be opened, walked area by area, answered, verified,
+  triaged and closed - the whole method from the wave 4 review board,
+  with its 39-area map loaded as data. Findings carry what the
+  developers said, what you verified, and what the review decided,
+  which are three different statements and stay three. Anything the
+  review produced that is not future work is archived with a reason
+  rather than thrown away. Three pages: the wave list with the
+  standing asks and the area map, the board itself with its coverage
+  rail and walker, and the triage view. Like application review, the
+  pages read and a Claude session writes (`/portal-review`).
+- The dashboard's **Reviews** section now covers both reviews, each
+  measured in its own units: an application wave counts applications
+  to classify, a portal wave counts areas still to walk.
 - The platform page now has a **Look and feel** section: fifteen rows
   describing how the LaunchPad front end is actually styled - the
   layer model, the eight layout compositions, spacing, buttons,

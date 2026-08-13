@@ -27,7 +27,9 @@ const BANDS = ["0.65", "0.40", "0.22"];
 // Documents that must CITE the intake protocol rather than restate its
 // numbers. Everything here is read by a session that could otherwise act
 // on a remembered threshold.
-const CITERS = [PLAYBOOK, REVIEW, ADD_CMD, REVIEW_CMD];
+const PORTAL_REVIEW = "docs/PORTAL-REVIEW.md";
+const PORTAL_CMD = ".claude/commands/portal-review.md";
+const CITERS = [PLAYBOOK, REVIEW, ADD_CMD, REVIEW_CMD, PORTAL_REVIEW, PORTAL_CMD];
 
 test("the search surface is declared in schema with its grants", () => {
   const schema = read(SCHEMA);

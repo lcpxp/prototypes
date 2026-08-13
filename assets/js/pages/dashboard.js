@@ -23,7 +23,7 @@
   var SECTIONS = [
     { id: "ds-now-next", keys: ["roadmap", "backlog"] },
     { id: "ds-reference", keys: ["reference"] },
-    { id: "ds-reviews", keys: ["app-review"] },
+    { id: "ds-reviews", keys: ["app-review", "portal-review"] },
     { id: "ds-knowledge", keys: ["platform"] },
     { id: "ds-tools", keys: null },
     { id: "ds-modules", keys: null },
@@ -82,10 +82,15 @@
     }));
   }
 
+  // A wave links into whichever review it belongs to. Both modules put
+  // a wave on wave.html, so the only question is which module.
   function renderReviews(summary) {
-    var mod = moduleByKey("app-review");
-    fill("ds-reviews", App.dashboardCards.reviews(summary.reviews, {
+    var waves = (summary.reviews || []).filter(function (wave) {
+      return canReach([wave.kind === "application" ? "app-review" : "portal-review"]);
+    });
+    fill("ds-reviews", App.dashboardCards.reviews(waves, {
       href: function (wave) {
+        var mod = moduleByKey(wave.kind === "application" ? "app-review" : "portal-review");
         return mod ? App.moduleHref(mod) + "wave.html?wave=" +
           encodeURIComponent(wave.id) : "#";
       },
@@ -241,7 +246,7 @@
 
     if (canReach(["roadmap", "backlog"])) renderNowNext(summary);
     if (canReach(["reference"])) renderReference(summary, results[1]);
-    if (canReach(["app-review"])) renderReviews(summary);
+    if (canReach(["app-review", "portal-review"])) renderReviews(summary);
     if (canReach(["platform"])) renderKnowledge(summary);
     renderTools();
     renderModules(summary);

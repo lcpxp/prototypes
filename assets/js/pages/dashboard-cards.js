@@ -100,6 +100,24 @@
   // confirm" is a thing to do, and the difference is the whole reason
   // this section exists rather than another counter.
   App.dashboardCards.waveAction = function (wave) {
+    // A portal or code wave answers a different question from an
+    // application wave, so it gets its own ladder rather than a
+    // borrowed one with zeroes in it.
+    if (wave.kind && wave.kind !== "application") {
+      if (wave.walked < wave.areas) {
+        var left = wave.areas - wave.walked;
+        return plural(left, "area still to walk", "areas still to walk");
+      }
+      if (wave.awaiting_verification > 0) {
+        return plural(wave.awaiting_verification,
+          "answer waiting on your verification", "answers waiting on your verification");
+      }
+      if (wave.findings_open > 0) {
+        return plural(wave.findings_open,
+          "finding open with the developers", "findings open with the developers");
+      }
+      return "Nothing outstanding. The wave is ready to triage.";
+    }
     if (wave.needs_action > 0) {
       return plural(wave.needs_action, "application needs action", "applications need action");
     }
@@ -110,20 +128,36 @@
     return "Every application is classified and confirmed";
   };
 
+  var WAVE_KIND = {
+    application: "Application review",
+    portal: "Portal review",
+    code: "Code review",
+  };
+
+  // What a wave is made of, in its own units.
+  function waveSize(wave) {
+    if (wave.kind && wave.kind !== "application") {
+      return esc(wave.walked || 0) + " of " + plural(wave.areas || 0, "area", "areas") +
+        " walked";
+    }
+    return plural(wave.applications || 0, "application", "applications");
+  }
+
   App.dashboardCards.reviews = function (waves, opts) {
     opts = opts || {};
     if (!waves || !waves.length) {
       return '<p class="notice">No review wave is open. Start one in a Claude ' +
-        "session with /app-review.</p>";
+        "session with /app-review or /portal-review.</p>";
     }
     return '<div class="card-grid ds-waves">' + waves.map(function (wave) {
       var opened = wave.opened_at ? String(wave.opened_at).slice(0, 10) : "";
       return '<a class="card ds-wave" href="' +
         esc(opts.href ? opts.href(wave) : "#") + '">' +
-        '<span class="eyebrow">Application review</span>' +
+        '<span class="eyebrow">' +
+        esc(WAVE_KIND[wave.kind] || WAVE_KIND.application) + "</span>" +
         "<h3>" + esc(wave.name) + "</h3>" +
         '<p class="ds-wave-action">' + App.dashboardCards.waveAction(wave) + "</p>" +
-        '<p class="card-meta">' + plural(wave.applications || 0, "application", "applications") +
+        '<p class="card-meta">' + waveSize(wave) +
         (opened ? " &middot; opened " + esc(opened) : "") + "</p></a>";
     }).join("") + "</div>";
   };

@@ -303,10 +303,15 @@ create policy "triage_categories: members read"
   to authenticated
   using ((select public.has_module_access('app-review')));
 
+-- review_waves is SHARED between the two review features: a wave
+-- carries a `kind` (application, portal, code). So the read is either
+-- grant, and the pages filter by kind. Gating it on app-review alone
+-- would hide a portal reviewer's own waves from them.
 create policy "review_waves: members read"
   on public.review_waves for select
   to authenticated
-  using ((select public.has_module_access('app-review')));
+  using ((select public.has_module_access('app-review'))
+      or (select public.has_module_access('portal-review')));
 
 create policy "review_applications: members read"
   on public.review_applications for select
@@ -322,6 +327,51 @@ create policy "review_revisions: members read"
   on public.review_revisions for select
   to authenticated
   using ((select public.has_module_access('app-review')));
+
+-- ---------------------------------------------------------------
+-- Portal review (schema/52_portal_review.sql). READ ONLY, for exactly
+-- the same reasons as application review above: every write happens in
+-- a Claude session over the service connection, and adding a write
+-- policy here would move the boundary of the feature rather than just
+-- enabling an edit.
+--
+-- Findings name internal defects, environments and developer
+-- conversations, and carry a `visibility` of 'internal' for the ones
+-- that never leave the review - so reads are gated on the
+-- portal-review module grant and anon gets nothing.
+--
+-- review_waves is shared and its policy is above.
+-- ---------------------------------------------------------------
+
+alter table public.review_areas             enable row level security;
+alter table public.review_area_passes       enable row level security;
+alter table public.review_findings          enable row level security;
+alter table public.review_finding_revisions enable row level security;
+
+drop policy if exists "review_areas: members read" on public.review_areas;
+drop policy if exists "review_area_passes: members read" on public.review_area_passes;
+drop policy if exists "review_findings: members read" on public.review_findings;
+drop policy if exists "review_finding_revisions: members read" on public.review_finding_revisions;
+
+create policy "review_areas: members read"
+  on public.review_areas for select
+  to authenticated
+  using ((select public.has_module_access('portal-review')));
+
+create policy "review_area_passes: members read"
+  on public.review_area_passes for select
+  to authenticated
+  using ((select public.has_module_access('portal-review')));
+
+create policy "review_findings: members read"
+  on public.review_findings for select
+  to authenticated
+  using ((select public.has_module_access('portal-review')));
+
+create policy "review_finding_revisions: members read"
+  on public.review_finding_revisions for select
+  to authenticated
+  using ((select public.has_module_access('portal-review')));
 
 -- ---------------------------------------------------------------
 -- The dashboard read RPCs (defined in schema/90_dashboard.sql):

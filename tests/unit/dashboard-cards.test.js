@@ -136,8 +136,39 @@ test("a wave says the single next action in words, not a count", () => {
     "1 application needs action");
 });
 
+test("a portal wave answers its own question, not an application wave's", () => {
+  // Borrowing the application ladder would put "0 applications need
+  // action" on a card whose whole subject is areas.
+  const portal = { kind: "portal", areas: 39, walked: 12,
+    findings_open: 5, awaiting_verification: 2 };
+  assert.equal(cards.waveAction(portal), "27 areas still to walk");
+  assert.equal(cards.waveAction(Object.assign({}, portal, { walked: 39 })),
+    "2 answers waiting on your verification");
+  assert.equal(cards.waveAction(
+    Object.assign({}, portal, { walked: 39, awaiting_verification: 0 })),
+    "5 findings open with the developers");
+  assert.equal(cards.waveAction(
+    { kind: "portal", areas: 39, walked: 39, findings_open: 0, awaiting_verification: 0 }),
+    "Nothing outstanding. The wave is ready to triage.");
+});
+
+test("a wave is measured in its own units and named by its kind", () => {
+  const html = cards.reviews([
+    { id: "w1", name: "Wave 5", kind: "portal", areas: 39, walked: 12,
+      findings_open: 5, awaiting_verification: 0, opened_at: "2026-08-01T00:00:00Z" },
+    { id: "w2", name: "Wave 4", kind: "application", applications: 42,
+      needs_action: 3, unconfirmed: 9 },
+  ], { href: (w) => "#" + w.id });
+  assert.match(html, /<span class="eyebrow">Portal review<\/span>/);
+  assert.match(html, /<span class="eyebrow">Application review<\/span>/);
+  assert.match(html, /12 of 39 areas walked/);
+  assert.match(html, /42 applications/);
+  assert.doesNotMatch(html, /0 applications/,
+    "a figure that does not apply is absent, not zero");
+});
+
 test("no open wave offers to start one, naming the command", () => {
-  assert.match(cards.reviews([]), /\/app-review/);
+  assert.match(cards.reviews([]), /\/app-review or \/portal-review/);
   assert.match(cards.reviews(null), /No review wave is open/);
 });
 

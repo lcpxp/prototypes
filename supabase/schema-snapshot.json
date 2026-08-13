@@ -40,6 +40,7 @@
     "knowledge_link_duplicate_dropped()",
     "knowledge_link_guard()",
     "own_role()",
+    "review_finding_revision_log()",
     "review_revision_log()",
     "review_status_note_guard()",
     "rls_auto_enable()",
@@ -222,6 +223,14 @@
     {
       "name": "dashboard_summary",
       "version": "20260813223937"
+    },
+    {
+      "name": "portal_review",
+      "version": "20260813230545"
+    },
+    {
+      "name": "dashboard_summary_portal_waves",
+      "version": "20260813233000"
     }
   ],
   "policies": [
@@ -490,8 +499,24 @@
       "table": "review_applications"
     },
     {
+      "name": "review_area_passes: members read",
+      "table": "review_area_passes"
+    },
+    {
+      "name": "review_areas: members read",
+      "table": "review_areas"
+    },
+    {
       "name": "review_evidence: members read",
       "table": "review_evidence"
+    },
+    {
+      "name": "review_finding_revisions: members read",
+      "table": "review_finding_revisions"
+    },
+    {
+      "name": "review_findings: members read",
+      "table": "review_findings"
     },
     {
       "name": "review_revisions: members read",
@@ -848,6 +873,23 @@
       "updated_at",
       "wave_id"
     ],
+    "review_area_passes": [
+      "area_id",
+      "walked_at",
+      "walked_by",
+      "wave_id"
+    ],
+    "review_areas": [
+      "code",
+      "created_at",
+      "id",
+      "note",
+      "part",
+      "retired_at",
+      "sort_order",
+      "title",
+      "updated_at"
+    ],
     "review_evidence": [
       "actor",
       "application_id",
@@ -862,6 +904,48 @@
       "source",
       "summary",
       "updated_at"
+    ],
+    "review_finding_revisions": [
+      "changed_at",
+      "changed_by",
+      "created_at",
+      "field",
+      "finding_id",
+      "from_value",
+      "id",
+      "reason",
+      "to_value"
+    ],
+    "review_findings": [
+      "area_id",
+      "blocks",
+      "body",
+      "carried_from_finding_id",
+      "created_at",
+      "deleted_at",
+      "disposition",
+      "emphasis",
+      "environment",
+      "id",
+      "kind",
+      "owner_action",
+      "promoted_work_item_id",
+      "raised_count",
+      "ref",
+      "resolution",
+      "resolved_at",
+      "responded_at",
+      "response",
+      "response_by",
+      "standing",
+      "state",
+      "title",
+      "updated_at",
+      "verification_note",
+      "verified_at",
+      "verified_by",
+      "visibility",
+      "wave_id"
     ],
     "review_revisions": [
       "application_id",
@@ -881,6 +965,7 @@
       "created_at",
       "deleted_at",
       "id",
+      "kind",
       "name",
       "notes",
       "opened_at",

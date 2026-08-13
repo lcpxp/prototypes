@@ -56,10 +56,13 @@ test("each end records what type the other end is", () => {
 });
 
 test("every registered entity type can be indexed", () => {
-  // The regression guard: 49 ordered pairs, all of which must survive
-  // indexing. Two of them used to render and the rest vanished.
+  // The regression guard: every ordered pair must survive indexing.
+  // Two of them used to render and the rest vanished, which is why
+  // this walks the whole square rather than a sample.
   const types = Object.keys(App.registry.linkEntities);
-  assert.equal(types.length, 7);
+  assert.ok(types.length >= 7,
+    "the seven original types are the floor, not the ceiling - adding one " +
+    "must widen this square rather than break it");
   const rows = [];
   types.forEach((from, i) => types.forEach((to, j) => {
     rows.push(link({ from_type: from, from_id: "a" + i, to_type: to, to_id: "b" + j,

@@ -1,0 +1,268 @@
+/* ------------------------------------------------------------------
+   portal-review.css - The portal review board (docs/PORTAL-REVIEW.md).
+   Tokens only, mobile-first. The board reads; nothing here styles a
+   control that writes, because there are none.
+   ------------------------------------------------------------------ */
+
+.pr-section { margin-block-end: var(--s-7); }
+
+.pr-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2) var(--s-4);
+  margin-block-end: var(--s-4);
+  padding-block-end: var(--s-2);
+  border-block-end: 1px solid var(--line);
+}
+.pr-head h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+.pr-figure {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--faint);
+}
+
+/* An area code is a handle people say out loud, so it reads as one. */
+.pr-code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+
+/* --- the wave list -------------------------------------------------- */
+
+.pr-wave h3 {
+  margin: 0 0 var(--s-2);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+.pr-wave-action {
+  margin: 0 0 var(--s-2);
+  font-size: var(--text-md);
+  color: var(--ink);
+}
+.pr-wave-blockers {
+  margin: var(--s-2) 0 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--danger);
+}
+
+.pr-standing {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-2);
+}
+.pr-standing li {
+  padding: var(--s-2) 0;
+  border-block-end: 1px solid var(--line);
+}
+.pr-standing-meta {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+
+/* --- the area map --------------------------------------------------- */
+
+.pr-map-part { margin-block-end: var(--s-5); }
+.pr-map-part h3 {
+  margin: 0 0 var(--s-1);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+.pr-map-list {
+  margin: var(--s-2) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-1);
+}
+.pr-map-list li {
+  padding: var(--s-1) 0;
+  font-size: var(--text-sm);
+  border-block-end: 1px solid var(--line);
+}
+.pr-map-note {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+
+/* --- the coverage rail ---------------------------------------------- */
+
+.pr-rail {
+  display: grid;
+  gap: var(--s-4);
+  margin-block-end: var(--s-6);
+}
+@media (min-width: 48rem) {
+  .pr-rail { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+}
+.pr-rail-figure {
+  margin: var(--s-0) 0 var(--s-2);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+.pr-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+/* Hollow means never walked in this wave, filled means walked. The dot
+   also carries a title and the part line says the figure in words, so
+   the shape is never the only thing carrying the meaning. */
+.pr-dot > span:first-child {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+}
+.pr-dot--walked > span:first-child {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.pr-dot--open > span:first-child { border-color: var(--warn); border-width: 2px; }
+.pr-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.pr-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-block-end: var(--s-5);
+}
+
+.pr-brief {
+  margin-block-end: var(--s-5);
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.pr-brief summary {
+  cursor: pointer;
+  font-weight: var(--weight-medium);
+}
+
+/* --- parts, areas and findings --------------------------------------- */
+
+.pr-part { margin-block-end: var(--s-7); }
+.pr-part > h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.pr-area {
+  margin-block-start: var(--s-4);
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.pr-area-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-block-end: var(--s-3);
+}
+.pr-area-head h3 {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  flex: 1;
+}
+.pr-area-state {
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+
+.pr-finding {
+  padding: var(--s-3) 0;
+  border-block-start: 1px solid var(--line);
+}
+.pr-finding h4 {
+  margin: 0 0 var(--s-1);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+}
+/* Emphasis reads as a rail as well as a chip, so it survives a print
+   and a monochrome screen. */
+.pr-finding--blocker { border-inline-start: 3px solid var(--danger); padding-inline-start: var(--s-3); }
+.pr-finding--bug { border-inline-start: 3px solid var(--warn); padding-inline-start: var(--s-3); }
+.pr-finding--lead { border-inline-start: 3px solid var(--accent); padding-inline-start: var(--s-3); }
+
+.pr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin: 0 0 var(--s-1);
+}
+.pr-meta {
+  margin: 0 0 var(--s-2);
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+.pr-promoted { margin: var(--s-2) 0 0; font-size: var(--text-sm); }
+
+/* An answer, a verification and a resolution are three different
+   statements, so each gets its own block rather than one meta line. */
+.pr-said {
+  margin-block-start: var(--s-2);
+  padding-inline-start: var(--s-3);
+  border-inline-start: 2px solid var(--line);
+}
+.pr-said p { margin: var(--s-0) 0 0; font-size: var(--text-sm); }
+.pr-said--verified { border-inline-start-color: var(--ok); }
+
+.pr-group { margin-block-start: var(--s-3); }
+.pr-group summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+/* --- triage ---------------------------------------------------------- */
+
+.pr-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  margin: 0 0 var(--s-6);
+  padding-block-end: var(--s-3);
+  border-block-end: 1px solid var(--line);
+}
+.pr-counts dt { font-size: var(--text-xs); color: var(--faint); }
+.pr-counts dd {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+}
+
+.pr-triage-group { margin-block-end: var(--s-7); }
+.pr-triage-group h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+.pr-triage-n {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--faint);
+}
+.pr-triage-row {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: var(--s-2);
+  align-items: start;
+}

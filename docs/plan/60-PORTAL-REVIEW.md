@@ -1,5 +1,8 @@
 # Portal review, as a feature
 
+**BUILT 2026-08-13.** Schema, area map, pages, protocol and command
+all landed. What the build changed is recorded at the end.
+
 The wave 4 review board is the most effective thing in the supplied
 material. It ran five waves, recorded 183 findings, and ended
 with a production release that came back clean. It is also a
@@ -297,3 +300,39 @@ board would trade that density for controls.
   archived one has a resolution and stays findable.
 - The next wave starts with the standing asks and the carried findings
   already in place, each with its raise count.
+
+## What landed, 2026-08-13
+
+Everything above except the code-wave variant, which shares the schema
+(`review_waves.kind = 'code'`) and needs no further work to use.
+
+- **Schema** (migration `20260813230545`): `review_areas`,
+  `review_area_passes`, `review_findings`,
+  `review_finding_revisions`, plus `review_waves.kind`. Two
+  constraints the plan implied and the database now enforces: a
+  `promoted` finding must name its work item, and an `archived` one
+  must carry a resolution. `50_review.sql` was split at its declared
+  seam, with the two guards moving to `51_review_guards.sql`.
+- **The area map is loaded**: 39 areas in 6 parts, read out of the
+  board file rather than retyped, with the 01/02 merge note intact.
+- **47 of the board's 65 area/roadmap pairs resolved** to real work
+  items and are now `review_area -> work_item` links. The other 18
+  named titles that no longer exist - "Unity integration", "Unity:
+  Merchant", "Admin tools", "Partner Type Enablement" and the rest of
+  the Unity family - because the roadmap has been restructured since
+  ("Unity Finalisation" is the workstream now). Mapping them would
+  have been inference written as fact, so they are left for the first
+  wave to resolve against the live roadmap. That gap is the finding.
+- **`review_waves` is shared, so its read policy widened** to either
+  grant. Gating it on `app-review` alone would have hidden a portal
+  reviewer's own waves from them - a bug the shared table introduces
+  and which is easy to miss until somebody without both grants looks.
+- **A finding has no link destination, by design.** It exists only
+  inside its wave and a `knowledge_links` row carries no wave id, so
+  there is no address that reaches it from the link alone. Like
+  `note`, it renders as its name and its type. The area map does have
+  a home - it outlives every wave - so it is anchored on the index.
+
+The render-coverage gate did its job twice here: it refused the five
+new vocabularies until they had a renderer, and it refused the
+`finding` anchor until a page could actually reach it.
