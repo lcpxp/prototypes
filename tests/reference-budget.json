@@ -2,12 +2,12 @@
   "comment": "Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands.",
   "specs": {
     "LaunchPad Partner Portal API": {
-      "phantom": 12,
-      "absent": 219,
+      "phantom": 0,
+      "absent": 196,
       "undeclared_mirrors": 22,
       "unverified_badges": 3,
       "gap_badges": 0,
-      "note": "Baseline taken 2026-08-13 from the supplied snapshot. phantom: the twelve wrong rows catalogued in docs/plan/20-API-REFERENCE.md, each traced to source - drive to 0 first, they are the rows that actively mislead. absent: the 219 genuinely undocumented routes, prioritised in the same file. undeclared_mirrors: v1 partner/merchant and admin/merchant routes that mirror a documented /merchants row under a collapse the reference never declares - fixed by declaring it, not by writing 22 rows."
+      "note": "Baseline 2026-08-13, tightened the same day. phantom is now 0 and must stay there: the twelve wrong rows catalogued in docs/plan/20-API-REFERENCE.md were each traced to source and corrected, so a phantom row appearing again means the reference has drifted from the code rather than merely lagging it. absent 196: the genuinely undocumented routes, prioritised in the same file - lower this as each group lands. undeclared_mirrors 22: v1 partner/merchant and admin/merchant routes that mirror a documented /merchants row under a collapse the reference never declares. Fixed by declaring the collapse, not by writing 22 rows."
     },
     "Unity Acquiring API": {
       "unverified_badges": 1,

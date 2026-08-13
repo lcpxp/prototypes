@@ -109,43 +109,43 @@ itself. And the equivalent v1 collapse (`/v1/merchants/{}` against
 nowhere, which is why those three groups show 74 gaps between them,
 22 of them pure mirrors a declared convention would absorb.
 
-## The twelve rows that are wrong, and their fixes
+## The twelve rows that were wrong - CORRECTED 2026-08-13
 
-Verified against the source. Fix these first; they are the rows that
-actively mislead.
+Each was traced to source and fixed; `phantom` is now 0 and the budget
+ceiling holds it there. Kept as the record of what was wrong and why,
+because the same mistakes are the ones a later wave will make again.
 
-| Row | Fault | Fix |
+| Row | Fault | Fix applied |
 |---|---|---|
-| `GET,POST,DELETE /api/v1/partners/{}/products...` (3 rows) | Controller is `[Route("api/partners")]` with **no `[ApiVersion]`** | Repath to `/api/partners/{partnerId}/products/...`; add the missing `GET /api/partners/{}/products/{}` |
-| `PATCH /api/v1/admin/price-sheets/{}` | Action lives in `AdminMerchantController`, base `admin/merchant` | Repath to `/api/v1/admin/merchant/price-sheets/{priceSheetId}` |
-| `GET /api/v2/merchant-applications/{}/merchant/banks` · `/persons` · `/sites` (3 rows) | Commented-out planning stubs | Retire the rows; record the three in the spec's gap-register topic as designed-not-built |
-| `GET,PUT /api/v1/service-fees/{}` and `/{}/questions` (4 rows) | Reference invents a `{category}` parameter; the code has literal segments | Replace with ten rows: `pos`, `pos-plus`, `ecom` (config + questions), `merchant`, `card-service` |
-| `DELETE /api/v1/acquirers/{}/onboarding-flows/{}` | **Filed under the wrong resource.** That controller's only delete is `{id}/contracts/{contractId}`; deleting a flow is `DELETE /api/v1/onboarding-flows/{id}` on the standalone controller | Repath it, and document the standalone controller's 19 routes (gap 3 below) |
+| `GET,POST,DELETE /api/v1/partners/{}/products...` (3) | Controller is `[Route("api/partners")]` with **no `[ApiVersion]`** | Repathed to `/api/partners/...`; the missing detail read added |
+| `PATCH /api/v1/admin/price-sheets/{}` | Action lives in `AdminMerchantController`, base `admin/merchant` | Repathed to `/api/v1/admin/merchant/price-sheets/{priceSheetId}` |
+| `GET /api/v2/.../merchant/banks` · `/persons` · `/sites` (3) | Commented-out planning stubs | Retired, after recording all seven stubs in the gap register |
+| `GET,PUT /api/v1/service-fees/{}` and `/{}/questions` (4) | An invented `{category}` parameter; the code has literal segments | Replaced by the 16 real endpoints across five fee families |
+| `DELETE /api/v1/acquirers/{}/onboarding-flows/{}` | **Filed under the wrong resource.** That controller's only delete is `{id}/contracts/{contractId}` | Repathed to `DELETE /api/v1/onboarding-flows/{flowId}`; the contract delete added |
 
-Nine changes covering twelve rows, plus five to ten new rows: a single
-session's work that removes every known falsehood from the reference.
+Applied as nine changes over twelve rows plus fourteen new rows they
+implicated, the retired stubs written into the gap register first so
+nothing was lost. Coverage 311/552 (56.3%) to 334/552 (60.5%), rows
+245 to 256, `absent` 219 to 196.
 
-## The 219 gaps, in priority order
+## The remaining 196 gaps, in priority order
 
 Priority comes from consumer evidence (inventory C), not group size.
 
 1. **`/v1/merchant-applications/{}` - 26.** The v1 application surface
    the front end still calls. Highest traffic, most consequential.
-2. **`/v1/merchants/{}` - 22 and `/v1/admin/merchant` - 26.** The
-   merchant and admin-merchant surfaces. Declare the scope collapse
-   here as it was declared for v2, then document the residue.
-3. **`/v1/onboarding-flows/{}` - 19.** Flow configuration - the
-   mechanism behind acquirer enablement and the modular-stages work on
-   the roadmap. Documenting this makes several roadmap items legible.
+2. **`/v1/merchants/{}` 22 and `/v1/admin/merchant` 26.** Declare the
+   scope collapse here as it was for v2, then document the residue.
+3. **`/v1/onboarding-flows/{}` - 19.** Flow configuration, the
+   mechanism behind acquirer enablement and modular stages. Documenting
+   it makes several roadmap items legible.
 4. **`/v1/applications/drafts` - 11.** An undocumented draft surface
    with no reference presence at all.
-5. **`/v1/service-fees/*` - 14.** Follows directly from the four wrong
-   rows above; Tim owns service fees and the roadmap carries several
-   items against them.
-6. **The 17 scope-prefixed v2 routes with no documented unscoped
-   twin**, and the declaration of the v1 collapse that absorbs 22 more.
-7. **`/v1/partner/users` - 6, `/v1/product-definitions/{}` - 6,
-   `/v2/product-definitions/{}` - 4, `/v1/eit-management/*` - 6.**
+5. ~~`/v1/service-fees/*`~~ - **done**, all 16 endpoints documented.
+6. **The 17 scope-prefixed v2 routes with no documented unscoped twin**,
+   plus declaring the v1 collapse that absorbs 22 more.
+7. **`/v1/partner/users` 6, `/v1/product-definitions/{}` 6,
+   `/v2/product-definitions/{}` 4, `/v1/eit-management/*` 6.**
 8. **Webhooks and listeners - `adobe-webhooks/adobe-sign` (2),
    `listeners/idpal`, `web-shield/events`.** Inbound callbacks. Small,
    and the only documentation anyone will ever get.
