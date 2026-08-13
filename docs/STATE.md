@@ -1,39 +1,39 @@
 # Current state
 
-Updated: 2026-08-11 (nav Splunk link; roadmap board overhaul before it)
+Updated: 2026-08-13 (alignment programme planned; no code changed yet)
 
 ## In progress
-Nothing mid-flight in code. Newest first:
+Nothing mid-flight in code; 232 tests green. Instead,
+docs/plan/ holds an eight-part programme planned against the supplied
+LaunchPad source (API + Angular portal), the wave 4 review board, the
+live database and this repo. Start at docs/plan/00-PROGRAMME.md: it
+carries the evidence base, the provenance ladder, sequencing and the
+five decisions needed. Nothing in it has been started.
 
-- Nav bug icon opens the Splunk error sweep in a new tab. New
-  portal_links table (schema + policies + migration + snapshot, drift
-  gate green) holds host, search and display params, so no internal URL
-  enters this public repo; assets/js/core/tools.js builds the URL.
+Verified while planning:
+- Reference vs code: 552 routes, 245 documented, 233 matching, 12 rows
+  wrong, 100 covered by the scope-variant convention, 219 absent.
+- Cross-type knowledge links render nowhere (roadmap.js omits
+  from_type/to_type; platform.js resolves capability pairs only).
+- 20 orphan work_notes; 0 milestones and 0 phases behind live schema;
+  work_item_dependencies documented but absent; 0 'styling' rows.
 
-- Roadmap board overhaul landed before it: 90-day Recently/Previously
-  split with a previously_completed_at latch, roadmap-export.js split,
-  Expand board and per-column collapse.
-
-232 tests green (size/style/structure/drift gates).
-
-Two data/next threads carry over from before (both database, not code):
-
-1. LaunchPad API reference - context-accumulation pass still open: work the
-   "Open questions & context gaps" register (13 items), dropping the
-   assumption/unverified/gap badges as each is answered.
-2. Semantic recall (NOT done): a reworded request still collapses High to
-   Low and applies in silence. Embeddings not built.
+The API gap register is now 20-API-REFERENCE.md. Embeddings unchanged
+and still not built.
 
 ## Next steps
-1. Context-accumulation pass on the API reference (13-item gap register).
-2. Embeddings: pgvector + embedding cols on work_items/notes/
-   product_capabilities; Edge Function knowledge/index.ts (embed|find),
-   gte-small, 384 dims. Add 'ts' to isTextFile the same commit.
-3. Calibration fixtures + weighted blend, never RRF (KNOWLEDGE-MODEL.md).
-4. Owner waves: proposed links, unlinked near-pairs, empty product areas.
+1. Route extractor, coverage artefact, drift gate, then the 12 wrong
+   reference rows (20-API-REFERENCE.md).
+2. Entity-aware links and the shared detail panel (40-SURFACING.md),
+   then the dashboard rebuild (50-DASHBOARD.md).
+3. First code-review wave and the style load (10, 30).
+4. Portal review waves (60), prototype ideas (70).
+5. Embeddings: pgvector, knowledge/index.ts, gte-small, 384 dims.
 
 ## Open decisions
-- Hand over workstream: CLOSED 10 Aug at Luke's direction (status done,
-  resolution + decision note, 0 open children). Resolved.
+- The five in 00-PROGRAMME.md: reference scope, Unity grading,
+  commented-out routes, removing milestones/phases, and whether a
+  promoted finding creates or merges into a work item.
+- Portal review board read-only, or admin write for disposition only
+  (60). Ship read-only first.
 - Edge Function + gte-small: AGREED 2026-08-09. No key, 384 dims.
-- Two live rows block their duplicate_of links until resolved.
