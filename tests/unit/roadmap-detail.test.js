@@ -263,6 +263,61 @@ test("a link to a type with no page renders flat, not as a dead link", () => {
   assert.doesNotMatch(html, /href="[^"]*note-n1"/, "no anchor is invented for it");
 });
 
+test("a set milestone renders, with its date where it has one", () => {
+  // roadmap_milestones holds no rows today and is kept deliberately
+  // (docs/plan/00-PROGRAMME.md). Keeping it makes milestone_id a live
+  // column, and a live column that no view renders is the exact defect
+  // this programme is clearing out: the first milestone anybody set
+  // would have been stored, fetched and invisible.
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  item.milestone_id = "m1";
+  const ctx = ctxOf(App, data);
+  ctx.milestoneById = {
+    m1: { id: "m1", title: "Unity go-live", due_on: "2026-09-30" },
+    m2: { id: "m2", title: "Undated checkpoint", due_on: null },
+  };
+  const html = App.roadmapDetail.drawerHtml(item, ctx);
+  assert.match(html, /<dt>Milestone<\/dt><dd>Unity go-live \(2026-09-30\)<\/dd>/);
+
+  item.milestone_id = "m2";
+  assert.match(App.roadmapDetail.drawerHtml(item, ctx),
+    /<dt>Milestone<\/dt><dd>Undated checkpoint<\/dd>/,
+    "a milestone with no due date still names itself");
+});
+
+test("an unset or unresolvable milestone adds no row", () => {
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  const ctx = ctxOf(App, data);
+  ctx.milestoneById = { m1: { id: "m1", title: "Unity go-live", due_on: "2026-09-30" } };
+  assert.doesNotMatch(App.roadmapDetail.drawerHtml(item, ctx), /<dt>Milestone<\/dt>/,
+    "no milestone_id, no row");
+
+  item.milestone_id = "gone";
+  assert.doesNotMatch(App.roadmapDetail.drawerHtml(item, ctx), /<dt>Milestone<\/dt>/,
+    "an id the viewer cannot read renders nothing rather than a blank row");
+
+  item.milestone_id = "m1";
+  assert.doesNotMatch(App.roadmapDetail.drawerHtml(item, ctxOf(App, data)),
+    /<dt>Milestone<\/dt>/,
+    "and a context that never loaded the map at all is survivable");
+});
+
+test("a milestone title is escaped like every other value", () => {
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  item.milestone_id = "m1";
+  const ctx = ctxOf(App, data);
+  ctx.milestoneById = { m1: { id: "m1", title: "<img src=x>", due_on: "2026-09-30" } };
+  const html = App.roadmapDetail.drawerHtml(item, ctx);
+  assert.doesNotMatch(html, /<img src=x>/);
+  assert.match(html, /&lt;img src=x&gt;/);
+});
+
 test("drawerHtml tags a workstream and stays lean on a bare item", () => {
   const App = load();
   const data = sample();

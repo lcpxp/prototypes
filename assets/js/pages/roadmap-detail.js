@@ -206,6 +206,18 @@
     }).join("");
   }
 
+  // The milestone an item is targeted at, with its date where it has
+  // one. roadmap_milestones is empty today and kept deliberately; this
+  // is what stops a milestone being stored and shown nowhere the day
+  // somebody first sets one.
+  function milestoneText(item, ctx) {
+    var found = item.milestone_id && ctx && ctx.milestoneById
+      ? ctx.milestoneById[item.milestone_id] : null;
+    if (!found) return "";
+    var due = day(found.due_on);
+    return esc(found.title) + (due ? " (" + esc(due) + ")" : "");
+  }
+
   // The originating work_document title (provenance), resolved through the
   // ctx map roadmap.js builds. Blank when unset or unreadable.
   function sourceText(item, ctx) {
@@ -320,6 +332,7 @@
       row("PRD status", esc(PRD_STATUS[item.prd_status] || "")) +
       row("Project status", esc(PROJECT_STATUS[item.project_status] || "")) +
       progressRow(item) +
+      row("Milestone", milestoneText(item, ctx)) +
       row("Dates", esc(dateRange(item.starts_on, item.ends_on))) +
       row("Sprints", item.end_sprint && item.end_sprint !== item.start_sprint
         ? esc((item.start_sprint || "?") + " to " + item.end_sprint)

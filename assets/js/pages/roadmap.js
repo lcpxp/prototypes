@@ -414,7 +414,7 @@
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
       App.db.from(App.registry.tables.workItems)
-        .select("id, parent_id, area_id, category_id, source_document_id, title, summary, details, type, level, " +
+        .select("id, parent_id, area_id, category_id, milestone_id, source_document_id, title, summary, details, type, level, " +
           "assignee, support_assignee, status, horizon, end_horizon, " +
           "presentation, priority, effort, impact, department, associated_departments, starts_on, ends_on, progress, " +
           "prd_status, project_status, start_sprint, end_sprint, attributes, " +
@@ -443,6 +443,12 @@
       App.db.from(App.registry.tables.knowledgeLinks)
         .select("from_type, from_id, to_type, to_id, kind, note, confidence")
         .is("valid_to", null),
+      // Milestones. Empty today, kept deliberately (see
+      // docs/plan/40-SURFACING.md), and until now milestone_id was
+      // neither selected nor rendered - so setting one would have been
+      // invisible from the moment anybody first used it.
+      App.db.from(App.registry.tables.roadmapMilestones)
+        .select("id, title, due_on"),
     ]);
 
     var itemsResult = results[2];
@@ -490,6 +496,9 @@
     var docs = results[5] && !results[5].error ? results[5].data || [] : [];
     ctx.docById = {};
     docs.forEach(function (d) { ctx.docById[d.id] = d; });
+    var milestones = results[7] && !results[7].error ? results[7].data || [] : [];
+    ctx.milestoneById = {};
+    milestones.forEach(function (m) { ctx.milestoneById[m.id] = m; });
     ctx.assigneeCounts = {};
     data.items.forEach(function (i) {
       if (i.assignee) ctx.assigneeCounts[i.assignee] = (ctx.assigneeCounts[i.assignee] || 0) + 1;

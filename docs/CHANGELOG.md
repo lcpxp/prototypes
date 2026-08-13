@@ -11,6 +11,9 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- A roadmap item now shows the **milestone** it is targeted at, with its
+  date. The column was stored and fetched but rendered nowhere, so the
+  first milestone anybody set would have been invisible.
 - The **integrations detail** now shows everything recorded against an
   integration, not just the six fields the view was written around.
   Anything else on the record appears under "Also recorded against
