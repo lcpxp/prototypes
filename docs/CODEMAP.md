@@ -105,7 +105,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 438 | Changelog |
+| docs/CHANGELOG.md | 443 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -125,7 +125,7 @@ document instead of walking the tree or reading whole files.
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/plan/00-PROGRAMME.md | 270 | Alignment programme |
 | docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
-| docs/plan/20-API-REFERENCE.md | 381 | Aligning API reference 2.0 with the code |
+| docs/plan/20-API-REFERENCE.md | 394 | Aligning API reference 2.0 with the code |
 | docs/plan/30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
 | docs/plan/40-SURFACING.md | 339 | Nothing buried, anywhere in the portal |
 | docs/plan/50-DASHBOARD.md | 278 | Rebuilding the dashboard |
@@ -165,7 +165,7 @@ document instead of walking the tree or reading whole files.
 | scripts/extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and |
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
-| scripts/gen-coverage.js | 315 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
+| scripts/gen-coverage.js | 325 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
 | scripts/gen-snapshot.js | 136 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
@@ -823,11 +823,11 @@ document instead of walking the tree or reading whole files.
 | firstLineMatching() | scripts/gen-codemap.js:22 |
 | purposeOf() | scripts/gen-codemap.js:30 |
 | symbolsOf() | scripts/gen-codemap.js:41 |
-| collapsedKeys() | scripts/gen-coverage.js:101 |
-| declaredOn() | scripts/gen-coverage.js:121 |
-| callState() | scripts/gen-coverage.js:135 |
-| reconcile() | scripts/gen-coverage.js:154 |
-| build() | scripts/gen-coverage.js:221 |
+| collapsedKeys() | scripts/gen-coverage.js:111 |
+| declaredOn() | scripts/gen-coverage.js:131 |
+| callState() | scripts/gen-coverage.js:145 |
+| reconcile() | scripts/gen-coverage.js:164 |
+| build() | scripts/gen-coverage.js:231 |
 | sorted() | scripts/gen-snapshot.js:91 |
 | write() | scripts/gen-snapshot.js:101 |
 | seededKinds() | tests/checks/knowledge-links.test.js:22 |

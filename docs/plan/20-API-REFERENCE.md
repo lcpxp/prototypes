@@ -185,17 +185,30 @@ coverage back to 60.3% and fails the gate. Without that, anyone could
 decide a convention was obvious and gain twelve points of coverage
 while every reader still had to guess.
 
-**The 31 that remain.** These are the rows to write.
+**The last 31 - DONE 2026-08-14. The gap is 0.**
 
-| Family | Rows | |
-|---|---|---|
-| `PartnerUsers` | 6 | the partner arm of the user surface |
-| `AdminMerchant` | 5 | list, applications, update, void, commercial terms |
-| `PartnerProductDefinitions` | 4 | v2 scope variants with no unscoped twin |
-| `SalesTeamProductDefinitions` | 4 | the same |
-| `ProductDefinition` / `ProductDefinitions` | 6 | v1 and v2 |
-| `ServiceDefinitions` | 2 | |
-| singletons | 4 | Dropdown, SalesTeamProducts, two application controllers |
+Sixteen rows and two more collapses closed it. The user surface is the
+same six operations under an admin and a partner prefix, identical on
+all six, so it collapses like the merchant one. Three v2 product
+reads, the pre-screen validation and the partner addons each carry
+scope variants, so one row apiece covers three routes.
+
+**Where the collapse did NOT apply, and why that matters.** The
+merchant *list* looks like the same mirror and is not: the admin form
+returns `AdminMerchantSummaryReadModel` and takes `includeHidden`, the
+partner form returns `PartnerMerchantSummaryReadModel` and takes
+`salesTeamId` and `partnerId`. Two rows, each saying it is not the
+other. This was caught by comparing every shared operation's return
+type and parameter list mechanically rather than trusting the matching
+action names - 46 of 48 were identical, and these two were not. The
+create operation was the second: same body and response, but the
+unscoped form takes `partnerId` where the partner-scoped one infers
+it. It stayed one row, with the difference stated on it.
+
+Final state: **271 rows, 0 phantom, 0 gap, 0 undeclared mirrors,
+78.1% of the code's routes accounted for.** Everything still absent is
+a route nothing calls, which is the register below rather than a
+writing job.
 
 **The 127, by why nothing calls them.** These go in the register.
 

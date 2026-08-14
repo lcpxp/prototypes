@@ -11,6 +11,11 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The **API reference** now documents every route the LaunchPad portal
+  actually calls. Sixteen rows were added and three more scope
+  collapses declared, taking the undocumented-but-live count from 69
+  to zero and coverage against the code to 78.1%. What remains
+  undocumented is routes nothing calls.
 - The **API reference** documents the v1 merchant surface once rather
   than three times. Twenty operations are served under an unscoped, an
   admin and a partner prefix with identical shapes; each now has one

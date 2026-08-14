@@ -96,6 +96,16 @@ const COLLAPSES = [
   { declared: true, from: /^\/api\/v1\/partner\/merchant/, to: "/api/v1/merchants" },
   { declared: true, from: /^\/api\/v1\/admin\/merchant/, to: "/api/v1/merchants" },
   { declared: true, from: /^\/api\/v1\/admin\/merchant/, to: "/api/v1/partner/merchant" },
+  // The user surface is the same six operations under two prefixes,
+  // identical on all six - checked signature by signature. The
+  // merchant LIST is not: the admin and partner forms return different
+  // read models and take different query parameters, so it keeps two
+  // rows and no rule absorbs it.
+  { declared: true, from: /^\/api\/v1\/partner\/users/, to: "/api/v1/admin/users" },
+  // A v2 operation that exists under the two scope prefixes but has no
+  // unscoped form: product addons. The partner row is the one that
+  // stands, as with the two-arm merchant operations.
+  { declared: true, from: /^\/api\/v2\/sales-teams\/\{\}\//, to: "/api/v2/partners/{}/" },
 ];
 
 function collapsedKeys(key, declaredOnly) {
