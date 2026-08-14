@@ -85,6 +85,12 @@ select jsonb_pretty(jsonb_build_object(
 // separately because a reader who cannot see the convention has to
 // guess. Adding a rule here is how a new collapse gets counted.
 const COLLAPSES = [
+  // Order matters: a route stands on the FIRST documented twin, so the
+  // more specific rule is listed first. Product addons exist under
+  // both scope prefixes and unscoped; the sales-team form belongs to
+  // the partner row, and letting it reach the unscoped row instead
+  // would mark a row nothing calls as live.
+  { declared: true, from: /^\/api\/v2\/sales-teams\/\{\}\//, to: "/api/v2/partners/{}/" },
   { declared: true, from: /^\/api\/v2\/partners\/\{\}\//, to: "/api/v2/" },
   { declared: true, from: /^\/api\/v2\/sales-teams\/\{\}\//, to: "/api/v2/" },
   // The v1 merchant surface serves the same twenty operations under
@@ -213,8 +219,23 @@ function reconcile(routeKeys, docKeys, callKeys, scopeKeys) {
     if (callState(key, calls)) {
       result.called++;
       if (!documented) result.gap++;
+      // A collapse only stands in where there is no direct row. Both
+      // exist for product addons - the scoped form has its own row and
+      // an unscoped route exists that nothing calls - and crediting
+      // the twin as well would mark the unscoped row live on the
+      // strength of a call to a different route.
+      // A route collapses onto exactly ONE row: its own if it has one,
+      // otherwise the first documented twin in rule order, which is
+      // why the more specific rules are listed first. Crediting every
+      // documented twin marks rows live on the strength of a call to a
+      // different route - the sales-team addons call would have made
+      // both the partner row and an unscoped row nothing calls look
+      // live at once.
       if (docs.has(key)) liveDocs.add(key);
-      for (const t of twins) if (docs.has(t.key)) liveDocs.add(t.key);
+      else {
+        const stands = twins.find((t) => docs.has(t.key));
+        if (stands) liveDocs.add(stands.key);
+      }
     } else {
       result.uncalled++;
     }

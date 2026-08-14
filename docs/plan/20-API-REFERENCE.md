@@ -205,10 +205,28 @@ create operation was the second: same body and response, but the
 unscoped form takes `partnerId` where the partner-scoped one infers
 it. It stayed one row, with the difference stated on it.
 
-Final state: **271 rows, 0 phantom, 0 gap, 0 undeclared mirrors,
-78.1% of the code's routes accounted for.** Everything still absent is
-a route nothing calls, which is the register below rather than a
-writing job.
+### The register - DONE 2026-08-14. Coverage is 100%
+
+The 121 routes nothing calls are now rows of their own, each written
+from its controller signature, each badged `no portal consumer`, each
+carrying one sentence per family saying what the family is and what is
+**not** known about it. Metrics, ShoppingCart and
+MerchantApplicationsProducts say plainly that whether a BI tool or a
+scheduled job reads them cannot be answered from the source and has
+not been guessed. The four webhook receivers say the opposite thing:
+their caller is Adobe Sign, ID-Pal or WebShield, so having no
+front-end call site is what you would expect rather than a sign of
+death.
+
+Final state: **392 rows, 552 of 552 routes accounted for (100%), 0
+phantom, 0 absent, 0 gap, 0 undeclared mirrors.** 411 routes are
+called by the portal; 141 are not, and 125 rows say so on their face.
+
+**What holds it there.** Every one of those figures is capped at 0 in
+tests/reference-budget.json, and the two that are deliberately not
+capped - how many routes are uncalled, and how many rows say so - are
+held equal to each other instead. Probed four ways: drop a badge, drop
+a stale row, add a gap, add an absent route. Each fails.
 
 **The 127, by why nothing calls them.** These go in the register.
 

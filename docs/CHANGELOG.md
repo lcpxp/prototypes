@@ -11,6 +11,13 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The **API reference** now covers the LaunchPad API completely: all
+  552 routes, none missing, none invented. The 121 routes nothing in
+  the portal calls are documented too, each marked as having no
+  front-end consumer and each saying what is actually known about who
+  uses it - which for the analytics and draft-cart surfaces is an open
+  question rather than an assumption, and for the four webhook
+  receivers is Adobe Sign, ID-Pal and WebShield.
 - The **API reference** now documents every route the LaunchPad portal
   actually calls. Sixteen rows were added and three more scope
   collapses declared, taking the undocumented-but-live count from 69

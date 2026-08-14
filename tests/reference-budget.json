@@ -3,12 +3,12 @@
   "specs": {
     "LaunchPad Partner Portal API": {
       "phantom": 0,
-      "absent": 121,
+      "absent": 0,
       "gap": 0,
       "undeclared_mirrors": 0,
       "unverified_badges": 3,
       "gap_badges": 0,
-      "note": "Baseline 2026-08-13, tightened the same day, joined by the consumer dimension on 2026-08-14. phantom is now 0 and must stay there: the twelve wrong rows catalogued in docs/plan/20-API-REFERENCE.md were each traced to source and corrected, so a phantom row appearing again means the reference has drifted from the code rather than merely lagging it. gap reached 0 on 14 Aug and must stay there: every route the Angular portal calls is documented, measured by scripts/extract-calls.js rather than assumed, so this rising means the front end started calling something nobody wrote up. That is the one figure worth watching on every API change. absent 121 is the older, blunter number - it counts undocumented routes whether or not anything calls them, and now that gap is 0 every one of the 121 is a route with no front-end consumer: whole features nothing touches (Metrics, the unscoped OnboardingFlows mirror, ShoppingCart) plus four webhook receivers whose consumer is a third party. Lower absent as the register of those lands. undeclared_mirrors 0 as of 14 Aug and it must stay there: the v1 merchant collapse is now declared on the rows themselves, and a rule marked declared in gen-coverage.js earns nothing until the row it points at carries the badge - so this figure rising means someone added a collapse and did not say so. Deliberately NOT capped: uncalled (a fact about the API, not a defect) and stale_docs (which rises on purpose as the register lands) - a ceiling on either would make honest work fail the gate.",
+      "note": "Baseline 2026-08-13; the consumer dimension joined it on 2026-08-14 and the spec reached 100% coverage of the code's 552 routes the same day. Every figure here is now 0 and each one means something different if it rises. phantom: a documented row with no route behind it - the reference has drifted from the code. gap: a route the Angular portal calls that nothing documents - measured by scripts/extract-calls.js, and the figure to watch on every API change. absent: any route with no row at all. undeclared_mirrors: a scope collapse the rows do not state on their face; a rule marked declared in gen-coverage.js earns nothing until the row it points at carries the badge, so this rising means someone added a collapse and did not say so. Deliberately NOT capped: uncalled (141 - a fact about the API, not a defect) and stale_docs (125 - documented routes nothing calls, which is the register and is meant to exist). Those two are held honest instead by the badge check in reference-drift.test.js, which fails when the badge count and the derived figure disagree in either direction.",
       "duplicates": 0
     },
     "Unity Acquiring API": {
