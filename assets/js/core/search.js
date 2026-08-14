@@ -5,6 +5,13 @@
 // columns and shows grouped, badged, deep-linked results. RLS is the
 // real gate; the access check just avoids pointless requests. Every
 // value is escaped; the box is a keyboard-driven ARIA combobox.
+//
+// Cost: one request per reachable source per query, debounced, each
+// capped at PER rows. That is fourteen for a viewer with every grant,
+// up from six - the price of the narrative content being findable at
+// all. Each is an indexed ilike with a limit, and a stale response is
+// dropped rather than painted, so a fast typist never sees an older
+// result overtake a newer one.
 // ------------------------------------------------------------------
 
 (function () {
@@ -20,7 +27,25 @@
   // column (name) and optional secondary line (sub), an optional badge
   // column (rendered with methodBadge or statusBadge), any extra columns
   // a deep link needs, the access keys that gate it, and the module it
-  // links to. App.itemHref (registry.js) turns a row into an item URL.
+  // links to.
+  //
+  // Where a row goes:
+  //   entity  the registry.linkEntities type, so App.linkHref builds the
+  //           address from the same anchor a knowledge link uses. One
+  //           home for "where does a row of this type live".
+  //   href    a per-row builder, for the rows whose destination depends
+  //           on the row rather than its type - a note lives inside
+  //           whatever it is about, a finding inside its wave.
+  //   neither means App.itemHref, which is right for anything the
+  //           module routes by id or path.
+  //
+  // Until 2026-08-13 this covered six sources and missed the richest
+  // narrative content in the system: 174 work notes, 16 documents, 34
+  // glossary terms, 13 journey stages, the API topics and specs, the
+  // prototype ideas and the review findings were all unfindable from
+  // the nav. `snippet: true` windows the matched text rather than
+  // showing the first line, because searching notes without seeing why
+  // a note matched is close to useless.
   function sources() {
     var t = App.registry.tables;
     return [
@@ -30,11 +55,51 @@
       { keys: ["reference"], mod: "reference", label: "API reference", table: t.apiEndpoints,
         cols: ["path", "summary"], name: "path", sub: "summary",
         badge: "method", badgeType: "method", extra: ["spec_id"] },
+      { keys: ["reference"], mod: "reference", label: "API topics", table: t.apiTopics,
+        cols: ["title", "intro"], name: "title", sub: "intro", snippet: true,
+        extra: ["spec_id"], href: function (r) {
+          return specHref(r.spec_id) + (r.id ? "#topic-" + r.id : "");
+        } },
+      { keys: ["reference"], mod: "reference", label: "API specs", table: t.apiSpecs,
+        cols: ["title", "description"], name: "title", sub: "description",
+        badge: "status", badgeType: "status", extra: ["version"],
+        href: function (r) { return specHref(r.id); } },
       { keys: ["roadmap", "backlog"], mod: "roadmap", label: "Roadmap and backlog", table: t.workItems,
         cols: ["title", "summary"], name: "title", sub: "summary",
         badge: "status", badgeType: "status" },
+      // A note lives inside whatever it is about, so its address comes
+      // from the row rather than from its type - which is also why
+      // `note` is the one link entity with no page of its own.
+      { keys: ["roadmap", "backlog"], mod: "backlog", label: "Notes and decisions",
+        table: t.workNotes, cols: ["body"], name: "body", snippet: true,
+        badge: "kind", badgeType: "status",
+        extra: ["work_item_id", "document_id"], href: noteHref },
+      { keys: ["backlog"], mod: "backlog", label: "Source documents", table: t.workDocuments,
+        cols: ["title", "summary"], name: "title", sub: "summary",
+        badge: "kind", badgeType: "status", entity: "document" },
       { keys: ["platform"], mod: "platform", label: "Platform", table: t.productCapabilities,
-        cols: ["title", "summary"], name: "title", sub: "summary" },
+        cols: ["title", "summary"], name: "title", sub: "summary",
+        badge: "maturity", badgeType: "status", entity: "capability" },
+      { keys: ["platform"], mod: "platform", label: "Glossary", table: t.domainTerms,
+        cols: ["term", "expansion", "definition"], name: "term", sub: "definition",
+        snippet: true, entity: "term" },
+      { keys: ["platform"], mod: "platform", label: "Journey stages", table: t.journeyStages,
+        cols: ["title", "description"], name: "title", sub: "description",
+        snippet: true, entity: "stage" },
+      { keys: ["prototypes"], mod: "prototypes", label: "Prototype ideas",
+        table: t.futurePrototypes, cols: ["name", "summary", "value_note", "note"],
+        name: "name", sub: "summary", badge: "status", badgeType: "status",
+        entity: "prototype_idea" },
+      { keys: ["portal-review"], mod: "portal-review", label: "Review findings",
+        table: t.reviewFindings, cols: ["title", "body"], name: "title", sub: "body",
+        snippet: true, badge: "state", badgeType: "status", extra: ["wave_id"],
+        // A soft-deleted finding is filtered out of every other view;
+        // search must not be the one place it resurfaces.
+        live: "deleted_at",
+        href: function (r) {
+          return App.moduleHref(moduleByKey("portal-review")) + "wave.html?wave=" +
+            encodeURIComponent(r.wave_id || "") + "#finding-" + encodeURIComponent(r.id);
+        } },
       { keys: ["users"], mod: "users", label: "Users", table: t.profiles,
         cols: ["display_name", "email"], name: "display_name", sub: "email",
         badge: "role", badgeType: "status" },
@@ -50,6 +115,39 @@
   }
   function moduleByKey(key) {
     return App.registry.modules.find(function (m) { return m.key === key; });
+  }
+
+  function specHref(specId) {
+    var mod = moduleByKey("reference");
+    return mod ? App.moduleHref(mod) + "index.html?spec=" +
+      encodeURIComponent(specId || "") : "#";
+  }
+
+  // A note is shown inside the thing it is about, so its address is
+  // that thing's. Twenty notes are anchored to nothing at all; those
+  // resolve to the backlog index rather than to a link that lies about
+  // where they live.
+  function noteHref(r) {
+    if (r.work_item_id) {
+      return App.itemHref(moduleByKey("roadmap"), { id: r.work_item_id });
+    }
+    if (r.document_id) {
+      return App.linkHref("document", r.document_id, App.root);
+    }
+    var mod = moduleByKey("backlog");
+    return mod ? App.moduleHref(mod) : "#";
+  }
+
+  // Where one result goes. `href` wins (the row decides), then
+  // `entity` (the type decides, through the same anchor a knowledge
+  // link uses), then App.itemHref.
+  function hrefFor(s, r) {
+    if (s.href) return s.href(r);
+    if (s.entity) {
+      var byType = App.linkHref(s.entity, r.id, App.root);
+      if (byType) return byType;
+    }
+    return App.itemHref(targetMod(s), r);
   }
 
   // Work items live in both roadmap and backlog; link to whichever the
@@ -73,6 +171,23 @@
       if (c && cols.indexOf(c) === -1) cols.push(c);
     });
     return cols.join(",");
+  }
+
+  // A window of the text around the match, so a note result shows WHY
+  // it matched rather than its first line. Trimmed to a word boundary
+  // at each end, with an ellipsis where text was cut.
+  var SNIPPET = 140;
+  function snippet(text, q) {
+    var full = String(text || "");
+    if (full.length <= SNIPPET) return full;
+    var at = q ? full.toLowerCase().indexOf(String(q).toLowerCase()) : -1;
+    if (at === -1) return full.slice(0, SNIPPET).replace(/\s+\S*$/, "") + "\u2026";
+    var start = Math.max(0, at - Math.floor((SNIPPET - q.length) / 2));
+    var end = Math.min(full.length, start + SNIPPET);
+    var cut = full.slice(start, end);
+    if (start > 0) cut = cut.replace(/^\S*\s+/, "\u2026");
+    if (end < full.length) cut = cut.replace(/\s+\S*$/, "\u2026");
+    return cut;
   }
 
   // Escape first, then wrap the first occurrence of the query in <mark>.
@@ -107,10 +222,16 @@
       var full = count === PER;
       var mod = targetMod(s);
       var lis = res.data.map(function (r) {
-        var href = App.itemHref(mod, r);
-        var title = highlight(r[s.name] || "(untitled)", query);
-        var sub = s.sub && r[s.sub] && r[s.sub] !== r[s.name]
-          ? '<span class="nav-search-sub">' + highlight(r[s.sub], query) + "</span>" : "";
+        var href = hrefFor(s, r);
+        // A note's display column IS its body, so the title is a
+        // snippet too - otherwise every note reads as its first line.
+        var titleText = s.snippet && !s.sub
+          ? snippet(r[s.name], query) : r[s.name];
+        var title = highlight(titleText || "(untitled)", query);
+        var subText = s.sub && r[s.sub] && r[s.sub] !== r[s.name]
+          ? (s.snippet ? snippet(r[s.sub], query) : r[s.sub]) : "";
+        var sub = subText
+          ? '<span class="nav-search-sub">' + highlight(subText, query) + "</span>" : "";
         var li = '<li><a role="option" id="nav-search-opt-' + optIndex + '" href="' +
           App.escape(href) + '">' + badgeHtml(s, r) + title + sub + "</a></li>";
         optIndex++;
@@ -178,7 +299,9 @@
       var srcs = sources().filter(function (s) { return canReach(s.keys); });
       Promise.all(srcs.map(function (s) {
         var or = s.cols.map(function (c) { return c + ".ilike.%" + q + "%"; }).join(",");
-        return App.db.from(s.table).select(selectFor(s)).or(or).limit(PER);
+        var query = App.db.from(s.table).select(selectFor(s)).or(or);
+        if (s.live) query = query.is(s.live, null);
+        return query.limit(PER);
       })).then(function (results) {
         if (mine !== seq) return;   // a fresher query has overtaken this one
         paint(srcs, results, q);
@@ -219,6 +342,7 @@
     attach: attach,
     clean: clean,
     highlight: highlight,
+    snippet: snippet,
     selectFor: selectFor,
     sources: sources,
   };

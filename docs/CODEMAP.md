@@ -49,7 +49,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
 | assets/js/core/links.js | 144 | links.js - The typed knowledge graph, resolved for rendering. |
 | assets/js/core/registry.js | 308 | registry.js - Single source of truth for the hub's modules, the |
-| assets/js/core/search.js | 226 | search.js - Global header search (App.search). Renders results for |
+| assets/js/core/search.js | 350 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/send-tool.js | 195 | send-tool.js - A nav icon that opens the acquirer send snippet: a |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
@@ -105,7 +105,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 409 | Changelog |
+| docs/CHANGELOG.md | 417 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -127,7 +127,7 @@ document instead of walking the tree or reading whole files.
 | docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
 | docs/plan/20-API-REFERENCE.md | 300 | Aligning API reference 2.0 with the code |
 | docs/plan/30-KNOWLEDGE.md | 283 | Writing verified findings into the system |
-| docs/plan/40-SURFACING.md | 316 | Nothing buried, anywhere in the portal |
+| docs/plan/40-SURFACING.md | 339 | Nothing buried, anywhere in the portal |
 | docs/plan/50-DASHBOARD.md | 278 | Rebuilding the dashboard |
 | docs/plan/60-PORTAL-REVIEW.md | 339 | Portal review, as a feature |
 | docs/plan/70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans |
@@ -247,7 +247,7 @@ document instead of walking the tree or reading whole files.
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 27 |  |
-| tests/size-budget.json | 125 |  |
+| tests/size-budget.json | 129 |  |
 | tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
@@ -275,7 +275,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/roadmap-views-exec.test.js | 49 | tests/unit/roadmap-views-exec.test.js - Benchmarks for the Executive |
 | tests/unit/roadmap-views.test.js | 475 | tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/route-extract.test.js | 108 | tests/unit/route-extract.test.js - Benchmarks for the route |
-| tests/unit/search.test.js | 142 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
+| tests/unit/search.test.js | 259 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/tools.test.js | 217 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
@@ -313,21 +313,25 @@ document instead of walking the tree or reading whole files.
 | App.itemHref | assets/js/core/registry.js:232 |
 | App.linkHref | assets/js/core/registry.js:275 |
 | App.departmentLabel | assets/js/core/registry.js:301 |
-| sources() | assets/js/core/search.js:24 |
-| canReach() | assets/js/core/search.js:47 |
-| moduleByKey() | assets/js/core/search.js:51 |
-| targetMod() | assets/js/core/search.js:57 |
-| clean() | assets/js/core/search.js:66 |
-| selectFor() | assets/js/core/search.js:70 |
-| highlight() | assets/js/core/search.js:81 |
-| badgeHtml() | assets/js/core/search.js:91 |
-| buildHtml() | assets/js/core/search.js:100 |
-| attach() | assets/js/core/search.js:129 |
-| close() | assets/js/core/search.js:139 |
-| open() | assets/js/core/search.js:148 |
-| paint() | assets/js/core/search.js:153 |
-| setActive() | assets/js/core/search.js:162 |
-| run() | assets/js/core/search.js:174 |
+| sources() | assets/js/core/search.js:49 |
+| canReach() | assets/js/core/search.js:112 |
+| moduleByKey() | assets/js/core/search.js:116 |
+| specHref() | assets/js/core/search.js:120 |
+| noteHref() | assets/js/core/search.js:130 |
+| hrefFor() | assets/js/core/search.js:144 |
+| targetMod() | assets/js/core/search.js:155 |
+| clean() | assets/js/core/search.js:164 |
+| selectFor() | assets/js/core/search.js:168 |
+| snippet() | assets/js/core/search.js:180 |
+| highlight() | assets/js/core/search.js:196 |
+| badgeHtml() | assets/js/core/search.js:206 |
+| buildHtml() | assets/js/core/search.js:215 |
+| attach() | assets/js/core/search.js:250 |
+| close() | assets/js/core/search.js:260 |
+| open() | assets/js/core/search.js:269 |
+| paint() | assets/js/core/search.js:274 |
+| setActive() | assets/js/core/search.js:283 |
+| run() | assets/js/core/search.js:295 |
 | copy() | assets/js/core/send-tool.js:102 |
 | fallback() | assets/js/core/send-tool.js:115 |
 | buildDialog() | assets/js/core/send-tool.js:127 |

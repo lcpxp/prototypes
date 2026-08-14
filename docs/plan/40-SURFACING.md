@@ -50,9 +50,13 @@ not exist.
 
 **Global search covers six sources** - prototypes, endpoints, work
 items, capabilities, profiles, integrations. It does not cover work
-notes (174), work documents (16), domain terms (34), journey stages
-(13), API topics (22), specs, future prototypes or portal links. The
-richest narrative content in the system is unfindable from the nav.
+notes (now 180), work documents (17), domain terms (34), journey
+stages (13), API topics (22), specs, prototype ideas or review
+findings. The richest narrative content in the system is unfindable
+from the nav. FIXED 2026-08-13; see "Global search, completed" below.
+Portal links were considered and left out: a tool link is a nav icon
+with an external target, not content, and putting internal URLs in a
+result list is a different decision from making them clickable.
 
 ## The completeness contract
 
@@ -269,18 +273,37 @@ Links to one render as name plus type, flat.
 | Prototypes | Panel for a prototype and for an idea (70-PROTOTYPE-IDEAS.md) |
 | Global search | Add every remaining source; see below |
 
-## Global search, completed
+## Global search, completed - DONE 2026-08-13
 
-`assets/js/core/search.js` gains sources for work notes, work
-documents, domain terms, journey stages, API topics, API specs, future
-prototypes and review findings. Each needs a `keys` gate, a display
-column, and an `App.itemHref` case. The result grouping already
-handles arbitrary sources, so this is additive.
+`assets/js/core/search.js` went from six sources to fourteen: work
+notes, work documents, domain terms, journey stages, API topics, API
+specs, prototype ideas and review findings all joined the six that
+were there. The snippet landed too - a result windows the matched text
+rather than showing a first line, because searching 180 notes without
+seeing why one matched is close to useless.
 
-Two refinements worth doing at the same time: show the source group's
-label on every result (it already does), and let a result carry a
-one-line snippet of the matched text, because searching notes without
-seeing why a note matched is close to useless.
+Where a row goes turned out to be three cases, not one, and naming
+them is what kept it honest:
+
+- **`entity`** - the row's `linkEntities` type, so `App.linkHref`
+  builds the address from the same anchor a knowledge link uses. One
+  home for "where does a row of this type live", and it means a search
+  result and a link in a drawer open the same place.
+- **`href`** - a per-row builder, for rows whose destination depends on
+  the row rather than its type. A note lives inside whatever it is
+  about (work item, then document, then nowhere - twenty are anchored
+  to nothing); a finding lives inside its wave; a topic inside its
+  spec.
+- **neither** - `App.itemHref`, right for anything its module routes by
+  id or path.
+
+A benchmark walks every source and fails if any of them produces no
+address, because a search that finds something and then lands on a
+module index has lost it.
+
+The cost is one request per reachable source per query: fourteen for a
+viewer with every grant, up from six. Each is an indexed ilike with a
+limit of five, debounced, with stale responses dropped.
 
 ## Removals in the same programme
 

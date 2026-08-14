@@ -23,6 +23,14 @@ is the git history; what is unfinished is docs/STATE.md.
   something did, and links to the row rather than the module.
 
 ### Added
+- **Global search now reaches the narrative content**, which it never
+  did: notes and decisions, source documents, glossary terms, journey
+  stages, API topics and specs, prototype ideas and review findings
+  all join the six things it already found. A result shows the part of
+  the text that matched rather than a first line, so searching 180
+  notes tells you why each one came back, and every result lands on
+  the row itself rather than on a module index - a note opens whatever
+  it is about, a finding opens inside its wave.
 - The prototypes module now has an **ideas and plans board**. The
   fourteen-name "Future prototypes" table becomes a list you can
   actually work: each idea can carry what it would prove, a priority
