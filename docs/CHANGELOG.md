@@ -11,6 +11,12 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The **API reference** now says when a documented route has no
+  front-end consumer, rather than presenting every route as equally
+  current. Four routes carry the badge today, each with a note saying
+  what was checked. The split is measured from the LaunchPad portal's
+  own call sites on every run, so a route the portal starts calling
+  loses the badge instead of keeping a label nobody revisited.
 - The **dashboard** is rebuilt around what is happening rather than
   what exists. It now opens with the workstreams at now and next -
   each with its theme, progress, open-item count and a click straight

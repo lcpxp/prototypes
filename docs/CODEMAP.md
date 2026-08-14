@@ -105,7 +105,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 425 | Changelog |
+| docs/CHANGELOG.md | 431 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -125,12 +125,13 @@ document instead of walking the tree or reading whole files.
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/plan/00-PROGRAMME.md | 270 | Alignment programme |
 | docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
-| docs/plan/20-API-REFERENCE.md | 300 | Aligning API reference 2.0 with the code |
+| docs/plan/20-API-REFERENCE.md | 347 | Aligning API reference 2.0 with the code |
 | docs/plan/30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
 | docs/plan/40-SURFACING.md | 339 | Nothing buried, anywhere in the portal |
 | docs/plan/50-DASHBOARD.md | 278 | Rebuilding the dashboard |
 | docs/plan/60-PORTAL-REVIEW.md | 339 | Portal review, as a feature |
 | docs/plan/70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans |
+| docs/plan/80-LOAD-SPEED.md | 228 | 80 - Stop loading item detail text on first paint |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
@@ -161,9 +162,10 @@ document instead of walking the tree or reading whole files.
 | modules/users/index.html | 60 | Users - LPio / LaunchPad IO |
 | package.json | 15 |  |
 | scripts/audit.js | 145 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
+| scripts/extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and |
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
-| scripts/gen-coverage.js | 181 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
+| scripts/gen-coverage.js | 276 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
 | scripts/gen-snapshot.js | 136 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
@@ -212,7 +214,7 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260813233000_dashboard_summary_portal_waves.sql | 132 | The dashboard's Reviews section now covers both reviews. A wave |
 | supabase/migrations/20260813234500_prototype_ideas.sql | 73 | Prototype ideas and plans (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | supabase/policies.sql | 419 | ------------------------------------------------------------------ |
-| supabase/reference-coverage.json | 64 |  |
+| supabase/reference-coverage.json | 80 |  |
 | supabase/schema-snapshot.json | 1122 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
@@ -230,7 +232,7 @@ document instead of walking the tree or reading whole files.
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 77 | tests/checks/perf.test.js - Performance gates. |
-| tests/checks/reference-drift.test.js | 128 | tests/checks/reference-drift.test.js - Keeps the API reference from |
+| tests/checks/reference-drift.test.js | 167 | tests/checks/reference-drift.test.js - Keeps the API reference from |
 | tests/checks/render-coverage.test.js | 351 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | tests/checks/roadmap-intake.test.js | 147 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 152 | tests/checks/schema-drift.test.js - The repo must describe the |
@@ -244,16 +246,20 @@ document instead of walking the tree or reading whole files.
 | tests/fixtures/controllers/RetiredController.cs | 18 |  |
 | tests/fixtures/controllers/TokenController.cs | 16 |  |
 | tests/fixtures/controllers/UnversionedWidgetsController.cs | 18 |  |
+| tests/fixtures/services/api-base.token.ts | 24 |  |
+| tests/fixtures/services/bases.service.ts | 61 |  |
+| tests/fixtures/services/shapes.service.ts | 112 |  |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
-| tests/reference-budget.json | 27 |  |
+| tests/reference-budget.json | 28 |  |
 | tests/size-budget.json | 133 |  |
 | tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
 | tests/unit/backlog-detail.test.js | 131 | tests/unit/backlog-detail.test.js - The backlog's two modals, both |
 | tests/unit/blocks.test.js | 119 | tests/unit/blocks.test.js - The typed-block renderer. |
-| tests/unit/coverage-reconcile.test.js | 111 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage |
+| tests/unit/call-extract.test.js | 156 | tests/unit/call-extract.test.js - Benchmarks for the call-site |
+| tests/unit/coverage-reconcile.test.js | 244 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/dashboard-cards.test.js | 270 | tests/unit/dashboard-cards.test.js - The dashboard's four card |
 | tests/unit/dashboard-strip.test.js | 164 | tests/unit/dashboard-strip.test.js - The dashboard's headline strip |
@@ -793,6 +799,17 @@ document instead of walking the tree or reading whole files.
 | thenBalance() | scripts/audit.js:74 |
 | stalePaths() | scripts/audit.js:88 |
 | snapshotSummary() | scripts/audit.js:103 |
+| toJs() | scripts/extract-calls.js:72 |
+| stripParamTypes() | scripts/extract-calls.js:76 |
+| lens() | scripts/extract-calls.js:92 |
+| evaluate() | scripts/extract-calls.js:99 |
+| relativeKey() | scripts/extract-calls.js:107 |
+| firstArg() | scripts/extract-calls.js:119 |
+| walk() | scripts/extract-calls.js:137 |
+| collectShared() | scripts/extract-calls.js:152 |
+| extractFile() | scripts/extract-calls.js:176 |
+| digestOf() | scripts/extract-calls.js:280 |
+| extractDir() | scripts/extract-calls.js:285 |
 | normalisePath() | scripts/extract-routes.js:38 |
 | routeKey() | scripts/extract-routes.js:46 |
 | controllerName() | scripts/extract-routes.js:50 |
@@ -806,9 +823,10 @@ document instead of walking the tree or reading whole files.
 | firstLineMatching() | scripts/gen-codemap.js:22 |
 | purposeOf() | scripts/gen-codemap.js:30 |
 | symbolsOf() | scripts/gen-codemap.js:41 |
-| collapsedKeys() | scripts/gen-coverage.js:78 |
-| reconcile() | scripts/gen-coverage.js:91 |
-| build() | scripts/gen-coverage.js:115 |
+| collapsedKeys() | scripts/gen-coverage.js:79 |
+| callState() | scripts/gen-coverage.js:100 |
+| reconcile() | scripts/gen-coverage.js:119 |
+| build() | scripts/gen-coverage.js:182 |
 | sorted() | scripts/gen-snapshot.js:91 |
 | write() | scripts/gen-snapshot.js:101 |
 | seededKinds() | tests/checks/knowledge-links.test.js:22 |

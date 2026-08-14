@@ -132,27 +132,74 @@ nothing was lost. Coverage 311/552 (56.3%) to 334/552 (60.5%), rows
 
 Priority comes from consumer evidence (inventory C), not group size.
 
-1. **`/v1/merchant-applications/{}` - 26.** The v1 application surface
-   the front end still calls. Highest traffic, most consequential.
-2. **`/v1/merchants/{}` 22 and `/v1/admin/merchant` 26.** Declare the
-   scope collapse here as it was for v2, then document the residue.
-3. **`/v1/onboarding-flows/{}` - 19.** Flow configuration, the
-   mechanism behind acquirer enablement and modular stages. Documenting
-   it makes several roadmap items legible.
-4. **`/v1/applications/drafts` - 11.** An undocumented draft surface
-   with no reference presence at all.
-5. ~~`/v1/service-fees/*`~~ - **done**, all 16 endpoints documented.
-6. **The 17 scope-prefixed v2 routes with no documented unscoped twin**,
-   plus declaring the v1 collapse that absorbs 22 more.
-7. **`/v1/partner/users` 6, `/v1/product-definitions/{}` 6,
-   `/v2/product-definitions/{}` 4, `/v1/eit-management/*` 6.**
-8. **Webhooks and listeners - `adobe-webhooks/adobe-sign` (2),
-   `listeners/idpal`, `web-shield/events`.** Inbound callbacks. Small,
-   and the only documentation anyone will ever get.
-9. **`/v1/metrics/*` - 24.** Deliberately last: single-purpose
-   dashboard reads, low ambiguity, high row count. Consider one topic
-   describing the family plus rows only for the ones in use.
-10. **`Dropdown` - 5 remaining.** Trivially documented lookups.
+### Measured 2026-08-14: the gap is 69, not 196
+
+The priority list this section used to carry was ordered on a guess
+about which surfaces the front end still calls. `scripts/extract-calls.js`
+now measures it instead, resolving all 401 of the portal's call sites.
+The answer reorders the work and shrinks it:
+
+| | portal calls it | nothing calls it |
+|---|---|---|
+| **documented** | 342 | 4 |
+| **not documented** | **69** | 127 |
+
+So 196 undocumented routes are two different jobs. **69 are the
+writing job** - live surface with no reference row. The other **127
+are a register**: whole features nothing in the portal touches, which
+should be present and findable but must never be shown as current.
+
+**The 69, by family.** These are the rows to write.
+
+| Family | Rows | |
+|---|---|---|
+| `AdminMerchant` | 21 | the admin arm of the v1 merchant mirror |
+| `Merchant` | 16 | the unscoped arm |
+| `PartnerUsers` | 6 | |
+| `AdminMerchantDocuments` | 4 | third arm of the documents mirror |
+| `PartnerProductDefinitions` | 4 | scope variants |
+| `SalesTeamProductDefinitions` | 4 | scope variants |
+| `ProductDefinition` / `ProductDefinitions` | 6 | v1 and v2 |
+| `ServiceDefinitions` | 2 | |
+| eight singletons | 8 | Dropdown, PartnerMerchant, SalesTeamProducts, three application controllers |
+
+**The 127, by why nothing calls them.** These go in the register.
+
+| Family | Rows | What it is |
+|---|---|---|
+| `Metrics` | 24 | an analytics surface with no portal consumer at all |
+| `MerchantApplications` v1 | 23 | superseded by the v2 application surface |
+| `OnboardingFlows` | 20 | the unscoped mirror of the acquirer-scoped controller the portal does call |
+| `ShoppingCart` | 11 | draft-cart surface superseded by the merchant order routes |
+| `EitManagement` | 7 | |
+| `MerchantApplicationsProducts` | 7 | |
+| `MerchantDocuments` | 4 | the unscoped third arm; admin and partner arms are both live |
+| `Dropdown` | 4 | lookups the portal does not use |
+| webhook receivers | 4 | Adobe Sign x2, ID-Pal, WebShield - **inbound from a third party**, correctly never called by a front end |
+| the rest | 23 | ones and twos across sixteen controllers |
+
+Two things follow. The webhook receivers are not dead: their consumer
+is an external system, so "no portal consumer" is the wrong frame for
+them and the register must say so. And `Metrics`, `ShoppingCart` and
+`MerchantApplicationsProducts` are graded `verified-code` with the
+consumer left as an open question - the source proves the routes exist
+and that the portal does not call them, and proves nothing about
+whether a BI tool or another client does.
+
+### The defect this measurement found
+
+`OnboardingFlowApiService.deleteOnboardingFlow()` calls
+`DELETE /api/v1/acquirers/{acquirerId}/onboarding-flows/{flowId}`.
+`AcquirerOnboardingFlowsController` declares no `[HttpDelete("{id}")]`
+- its only delete is `{id}/contracts/{contractId}` - so that call
+returns 405.
+
+This is the same misunderstanding the reference made. Row twelve of
+the corrections table above was that exact path, filed under the wrong
+resource and repathed to `DELETE /api/v1/onboarding-flows/{flowId}`.
+The reference has been fixed; the portal has not. And the route it
+should be calling is one of the four now badged as having no consumer
+- which is precisely why it has none.
 
 ## What a finished row looks like
 
