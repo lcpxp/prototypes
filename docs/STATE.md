@@ -1,36 +1,39 @@
 # Current state
 
-Updated: 2026-08-13 (surfacing complete; all seven plan files built)
+Updated: 2026-08-14 (reference scope settled by measurement)
 
 ## In progress
-Nothing mid-flight. 450 tests green on main, npm run audit clean.
-Programme is docs/plan/, start at 00-PROGRAMME.md. Every plan file
-from 10 to 70 carries a "what landed" section recording where the
-build corrected the plan. Landed since the last checkpoint:
-
-- Global search now reaches the narrative content: six sources became
-  fourteen. Results window the matched text and land on the row, never
-  a module index. That closes 40-SURFACING.
-- Code-review wave 2: ten technical capability rows, ten links, two
-  work notes. Corrected two plan claims (signals are past halfway;
-  eight guards, not three roles) and explained the 53-vs-51 controller
-  gap - two controllers are commented out entirely.
+480 tests green on main, audit clean. Programme is docs/plan/, start
+at 00-PROGRAMME.md. Landed: scripts/extract-calls.js resolves all 401
+portal call sites by evaluating the URL expressions, and the coverage
+generator now derives called/uncalled/gap/stale_docs every run, with a
+gate holding the "no portal consumer" badge equal to it in both
+directions. That closed open decision 1: the portal calls 411 of 552
+routes, 342 already documented, so the writing job is **69 rows, not
+196**. The other 127 are features nothing calls. Lists in
+20-API-REFERENCE.md.
 
 ## Next steps
-1. The two owner passes the build deliberately left: backfill the
-   fourteen prototype ideas, and resolve the 18 review-area/roadmap
-   pairs naming work items that no longer exist. Both are judgements,
-   not derivations.
-2. Further code-review waves (10): domain terms and journey stages
-   against the onboarding-flow step definitions. Waves 1 and 2 covered
-   styling and architecture.
-3. Embeddings: pgvector, knowledge/index.ts, gte-small, 384 dims.
-4. Backlog notes against documents, and the platform Coverage line for
-   prototypes with no built-from links (both wait on content).
+1. Write the 69 called-but-undocumented rows (AdminMerchant 21,
+   Merchant 16, PartnerUsers 6, then the smaller families). Lower the
+   `gap` ceiling in tests/reference-budget.json as each lands.
+2. Register the 127 uncalled routes, badged, graded verified-code with
+   the consumer left as an open question. Webhook receivers are NOT
+   consumer-less: their caller is a third party.
+3. Record the 405 defect: the portal deletes an onboarding flow at a
+   path AcquirerOnboardingFlowsController does not serve. Review
+   finding plus a linked roadmap item.
+4. Then: code-review wave 3 (glossary, journey stages), housekeeping,
+   embeddings (pgvector, gte-small, 384 dims), and 80-LOAD-SPEED.md
+   (added 14 Aug, deliberately last).
+
+## Owner passes, not derivable here
+Backfill the fourteen prototype ideas; resolve the 18 review-area
+pairs naming work items that no longer exist. A context-gathering
+handover prompt for a claude.ai session is owed at the end.
 
 ## Open decisions
-- Four in 00-PROGRAMME.md: reference scope, Unity grading,
-  commented-out routes, promoted-finding handling.
+- 00-PROGRAMME.md: Unity grading, commented-out routes,
+  promoted-finding handling. Reference scope CLOSED 14 Aug.
 - Milestones/phases: LEFT ALONE, decided 13 Aug. Do not re-propose.
-- Edge Function + gte-small: AGREED 9 Aug. No key, 384 dims.
 - Front-end writes: CLOSED 13 Aug. The browser reads; sessions write.

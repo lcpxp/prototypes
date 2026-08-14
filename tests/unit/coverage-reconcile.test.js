@@ -46,17 +46,50 @@ test("a declared scope variant is covered, not absent", () => {
   assert.equal(r.absent, 0);
 });
 
-test("an undeclared mirror is counted apart from a declared variant", () => {
-  // The same collapse exists in v1 but the reference never says so, so
-  // it must not be silently folded into the coverage figure.
+test("a collapse the row does not state is a mirror, not a variant", () => {
+  // `declared` in the rule table is an intention. The badge on the row
+  // is the evidence. Without it the reader cannot see the convention,
+  // so the route must not be folded into the coverage figure.
+  const routes = ["GET /api/v1/merchants/{}/order",
+    "GET /api/v1/partner/merchant/{}/order"];
+  const docs = ["GET /api/v1/merchants/{}/order"];
+  const silent = reconcile(routes, docs, [], []);
+  assert.equal(silent.matched, 1);
+  assert.equal(silent.undeclared_mirrors, 1);
+  assert.equal(silent.scope_variants, 0);
+  assert.equal(silent.accounted, 1, "only declared collapses count toward coverage");
+
+  const stated = reconcile(routes, docs, [], ["GET /api/v1/merchants/{}/order"]);
+  assert.equal(stated.scope_variants, 1);
+  assert.equal(stated.undeclared_mirrors, 0);
+  assert.equal(stated.accounted, 2, "badging the row is what earns the coverage");
+});
+
+test("flipping a rule to declared without badging the rows changes nothing", () => {
+  // The failure this prevents: someone decides a convention is obvious,
+  // marks it declared, and coverage jumps twenty points while every
+  // reader still has to guess.
+  const routes = ["GET /api/v1/merchants/{}/sites",
+    "GET /api/v1/admin/merchant/{}/sites",
+    "GET /api/v1/partner/merchant/{}/sites"];
+  const docs = ["GET /api/v1/merchants/{}/sites"];
+  assert.equal(reconcile(routes, docs, [], []).accounted, 1);
+  assert.equal(reconcile(routes, docs, [], docs).accounted, 3);
+});
+
+test("an admin route stands on a partner row when there is no unscoped one", () => {
+  // Five merchant operations are served by the admin and partner arms
+  // only. The canonical path does not exist, so the partner row is the
+  // one that stands, and the admin route collapses onto it.
   const r = reconcile(
-    ["GET /api/v1/merchants/{}/order",
-     "GET /api/v1/partner/merchant/{}/order"],
-    ["GET /api/v1/merchants/{}/order"]);
+    ["PUT /api/v1/admin/merchant/{}/commercial-terms",
+     "PUT /api/v1/partner/merchant/{}/commercial-terms"],
+    ["PUT /api/v1/partner/merchant/{}/commercial-terms"],
+    [],
+    ["PUT /api/v1/partner/merchant/{}/commercial-terms"]);
   assert.equal(r.matched, 1);
-  assert.equal(r.undeclared_mirrors, 1);
-  assert.equal(r.scope_variants, 0, "an undeclared collapse is not a declared one");
-  assert.equal(r.accounted, 1, "only declared collapses count toward coverage");
+  assert.equal(r.scope_variants, 1);
+  assert.equal(r.absent, 0);
 });
 
 test("a scope-prefixed route with no documented twin is absent", () => {
@@ -155,10 +188,11 @@ test("a route documented through a collapse counts as documented", () => {
   const r = reconcile(
     ["GET /api/v1/partner/merchant/{}/sites"],
     ["GET /api/v1/merchants/{}/sites"],
-    ["GET /api/v1/partner/merchant/{}/sites"]);
+    ["GET /api/v1/partner/merchant/{}/sites"],
+    ["GET /api/v1/merchants/{}/sites"]);
   assert.equal(r.called, 1);
   assert.equal(r.gap, 0, "the documented twin covers it");
-  assert.equal(r.undeclared_mirrors, 1, "still reported as an undeclared collapse");
+  assert.equal(r.scope_variants, 1);
 });
 
 test("a call passing a variable where the code has a literal reaches them all", () => {

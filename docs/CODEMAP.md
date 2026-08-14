@@ -105,7 +105,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 431 | Changelog |
+| docs/CHANGELOG.md | 438 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -120,12 +120,12 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 37 | Current state |
+| docs/STATE.md | 40 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/plan/00-PROGRAMME.md | 270 | Alignment programme |
 | docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
-| docs/plan/20-API-REFERENCE.md | 347 | Aligning API reference 2.0 with the code |
+| docs/plan/20-API-REFERENCE.md | 381 | Aligning API reference 2.0 with the code |
 | docs/plan/30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
 | docs/plan/40-SURFACING.md | 339 | Nothing buried, anywhere in the portal |
 | docs/plan/50-DASHBOARD.md | 278 | Rebuilding the dashboard |
@@ -165,7 +165,7 @@ document instead of walking the tree or reading whole files.
 | scripts/extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and |
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
-| scripts/gen-coverage.js | 276 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
+| scripts/gen-coverage.js | 315 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
 | scripts/gen-snapshot.js | 136 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
@@ -259,7 +259,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/backlog-detail.test.js | 131 | tests/unit/backlog-detail.test.js - The backlog's two modals, both |
 | tests/unit/blocks.test.js | 119 | tests/unit/blocks.test.js - The typed-block renderer. |
 | tests/unit/call-extract.test.js | 156 | tests/unit/call-extract.test.js - Benchmarks for the call-site |
-| tests/unit/coverage-reconcile.test.js | 244 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage |
+| tests/unit/coverage-reconcile.test.js | 278 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage |
 | tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
 | tests/unit/dashboard-cards.test.js | 270 | tests/unit/dashboard-cards.test.js - The dashboard's four card |
 | tests/unit/dashboard-strip.test.js | 164 | tests/unit/dashboard-strip.test.js - The dashboard's headline strip |
@@ -823,10 +823,11 @@ document instead of walking the tree or reading whole files.
 | firstLineMatching() | scripts/gen-codemap.js:22 |
 | purposeOf() | scripts/gen-codemap.js:30 |
 | symbolsOf() | scripts/gen-codemap.js:41 |
-| collapsedKeys() | scripts/gen-coverage.js:79 |
-| callState() | scripts/gen-coverage.js:100 |
-| reconcile() | scripts/gen-coverage.js:119 |
-| build() | scripts/gen-coverage.js:182 |
+| collapsedKeys() | scripts/gen-coverage.js:101 |
+| declaredOn() | scripts/gen-coverage.js:121 |
+| callState() | scripts/gen-coverage.js:135 |
+| reconcile() | scripts/gen-coverage.js:154 |
+| build() | scripts/gen-coverage.js:221 |
 | sorted() | scripts/gen-snapshot.js:91 |
 | write() | scripts/gen-snapshot.js:101 |
 | seededKinds() | tests/checks/knowledge-links.test.js:22 |

@@ -11,6 +11,13 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
+- The **API reference** documents the v1 merchant surface once rather
+  than three times. Twenty operations are served under an unscoped, an
+  admin and a partner prefix with identical shapes; each now has one
+  row naming all three, so the addresses are still findable by search
+  but the list is no longer three copies of itself. Coverage against
+  the code rose from 60.5% to 72.5% as a result, without a single row
+  being written.
 - The **API reference** now says when a documented route has no
   front-end consumer, rather than presenting every route as equally
   current. Four routes carry the badge today, each with a note saying

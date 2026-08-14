@@ -58,6 +58,21 @@ select jsonb_pretty(jsonb_build_object(
           where e.spec_id = s.id and b->>'label' is not null
           group by 1
         ) c
+      ),
+      -- Rows that state the scope collapse on their face. A collapse
+      -- only counts as declared when the row it points at says so, so
+      -- this is the evidence for that, matched in memory and never
+      -- written to the repo.
+      'scope_keys', (
+        select coalesce(jsonb_agg(distinct
+          upper(e.method) || ' ' ||
+          lower(regexp_replace(e.path, '\\{[^}]+\\}', '{}', 'g'))), '[]'::jsonb)
+        from api_endpoints e
+        where e.spec_id = s.id
+          and exists (
+            select 1 from jsonb_array_elements(e.badges) b
+            where b->>'label' like '%scope%'
+          )
       )
     ) order by s.title)
     from api_specs s
@@ -72,8 +87,15 @@ select jsonb_pretty(jsonb_build_object(
 const COLLAPSES = [
   { declared: true, from: /^\/api\/v2\/partners\/\{\}\//, to: "/api/v2/" },
   { declared: true, from: /^\/api\/v2\/sales-teams\/\{\}\//, to: "/api/v2/" },
-  { declared: false, from: /^\/api\/v1\/partner\/merchant/, to: "/api/v1/merchants" },
-  { declared: false, from: /^\/api\/v1\/admin\/merchant/, to: "/api/v1/merchants" },
+  // The v1 merchant surface serves the same twenty operations under
+  // three prefixes - unscoped, admin and partner - with identical
+  // shapes and different visibility. Documenting sixty rows for twenty
+  // operations would bury the difference that matters. The third rule
+  // is for the operations only two of the arms serve: the canonical
+  // path does not exist, so the partner row is the one that stands.
+  { declared: true, from: /^\/api\/v1\/partner\/merchant/, to: "/api/v1/merchants" },
+  { declared: true, from: /^\/api\/v1\/admin\/merchant/, to: "/api/v1/merchants" },
+  { declared: true, from: /^\/api\/v1\/admin\/merchant/, to: "/api/v1/partner/merchant" },
 ];
 
 function collapsedKeys(key, declaredOnly) {
@@ -85,6 +107,19 @@ function collapsedKeys(key, declaredOnly) {
     out.push({ key: method + " " + p.replace(rule.from, rule.to), declared: rule.declared });
   }
   return out;
+}
+
+// `declared` is a claim about the REFERENCE, not about the code: it
+// means a reader can see the convention, in a badge and a note on the
+// row the collapse points at. Marking a rule declared here does not
+// make it so - only the badge does. So a route counts as a declared
+// variant only when the row it collapses onto actually carries the
+// badge, and a rule flipped to declared without the rows being badged
+// makes coverage fall rather than rise. That is the intended
+// direction: it is the difference between the convention being stated
+// and someone having decided it is obvious.
+function declaredOn(twin, docs, scoped) {
+  return twin.declared && docs.has(twin.key) && (!scoped || scoped.has(twin.key));
 }
 
 // A call inventory turns "documented?" into "documented, and does
@@ -116,10 +151,14 @@ function callState(key, calls) {
 
 // The whole reconciliation, as a pure function so the gate's arithmetic
 // can be benchmarked without a database or a checkout.
-function reconcile(routeKeys, docKeys, callKeys) {
+function reconcile(routeKeys, docKeys, callKeys, scopeKeys) {
   const routes = new Set(routeKeys);
   const docs = new Set(docKeys);
   const calls = new Set(callKeys || []);
+  // Rows that carry a scope-collapse badge. Undefined means the
+  // payload predates the check, in which case a declared rule is
+  // taken at its word.
+  const scoped = scopeKeys ? new Set(scopeKeys) : null;
   const result = {
     routes: routes.size, documented: docs.size,
     matched: 0, phantom: 0, scope_variants: 0, undeclared_mirrors: 0, absent: 0,
@@ -129,8 +168,8 @@ function reconcile(routeKeys, docKeys, callKeys) {
   for (const key of routes) {
     if (docs.has(key)) continue;
     const twins = collapsedKeys(key, false);
-    const declared = twins.some((t) => t.declared && docs.has(t.key));
-    const undeclared = twins.some((t) => !t.declared && docs.has(t.key));
+    const declared = twins.some((t) => declaredOn(t, docs, scoped));
+    const undeclared = twins.some((t) => docs.has(t.key)) && !declared;
     if (declared) result.scope_variants++;
     else if (undeclared) result.undeclared_mirrors++;
     else result.absent++;
@@ -211,7 +250,7 @@ function build(specs, inventory, calls) {
     // figure that would read as verified.
     const gradeable = spec.family === "launchpad" && spec.status === "live";
     const rec = gradeable
-      ? reconcile(routeKeys, spec.keys, callKeys)
+      ? reconcile(routeKeys, spec.keys, callKeys, spec.scope_keys)
       : { documented: spec.endpoints };
     // Two rows normalising to one path is invisible to the
     // reconciliation - a spec with no source to compare against is not

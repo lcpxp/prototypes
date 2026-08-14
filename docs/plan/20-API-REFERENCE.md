@@ -149,19 +149,53 @@ writing job** - live surface with no reference row. The other **127
 are a register**: whole features nothing in the portal touches, which
 should be present and findable but must never be shown as current.
 
-**The 69, by family.** These are the rows to write.
+**Of the 69, 38 were the merchant collapse - DONE 2026-08-14.**
+
+The v1 merchant surface serves **twenty identical operations under
+three prefixes**: `/api/v1/merchants` (unscoped), `/api/v1/admin/merchant`
+and `/api/v1/partner/merchant`. Same action names, same shapes,
+different visibility. A further twenty-seven operations are served by
+two of the three.
+
+The reference had been documenting this two ways at once - the
+banks, persons, sites and documents operations under the partner
+prefix, the order and fulfilment ones under the unscoped prefix - which
+is why sixty routes read as undocumented when twenty rows already
+described them. The twenty shared operations moved onto the unscoped
+path, forty-seven rows now carry a `3 merchant scopes` or `2 merchant
+scopes` badge naming the prefixes, and `gen-coverage.js` declares the
+collapse.
+
+One duplicate was folded in the process: `POST /api/v1/partner/merchant`
+and `POST /api/v1/merchants` were two rows for one operation, and the
+partner row's note claimed it mirrored `POST /api/v1/admin/merchant`.
+There is no admin create - `AdminMerchantController` declares no create
+action. That is a thirteenth wrong claim, of a kind the twelve
+corrections did not cover: the row was real, its note pointed at a
+route that does not exist.
+
+Result: coverage **60.5% to 72.5%**, absent 196 to 152, the gap 69 to
+**31**, undeclared mirrors 22 to **0**.
+
+**Declared has to mean declared.** A rule marked `declared` in the
+COLLAPSES table is an intention; the badge on the row is the evidence.
+So a route only counts as a declared variant when the row it collapses
+onto actually carries the badge - proven by removing them, which drops
+coverage back to 60.3% and fails the gate. Without that, anyone could
+decide a convention was obvious and gain twelve points of coverage
+while every reader still had to guess.
+
+**The 31 that remain.** These are the rows to write.
 
 | Family | Rows | |
 |---|---|---|
-| `AdminMerchant` | 21 | the admin arm of the v1 merchant mirror |
-| `Merchant` | 16 | the unscoped arm |
-| `PartnerUsers` | 6 | |
-| `AdminMerchantDocuments` | 4 | third arm of the documents mirror |
-| `PartnerProductDefinitions` | 4 | scope variants |
-| `SalesTeamProductDefinitions` | 4 | scope variants |
+| `PartnerUsers` | 6 | the partner arm of the user surface |
+| `AdminMerchant` | 5 | list, applications, update, void, commercial terms |
+| `PartnerProductDefinitions` | 4 | v2 scope variants with no unscoped twin |
+| `SalesTeamProductDefinitions` | 4 | the same |
 | `ProductDefinition` / `ProductDefinitions` | 6 | v1 and v2 |
 | `ServiceDefinitions` | 2 | |
-| eight singletons | 8 | Dropdown, PartnerMerchant, SalesTeamProducts, three application controllers |
+| singletons | 4 | Dropdown, SalesTeamProducts, two application controllers |
 
 **The 127, by why nothing calls them.** These go in the register.
 
