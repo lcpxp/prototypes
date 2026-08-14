@@ -6,8 +6,8 @@ what is verified into the system as durable knowledge, stop burying
 that knowledge behind partial renderers, and add the two features
 (portal review waves, prototype ideas) the current shape is missing.
 
-Eight workstreams, one file each. Read this first, then the file for
-the workstream in hand. Nothing here restates the existing protocols -
+Eight workstreams, one file each, in the order they are numbered. Read
+this first, then the file for the workstream in hand. Nothing here restates the existing protocols -
 docs/WORKFLOW.md, docs/PLATFORM.md, docs/ROADMAP-INTAKE.md,
 docs/ROADMAP-PLAYBOOK.md and docs/APP-REVIEW.md remain the one home
 for what they cover, and this plan cites them rather than repeating
@@ -20,6 +20,7 @@ them.
     50-DASHBOARD.md        rebuild the dashboard around what we do now
     60-PORTAL-REVIEW.md    portal review waves, as a portal feature
     70-PROTOTYPE-IDEAS.md  prototype ideas and plans area
+    80-LOAD-SPEED.md       stop loading item detail text on first paint
 
 ## What was reviewed to write this
 
@@ -41,12 +42,23 @@ the whole surface.
 files, Azure MSAL / B2C auth, two tenants (`/pxp` for system admin,
 `/app/:tenantId` for partners), CUBE CSS with Every Layout, a single
 compiled stylesheet, and a written CSS ruleset at
-`src/styles/styling-rules.md`. It issues HTTP from **405 call sites
-across 88 files** - the consumer's view of the API, and a third
-opinion to reconcile against the other two. Note for the tooling: 212
-of those declare their base URL outside the calling file, so full-path
-resolution needs the environment and config files read too. A
-single-file extractor resolves fewer than half.
+`src/styles/styling-rules.md`. It issues HTTP from **401 call sites
+across 37 files** - the consumer's view of the API, and a third
+opinion to reconcile against the other two.
+
+*Measured 14 Aug, correcting the estimate this file opened with (405
+sites, 88 files).* `this.http.<verb>` is the only spelling in the
+codebase, and `scripts/extract-calls.js` now resolves every one of the
+401 to a route. Seven of them are not routes at all - they GET a
+pre-signed URL that an earlier response handed back, so the request
+leaves the API entirely. The note for the tooling was right and
+understated: almost every call site declares its base outside the
+calling expression, and the bases are built by ordinary TypeScript -
+constructor fields, defaulted helper parameters, ternaries inside
+template literals - so pattern-matching stalls around 75%. The
+extractor evaluates the expressions instead. One base is an injection
+token with two providers (`MERCHANT_API_BASE`), which is the mirror
+convention in the source: one call site, two live routes.
 
 **launchpadreviewboard_1.html** - the wave 4 review board. **39 areas
 in six parts** (8 / 14 / 7 / 2 / 2 / 6), **183 recorded entries**
@@ -202,11 +214,18 @@ portal should grow a front-end write path - was **settled by the owner
 on 13 Aug 2026: it should not.** It is recorded as a binding principle
 above rather than as an open decision.
 
-1. **Reference scope.** Does the LaunchPad Partner Portal API spec
-   aim for all 552 routes, or a curated surface with the remainder
-   listed as known-but-undocumented? Recommendation: full coverage of
-   v2 plus everything the front end calls; a coverage register for the
-   rest. 20-API-REFERENCE.md is written for that reading.
+1. **Reference scope. CLOSED 2026-08-14.** Does the spec aim for all
+   552 routes, or a curated surface with the remainder listed as
+   known-but-undocumented? Settled by measurement rather than by
+   preference: `scripts/extract-calls.js` shows the portal calls 411
+   of the 552, and 342 of those are already documented. The gap that
+   matters is **69 routes, not 196**. So: full rows for the 69, and a
+   complete register of the 127 undocumented routes nothing calls -
+   every one present and findable, grouped by controller with its
+   evidence, badged as having no portal consumer. Both halves of the
+   owner's constraint hold: nothing is buried, and nothing superseded
+   is dressed up as current. The classification is derived on every
+   run, never typed, so it stays true when the portal changes.
 2. **Unity Acquiring API.** 151 endpoints with no source supplied.
    Recommendation: mark the whole spec `stated` until a source or a
    live Swagger arrives, so it cannot be mistaken for verified.

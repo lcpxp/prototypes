@@ -120,6 +120,10 @@
       "hard": 500,
       "note": "Over soft on arrival: the KPI/CSV export cases split out of roadmap-detail.test.js on 2026-08-13, carrying the shared fixture with them. Exit plan: the CSV cases would split again from the KPI ones, but both read the same fixture, so a third copy of it costs more than it saves."
     },
+    "scripts/extract-calls.js": {
+      "hard": 500,
+      "note": "Over soft (335) on arrival. Roughly half the file is the nine rules and the reasoning beside each one, which has to sit next to the code it constrains: every rule here was needed to make the real comparison come out right, and a rule got wrong produces a confidently wrong answer - a live route filed as abandoned - rather than no answer. NOT split from extract-routes.js's idiom: the two extractors are read together, and gen-coverage.js requires both. Exit plan: the expression evaluator (lens, evaluate, toJs, stripParamTypes, firstArg) is the clean seam - move it to scripts/lib/ts-eval.js if this passes 400."
+    },
     "assets/js/core/search.js": {
       "hard": 500,
       "note": "Over soft (337) since global search grew from six sources to fourteen - work notes, documents, glossary terms, journey stages, API topics and specs, prototype ideas and review findings were all unfindable from the nav before. Roughly a third of the file is the declarative source table. NOT split, deliberately: search.js is a core module in the fixed include order on 23 pages, so splitting it costs an extra request on every page load and a 23-file edit. Exit plan: if it passes 400, sources() and the href builders move to core/search-sources.js and every page gains the include."

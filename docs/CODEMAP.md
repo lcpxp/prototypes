@@ -123,7 +123,7 @@ document instead of walking the tree or reading whole files.
 | docs/STATE.md | 37 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
-| docs/plan/00-PROGRAMME.md | 251 | Alignment programme |
+| docs/plan/00-PROGRAMME.md | 270 | Alignment programme |
 | docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
 | docs/plan/20-API-REFERENCE.md | 300 | Aligning API reference 2.0 with the code |
 | docs/plan/30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
@@ -247,7 +247,7 @@ document instead of walking the tree or reading whole files.
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 27 |  |
-| tests/size-budget.json | 129 |  |
+| tests/size-budget.json | 133 |  |
 | tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
