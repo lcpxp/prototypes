@@ -126,7 +126,13 @@ counting settled it.
 
 ## What the technical load contains
 
-Two `technical` rows exist. The supplied source supports roughly ten
+**WAVE 2 RUN 2026-08-13: done.** Ten `technical` rows landed against
+the same `core-frontend` area, plus ten links and two work notes. The
+numbers below are what the checkout actually contains, counted rather
+than recalled; where the plan's prose and the code differed, the row
+records the code.
+
+Two `technical` rows existed. The supplied source supports roughly ten
 more, and they are what a session needs to answer "how is this built".
 
 **Front end.** Angular 20 with the CLI and no state library - RxJS
@@ -153,6 +159,37 @@ step definitions, and end-to-end using the screenplay pattern.
 
 Every one of those sentences is `verified-code` with a citation. None
 of them names a host, a key or an environment URL.
+
+### What wave 2 measured
+
+| Claim | Counted |
+|---|---|
+| Onion layers | Domain, Application, Infrastructure, Presentation, Host - 219 converter types across the outer three |
+| Controllers | 53 files, **51 live**: `InputsController` and `InputValuesController` are commented out entirely, three actions each |
+| Routes | 552 over the 51, split 376 v1 / 150 v2 / **26 with no version segment at all** |
+| SmartEnum | 73 files reference it |
+| Migrations | 210 in `src/Infrastructure/Migrations` |
+| API tests | three projects: Unit, Integration (47 step/feature files), E2E (8 screenplay files) |
+| Angular | 20.3, no state library; **34 files use signals against 19 using BehaviorSubject** |
+| Guards | eight, not three - `pxp-admin`, `partner-admin`, `partner-tenant`, `v2-user`, `application`, `onboarding-flow`, `product`, `sales-team-query-param` |
+| Interceptors | exactly one, `api-response-error` |
+| Front-end specs | **zero** `.spec.ts` files |
+
+Two of those change what the plan said. The signals migration is
+already past halfway, so signals are the house style rather than the
+new thing. And the plan described "three roles drive every check"
+where the code has **eight guards** - roles and guards are not the
+same count, and a session reasoning about access from the role count
+alone would miss five of the checks.
+
+The most useful row is the one that says least on its own:
+`tech-fe-testing` is `partial`, not `live`, because the decision to
+skip unit tests rests on an external Playwright suite whose
+`data-testid` locators appear 20 times in the entire front end. Each
+fact is defensible alone; together they say the front end has
+materially less automated cover than either implies. That pairing is
+recorded as a `relates_to` link rather than as prose in one row, so
+neither can be read without the other.
 
 ## Terms, stages and the shared taxonomy
 

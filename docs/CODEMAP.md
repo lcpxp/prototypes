@@ -105,7 +105,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 417 | Changelog |
+| docs/CHANGELOG.md | 425 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HARNESS.md | 127 | Verification harness and working process |
@@ -120,13 +120,13 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 33 | Current state |
+| docs/STATE.md | 37 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
-| docs/plan/00-PROGRAMME.md | 244 | Alignment programme |
+| docs/plan/00-PROGRAMME.md | 251 | Alignment programme |
 | docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
 | docs/plan/20-API-REFERENCE.md | 300 | Aligning API reference 2.0 with the code |
-| docs/plan/30-KNOWLEDGE.md | 283 | Writing verified findings into the system |
+| docs/plan/30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
 | docs/plan/40-SURFACING.md | 339 | Nothing buried, anywhere in the portal |
 | docs/plan/50-DASHBOARD.md | 278 | Rebuilding the dashboard |
 | docs/plan/60-PORTAL-REVIEW.md | 339 | Portal review, as a feature |

@@ -23,6 +23,14 @@ is the git history; what is unfinished is docs/STATE.md.
   something did, and links to the row rather than the module.
 
 ### Added
+- The platform page's **How it is built** section now has ten rows
+  describing the LaunchPad architecture, read from the code: the API's
+  four layers and where a shape gets converted, its Result type, its
+  URL versioning, its 210 migrations and its three test projects; and
+  the front end's Angular 20 with no state library, its eight route
+  guards, its single error interceptor and its absent unit suite.
+  Enough to answer "how is this built" without opening either
+  repository.
 - **Global search now reaches the narrative content**, which it never
   did: notes and decisions, source documents, glossary terms, journey
   stages, API topics and specs, prototype ideas and review findings

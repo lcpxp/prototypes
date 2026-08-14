@@ -214,6 +214,13 @@ above rather than as an open decision.
    and seven v2 merchant sub-resources exist only as comments.
    Recommendation: a `planned` badge and a topic entry, never an
    endpoint row.
+   *Measured in wave 2, 13 Aug:* the two controllers are commented out
+   in their entirety - every line prefixed with `//` - carrying three
+   actions each. That is exactly the difference between the 53
+   `*Controller.cs` files on disk and the 51 the route extractor
+   reports, so both figures were right and the gap is now explained
+   rather than outstanding. The decision itself is still open: it is
+   about what the reference should say, not about what the code does.
 4. **Milestones and phases. CLOSED 2026-08-13: leave them.** Both
    tables are empty, so removing them changes nothing a user sees and
    nothing a test checks. The case was tidiness, and a destructive
