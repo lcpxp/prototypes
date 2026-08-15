@@ -18,15 +18,15 @@ wave 3 (the glossary held; the journey model did not - CR3-02).
    drawer and skeleton, both export paths and the backlog modal.
 2. **Embeddings.** Blocked on the decision below.
 
-## The embeddings decision
-Design settled in docs/KNOWLEDGE-MODEL.md; `vector` 0.8.2 available,
-not installed. Two things stop a session finishing it alone. The
-BACKFILL needs a path: the Edge Function computes vectors, something
-must write 268, a chat session cannot carry them and the function
-cannot write without elevated rights. `pg_net` is the clean answer and
-adding an extension is an owner decision. The RESCALE must be fitted:
-gte-small cosines sit at 0.70-0.80 for unrelated text, so the affine
-floor and ceiling need labelled pairs. Guessing is what it forbids.
+## Embeddings: decided, deferred, not blocked on the owner
+DECIDED 15 Aug, mechanism is the session's call: enable `vector` and
+`pg_net`, have Postgres call the Edge Function and write back, so no
+vector crosses a chat session and no elevated key is needed. The
+RESCALE does NOT need the owner - a correction to what this file said
+on 14 Aug. docs/KNOWLEDGE-MODEL.md already holds 14 labelled items
+from the replayed 2026-07-27 batch with their outcomes; fit the affine
+floor and ceiling so the semantic bands land where those labels say.
+Deferred only because it is a five-part build wanting a fresh session.
 
 ## Owner passes
 docs/HANDOVER-CONTEXT.md is the claude.ai prompt: 14 blank prototype

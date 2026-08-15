@@ -10,6 +10,8 @@ Node.js built-in test runner and git.
     npm run setup    once per fresh clone: wires hooks + commit template
     npm test         full suite: gates + behaviour benchmarks
     npm run map      regenerate docs/CODEMAP.md and llms.txt
+    npm run audit    one-screen health report, knowledge decay included
+    npm run knowledge  print the SQL behind the knowledge gate
 
 ## Permissions and the pre-commit hook
 
@@ -109,6 +111,28 @@ Three layers, cheapest first:
    docs/CHANGELOG.md records what changed for users.
 3. Generated codemap diffs - because CODEMAP.md is committed, the
    history of the map is itself a structural audit trail.
+
+## The knowledge gate
+
+Three gates check structure - that a vocabulary is documented, that a
+stored value renders, that the reference matches the code. None of
+them notices CONTENT decaying: a note that lost its anchor, a term
+whose source was dropped, a closed item whose resolution went missing.
+Those matter most to whoever supplies the content, because the promise
+they rely on is that what they say does not get lost.
+
+`npm run knowledge` prints the SQL; a session with Supabase access runs
+it and writes `supabase/knowledge-coverage.json` - counts only, never a
+title or a body, the same trick the reference and schema artefacts use.
+`tests/checks/knowledge-drift.test.js` ratchets it against
+`tests/knowledge-budget.json`.
+
+Five figures are at zero and their ceilings are held at zero, so
+raising one instead of fixing the rows fails the build: every glossary
+term has a definition and a source, every journey stage has a source,
+every source document has a digest, and no finding claims a promotion
+with nothing behind it. The rest are the honest backlog, and
+`docs/HANDOVER-CONTEXT.md` is the session that closes them.
 
 ## Security gates (mechanical, not advisory)
 

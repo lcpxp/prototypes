@@ -48,6 +48,15 @@ is the git history; what is unfinished is docs/STATE.md.
   something did, and links to the row rather than the module.
 
 ### Added
+- The repository now measures and defends **what it was told**, not
+  only how it is built. Twelve figures - notes with no anchor, terms
+  with no source, items with no summary, ideas with no value note,
+  links nobody confirmed and seven more - are measured against the
+  database and held by a gate. Five are already at zero and their
+  ceilings are pinned there, so every glossary term keeps its source
+  and every document keeps its digest, or the build fails. The rest
+  are the honest backlog and can only ever go down. `npm run audit`
+  shows all of it on one screen.
 - The glossary explains the **application event log**: the seventeen
   typed events the API timestamps against an application, and how they
   differ from the thirteen journey stages. The two do not map one to

@@ -108,8 +108,8 @@ document instead of walking the tree or reading whole files.
 | docs/CHANGELOG.md | 454 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
-| docs/HANDOVER-CONTEXT.md | 156 | Context-gathering handover |
-| docs/HARNESS.md | 127 | Verification harness and working process |
+| docs/HANDOVER-CONTEXT.md | 169 | Context-gathering handover |
+| docs/HARNESS.md | 151 | Verification harness and working process |
 | docs/KNOWLEDGE-MODEL.md | 187 | The knowledge model |
 | docs/PLATFORM.md | 201 | Platform product-knowledge protocol |
 | docs/PORTAL-REVIEW.md | 208 | Portal review playbook |
@@ -161,8 +161,8 @@ document instead of walking the tree or reading whole files.
 | modules/reference/index.html | 80 | API reference - LPio / LaunchPad IO |
 | modules/roadmap/index.html | 138 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 60 | Users - LPio / LaunchPad IO |
-| package.json | 15 |  |
-| scripts/audit.js | 145 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
+| package.json | 16 |  |
+| scripts/audit.js | 169 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and |
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |

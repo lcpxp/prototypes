@@ -1,0 +1,31 @@
+{
+  "comment": "Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them.",
+  "figures": {
+    "terms.no_definition": 0,
+    "terms.no_source": 0,
+    "stages.no_source": 0,
+    "documents.no_digest": 0,
+    "findings.promoted_without_item": 0,
+    "capabilities.no_area": 5,
+    "notes.orphaned": 20,
+    "items.no_summary": 80,
+    "items.closed_without_resolution": 39,
+    "ideas.no_summary": 14,
+    "ideas.no_value_note": 14,
+    "links.proposed": 110
+  },
+  "notes": {
+    "terms.no_definition": "At 0 and must stay there. A term with no definition is a word in a list.",
+    "terms.no_source": "At 0 and must stay there. 35 terms, every one citing where it came from - owner-validated, a named document, a handover call, or PartnerPortal source. This is the figure that makes the glossary trustworthy rather than plausible.",
+    "stages.no_source": "At 0. All 13 cite the Unity Integration PRD and the date the owner validated them. Note that code-review wave 3 found the model and the code's 17 instrumented events disagree - see finding CR3-02 - which is a question about the model, not a missing source.",
+    "documents.no_digest": "At 0. docs/WORKFLOW.md requires raw material AND a digest; 18 of 18 have one. Rising means somebody pasted material and did not distil it, which is how a document becomes unsearchable.",
+    "findings.promoted_without_item": "At 0, and the schema constrains it too. Counted anyway because a constraint that is never exercised is a constraint nobody notices has been dropped.",
+    "capabilities.no_area": "5 of 46. A capability with no area does not appear in the platform page's sections, so it is stored and effectively invisible. Lower this by filing them; they are not content the owner needs to supply.",
+    "notes.orphaned": "20 of 182 anchored to neither an item nor a document. Real content nothing links to. Each needs a decision - which item or document it belongs to, or that it is stale and closes with a reason. On the handover list.",
+    "items.no_summary": "80 of 268 carry a title and no summary. Six months later a title alone is unreadable, which is exactly when it gets read. The largest single item on the handover list.",
+    "items.closed_without_resolution": "39 done or dropped rows with no resolution. 'Nothing is ever deleted' means a closed row carries WHY it closed; these have lost the decision. Some are recoverable from git or from notes, some need the owner.",
+    "ideas.no_summary": "14 of 14. The whole future_prototypes table is names. First job on the handover list.",
+    "ideas.no_value_note": "14 of 14. What an idea would PROVE is the field that decides whether to build it, and the one the owner will be laziest about. The handover prompt is written to push on it.",
+    "links.proposed": "110 of 119 live links are still proposed - an assistant's suggestion nobody has confirmed. Not a defect: proposed is the honest state and confirming in bulk would destroy the distinction. But it is a queue, and a queue nobody watches grows. Lower it by confirming groups the owner approves, and leave the rest proposed rather than closing them."
+  }
+}

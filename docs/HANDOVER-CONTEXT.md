@@ -7,7 +7,7 @@ derive is what you know and have not written down. That is this.
 
 Everything below the line is the prompt. Paste it whole.
 
-The counts in it were measured on 2026-08-14. They will have moved by
+The counts in it were measured on 2026-08-15. They will have moved by
 the time it runs, which is why the prompt makes the session re-measure
 rather than trust them.
 
@@ -41,7 +41,16 @@ statement nobody can tell from a checked one.
 ## Start by measuring, not by assuming
 
 Run this first and show me the result. The numbers below are from
-2026-08-14 and will have moved.
+2026-08-15 and will have moved.
+
+These are the same figures the repository measures and holds. There is
+a gate (`tests/checks/knowledge-drift.test.js`) that fails the build if
+any of them decays, and five that are already at zero and must stay
+there: every glossary term has a definition and a source, every
+journey stage has a source, every source document has a digest, and no
+review finding claims a promotion with nothing behind it. So the work
+you and I do here is not lost when we close the tab - it is measured,
+committed and defended.
 
     select 'prototype ideas total' as gap, count(*) as n from future_prototypes
     union all select 'ideas with no summary', count(*) from future_prototypes where coalesce(btrim(summary),'') = ''
@@ -143,7 +152,11 @@ worth a wave next, and record that as a note rather than as passes.
 
 When we have worked through what I have patience for:
 
-1. Show me a written summary of what you wrote, by table, with counts.
+1. Re-run the measuring query and show me the before and after side by
+   side. Those figures go into the repository as ceilings, so telling
+   me "notes.orphaned went from 20 to 6" is the single most useful
+   sentence you can end on - a code session lowers the ceiling to 6
+   and it can never silently climb back.
 2. Tell me what is still open, and what you asked that I did not answer -
    that list is as valuable as the answers.
 3. Do not update `docs/STATE.md` or anything else in the repository.

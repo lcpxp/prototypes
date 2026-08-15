@@ -9,7 +9,7 @@ const path = require("node:path");
 const { ROOT, trackedFiles, read } = require("../tests/lib/repo.js");
 const budget = require("../tests/size-budget.json");
 
-function row(label, value) { console.log("  " + String(label).padEnd(30) + value); }
+function row(label, value) { console.log("  " + String(label).padEnd(31) + " " + value); }
 function head(title) { console.log("\n" + title); }
 
 // 1. Test totals - run the suite and parse the TAP summary (node --test
@@ -133,6 +133,30 @@ row("snapshot tables / policies", snap.tables + " / " + snap.policies);
 row("applied migrations", snap.migrations + " (files: " + snap.files + ")");
 row("snapshot vs migration files", snap.migrations === snap.files
   ? "in step" : "DRIFT - run npm test for detail");
+
+// Knowledge decay, in the order it matters: the promises already kept
+// first, so a zero that has become a one is the line you read.
+head("Knowledge");
+try {
+  var kc = JSON.parse(read("supabase/knowledge-coverage.json"));
+  var kb = JSON.parse(read("tests/knowledge-budget.json"));
+  var kept = ["terms.no_source", "terms.no_definition", "stages.no_source",
+    "documents.no_digest", "findings.promoted_without_item"];
+  var broken = kept.filter(function (k) {
+    return kc.figures[k] && kc.figures[k].n > 0;
+  });
+  row("promises kept (must be 0)", broken.length === 0
+    ? "all " + kept.length + " holding" : "BROKEN: " + broken.join(", "));
+  Object.keys(kc.figures).forEach(function (k) {
+    if (kept.indexOf(k) !== -1) return;
+    var f = kc.figures[k];
+    if (!f.n) return;
+    row(k, f.n + " of " + f.of + " (" + f.pct + "%), ceiling " + kb.figures[k]);
+  });
+  row("measured", kc.generated_on);
+} catch (e) {
+  row("knowledge coverage", "missing - run npm run knowledge");
+}
 
 head("Structure");
 var tg = themeGuardAnomalies();
