@@ -231,3 +231,41 @@ day it is added.
 - The findings register holds the defects and questions, triaged, with
   the promoted ones on the roadmap and the rest archived against the
   wave that raised them.
+
+## Wave 3, 14 Aug: the journey model against the instrumentation
+
+Waves 1 and 2 read the front end's styling and the API's architecture.
+Wave 3 took the last thing the plan named - domain terms and journey
+stages - and checked them against what the code actually records.
+
+The glossary held up: 34 terms, every one with a definition and a
+source, and the code contradicted none of them. One term was missing
+and has been added - the application event log, which a reader meeting
+`MerchantApplicationEventLogType` in the API had nowhere to look up.
+
+The journey model did not, and the mismatch is now finding CR3-02.
+`journey_stages` carries 13 stages from the Unity Integration PRD,
+owner-validated. `MerchantApplicationEventLogType` declares **17**
+events, and `TimelineUtility` maps 16 of them and computes the gap
+between each pair - which makes that order authoritative rather than
+merely declared. Against each other:
+
+- **Two events have no stage.** `APPLICATION_STARTED` is the timeline
+  origin, so the model has no stage for where an application begins.
+  `PRODUCT_ASSIGNMENT` sets a date the v2 summary repository reads.
+- **Two stages fold two events each.** Contract covers sent and
+  signed; Third-Party Checks covers started and complete. Each has a
+  start and a finish the model cannot express.
+- **One pair is ordered the other way round.** The model puts Related
+  Entities before Product Selection; the code computes
+  `RelatedEntities - ProductSelection`.
+- **The last stage has no timeline slot.** `ACTIVE_MERCHANT` is on the
+  enum but not in the mapping, so the stage that matters commercially
+  contributes no date.
+- **The elapsed-time field names are offset.** Each `TimePassedSinceX`
+  measures the gap ending at X's successor, and
+  `TimePassedSincePeopleSiteBanks` names something that is not an event.
+
+Left for the owner rather than applied. Reshaping an owner-validated
+model to match instrumentation is a decision about what the model is
+for, not a correction, so the finding carries `owner_action`.

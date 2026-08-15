@@ -105,9 +105,10 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 450 | Changelog |
+| docs/CHANGELOG.md | 454 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
+| docs/HANDOVER-CONTEXT.md | 156 | Context-gathering handover |
 | docs/HARNESS.md | 127 | Verification harness and working process |
 | docs/KNOWLEDGE-MODEL.md | 187 | The knowledge model |
 | docs/PLATFORM.md | 201 | Platform product-knowledge protocol |
@@ -124,7 +125,7 @@ document instead of walking the tree or reading whole files.
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/plan/00-PROGRAMME.md | 270 | Alignment programme |
-| docs/plan/10-CODE-REVIEW.md | 234 | Reviewing the LaunchPad codebase |
+| docs/plan/10-CODE-REVIEW.md | 272 | Reviewing the LaunchPad codebase |
 | docs/plan/20-API-REFERENCE.md | 412 | Aligning API reference 2.0 with the code |
 | docs/plan/30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
 | docs/plan/40-SURFACING.md | 339 | Nothing buried, anywhere in the portal |
@@ -252,7 +253,7 @@ document instead of walking the tree or reading whole files.
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 28 |  |
-| tests/size-budget.json | 137 |  |
+| tests/size-budget.json | 197 |  |
 | tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |

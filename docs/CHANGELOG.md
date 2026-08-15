@@ -48,6 +48,10 @@ is the git history; what is unfinished is docs/STATE.md.
   something did, and links to the row rather than the module.
 
 ### Added
+- The glossary explains the **application event log**: the seventeen
+  typed events the API timestamps against an application, and how they
+  differ from the thirteen journey stages. The two do not map one to
+  one, and until now nothing said so.
 - The platform page's **How it is built** section now has ten rows
   describing the LaunchPad architecture, read from the code: the API's
   four layers and where a shape gets converted, its Result type, its

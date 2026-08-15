@@ -131,6 +131,66 @@
     "assets/js/core/search.js": {
       "hard": 500,
       "note": "Over soft (337) since global search grew from six sources to fourteen - work notes, documents, glossary terms, journey stages, API topics and specs, prototype ideas and review findings were all unfindable from the nav before. Roughly a third of the file is the declarative source table. NOT split, deliberately: search.js is a core module in the fixed include order on 23 pages, so splitting it costs an extra request on every page load and a 23-file edit. Exit plan: if it passes 400, sources() and the href builders move to core/search-sources.js and every page gains the include."
+    },
+    "assets/css/roadmap-views.css": {
+      "hard": 500,
+      "note": "Over soft (438) and the closest of these to the hard cap. One stylesheet for six board layouts - timeline, cascade, exec, breakdown, custom and the shared placement grid - which share a coordinate model and a set of rails; splitting them means duplicating that model or inventing a shared file that is most of it. Exit plan: the Timeline block is self-contained and goes first, into roadmap-views-timeline.css linked wherever this is. Do that before adding a seventh view."
+    },
+    "assets/js/core/registry.js": {
+      "hard": 500,
+      "note": "Just over soft (307) and by design: this is the single source of truth for modules, table names, roles, link kinds, link entity types, spec families and departments, and CLAUDE.md forbids any of those living anywhere else. Splitting it would make 'what does this system contain' a multi-file question, which is the thing it exists to prevent. Exit plan: none while that holds. If it must be cut, linkEntities is the only block with no other reader."
+    },
+    "assets/js/core/ui.js": {
+      "hard": 500,
+      "note": "Just over soft (311). Shared runtime: nav rendering, escaping, badges, href builders, the sign-out path. Loaded on every page in a fixed include order, so a split costs an extra request on 23 pages and a 23-file edit, as with search.js. Exit plan: if it passes 400, the badge and href helpers move to core/ui-render.js and every page gains the include."
+    },
+    "assets/js/pages/pci-portal.js": {
+      "hard": 500,
+      "note": "Just over soft (301). A prototype: the seven-step PCI prescreen wizard, its stepper and its in-memory sample data in one file so the whole prototype reads in one pass. Prototypes are demonstrations, not shared code, and splitting one across files makes it harder to read for no reuse gain. Exit plan: none unless it approaches the hard cap, at which point the step content moves to pci-portal-steps.js."
+    },
+    "assets/js/pages/platform.js": {
+      "hard": 500,
+      "note": "Over soft (326). The platform page: capability kinds and where each renders, the knowledge sections, the coverage lines. The pure builders already hang off App.platformView and are DOM-free so they can be benchmarked. Exit plan: the capability-kind table and its renderers are the seam - platform-capabilities.js - when the next section lands."
+    },
+    "docs/CHANGELOG.md": {
+      "hard": 500,
+      "note": "Over soft (450) and growing by design: it is an append-only record of what changed for users, and the project is pre-1.0 so nothing has rolled up yet. Exit plan: the documented one - when the owner cuts a release, Unreleased becomes a dated version heading and the file resets to a short Unreleased section. Until then length tracks work done, which is the point of it."
+    },
+    "docs/ROADMAP-INTAKE.md": {
+      "hard": 500,
+      "note": "Over soft (405) and deliberately not split. It is the ONE home for the confidence-band thresholds and the calibration behind them, and the one-home gate in tests/checks/roadmap-intake.test.js fails if any of that is restated elsewhere. The last attempt to split this file is what put the bands in three places. Exit plan: none. A longer single file beats the same threshold stated in three shorter ones."
+    },
+    "docs/plan/20-API-REFERENCE.md": {
+      "hard": 500,
+      "note": "Over soft (412). The reference workstream, now closed: the three inventories, the reconciliation as it moved from 56% to 100%, the twelve corrected rows and the thirteenth wrong claim, the merchant collapse, and the register. Much of the length is the record of where the plan was wrong, which is what a later wave needs. Exit plan: on the next release, fold the closed sections into a short outcome and keep the corrections table."
+    },
+    "docs/plan/30-KNOWLEDGE.md": {
+      "hard": 500,
+      "note": "Just over soft (320). The knowledge workstream: the provenance ladder, the link vocabulary and the capability model, each stated once here and cited elsewhere. Exit plan: none while the one-home gate holds it; the link vocabulary is the only block with a second potential home, and it is deliberately here rather than in 33_links.sql."
+    },
+    "docs/plan/40-SURFACING.md": {
+      "hard": 500,
+      "note": "Over soft (339). The surfacing workstream: the completeness contract, the typed-block vocabulary and the four ways a value can be covered, which the render-coverage gate enforces directly. Exit plan: fold the landed sections into an outcome once the load-speed work (80) has settled, since that touches the same renderers."
+    },
+    "docs/plan/60-PORTAL-REVIEW.md": {
+      "hard": 500,
+      "note": "Over soft (339). The portal-review workstream: the wave lifecycle, the 39-area map and the triage protocol. docs/PORTAL-REVIEW.md is the operating protocol and this is the build record, so the two are not duplicates. Exit plan: fold the build record into an outcome once a second wave has been run and the method has stopped changing."
+    },
+    "modules/prototypes/daopay/index.html": {
+      "hard": 400,
+      "note": "Over the html soft cap (258 > 250) and comfortably under hard. A prototype page: the DaoPay onboarding walkthrough, its markup in one file so the whole thing reads in one pass. Exit plan: none unless it approaches 400."
+    },
+    "supabase/migrations/20260809130647_knowledge_links_typed_vocabulary.sql": {
+      "hard": 500,
+      "note": "Applied migrations are immutable history, never edited after the fact, so they are not split or reflowed. Length tracks the vocabulary it installs and the data it migrates onto it."
+    },
+    "supabase/schema/33_links.sql": {
+      "hard": 500,
+      "note": "Over soft (344). The knowledge-link domain in one file: the table, the eight typed kinds, the eleven entity types, the validity window and the confidence model, with the reasoning beside each constraint. These rules were learned by getting them wrong and the reasoning has to sit next to what encodes it. Exit plan: the entity-type check is the clean seam if the vocabulary grows again."
+    },
+    "tests/checks/render-coverage.test.js": {
+      "hard": 500,
+      "note": "Over soft (350). The gate that makes 'nothing stored is invisible' mechanical: it checks constraint vocabularies, link entity types, anchor reachability, contract adopters and the core/detail.js include across every module page. Splitting it would separate the rule from the reason each clause exists, and each clause exists because something was buried once. Exit plan: the vocabulary checks split from the page checks if it passes 450."
     }
   }
 }
