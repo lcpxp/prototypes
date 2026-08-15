@@ -200,6 +200,45 @@ before adding a file.
 - Both export outputs carry `details` for every exported item.
 - A stale response from a superseded drawer open does not paint.
 
+## Baseline, measured 2026-08-14
+
+Step one of the verification below, done before any change. Payload
+sizes are exact, measured server-side as the JSON PostgREST would
+serialise; asset sizes are from disk.
+
+| Request | Bytes | Note |
+| --- | --- | --- |
+| `work_items` `select("*")` | 408,238 | 268 rows |
+| the same without `details` | 305,282 | **102,956 saved, 25.2% of the request** |
+| `work_notes` page-load fetch | 63,098 | 116 rows; removable entirely |
+| 32 asset files | 294,726 raw / 99,306 gzipped | |
+| page HTML | 6,925 raw / 1,850 gzipped | |
+
+`details` is 46.6% of `work_items` by stored size and 131 of the 268
+rows carry any. `work_notes.body` is 73% of the notes payload.
+
+**The honest projection, and it is under target.** Removing both takes
+166,054 bytes out of 772,987 uncompressed - **21.5%, not 25%.** The
+plan says to report that plainly rather than adjust the claim, so:
+this buys about a fifth, and the remaining cold-load time is in the 32
+asset requests, which is a different piece of work.
+
+Two caveats on the number, both of which need the browser run rather
+than a server-side measurement to settle:
+
+- These are uncompressed bytes. Everything transfers gzipped, and the
+  two do not compress alike: `work_items` JSON repeats the same 39
+  keys 268 times and compresses hard, while `details` is prose and
+  compresses far less. The compressed saving is therefore likely to be
+  a **larger** share than 21.5%, not a smaller one - but that is a
+  prediction, and the DevTools run is what settles it.
+- The figure ignores the other page-load requests (areas, phases,
+  documents, links, categories), which shrink the denominator and
+  raise the percentage slightly.
+
+So the 25% target is plausible on compressed bytes and not established
+on uncompressed ones. Record both when the change lands.
+
 ## How to verify the 25%
 
 Record a baseline **before** changing anything. DevTools → Network →
