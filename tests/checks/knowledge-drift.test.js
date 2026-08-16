@@ -88,11 +88,15 @@ test("nothing has decayed past its declared ceiling", () => {
 });
 
 test("the promises already kept are held at zero", () => {
-  // These five are not a backlog. Each is a rule the content already
+  // These six are not a backlog. Each is a rule the content already
   // satisfies, and a rule satisfied by accident is one nobody notices
   // breaking. Holding them at zero is the whole point of the gate.
+  //
+  // embeddings.stale is the one that is actively misleading rather than
+  // merely missing: a vector computed from text that has since changed
+  // still answers searches, with the wrong meaning and no sign of it.
   for (const key of ["terms.no_definition", "terms.no_source", "stages.no_source",
-    "documents.no_digest", "findings.promoted_without_item"]) {
+    "documents.no_digest", "findings.promoted_without_item", "embeddings.stale"]) {
     assert.equal(budget.figures[key], 0,
       `${key} is at zero today and its ceiling must stay zero - raising it is ` +
       "a decision to let the guarantee lapse, not a housekeeping edit");

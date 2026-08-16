@@ -12,7 +12,8 @@
     "items.closed_without_resolution": 39,
     "ideas.no_summary": 14,
     "ideas.no_value_note": 14,
-    "links.proposed": 110
+    "links.proposed": 110,
+    "embeddings.stale": 0
   },
   "notes": {
     "terms.no_definition": "At 0 and must stay there. A term with no definition is a word in a list.",
@@ -26,6 +27,7 @@
     "items.closed_without_resolution": "39 done or dropped rows with no resolution. 'Nothing is ever deleted' means a closed row carries WHY it closed; these have lost the decision. Some are recoverable from git or from notes, some need the owner.",
     "ideas.no_summary": "14 of 14. The whole future_prototypes table is names. First job on the handover list.",
     "ideas.no_value_note": "14 of 14. What an idea would PROVE is the field that decides whether to build it, and the one the owner will be laziest about. The handover prompt is written to push on it.",
-    "links.proposed": "110 of 119 live links are still proposed - an assistant's suggestion nobody has confirmed. Not a defect: proposed is the honest state and confirming in bulk would destroy the distinction. But it is a queue, and a queue nobody watches grows. Lower it by confirming groups the owner approves, and leave the rest proposed rather than closing them."
+    "links.proposed": "110 of 119 live links are still proposed - an assistant's suggestion nobody has confirmed. Not a defect: proposed is the honest state and confirming in bulk would destroy the distinction. But it is a queue, and a queue nobody watches grows. Lower it by confirming groups the owner approves, and leave the rest proposed rather than closing them.",
+    "embeddings.stale": "At 0 and it must stay there. A vector computed from text that has since changed still answers searches, with the wrong meaning and no sign of it - the one failure in this list that is actively misleading rather than merely missing. Clear it with select * from roadmap_embed_refresh(); it is idempotent, so running it when nothing is stale costs one query."
   }
 }

@@ -62,6 +62,26 @@ Run both. A bare headline is precise but thin; the full request is rich but
 dilutes rare handles across many common ones. Take the **higher** score per
 candidate - the two disagree often enough to matter.
 
+Add the semantic channel by passing a fifth argument. Omitted, `roadmap_find`
+scores lexically exactly as it always has; passed, `score` becomes the better
+of the two channels and the `lexical` and `semantic` columns say which spoke:
+
+    select title, score, lexical, semantic, status, is_hollow, resolution
+      from roadmap_find('currency swap on the summary page', 8, 0.15, null,
+                        roadmap_embed_query('currency swap on the summary page'));
+
+Worth doing on the **full request** rather than the headline: the channel
+exists for reworded duplicates, and a rewording is a sentence. It finds the
+right row where lexical cannot - and its magnitude does not separate a
+reworded duplicate from new work in the same area, so band on `score` as
+usual and read `semantic` as evidence, never as a second opinion on the band.
+Why, with the numbers: docs/KNOWLEDGE-MODEL.md.
+
+If a row was edited since it was embedded, its vector is stale and
+`work_items_unembedded` says so. `select * from roadmap_embed_refresh();`
+clears the backlog; it is idempotent, so running it when nothing is stale
+costs one query.
+
 Then one narrow search on the rarest handle alone, restricted to parked work,
 because `REVIVE` cases score low by construction (the parked row is worded
 for the problem as it looked then, not as it looks now):

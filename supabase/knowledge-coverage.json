@@ -72,6 +72,11 @@
       "n": 0,
       "of": 2,
       "pct": 0
+    },
+    "embeddings.stale": {
+      "n": 0,
+      "of": 268,
+      "pct": 0
     }
   }
 }

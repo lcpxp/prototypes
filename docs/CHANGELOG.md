@@ -21,6 +21,19 @@ is the git history; what is unfinished is docs/STATE.md.
   cancelled and the button says so, rather than writing a file that
   looks complete and is not.
 
+### Added
+- **Semantic search alongside the keyword one** when placing new work.
+  Every work item now carries a meaning vector, so a request worded
+  differently from the row it duplicates can still find it: "customer
+  birthday displaying a day earlier than entered" now returns "Date of
+  birth output off by one day" as its top hit, which keyword scoring
+  missed entirely. The two channels are combined by taking the better of
+  the pair, so nothing that already scored well scores worse, and both
+  are shown separately so you can see which one spoke. Honest limit:
+  this improves what gets *found*, and only slightly improves how
+  confidently a match is *graded* - the reasoning and the measurements
+  are in docs/KNOWLEDGE-MODEL.md.
+
 ### Changed
 - The **roadmap and the backlog load 33% less data on every visit**.
   Both pages were downloading the full write-up of all 268 work items to

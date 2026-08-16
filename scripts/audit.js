@@ -141,7 +141,7 @@ try {
   var kc = JSON.parse(read("supabase/knowledge-coverage.json"));
   var kb = JSON.parse(read("tests/knowledge-budget.json"));
   var kept = ["terms.no_source", "terms.no_definition", "stages.no_source",
-    "documents.no_digest", "findings.promoted_without_item"];
+    "documents.no_digest", "findings.promoted_without_item", "embeddings.stale"];
   var broken = kept.filter(function (k) {
     return kc.figures[k] && kc.figures[k].n > 0;
   });

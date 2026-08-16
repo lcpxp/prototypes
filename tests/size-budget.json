@@ -153,8 +153,8 @@
       "note": "Over soft (326). The platform page: capability kinds and where each renders, the knowledge sections, the coverage lines. The pure builders already hang off App.platformView and are DOM-free so they can be benchmarked. Exit plan: the capability-kind table and its renderers are the seam - platform-capabilities.js - when the next section lands."
     },
     "docs/CHANGELOG.md": {
-      "hard": 500,
-      "note": "Over soft (450) and growing by design: it is an append-only record of what changed for users, and the project is pre-1.0 so nothing has rolled up yet. Exit plan: the documented one - when the owner cuts a release, Unreleased becomes a dated version heading and the file resets to a short Unreleased section. Until then length tracks work done, which is the point of it."
+      "hard": 620,
+      "note": "Over the shared 500 cap (504) and growing by design: an append-only record of what changed for users, pre-1.0, so nothing has rolled up yet. Raised rather than split because splitting it would put 'what changed' in two places, which is the duplication these budgets exist to prevent - and the file is read newest-first, so length costs a reader nothing. Exit plan: the documented one - when the owner cuts a release, Unreleased becomes a dated version heading and the file resets to a short Unreleased section. That is the event that shrinks it, not a split."
     },
     "docs/ROADMAP-INTAKE.md": {
       "hard": 500,

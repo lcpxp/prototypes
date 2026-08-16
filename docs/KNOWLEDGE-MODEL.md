@@ -68,6 +68,39 @@ whose cosine similarities are compressed - unrelated short texts sit around
 so the semantic channel needs an affine rescale with the floor and ceiling
 fitted against labelled pairs, not guessed.
 
+### What the channel actually bought, measured 2026-08-16
+
+Landed and fitted. The rescale anchors and the replayed scores live in
+`supabase/schema/31_roadmap_search.sql`, beside the code they constrain;
+this is what they mean.
+
+The prediction above was half right, and the half that was wrong matters
+more than the half that was right.
+
+**Right:** semantic *retrieval* rescues the rewording cases outright.
+"customer birthday displaying a day earlier than entered" returns "Date of
+birth output off by one day" as its rank-1 hit, and "let an admin change
+every amount to a different currency before signing" returns "Adapt overall
+application currency on the Summary page" as its. Lexical scoring saw
+neither at 0.265 and 0.310.
+
+**Wrong:** semantic *banding* does not separate them from new work. Those
+two queries score cosine 0.8708 and 0.8804, below several genuinely new
+items whose best match is merely in the same product area (0.8896 for a new
+billing item against an existing billing row). Rank is informative here;
+magnitude is not. Any future attempt to band on the semantic channel alone
+will rediscover this.
+
+So the fusion is `greatest(lexical, semantic)` and the honest gain is
+narrow: one labelled duplicate promoted from Medium to High, one genuine
+neighbour from None to Medium, the strongest duplicates made unambiguous,
+and - because `greatest` cannot pull a score down - no labelled case made
+worse. The date-of-birth case that must never fire scores 0 on the semantic
+channel.
+
+That is worth having and it is not what was hoped for. Recorded as such
+rather than rounded up.
+
 ## Why a curated stoplist, not a threshold
 
 The first instinct on finding a bad word list is to delete it and let IDF
@@ -184,3 +217,13 @@ single file beats the same number stated in three shorter ones.
   is well under a millisecond. Add
   `using hnsw (embedding vector_cosine_ops)` when any embedded table passes
   roughly 5,000 rows, and not before.
+- **No embedding on anything but work items.** `product_capabilities`,
+  `domain_terms` and `work_notes` would each need their own labelled set
+  before a threshold could be fitted, and an unfitted threshold is worse
+  than none. `work_item_embeddings` is deliberately named for one table
+  rather than being a generic `embeddings(entity_type, entity_id, ...)`:
+  the generic shape invites exactly that unfitted reuse.
+- **No trigger re-embedding on write.** Editing an item would fire an
+  outbound HTTP call inside the writing transaction. `source_hash` makes
+  the staleness visible instead, and `roadmap_embed_refresh()` clears it
+  when someone chooses to.

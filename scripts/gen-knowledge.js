@@ -79,7 +79,9 @@ select jsonb_build_object(
     'live', (select count(*) from review_findings where deleted_at is null),
     'promoted_without_item', (select count(*) from review_findings
                               where deleted_at is null and disposition = 'promoted'
-                                and promoted_work_item_id is null))
+                                and promoted_work_item_id is null)),
+  'embeddings', jsonb_build_object(
+    'stale', (select count(*) from work_items_unembedded))
 ) as payload;`;
 
 // The rules, each stated once here with the reason it is a rule. The
@@ -110,6 +112,8 @@ const RULES = [
     why: "docs/WORKFLOW.md says raw material AND a digest go to work_documents; the digest is the summary column. A document with none is a paste nobody distilled - the material is there and the meaning is not." },
   { key: "findings.promoted_without_item", of: "findings.live",
     why: "A finding marked promoted with no work item is a claim with nothing behind it. The schema constrains this; the count proves the constraint holds." },
+  { key: "embeddings.stale", of: "items.total",
+    why: "An item whose vector was computed from text that has since changed still answers searches - with the wrong meaning, silently. work_items_unembedded is the one place that knows; this is what makes it visible without asking. Clear it with select * from roadmap_embed_refresh()." },
 ];
 
 function dig(payload, dotted) {

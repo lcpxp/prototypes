@@ -39,6 +39,7 @@ document instead of walking the tree or reading whole files.
 | assets/css/roadmap-themes.css | 30 | roadmap-themes.css - The theme accent map: one rule per |
 | assets/css/roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme |
 | assets/css/roadmap.css | 410 | roadmap.css - The roadmap board (modules/roadmap/). A page sheet, |
+| assets/css/skeleton.css | 57 | skeleton.css - The loading placeholder for a region whose content |
 | assets/css/tokens.css | 444 | tokens.css - Design tokens for the LPio hub. |
 | assets/js/core/auth.js | 54 | auth.js - Login page logic for index.html. |
 | assets/js/core/blocks.js | 139 | blocks.js - The typed-block renderer, in one place. |
@@ -108,23 +109,23 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 491 | Changelog |
+| docs/CHANGELOG.md | 504 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HANDOVER-CONTEXT.md | 169 | Context-gathering handover |
 | docs/HARNESS.md | 151 | Verification harness and working process |
-| docs/KNOWLEDGE-MODEL.md | 187 | The knowledge model |
+| docs/KNOWLEDGE-MODEL.md | 230 | The knowledge model |
 | docs/PLATFORM.md | 201 | Platform product-knowledge protocol |
 | docs/PORTAL-REVIEW.md | 208 | Portal review playbook |
 | docs/PROTOTYPE-IDEAS.md | 150 | Prototype ideas and plans |
-| docs/ROADMAP-INTAKE.md | 405 | Roadmap intake |
+| docs/ROADMAP-INTAKE.md | 425 | Roadmap intake |
 | docs/ROADMAP-PLAYBOOK.md | 272 | Roadmap playbook |
 | docs/ROADMAP-REVIEW.md | 130 | Roadmap review |
 | docs/ROADMAP.md | 261 | Roadmap |
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 40 | Current state |
+| docs/STATE.md | 37 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/plan/00-PROGRAMME.md | 270 | Alignment programme |
@@ -170,9 +171,10 @@ document instead of walking the tree or reading whole files.
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
 | scripts/gen-coverage.js | 346 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
-| scripts/gen-knowledge.js | 160 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, |
+| scripts/gen-knowledge.js | 164 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, |
 | scripts/gen-snapshot.js | 148 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
-| supabase/knowledge-coverage.json | 78 |  |
+| supabase/functions/embed/index.ts | 61 |  |
+| supabase/knowledge-coverage.json | 83 |  |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
 | supabase/migrations/20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. Keys mirror |
 | supabase/migrations/20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected |
@@ -219,16 +221,25 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260813230545_portal_review.sql | 285 | ------------------------------------------------------------------ |
 | supabase/migrations/20260813233000_dashboard_summary_portal_waves.sql | 132 | The dashboard's Reviews section now covers both reviews. A wave |
 | supabase/migrations/20260813234500_prototype_ideas.sql | 73 | Prototype ideas and plans (docs/plan/70-PROTOTYPE-IDEAS.md). |
-| supabase/policies.sql | 444 | ------------------------------------------------------------------ |
+| supabase/migrations/20260816112327_work_items_board_view.sql | 35 | ------------------------------------------------------------------ |
+| supabase/migrations/20260816114710_work_item_embeddings.sql | 72 | ------------------------------------------------------------------ |
+| supabase/migrations/20260816114803_pg_net_for_embeddings.sql | 6 | Kept as history: pg_net was enabled here and dropped again three |
+| supabase/migrations/20260816114921_embed_functions.sql | 137 | ------------------------------------------------------------------ |
+| supabase/migrations/20260816115026_embed_over_synchronous_http.sql | 68 | ------------------------------------------------------------------ |
+| supabase/migrations/20260816115048_embed_text_window.sql | 21 | gte-small has a 512-token context and truncates past it, so sending a |
+| supabase/migrations/20260816115506_roadmap_find_semantic_channel.sql | 163 | ------------------------------------------------------------------ |
+| supabase/migrations/20260816115826_embed_batch_of_four.sql | 104 | Two corrections found while writing the schema file, applied so the |
+| supabase/policies.sql | 500 | ------------------------------------------------------------------ |
 | supabase/reference-coverage.json | 80 |  |
-| supabase/schema-snapshot.json | 1240 |  |
+| supabase/schema-snapshot.json | 1311 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
 | supabase/schema/10_reference.sql | 145 | ------------------------------------------------------------------ |
 | supabase/schema/20_portal.sql | 196 | ------------------------------------------------------------------ |
 | supabase/schema/30_work.sql | 449 | ------------------------------------------------------------------ |
-| supabase/schema/31_roadmap_search.sql | 220 | Roadmap search: the contextualisation read surface. |
+| supabase/schema/31_roadmap_search.sql | 289 | Roadmap search: the contextualisation read surface. |
 | supabase/schema/32_roadmap_board.sql | 157 | ------------------------------------------------------------------ |
 | supabase/schema/33_links.sql | 345 | ------------------------------------------------------------------ |
+| supabase/schema/34_embeddings.sql | 239 | ------------------------------------------------------------------ |
 | supabase/schema/40_platform.sql | 78 | ------------------------------------------------------------------ |
 | supabase/schema/45_context.sql | 67 | ------------------------------------------------------------------ |
 | supabase/schema/50_review.sql | 317 | ------------------------------------------------------------------ |
@@ -236,7 +247,7 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/52_portal_review.sql | 249 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 176 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
-| tests/checks/knowledge-drift.test.js | 138 | tests/checks/knowledge-drift.test.js - Keeps what the system was |
+| tests/checks/knowledge-drift.test.js | 142 | tests/checks/knowledge-drift.test.js - Keeps what the system was |
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/perf.test.js | 215 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/reference-drift.test.js | 167 | tests/checks/reference-drift.test.js - Keeps the API reference from |
@@ -256,7 +267,7 @@ document instead of walking the tree or reading whole files.
 | tests/fixtures/services/api-base.token.ts | 24 |  |
 | tests/fixtures/services/bases.service.ts | 61 |  |
 | tests/fixtures/services/shapes.service.ts | 112 |  |
-| tests/knowledge-budget.json | 32 |  |
+| tests/knowledge-budget.json | 34 |  |
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 28 |  |
@@ -859,8 +870,8 @@ document instead of walking the tree or reading whole files.
 | callState() | scripts/gen-coverage.js:151 |
 | reconcile() | scripts/gen-coverage.js:170 |
 | build() | scripts/gen-coverage.js:252 |
-| dig() | scripts/gen-knowledge.js:115 |
-| build() | scripts/gen-knowledge.js:119 |
+| dig() | scripts/gen-knowledge.js:119 |
+| build() | scripts/gen-knowledge.js:123 |
 | sorted() | scripts/gen-snapshot.js:103 |
 | write() | scripts/gen-snapshot.js:113 |
 | seededKinds() | tests/checks/knowledge-links.test.js:22 |

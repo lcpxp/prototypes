@@ -89,15 +89,68 @@ comment on view public.roadmap_searchable is
 -- trigram similarity alone misses it. Bands: see the playbook.
 -- ---------------------------------------------------------------
 
+-- ---------------------------------------------------------------
+-- roadmap_find: the two channels, fused.
+--
+-- docs/KNOWLEDGE-MODEL.md sets two rules this obeys. The result must be
+-- an ABSOLUTE score, because intake bands it to decide whether to speak
+-- at all - reciprocal rank fusion is specifically wrong here, since it
+-- discards magnitude and the None band could not exist under it. And
+-- the channels are FUSED, never swapped: the lexical IDF weighting wins
+-- on rare handles and has to survive intact.
+--
+-- The fusion is greatest(lexical, semantic): a weighted blend with the
+-- weight put where the evidence is, so neither channel can pull the
+-- other down and a row is scored on the best evidence either found.
+--
+-- THE RESCALE, and the numbers are fitted rather than chosen. gte-small
+-- produces normalised vectors whose best-match cosines on this corpus
+-- all sit between 0.83 and 0.94, so raw cosine would flood every band.
+-- The 14 labelled items in docs/ROADMAP-INTAKE.md were replayed against
+-- the embedded corpus, each scored against every row but itself:
+--
+--   0.9420 duplicate   0.8785 distinct    0.8560 new
+--   0.9198 duplicate   0.8697 duplicate   0.8541 new
+--   0.9127 umbrella    0.8696 distinct    0.8277 new (must never fire)
+--   0.9044 duplicate   0.8629 distinct
+--   0.8954 duplicate   0.8627 new
+--   0.8896 new         (its top hit is a genuine neighbour)
+--
+-- 0.860 is the top of the ambient band - the level a genuinely new item
+-- reaches just by being about the same product. 0.054 is the span that
+-- puts 0.8954, the weakest clear duplicate, at exactly 0.65, the bottom
+-- of High. Both live here and nowhere else.
+--
+-- What this does NOT do, measured rather than hoped: it does not fix the
+-- rewording cases. "customer birthday displaying a day earlier than
+-- entered" retrieves its target at rank 1 - which lexical scoring at
+-- 0.265 could not - but at cosine 0.8708, below several genuinely new
+-- items. Semantic RETRIEVAL works on this corpus; semantic BANDING does
+-- not separate a reworded duplicate from new work in the same area. The
+-- honest gain is narrower: one labelled duplicate promoted from Medium
+-- to High, one genuine neighbour from None to Medium, the top
+-- duplicates made unambiguous, and no labelled case made worse.
+--
+-- p_embedding is optional. Passed null, this scores exactly as it did
+-- before the channel existed, which is what makes the change safe to
+-- land: every existing caller keeps its behaviour until it opts in with
+-- public.roadmap_embed_query(query).
+-- ---------------------------------------------------------------
+
+drop function if exists public.roadmap_find(text, int, numeric, uuid);
+
 create or replace function public.roadmap_find(
   query        text,
   p_limit      int     default 8,
   p_min_score  numeric default 0.20,
-  p_exclude_id uuid    default null)
+  p_exclude_id uuid    default null,
+  p_embedding  extensions.vector(384) default null)
 returns table (
   id               uuid,
   title            text,
   score            numeric,
+  lexical          numeric,
+  semantic         numeric,
   level            text,
   status           text,
   horizon          text,
@@ -179,7 +232,15 @@ as $$
         extensions.word_similarity(lower(btrim(query)), lower(s.title))
       )::numeric as trgm,
       (lower(concat_ws(' ', s.title, s.summary, s.details))
-        like '%' || lower(btrim(query)) || '%') as verbatim
+        like '%' || lower(btrim(query)) || '%') as verbatim,
+      -- The affine rescale, fitted above. A row with no vector scores 0
+      -- on this channel rather than being dropped: an unembedded row is
+      -- not a dissimilar row, and it must still be findable lexically.
+      case when p_embedding is null then 0::numeric else coalesce((
+        select greatest(0, least(1,
+                 ((1 - (e.embedding <=> p_embedding))::numeric - 0.860) / 0.054))
+          from public.work_item_embeddings e where e.work_item_id = s.id), 0)
+      end as sem
     from public.roadmap_searchable s
     where p_exclude_id is null or s.id <> p_exclude_id
   ),
@@ -197,23 +258,31 @@ as $$
           + 0.20 * trgm
           + (case when verbatim and (select n_toks from stats) >= 3 then 0.25 else 0 end)
         )
-      ), 3) as score
+      ), 3) as lex
     from scored
   )
   select
-    id, title, score, level, status, horizon, workstream_title, theme_label,
+    id, title,
+    greatest(lex, round(sem, 3)) as score,
+    lex as lexical,
+    round(sem, 3) as semantic,
+    level, status, horizon, workstream_title, theme_label,
     department, assignee, links, resolution,
     is_hollow, summary, details, created_at, updated_at
   from ranked
-  where score >= p_min_score
-  order by score desc, updated_at desc
+  where greatest(lex, sem) >= p_min_score
+  order by greatest(lex, sem) desc, updated_at desc
   limit greatest(1, p_limit);
 $$;
 
-revoke execute on function public.roadmap_find(text, int, numeric, uuid) from public, anon;
-grant  execute on function public.roadmap_find(text, int, numeric, uuid) to authenticated;
+revoke execute on function public.roadmap_find(text, int, numeric, uuid, extensions.vector)
+  from public, anon;
+grant  execute on function public.roadmap_find(text, int, numeric, uuid, extensions.vector)
+  to authenticated;
 
-comment on function public.roadmap_find(text, int, numeric, uuid) is
-  'Ranked roadmap candidates for a free-text request, across title, summary, '
-  'details and resolution of every work_items row. Band the score per '
-  'docs/ROADMAP-PLAYBOOK.md: >=0.65 high, >=0.40 medium, >=0.22 low.';
+comment on function public.roadmap_find(text, int, numeric, uuid, extensions.vector) is
+  'Ranked roadmap candidates for a free-text request. score is greatest(lexical, semantic); '
+  'the two channels are returned separately so a reader can see which one spoke. '
+  'Pass p_embedding from public.roadmap_embed_query(query) to enable the semantic channel; '
+  'omitted, this scores exactly as it did before the channel existed. '
+  'Band the score per docs/ROADMAP-INTAKE.md: >=0.65 high, >=0.40 medium, >=0.22 low.';
