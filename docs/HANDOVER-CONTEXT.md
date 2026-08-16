@@ -5,6 +5,15 @@ because two kinds of work need separating: this repository is code, and
 a code session can derive almost everything from source. What it cannot
 derive is what you know and have not written down. That is this.
 
+Two things the connector has to be, or the session stalls half way:
+**not read-only** - the whole point is writing rows back - and connected
+with the project's own credentials rather than the anon key.
+`roadmap_embed_refresh()` and `roadmap_embed_query()` are revoked from
+`anon` and `authenticated` on purpose (they make outbound HTTP calls and
+block a backend), so they run for the connector and refuse from the
+portal. That is by design; if one of them is refused here, the
+connection is wrong, not the function.
+
 Everything below the line is the prompt. Paste it whole.
 
 The counts in it were measured on 2026-08-15. They will have moved by
