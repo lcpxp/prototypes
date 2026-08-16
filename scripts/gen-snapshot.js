@@ -52,9 +52,21 @@ select jsonb_pretty(jsonb_build_object(
          group by c.table_name
       ) t
   ),
+  -- Views carry their columns too, because a view over a table can
+  -- silently stop matching it: a column added to work_items does not
+  -- appear in work_items_board, which the board reads, and the field
+  -- would simply be undefined on every row. Names only, as for tables.
   'views', (
-    select coalesce(jsonb_agg(table_name order by table_name), '[]'::jsonb)
-      from information_schema.views where table_schema = 'public'
+    select coalesce(jsonb_object_agg(v.table_name, v.cols), '{}'::jsonb)
+      from (
+        select vw.table_name,
+               coalesce((select jsonb_agg(c.column_name order by c.column_name)
+                           from information_schema.columns c
+                          where c.table_schema = vw.table_schema
+                            and c.table_name = vw.table_name), '[]'::jsonb) as cols
+          from information_schema.views vw
+         where vw.table_schema = 'public'
+      ) v
   ),
   'policies', (
     select coalesce(jsonb_agg(

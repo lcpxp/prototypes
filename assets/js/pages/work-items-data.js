@@ -66,6 +66,39 @@
       });
   }
 
+  function loadDetail(item) {
+    return App.db.from(App.registry.tables.workItems)
+      .select("details")
+      .eq("id", item.id)
+      .maybeSingle()
+      .then(function (res) {
+        if (res.error) throw res.error;
+        // A row RLS withheld answers null rather than undefined, so the
+        // drawer caches "nothing to show" instead of asking again on
+        // every open.
+        return res.data ? res.data.details : null;
+      });
+  }
+
+  // What a drawer needs and the board does not carry. One settled pair,
+  // so the drawer paints once rather than twice, and one failed read
+  // fails the pair - the drawer says so instead of showing half of it as
+  // though it were all of it.
+  function loadDrawer(item) {
+    return Promise.all([loadDetail(item), loadNotes(item)])
+      .then(function (parts) {
+        return { details: parts[0], notes: parts[1].notes };
+      });
+  }
+
+  // The backlog modal shows the prose but not the notes, so it asks for
+  // one field rather than paying for a section it does not render.
+  function loadModal(item) {
+    return loadDetail(item).then(function (details) {
+      return { details: details };
+    });
+  }
+
   function loadDetails(items) {
     var todo = pending(items, "details");
     if (!todo.length) return Promise.resolve();
@@ -127,6 +160,8 @@
   }
 
   App.workItemsData = {
+    loadDrawer: loadDrawer,
+    loadModal: loadModal,
     loadNotes: loadNotes,
     loadForExport: loadForExport,
     ranked: ranked,

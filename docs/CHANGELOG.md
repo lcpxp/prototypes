@@ -22,6 +22,16 @@ is the git history; what is unfinished is docs/STATE.md.
   looks complete and is not.
 
 ### Changed
+- The **roadmap and the backlog load 33% less data on every visit**.
+  Both pages were downloading the full write-up of all 268 work items to
+  show one at a time, and the roadmap was downloading every note as
+  well. Neither list shows either: the prose now arrives when a drawer or
+  a modal opens, and 164,936 of the 498,075 bytes a visit fetched are
+  gone. A first-ever visit is 18.8% lighter - lower, because the loading
+  mechanism itself is 14KB of script and styling, which is then cached
+  forever. The drawer still opens instantly and fully populated; the
+  write-up fills a moment later and says it is loading rather than
+  looking as though the item has none.
 - The **roadmap loads faster**. It was downloading every note anchored
   to a work item - 116 of them - to show a handful in one drawer at a
   time. Notes now arrive when a drawer opens, taking 63KB and a whole

@@ -350,25 +350,78 @@ every row already has `details` and the presence guard makes no request
 for it. That is the point of the ordering - the safety net goes in
 before the thing it catches.
 
-### Still to do
+### Landed 2026-08-16: the board view, and the workstream closed
 
-The `work_items_board` view and the lazy `details` fetch: the
-migration, the registry entry, both page fetches pointed at the view,
-`details` added to `lazyKeys`, a three-state `detailsHtml`, and the
-backlog modal. The mechanism and the export safety net are both in
-place, so what remains is wiring.
+`work_items_board` is `work_items` minus `details`, `security_invoker =
+on`, granted to `authenticated` only. Both pages `select("*")` from it,
+so the argument the old comment made survives intact: a column added
+tomorrow still arrives without anyone editing a fetch line.
 
-Why the exports went first, kept as the record of a rule rather than a
-pending task: `details` is written for EVERY exported row by two
-board-wide paths - `flattenItem` in `roadmap-detail-export.js`, which
-`toCsvRoadmap` calls for every row on the board, and the backlog CSV
-record builder, the same shape. Both run over the whole set, not one
-open item, so neither is covered by the drawer's lazy load. Taking
-`details` off the page load first would have left a window where every
-export was quietly broken.
+**The trap in that design, and what was done about it.** A view freezes
+its column list at creation. `select <every column except details>` does
+not track the table - so a column added to `work_items` next month would
+be absent from the view, and the page would read `undefined` for it: a
+field that looks empty rather than missing, on every row, with nothing
+failing. Moving the list from JavaScript into SQL puts it where the
+person adding a column is already working, which helps, but it is still
+a hope.
+
+So the snapshot now records each view's columns as well as each table's,
+and `schema-drift.test.js` compares the two. A deliberate omission is one
+line in `NARROWING_VIEWS` with its reason; an accidental one fails the
+gate. Verified by removing `assignee` from the view's snapshot entry and
+watching it fail, then restoring it.
+
+Why the exports went first, kept as the record of a rule: `details` is
+written for EVERY exported row by two board-wide paths - `flattenItem`
+in `roadmap-detail-export.js` and the backlog CSV record builder. Both
+run over the whole set, not one open item, so neither is covered by the
+drawer's lazy load. Taking `details` off the page load first would have
+left a window where every export was quietly broken.
 
 The per-item JSON export was already safe: it chains onto the in-flight
 load (`inFlight.then`), which the perf gate holds.
+
+The skeleton moved to `assets/css/skeleton.css` when the backlog modal
+became the second surface to need it. `components.css` is at its hard
+budget and a copy in each page stylesheet is how two placeholders drift
+apart.
+
+#### Measured, 2026-08-16
+
+All figures taken the same day against the same data, so both sides are
+comparable to each other. Payload sizes are the JSON PostgREST
+serialises, measured server-side; asset sizes are from disk, with the
+"before" set being the 32 files the page loaded before this workstream
+started, at their current contents.
+
+| | before | after |
+| --- | --- | --- |
+| `work_items` request | 388,488 | 286,068 (the view) |
+| `work_notes` request | 62,516 | 0, the request is gone |
+| the other six requests | 47,071 | 47,071 |
+| **data per visit** | **498,075** | **333,139** |
+| assets | 298,532 (32 files) | 312,442 (35 files) |
+| page HTML | 6,925 | 7,130 |
+| **first-ever visit** | **803,532** | **652,711** |
+
+**33.1% off every visit's data, 18.8% off a first-ever cold load.**
+
+The gap between those two numbers is the mechanism paying for itself:
+`lazy-detail.js`, `work-items-data.js` and `skeleton.css` add 13,910
+bytes of assets. Those are cached after the first visit; the data is
+fetched on every one. So the 25% target is beaten comfortably on the
+repeat visit and missed on the very first one, and that is the honest
+way round to state it rather than picking whichever number clears the
+bar.
+
+Request count moved the same way: one fewer data request, three more
+asset requests, and the asset ones are cacheable.
+
+Gzipped assets went 100,498 to 105,929. The compressed payload figure
+still needs the DevTools run - `details` is prose and compresses far
+less than the JSON key repetition around it, so the compressed saving
+should be a **larger** share than 33.1%, but that remains a prediction.
 
 ## How to verify the 25%
 

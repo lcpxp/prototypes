@@ -351,8 +351,8 @@
     var openDrawer = App.roadmapDrawer({
       lookup: function (id) { return itemsById[id]; },
       getCtx: function () { return ctx; },
-      lazyKeys: ["notes"],
-      load: App.workItemsData.loadNotes,
+      lazyKeys: ["details", "notes"],
+      load: App.workItemsData.loadDrawer,
       download: function (item) {
         App.roadmapExport.downloadJson(
           "roadmap-item-" + App.roadmapExport.safeName(item.title) + ".json",
@@ -415,13 +415,19 @@
       App.db.from(App.registry.tables.workAreas)
         .select("id, key, title, scope, category_id, sort_order")
         .order("sort_order", { ascending: true }),
-      App.db.from(App.registry.tables.workItems)
+      App.db.from(App.registry.tables.workItemsBoard)
         // The drawer renders every column it is handed and names the
         // ones it does not lay out by hand (App.detail.facts), so the
-        // fetch has no reason to be narrower than the table. The
-        // hand-written list this replaces named all 39 columns anyway -
-        // same payload, but a column added tomorrow now arrives instead
-        // of needing this line edited before it could ever be seen.
+        // fetch stays select("*") - a column added tomorrow arrives
+        // instead of needing this line edited before it could be seen.
+        //
+        // What it selects from is the view rather than the table: the
+        // view is work_items without details, which is 102,956 bytes of
+        // prose that only ever appears in one drawer at a time. The
+        // column decision lives in SQL beside the schema, where a
+        // migration is already being written whenever a column is
+        // added, and schema-drift.test.js fails if the two diverge.
+        // docs/plan/80-LOAD-SPEED.md.
         .select("*")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),

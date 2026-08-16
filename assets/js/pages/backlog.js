@@ -67,7 +67,10 @@
   // Pure builders: row plus a lookup context, HTML out, no DOM. That is
   // what lets tests/unit/backlog-detail.test.js hold them.
   // names = { areaTitle, docTitle }
-  function itemFactsHtml(item, names) {
+  // `state` is App.lazyDetail's: "ready", "waiting" or "failed". It only
+  // reaches the details row; everything else on the modal was on the row
+  // the list already had.
+  function itemFactsHtml(item, names, state) {
     names = names || {};
     var areas = names.areaTitle || {};
     var docs = names.docTitle || {};
@@ -83,7 +86,19 @@
         { key: "status", label: "Status", html: function (v) { return App.statusBadge(v); } },
         { key: "priority", label: "Priority" },
         { key: "summary", label: "Summary" },
-        { key: "details", label: "Details" },
+        // Three states. details is not on the row the list loaded - it
+        // arrives when this modal opens - so an absent row and a row
+        // with no write-up have to look different. App.detail.facts
+        // drops a field whose builder returns "", which is what keeps
+        // the ready-and-empty case a clean omission.
+        { key: "details", label: "Details", html: function (v) {
+          if (state === "waiting") {
+            return '<span class="skeleton skeleton--inline" aria-hidden="true">' +
+              "<span></span><span></span></span>";
+          }
+          if (state === "failed") return "Couldn't load - reopen to try again.";
+          return App.escape(v == null ? "" : v);
+        } },
         { key: "external_ref", label: "External ref" },
         { key: "requested_by", label: "Requested by" },
         { key: "_source", label: "Source",
@@ -125,10 +140,24 @@
 
   function names() { return { areaTitle: areaTitle, docTitle: docTitle }; }
 
+  // The modal's prose arrives when it opens, not on page load.
+  // App.lazyDetail owns the timing, the presence guard and the
+  // stale-response guard; this only says what to paint.
+  var paintItem = null;
   function openItemModal(item) {
-    modalTitle.textContent = item.title;
-    modalBody.innerHTML = itemFactsHtml(item, names());
+    if (!paintItem) {
+      paintItem = App.lazyDetail({
+        keys: ["details"],
+        load: App.workItemsData.loadModal,
+        paint: function (row, state) {
+          modalTitle.textContent = row.title;
+          modalBody.innerHTML = itemFactsHtml(row, names(), state);
+        },
+      });
+    }
+    var loading = paintItem(item);
     modal.showModal();
+    return loading;
   }
 
   function openDocumentModal(doc) {
@@ -305,8 +334,13 @@
           "tags, supersedes_id, created_at, updated_at")
         .order("captured_on", { ascending: false }),
       App.db
-        .from(App.registry.tables.workItems)
-        // The modal renders everything on the row (App.detail.facts).
+        .from(App.registry.tables.workItemsBoard)
+        // The modal renders everything on the row (App.detail.facts), so
+        // the fetch stays select("*") - but of the view rather than the
+        // table. The view is work_items without details, which is
+        // paragraphs of prose per row for a list that shows every row
+        // and a modal that shows one. openItemModal fetches it when a
+        // modal opens. docs/plan/80-LOAD-SPEED.md.
         .select("*")
         .order("priority", { ascending: true })
         .order("sort_order", { ascending: true }),

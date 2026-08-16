@@ -411,6 +411,31 @@ grant execute on function public.roadmap_find(text, int, numeric, uuid)
   to authenticated;
 
 -- ---------------------------------------------------------------
+-- Roadmap board surface (schema/32_roadmap_board.sql).
+--
+-- work_items_board is work_items without details - the row the roadmap
+-- board and the backlog list actually read (docs/plan/80-LOAD-SPEED.md).
+--
+-- A VIEW IS NOT COVERED BY ITS BASE TABLE'S POLICIES. What makes this
+-- one inherit them is `with (security_invoker = on)` in its definition:
+-- the view executes as the caller, so every read is filtered by the
+-- "work_items: members read" policy above. Without that option the view
+-- would run as its owner, which bypasses RLS entirely and would publish
+-- all 268 rows to anyone holding the anon key. Never create a view over
+-- a policy-protected table without it.
+--
+-- The grant is the second layer and holds on its own: anon has no
+-- select on this view at all, so an unauthenticated request is refused
+-- before RLS is consulted. Same treatment as roadmap_searchable.
+--
+-- roadmap_current is granted to anon as well and stays that way: it is
+-- the read entry point for an operating session and exposes no prose.
+-- ---------------------------------------------------------------
+
+revoke all on public.work_items_board from public, anon;
+grant select on public.work_items_board to authenticated;
+
+-- ---------------------------------------------------------------
 -- After running this file, promote your own account to admin:
 --
 --   update public.profiles set role = 'admin'

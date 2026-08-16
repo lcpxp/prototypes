@@ -103,6 +103,12 @@
       roadmapCategories: "roadmap_categories",
       roadmapMilestones: "roadmap_milestones",
       workItems: "work_items",
+      // work_items without details - the row the roadmap board and the
+      // backlog list read. The prose is fetched when a drawer opens and
+      // in bulk when an export is pressed (App.workItemsData). A
+      // security_invoker view, so reads are filtered by the work_items
+      // policy. docs/plan/80-LOAD-SPEED.md.
+      workItemsBoard: "work_items_board",
       knowledgeLinks: "knowledge_links",
       workDocuments: "work_documents",
       workNotes: "work_notes",

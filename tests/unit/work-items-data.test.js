@@ -31,6 +31,7 @@ function fakeDb(reply) {
         in(col, ids) { q.filters[col] = ids.slice(); return chain; },
         eq(col, value) { q.filters[col] = value; return chain; },
         order(col, opts) { q.order = [col, opts]; return chain; },
+        maybeSingle() { q.single = true; return chain; },
         then(resolve, reject) {
           return Promise.resolve().then(() => reply(q)).then(resolve, reject);
         },
@@ -171,4 +172,47 @@ test("a drawer's notes read is scoped to the one open item", async () => {
   assert.equal(sent[0].table, tables.workNotes);
   assert.equal(sent[0].filters.work_item_id, "a");
   assert.deepEqual(out.notes.map((n) => n.body), ["live", "resolved"]);
+});
+
+test("a drawer asks for the prose and the notes together", async () => {
+  const { data, sent, tables } = load((q) =>
+    (q.table === tables.workItems
+      ? { data: { details: "the write-up" } }
+      : { data: [{ work_item_id: "a", body: "n", status: "active" }] }));
+  const out = await data.loadDrawer({ id: "a" });
+  assert.deepEqual(sent.map((q) => q.table).sort(),
+    [tables.workItems, tables.workNotes].sort());
+  assert.equal(sent.find((q) => q.table === tables.workItems).filters.id, "a");
+  assert.equal(out.details, "the write-up");
+  assert.deepEqual(plain(out.notes).map((n) => n.body), ["n"]);
+});
+
+test("a drawer read that fails on either half fails the pair", async () => {
+  // Half a drawer shown as though it were all of it is the failure: the
+  // notes section would read "none recorded" while the prose loaded.
+  const { data, tables } = load((q) =>
+    (q.table === tables.workNotes
+      ? { error: { message: "denied" } }
+      : { data: { details: "d" } }));
+  await assert.rejects(() => data.loadDrawer({ id: "a" }));
+});
+
+test("a modal asks for the prose only", async () => {
+  // The backlog modal renders no notes section, so it must not pay for
+  // one.
+  const { data, sent, tables } = load(() => ({ data: { details: "d" } }));
+  const out = await data.loadModal({ id: "a" });
+  assert.deepEqual(sent.map((q) => q.table), [tables.workItems]);
+  assert.equal(sent[0].select, "details");
+  assert.deepEqual(plain(out), { details: "d" });
+});
+
+test("a row the drawer cannot see answers null, not undefined", async () => {
+  // maybeSingle returns no row when RLS withholds it. Answering
+  // undefined would leave the key unset, and App.lazyDetail would fetch
+  // it again on every open, forever.
+  const { data } = load(() => ({ data: null }));
+  const out = await data.loadModal({ id: "a" });
+  assert.equal(out.details, null);
+  assert.equal(Object.prototype.hasOwnProperty.call(plain(out), "details"), true);
 });

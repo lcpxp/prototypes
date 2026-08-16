@@ -251,7 +251,26 @@
     }
     return { lead: text.slice(0, matches[0].labelStart).trim(), sections: sections };
   }
-  function detailsHtml(item) {
+  // Three states, like notesHtml and for the same reason: the prose
+  // arrives when the drawer opens rather than on page load, so an empty
+  // region has to be distinguishable from one that has not arrived. Here
+  // it matters more than it does for notes - an item with no write-up is
+  // common, so a blank gap reads as a fact about the item rather than as
+  // a moment in the load.
+  //
+  // The skeleton is unlabelled because the region has no heading of its
+  // own: the prose sits directly under the summary. A screen reader gets
+  // the visually-hidden line instead.
+  function detailsHtml(item, state) {
+    if (state === "waiting") {
+      return '<div class="skeleton" aria-hidden="true">' +
+        "<span></span><span></span><span></span></div>" +
+        '<p class="visually-hidden">Loading the detail</p>';
+    }
+    if (state === "failed") {
+      return '<p class="notice tone-warn">Couldn\'t load the detail - ' +
+        "try reopening.</p>";
+    }
     if (!item.details) return "";
     var parsed = parseDetails(item.details);
     if (!parsed) return '<p class="rmd-details">' + esc(item.details) + "</p>";
@@ -294,7 +313,7 @@
   function notesHtml(item, state) {
     if (state === "waiting") {
       return '<section class="rmd-section"><h3>Notes and decisions</h3>' +
-        '<div class="rmd-skeleton" aria-hidden="true">' +
+        '<div class="skeleton" aria-hidden="true">' +
         '<span></span><span></span><span></span></div>' +
         '<p class="visually-hidden">Loading notes</p></section>';
     }
@@ -449,7 +468,7 @@
         '<div class="rm-card-progress rmv-prog-' + prog.bucket +
         '" role="img" aria-label="Progress: ' + esc(prog.label) + '"><span></span></div></div>' +
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
-      detailsHtml(item) +
+      detailsHtml(item, state) +
       facts +
       itemsSection +
       deliverablesSection +

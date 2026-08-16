@@ -172,6 +172,10 @@
       "hard": 500,
       "note": "Over soft (339). The surfacing workstream: the completeness contract, the typed-block vocabulary and the four ways a value can be covered, which the render-coverage gate enforces directly. Exit plan: fold the landed sections into an outcome once the load-speed work (80) has settled, since that touches the same renderers."
     },
+    "docs/plan/80-LOAD-SPEED.md": {
+      "hard": 500,
+      "note": "Over soft (450). The load-speed workstream, now closed: the established facts, the three corrections to the brief it was written from, the design, the regression phase one shipped and how it was found, and the before/after measurements for both phases. Much of the length is the record of where the plan was wrong, which is the part a later wave needs. Exit plan: on the next release, fold the two landed sections into a short outcome and keep the measurements table and the regression note."
+    },
     "docs/plan/60-PORTAL-REVIEW.md": {
       "hard": 500,
       "note": "Over soft (339). The portal-review workstream: the wave lifecycle, the 39-area map and the triage protocol. docs/PORTAL-REVIEW.md is the operating protocol and this is the build record, so the two are not duplicates. Exit plan: fold the build record into an outcome once a second wave has been run and the method has stopped changing."

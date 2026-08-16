@@ -74,9 +74,50 @@ test("every live column is declared somewhere in supabase/schema/", () => {
 
 test("every live view is created by a schema file", () => {
   const text = schemaText();
-  for (const view of snapshot.views) {
+  for (const view of Object.keys(snapshot.views)) {
     assert.match(text, new RegExp(`create view public\\.${view}\\b`),
       `view ${view} exists live but no schema file creates it`);
+  }
+});
+
+// A view over a table freezes its column list at creation. So a column
+// added to work_items does NOT appear in work_items_board, and the page
+// reading the view gets undefined for it - a field that looks empty
+// rather than missing, on every row, with nothing failing. The list
+// lives in SQL beside the schema so the person adding a column is
+// already in the right file; this makes that mechanical rather than
+// hopeful.
+//
+// Each entry names its base table and exactly what it leaves out. A
+// deliberate omission is one line here; an accidental one fails.
+const NARROWING_VIEWS = {
+  work_items_board: {
+    base: "work_items",
+    omits: ["details"],
+    why: "paragraphs of prose, 46.6% of the table by size and shown one " +
+      "drawer at a time - fetched lazily (docs/plan/80-LOAD-SPEED.md)",
+  },
+};
+
+test("a view that narrows a table carries every column it does not omit", () => {
+  for (const [view, spec] of Object.entries(NARROWING_VIEWS)) {
+    const viewCols = snapshot.views[view];
+    const baseCols = snapshot.tables[spec.base];
+    assert.ok(viewCols, `view ${view} is not in the snapshot. ${REGEN}`);
+    assert.ok(baseCols, `table ${spec.base} is not in the snapshot. ${REGEN}`);
+    const expected = baseCols.filter((c) => !spec.omits.includes(c));
+    const missing = expected.filter((c) => !viewCols.includes(c));
+    assert.deepEqual(missing, [],
+      `${spec.base} has columns that ${view} does not carry:\n  ` +
+      missing.join("\n  ") +
+      `\nAdd them to the view (supabase/schema/) with a migration, or - if ` +
+      `the omission is deliberate - name them in NARROWING_VIEWS here with ` +
+      `the reason. A page reading ${view} sees an omitted column as an empty ` +
+      `field on every row, and nothing fails.`);
+    const omitted = spec.omits.filter((c) => viewCols.includes(c));
+    assert.deepEqual(omitted, [],
+      `${view} carries ${omitted.join(", ")}, which it exists to leave out: ` +
+      spec.why);
   }
 });
 

@@ -86,11 +86,18 @@ test("RLS policies never use \"for all\"", () => {
 // which works, silently costs the saving, and nothing else would fail.
 // ------------------------------------------------------------------
 
-test("the roadmap page load does not fetch notes", () => {
-  const src = read("assets/js/pages/roadmap.js");
-  assert.doesNotMatch(src, /tables\.workNotes/,
-    "roadmap.js must not read work_notes on page load - nothing on the board " +
-    "shows them. The drawer fetches one item's worth via App.roadmapData.loadNotes.");
+test("neither list page loads the prose or the notes", () => {
+  for (const file of ["assets/js/pages/roadmap.js", "assets/js/pages/backlog.js"]) {
+    const src = read(file);
+    assert.doesNotMatch(src, /tables\.workNotes/,
+      `${file} must not read work_notes on page load - nothing in either list ` +
+      "shows them. App.workItemsData fetches one item's worth when a drawer opens.");
+    assert.doesNotMatch(src, /tables\.workItems\b/,
+      `${file} must read tables.workItemsBoard, not the table: the view is ` +
+      "work_items without details, which is 102,956 bytes of prose shown one " +
+      "drawer at a time. docs/plan/80-LOAD-SPEED.md.");
+    assert.match(src, /tables\.workItemsBoard/, `${file} reads the board view`);
+  }
 });
 
 test("the notes a drawer needs are fetched for one item, not all of them", () => {
@@ -153,14 +160,36 @@ test("the export builders stay pure, so the fetch cannot hide inside one", () =>
   }
 });
 
-test("a lazily loaded region tells the reader which of three states it is in", () => {
-  // An empty section reads as "none recorded", which is a lie for the
-  // ~50ms it is wrong. The renderer has to be able to say "not yet".
-  const src = read("assets/js/pages/roadmap-detail.js");
-  assert.match(src, /function notesHtml\(item, state\)/);
-  for (const state of ["waiting", "failed"]) {
-    assert.ok(src.includes('=== "' + state + '"'),
-      `notesHtml must handle the ${state} state explicitly`);
+test("every lazily loaded region tells the reader which of three states it is in", () => {
+  // An empty region reads as "none recorded", which is a lie for the
+  // ~50ms it is wrong. Each renderer has to be able to say "not yet".
+  // It matters most for details: an item with no write-up is common, so
+  // a blank gap reads as a fact about the item rather than a moment in
+  // the load.
+  const surfaces = [
+    ["assets/js/pages/roadmap-detail.js", /function notesHtml\(item, state\)/],
+    ["assets/js/pages/roadmap-detail.js", /function detailsHtml\(item, state\)/],
+    ["assets/js/pages/backlog.js", /function itemFactsHtml\(item, names, state\)/],
+  ];
+  for (const [file, signature] of surfaces) {
+    const src = read(file);
+    assert.match(src, signature, `${file}: the builder must take the state`);
+    for (const state of ["waiting", "failed"]) {
+      assert.ok(src.includes('=== "' + state + '"'),
+        `${file} must handle the ${state} state explicitly`);
+    }
+  }
+});
+
+test("both lazy surfaces go through the one loader", () => {
+  // App.lazyDetail owns four rules the wiring would otherwise get wrong
+  // per surface: presence not truthiness, no placeholder before 40ms, a
+  // placeholder that appeared holds 150ms, and a superseded open never
+  // paints. Two hand-rolled copies is how one of them gets dropped.
+  for (const file of ["assets/js/pages/roadmap-drawer.js",
+    "assets/js/pages/backlog.js"]) {
+    assert.match(read(file), /App\.lazyDetail\(/,
+      `${file}: lazy loading goes through the shared mechanism`);
   }
 });
 
@@ -173,7 +202,13 @@ test("the item export waits for the fetch it depends on", () => {
 });
 
 test("the skeleton stands down for anyone who asked for less motion", () => {
-  const css = read("assets/css/roadmap-detail.css");
+  // In its own stylesheet rather than a page one: the roadmap drawer
+  // and the backlog modal both lazily load the same column, and two
+  // copies of one placeholder is how they drift apart.
+  const css = read("assets/css/skeleton.css");
+  assert.match(css, /\.skeleton\b/);
   assert.match(css, /prefers-reduced-motion/);
-  assert.match(css, /\.rmd-skeleton/);
+  const reduced = css.slice(css.lastIndexOf("prefers-reduced-motion"));
+  assert.match(reduced, /animation: none/,
+    "the shimmer must stop, not just slow down");
 });
