@@ -159,7 +159,17 @@ When we have worked through what I have patience for:
    and it can never silently climb back.
 2. Tell me what is still open, and what you asked that I did not answer -
    that list is as valuable as the answers.
-3. Do not update `docs/STATE.md` or anything else in the repository.
+3. Run `select * from roadmap_embed_refresh();` as the last thing you
+   do, and tell me what it returned. Every work item carries a meaning
+   vector computed from its title, summary, details and resolution -
+   so every summary you write leaves that item's vector describing text
+   that no longer exists. It keeps answering searches with the old
+   meaning and nothing looks wrong. The function is idempotent and
+   knows which rows changed, so running it costs one query if nothing
+   is stale. `embeddings.stale` is held at zero by a gate in the
+   repository, so skipping this is caught - but caught later, by
+   someone else, which is worse than doing it here.
+4. Do not update `docs/STATE.md` or anything else in the repository.
    You do not have it; a code session does. Give me the summary and I
    will carry it across.
 
