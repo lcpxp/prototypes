@@ -344,3 +344,41 @@
 .rmd-note-date { margin-inline-start: auto; }
 .rmd-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-5); }
 body.rmd-open { overflow: hidden; }
+
+/* Skeleton for a detail region whose content arrives when the drawer
+   opens rather than on page load. Three bars roughly the shape of a
+   note, so the drawer keeps its height and nothing jumps when the text
+   lands. It only ever appears if the fetch is slow enough to notice -
+   App.lazyDetail holds it back 40ms - which is why it is allowed to
+   move at all. */
+.rmd-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3) 0;
+}
+.rmd-skeleton span {
+  height: 0.75rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg, var(--line) 25%, var(--line-strong) 37%, var(--line) 63%);
+  background-size: 400% 100%;
+  animation: rmd-shimmer 1.4s ease-in-out infinite;
+}
+.rmd-skeleton span:nth-child(1) { width: 92%; }
+.rmd-skeleton span:nth-child(2) { width: 78%; }
+.rmd-skeleton span:nth-child(3) { width: 55%; }
+
+@keyframes rmd-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* A moving placeholder is worse than a still one for anyone who asked
+   for less motion, so it becomes a plain muted block. */
+@media (prefers-reduced-motion: reduce) {
+  .rmd-skeleton span {
+    animation: none;
+    background: var(--line);
+  }
+}

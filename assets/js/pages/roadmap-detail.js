@@ -287,7 +287,22 @@
     return '<div class="rmd-note-row' + (st ? " rmd-note-row--muted" : "") +
       '"><div class="rmd-note-meta">' + meta + "</div><p>" + esc(n.body) + "</p></div>";
   }
-  function notesHtml(item) {
+  // Three states, not two. Notes arrive when the drawer opens rather
+  // than on page load, so "none recorded" and "not here yet" have to
+  // look different - an empty section reads as the former and would be
+  // a lie for the ~50ms it is wrong.
+  function notesHtml(item, state) {
+    if (state === "waiting") {
+      return '<section class="rmd-section"><h3>Notes and decisions</h3>' +
+        '<div class="rmd-skeleton" aria-hidden="true">' +
+        '<span></span><span></span><span></span></div>' +
+        '<p class="visually-hidden">Loading notes</p></section>';
+    }
+    if (state === "failed") {
+      return '<section class="rmd-section"><h3>Notes and decisions</h3>' +
+        '<p class="notice tone-warn">Couldn\'t load the notes - try reopening.</p>' +
+        "</section>";
+    }
     var notes = item.notes || [];
     if (!notes.length) return "";
     return '<section class="rmd-section"><h3>Notes and decisions</h3>' +
@@ -406,7 +421,10 @@
     });
   }
 
-  function drawerHtml(item, ctx) {
+  // `state` is the lazy loader's: "ready", "waiting" or "failed".
+  // Absent means ready, so every existing caller and benchmark keeps
+  // working and only the drawer has to know the field arrives late.
+  function drawerHtml(item, ctx, state) {
     var V = App.roadmapView;
     var prog = V.progressOf(item);
     var a = attrs(item);
@@ -440,7 +458,7 @@
       note("PXP value", a.pxp_value) +
       note("Blockers and dependencies", a.blockers) +
       note("Resolution" + (resolvedOn ? " (" + resolvedOn + ")" : ""), item.resolution) +
-      notesHtml(item) +
+      notesHtml(item, state) +
       '<div class="rmd-actions">' + prd +
       '<button class="button" type="button" id="rmd-export">Export JSON</button></div>';
   }

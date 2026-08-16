@@ -239,6 +239,50 @@ than a server-side measurement to settle:
 So the 25% target is plausible on compressed bytes and not established
 on uncompressed ones. Record both when the change lands.
 
+## Landed 2026-08-15: notes off the page load
+
+The first of the two payloads, and the one needing no migration. The
+roadmap no longer fetches `work_notes` at all; the drawer fetches one
+item's worth when it opens.
+
+**63,098 bytes of 772,987 - 8.2% of the uncompressed cold load**, with
+the remaining 102,956 (`details`, 13.3%) still to come behind the
+board view. One fewer request on the critical path as well as fewer
+bytes: the notes read is gone entirely rather than narrowed.
+
+`assets/js/pages/lazy-detail.js` is the mechanism, and it is the part
+worth reusing rather than the wiring. It owns four decisions:
+
+- **Loaded is presence, not truthiness.** An item whose notes are
+  genuinely empty is loaded. Guarding on truthiness re-fetches it on
+  every open, forever, and nothing ever looks wrong.
+- **No placeholder before 40ms.** Most of these land in 20-60ms and a
+  spinner that flashes and vanishes reads as a glitch.
+- **A placeholder that appeared holds 150ms.** Otherwise a fetch
+  resolving just after it went up produces the flicker the delay
+  existed to prevent.
+- **A superseded open never paints.** Open A, open B before A returns,
+  and A's answer is cached onto A but does not touch the surface. The
+  guard is on the open, not the item, so reopening the SAME item also
+  supersedes.
+
+Eleven benchmarks, timer injected so every one is an assertion rather
+than a sleep. Three were verified by breaking the rule they hold.
+
+`notesHtml` renders three states, because an empty section reads as
+"none recorded" and that is a lie for the ~50ms it is wrong. The
+skeleton drops to a static block under `prefers-reduced-motion`. The
+per-item export chains onto the in-flight load, so exporting a drawer
+opened a moment ago cannot write a file with the notes missing.
+
+`roadmap.js` hit its hard budget doing this, so it took the exit plan
+its own note had been carrying: `roadmap-data.js` now exists and holds
+the per-item reads, starting with the note ordering rule.
+
+**Still to do:** the `work_items_board` view and the lazy `details`
+fetch. The mechanism is now in place, so that is the migration, the
+registry entry, adding `details` to `lazyKeys`, and the backlog modal.
+
 ## How to verify the 25%
 
 Record a baseline **before** changing anything. DevTools → Network →

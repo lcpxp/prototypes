@@ -74,3 +74,54 @@ test("RLS policies never use \"for all\"", () => {
       `${file}: replace "for all" policies with separate insert/update/delete.`);
   }
 });
+
+// ------------------------------------------------------------------
+// The board fetch. docs/plan/80-LOAD-SPEED.md: the roadmap downloaded
+// the prose of every item and every note to display one item's worth
+// at a time. Notes came off the page load on 2026-08-15, worth 63,098
+// bytes of the 772,987 a cold load moved.
+//
+// This is a source-level guard because the instinct next time someone
+// edits that fetch is to add the table back "so the drawer has it" -
+// which works, silently costs the saving, and nothing else would fail.
+// ------------------------------------------------------------------
+
+test("the roadmap page load does not fetch notes", () => {
+  const src = read("assets/js/pages/roadmap.js");
+  assert.doesNotMatch(src, /tables\.workNotes/,
+    "roadmap.js must not read work_notes on page load - nothing on the board " +
+    "shows them. The drawer fetches one item's worth via App.roadmapData.loadNotes.");
+});
+
+test("the notes a drawer needs are fetched for one item, not all of them", () => {
+  const src = read("assets/js/pages/roadmap-data.js");
+  assert.match(src, /tables\.workNotes/, "the loader is where the read belongs");
+  assert.match(src, /\.eq\("work_item_id"/,
+    "scoped to the open item - an unfiltered read here would put the whole " +
+    "payload back on the first drawer open instead of on page load");
+});
+
+test("a lazily loaded region tells the reader which of three states it is in", () => {
+  // An empty section reads as "none recorded", which is a lie for the
+  // ~50ms it is wrong. The renderer has to be able to say "not yet".
+  const src = read("assets/js/pages/roadmap-detail.js");
+  assert.match(src, /function notesHtml\(item, state\)/);
+  for (const state of ["waiting", "failed"]) {
+    assert.ok(src.includes('=== "' + state + '"'),
+      `notesHtml must handle the ${state} state explicitly`);
+  }
+});
+
+test("the item export waits for the fetch it depends on", () => {
+  // Exporting a drawer opened a moment ago must not write a file with
+  // the notes missing. A silently empty field in an export is data loss.
+  const src = read("assets/js/pages/roadmap-drawer.js");
+  assert.match(src, /inFlight\.then\(function \(\) \{ deps\.download\(item\); \}\)/,
+    "the export must be chained onto the in-flight load, not fired beside it");
+});
+
+test("the skeleton stands down for anyone who asked for less motion", () => {
+  const css = read("assets/css/roadmap-detail.css");
+  assert.match(css, /prefers-reduced-motion/);
+  assert.match(css, /\.rmd-skeleton/);
+});

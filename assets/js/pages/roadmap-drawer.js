@@ -34,17 +34,38 @@
       window.history.replaceState(null, "", url.href);
     }
 
+    // The heavy fields arrive when the drawer opens, not on page load.
+    // App.lazyDetail owns the timing and the stale-response guard; this
+    // only says what to paint. deps.load(item) does the fetch.
+    var inFlight = Promise.resolve();
+    var paint = App.lazyDetail({
+      keys: deps.lazyKeys || [],
+      load: deps.load || function () { return Promise.resolve({}); },
+      paint: function (item, state) {
+        if (!drawerBody) return;
+        drawerBody.innerHTML = App.roadmapDetail.drawerHtml(item, deps.getCtx(), state);
+        var itemExport = document.getElementById("rmd-export");
+        // Rebound on every paint because the markup is replaced, and it
+        // waits on the fetch: exporting a drawer opened a moment ago
+        // must not write a file with the notes missing.
+        if (itemExport) {
+          itemExport.addEventListener("click", function () {
+            inFlight.then(function () { deps.download(item); });
+          });
+        }
+      },
+    });
+
     function openDrawer(item) {
       if (!drawer || !drawerBody) return;
-      drawerBody.innerHTML = App.roadmapDetail.drawerHtml(item, deps.getCtx());
+      inFlight = paint(item);
       lastFocus = document.activeElement;
       drawer.hidden = false;
       if (scrim) scrim.hidden = false;
       document.body.classList.add("rmd-open");
       setItemParam(item.id);
-      var itemExport = document.getElementById("rmd-export");
-      if (itemExport) itemExport.addEventListener("click", function () { deps.download(item); });
       if (closeBtn) closeBtn.focus();
+      return inFlight;
     }
     function closeDrawer() {
       if (drawer) drawer.hidden = true;

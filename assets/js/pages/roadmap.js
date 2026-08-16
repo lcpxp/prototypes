@@ -351,6 +351,8 @@
     var openDrawer = App.roadmapDrawer({
       lookup: function (id) { return itemsById[id]; },
       getCtx: function () { return ctx; },
+      lazyKeys: ["notes"],
+      load: App.roadmapData.loadNotes,
       download: function (item) {
         App.roadmapExport.downloadJson(
           "roadmap-item-" + App.roadmapExport.safeName(item.title) + ".json",
@@ -426,13 +428,10 @@
       App.db.from(App.registry.tables.workItemPhases)
         .select("work_item_id, phase, quarter, starts_on, ends_on, start_tbc, end_tbc, sort_order")
         .order("sort_order", { ascending: true }),
-      // Notes carry their status so the drawer can mark a resolved question
-      // or a superseded decision, rather than silently dropping or (worse)
-      // showing replaced context as current. Active first, then the rest.
-      App.db.from(App.registry.tables.workNotes)
-        .select("work_item_id, kind, body, status, created_at")
-        .not("work_item_id", "is", null)
-        .order("created_at", { ascending: false }),
+      // Notes are NOT fetched here. Nothing on the board reads them -
+      // only the drawer does, one item at a time - and carrying all 182
+      // put 63KB on every page load to show a handful. loadNotes below
+      // fetches them when a drawer opens. docs/plan/80-LOAD-SPEED.md.
       // Source-document titles for the provenance link (read gated on
       // backlog access, so a denied fetch just leaves the field blank).
       App.db.from(App.registry.tables.workDocuments)
@@ -468,23 +467,9 @@
     phases.forEach(function (p) {
       (phasesByItem[p.work_item_id] = phasesByItem[p.work_item_id] || []).push(p);
     });
-    // Notes: active entries lead, then resolved/superseded, each kept in
-    // its recency order, so replaced context sits below the current record.
-    var notes = results[4] && !results[4].error ? results[4].data || [] : [];
-    var STATUS_RANK = { active: 0 };
-    var notesByItem = {};
-    notes.forEach(function (n) {
-      (notesByItem[n.work_item_id] = notesByItem[n.work_item_id] || []).push(n);
-    });
-    Object.keys(notesByItem).forEach(function (id) {
-      notesByItem[id].sort(function (a, b) {
-        return (STATUS_RANK[a.status] != null ? 0 : 1) - (STATUS_RANK[b.status] != null ? 0 : 1);
-      });
-    });
     itemsById = {};
     data.items.forEach(function (i) {
       i.phases = phasesByItem[i.id] || [];
-      i.notes = notesByItem[i.id] || [];
       itemsById[i.id] = i;
     });
     // Split delivered work into Recently/Previously completed by stamping
@@ -494,10 +479,10 @@
     // Enrich the shared context with lookups the drawer needs: a document
     // title map for the source-document link, and a per-assignee item count
     // so the ownership line can read "Xavier - 1st of 5".
-    var docs = results[5] && !results[5].error ? results[5].data || [] : [];
+    var docs = results[4] && !results[4].error ? results[4].data || [] : [];
     ctx.docById = {};
     docs.forEach(function (d) { ctx.docById[d.id] = d; });
-    var milestones = results[7] && !results[7].error ? results[7].data || [] : [];
+    var milestones = results[6] && !results[6].error ? results[6].data || [] : [];
     ctx.milestoneById = {};
     milestones.forEach(function (m) { ctx.milestoneById[m.id] = m; });
     ctx.assigneeCounts = {};
@@ -510,7 +495,7 @@
     // item pointed AT reads the inverse ("Includes" against "Part of").
     // Mirrors the knowledge_graph view in supabase/schema/33_links.sql;
     // the labels live here because the page never reads link_kinds.
-    var links = results[6] && !results[6].error ? results[6].data || [] : [];
+    var links = results[5] && !results[5].error ? results[5].data || [] : [];
     var linkIndex = App.links.index(links);
     ctx.linkIndex = linkIndex;
     // Work items already have their titles in memory; anything else a
