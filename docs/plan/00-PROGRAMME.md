@@ -22,6 +22,11 @@ them.
     70-PROTOTYPE-IDEAS.md  prototype ideas and plans area
     80-LOAD-SPEED.md       stop loading item detail text on first paint
 
+Every one of the eight is landed as of 2026-08-16. Each file keeps its
+record of where the plan turned out to be wrong, which is the part a
+later wave needs; the outcomes are in docs/CHANGELOG.md and the numbers
+that hold them are in `npm run audit`.
+
 ## What was reviewed to write this
 
 Three inputs, read directly, not summarised from memory.

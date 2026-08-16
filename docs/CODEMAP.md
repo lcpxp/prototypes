@@ -125,10 +125,10 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 37 | Current state |
+| docs/STATE.md | 34 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
-| docs/plan/00-PROGRAMME.md | 270 | Alignment programme |
+| docs/plan/00-PROGRAMME.md | 275 | Alignment programme |
 | docs/plan/10-CODE-REVIEW.md | 272 | Reviewing the LaunchPad codebase |
 | docs/plan/20-API-REFERENCE.md | 412 | Aligning API reference 2.0 with the code |
 | docs/plan/30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
