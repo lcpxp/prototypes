@@ -429,7 +429,7 @@
         .select("work_item_id, phase, quarter, starts_on, ends_on, start_tbc, end_tbc, sort_order")
         .order("sort_order", { ascending: true }),
       // Notes are NOT fetched here. Nothing on the board reads them -
-      // only the drawer does, one item at a time - and carrying all 182
+      // only the drawer does, one item at a time - and carrying all 116
       // put 63KB on every page load to show a handful. loadNotes below
       // fetches them when a drawer opens. docs/plan/80-LOAD-SPEED.md.
       // Source-document titles for the provenance link (read gated on

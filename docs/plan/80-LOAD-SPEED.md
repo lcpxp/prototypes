@@ -21,14 +21,22 @@ defeats the point of doing it.
 
 Checked against `main` at the time of writing, not recalled.
 
-| where | line | what |
-| --- | --- | --- |
-| `assets/js/pages/roadmap.js` | 423 | `work_items` fetched with `.select("*")` - 39 columns, 267 rows |
-| `assets/js/pages/backlog.js` | 333 | the same `.select("*")`, feeding the modal |
-| `assets/js/pages/roadmap.js` | 432 | `work_notes` fetched, 182 rows, including `body` |
-| `assets/js/pages/roadmap.js` | 487 | `item.notes` attached to each item |
-| `assets/js/pages/roadmap-detail.js` | 255 | `detailsHtml` - the only board-side reader of `details` |
-| `assets/js/pages/roadmap-detail.js` | 291 | the only reader of `item.notes` |
+Cited by symbol rather than by line: the line numbers this table
+originally carried were already wrong three commits later, which is
+what happens to a line number written into a document.
+
+| where | what |
+| --- | --- |
+| `roadmap.js`, the `Promise.all` in `onAuthed` | `work_items` fetched with `.select("*")` - 39 columns, 268 rows |
+| `backlog.js`, the same block | the same `.select("*")`, feeding the modal |
+| `roadmap-detail.js`, `detailsHtml` | the only board-side reader of `details` |
+| `roadmap-detail.js`, `notesHtml` | the only reader of `item.notes` |
+| `roadmap-detail-export.js`, `flattenItem` | writes `details` for EVERY exported row |
+| `backlog.js`, its CSV record builder | the same, for the backlog export |
+
+**Done 2026-08-15:** the `work_notes` page-load fetch and the
+`item.notes` attach are both gone; `roadmap-data.js` holds the
+per-item read instead.
 
 `work_items.details` (paragraphs of free text) and `work_notes.body`
 are the two heavy columns. No board view touches either:
@@ -48,13 +56,13 @@ Recorded here rather than silently absorbed, because each one changes
 the work.
 
 1. **`details` has three readers, not two.** Besides
-   `roadmap-detail.js` and `roadmap-detail-export.js`, `backlog.js:187`
-   writes `details` into its own CSV export record. That is exactly
+   `roadmap-detail.js` and `roadmap-detail-export.js`, the backlog CSV
+   record builder writes `details` into its own export. That is exactly
    the silently-empty-export failure the brief warns about, so the
    backlog export needs the same treatment and the same test as the
    roadmap one.
-2. **`work_notes` is already a column list**, not `select("*")` - see
-   `roadmap.js:432`. So it needs no board view. Drop the fetch from
+2. **`work_notes` is already a column list**, not `select("*")`. So it
+   needs no board view. Drop the fetch from
    page load entirely and pull an item's notes beside its details,
    which takes a whole request off the critical path rather than
    merely shrinking it.
@@ -68,7 +76,7 @@ the work.
 
 ### 1. A board view in Postgres, not a column list in JavaScript
 
-The comment at `roadmap.js:417` defends `select("*")`: a column added
+The comment above that fetch defends `select("*")`: a column added
 tomorrow reaches the drawer without anyone editing a 39-name list.
 That argument is correct and must survive this change. So do not
 replace `select("*")` with a hand-written list.
@@ -159,8 +167,7 @@ working:
   into its output and `roadmap-export.js` covers the whole board. A
   board-wide export must fetch `details` for the items it is exporting
   at the moment export is pressed, not on page load.
-- **Backlog export** - `backlog.js:187`, the correction above. Same
-  requirement.
+- **Backlog export** - the correction above. Same requirement.
 
 A silently empty `details` in an export file is data loss, so both
 export paths need a test, not just a manual check.
@@ -290,9 +297,9 @@ place, so most of that is wiring.
 assumed.** `details` is written for EVERY exported row by two
 board-wide paths:
 
-- `roadmap-detail-export.js:197`, inside `flattenItem`, which
-  `toCsvRoadmap` calls for every row on the board.
-- `backlog.js:187`, the same shape in the backlog CSV.
+- `flattenItem` in `roadmap-detail-export.js`, which `toCsvRoadmap`
+  calls for every row on the board.
+- the backlog CSV record builder, the same shape.
 
 Both run over the whole set, not one open item, so neither is covered
 by the drawer's lazy load. Taking `details` off the page load without

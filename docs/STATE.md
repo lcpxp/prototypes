@@ -15,7 +15,7 @@ knowledge gate that holds content integrity as a ratchet.
    the reusable mechanism. Phase 2 is `details`, 102,956 more (13.3%),
    21.5% total against a 25% target - the plan states that plainly.
    ORDER MATTERS: fix the two board-wide CSV exports FIRST. Both
-   `flattenItem` and `backlog.js:187` write `details` for every row, so
+   `flattenItem` and the backlog CSV builder write `details` per row, so
    taking it off page load first leaves a window where every export
    silently loses a column. Verified, not assumed.
 2. **Embeddings**, below.

@@ -2,8 +2,8 @@
 // lazy-detail.js - Fetching a row's heavy fields when the detail
 // surface opens, instead of carrying them for every row on page load.
 //
-// The roadmap board downloads the prose of 268 work items and 182
-// notes to show one item's worth at a time. This moves that off the
+// The roadmap board downloads the prose of 268 work items and the 116
+// notes anchored to one, to show a single item's worth at a time. This moves that off the
 // first paint. Used by the roadmap drawer and the backlog modal, which
 // is why it lives beside them rather than in core/ - two pages, two
 // includes, instead of a core file on twenty-three.

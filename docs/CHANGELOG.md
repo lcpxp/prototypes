@@ -11,10 +11,10 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Changed
-- The **roadmap loads faster**. It was downloading every note on every
-  work item - 182 of them - to show a handful in one drawer at a time.
-  Notes now arrive when a drawer opens, taking 63KB and a whole request
-  off the first paint. The drawer still opens instantly and fully
+- The **roadmap loads faster**. It was downloading every note anchored
+  to a work item - 116 of them - to show a handful in one drawer at a
+  time. Notes now arrive when a drawer opens, taking 63KB and a whole
+  request off the first paint. The drawer still opens instantly and fully
   populated; only the notes section fills a moment later, and it says
   it is loading rather than looking empty. Nothing flashes: a fast
   fetch shows no placeholder at all.
