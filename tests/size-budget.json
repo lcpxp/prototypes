@@ -90,7 +90,7 @@
     },
     "assets/js/pages/roadmap.js": {
       "hard": 540,
-      "note": "Over soft (fetch, switcher, board click/change wiring). The drawer surface is in roadmap-drawer.js and the export dropdown wiring is now in roadmap-export.js; the data fetch and the note/phase/link enrichment block in onAuthed are the next extract seam (roadmap-data.js) if it grows again."
+      "note": "Over soft (fetch, switcher, board click/change wiring). The drawer surface is in roadmap-drawer.js, the export dropdown wiring in roadmap-export.js and the per-item reads in work-items-data.js; the page-load fetch and the phase/link enrichment block in onAuthed are the next extract seam (roadmap-fetch.js) if it grows again."
     },
     "assets/js/pages/roadmap-detail.js": {
       "hard": 500,
@@ -98,7 +98,7 @@
     },
     "assets/js/pages/backlog.js": {
       "hard": 500,
-      "note": "Over soft since the CSV export. Exit plan: move the CSV record builder and columns into a backlog-export.js sharing App.csvFromRows."
+      "note": "Over soft (358). The exit plan was taken on 2026-08-16 - the CSV columns, record builder and wiring are in backlog-export.js. Next seam: the two modal fact builders, which need only App.detail and the name lookups."
     },
     "assets/js/pages/reference.js": {
       "hard": 500,

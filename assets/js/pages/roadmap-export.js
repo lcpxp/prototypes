@@ -6,7 +6,8 @@
 // wiring lives here; the KPI JSON/CSV builders stay in
 // roadmap-detail-export.js (App.roadmapDetail). No state of its own: wire()
 // pulls the current rows and ctx from a getter at click time, so the export
-// always reflects the live department/custom selection.
+// always reflects the live department/custom selection - and fetches the
+// heavy fields the board does not carry before it builds.
 // ------------------------------------------------------------------
 
 (function () {
@@ -55,16 +56,40 @@
       });
     }
 
+    // The board no longer carries notes, and after the board view lands
+    // it will not carry details either (docs/plan/80-LOAD-SPEED.md) - but
+    // both board-wide exports write them for EVERY row: toCsvRoadmap
+    // through flattenItem, toKpiRoadmap through toKpiItem. So an export
+    // fetches what it is about to write, at the moment it is pressed.
+    //
+    // The whole row set is hydrated rather than the exported subset. The
+    // builders do their own scope filtering, and over-fetching is the
+    // safe direction: under-fetching writes a blank column.
+    //
+    // A failed read cancels the download and says so. A file quietly
+    // missing a column it used to carry is data loss nobody notices
+    // until they open it, which is worse than no file at all.
+    function withHeavy(rows, keys, write) {
+      App.workItemsData.loadForExport(rows, keys).then(write, function () {
+        App.flashLabel(trigger, "Export failed");
+      });
+    }
+
     var jsonBtn = document.getElementById("roadmap-export-json");
     if (jsonBtn) jsonBtn.addEventListener("click", function () {
       var s = source();
-      downloadJson("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(s.rows, s.ctx));
+      withHeavy(s.rows, ["details", "notes"], function () {
+        downloadJson("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(s.rows, s.ctx));
+      });
     });
 
     var csvBtn = document.getElementById("roadmap-export-csv");
     if (csvBtn) csvBtn.addEventListener("click", function () {
       var s = source();
-      App.download("roadmap-export.csv", App.roadmapDetail.toCsvRoadmap(s.rows, s.ctx), "text/csv");
+      // No notes column in the CSV, so it does not pay for one.
+      withHeavy(s.rows, ["details"], function () {
+        App.download("roadmap-export.csv", App.roadmapDetail.toCsvRoadmap(s.rows, s.ctx), "text/csv");
+      });
     });
 
     var printBtn = document.getElementById("roadmap-download");

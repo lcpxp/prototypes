@@ -10,6 +10,17 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Fixed
+- The **roadmap's board-wide JSON export carries every item's notes
+  again**. Moving notes off the page load left that export writing them
+  only for items whose drawer had been opened, and the missing ones
+  vanished from the file rather than appearing empty. All three
+  board-wide exports - roadmap JSON, roadmap CSV, backlog CSV - now
+  fetch the full text for the rows they are about to write, at the
+  moment export is pressed. If that fetch fails the download is
+  cancelled and the button says so, rather than writing a file that
+  looks complete and is not.
+
 ### Changed
 - The **roadmap loads faster**. It was downloading every note anchored
   to a work item - 116 of them - to show a handful in one drawer at a

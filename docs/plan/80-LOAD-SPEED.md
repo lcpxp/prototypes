@@ -30,12 +30,19 @@ what happens to a line number written into a document.
 | `roadmap.js`, the `Promise.all` in `onAuthed` | `work_items` fetched with `.select("*")` - 39 columns, 268 rows |
 | `backlog.js`, the same block | the same `.select("*")`, feeding the modal |
 | `roadmap-detail.js`, `detailsHtml` | the only board-side reader of `details` |
-| `roadmap-detail.js`, `notesHtml` | the only reader of `item.notes` |
+| `roadmap-detail.js`, `notesHtml` | the only board-side reader of `item.notes` |
 | `roadmap-detail-export.js`, `flattenItem` | writes `details` for EVERY exported row |
-| `backlog.js`, its CSV record builder | the same, for the backlog export |
+| `roadmap-detail-export.js`, `toKpiItem` | writes `details` AND `notes`, same |
+| `backlog.js`, its CSV record builder | `details`, for the backlog export |
+
+The `toKpiItem` row was missing when this table was written, and phase
+one shipped a regression through the gap. The correction is kept in
+place rather than smoothed over - see "The regression phase one
+shipped" below. The backlog builder has since moved to
+`backlog-export.js`.
 
 **Done 2026-08-15:** the `work_notes` page-load fetch and the
-`item.notes` attach are both gone; `roadmap-data.js` holds the
+`item.notes` attach are both gone; `work-items-data.js` holds the
 per-item read instead.
 
 `work_items.details` (paragraphs of free text) and `work_notes.body`
@@ -283,38 +290,84 @@ per-item export chains onto the in-flight load, so exporting a drawer
 opened a moment ago cannot write a file with the notes missing.
 
 `roadmap.js` hit its hard budget doing this, so it took the exit plan
-its own note had been carrying: `roadmap-data.js` now exists and holds
-the per-item reads, starting with the note ordering rule.
+its own note had been carrying: the per-item reads moved out, into what
+is now `work-items-data.js`, starting with the note ordering rule.
 
-### Still to do, and the one thing that makes it delicate
+### The regression phase one shipped, found on 2026-08-16
+
+Recorded rather than quietly fixed, because it is the same failure this
+file was written to prevent and it landed anyway.
+
+`toKpiItem` writes `notes` for every row of the board-wide JSON export.
+Phase one removed the page-load fetch that put them there and did not
+touch that path, so from the moment it landed the export carried notes
+only for items whose drawer had been opened in that session - and
+`H.clean` drops an empty array, so the key simply vanished rather than
+appearing empty. A file that looks complete and is not.
+
+Verified by running the real builder over a row shaped the way the board
+now delivers it: `notes key present on export: false`.
+
+Two lessons, both cheap to state and expensive to relearn:
+
+- The export audit in this file listed the readers of `details` and
+  stopped. `notes` had its own reader in the same file and was not
+  checked, because at the time it was still on the page load.
+- "Nothing on the board reads it" is not the same claim as "nothing but
+  the drawer reads it". An export is not the board.
+
+### Landed 2026-08-16: the exports fetch what they write
+
+Phase two's mandated first step, and it also closes the regression
+above.
+
+`assets/js/pages/work-items-data.js` (the renamed `roadmap-data.js`,
+now shared with the backlog because it is one table and one rule) gained
+`loadForExport(rows, keys)`: presence-guarded, so a row already carrying
+a field costs no request and a genuinely empty field is never asked for
+twice; batched at 100 ids, because a whole board in a PostgREST `in.()`
+filter is about 10KB of URL and header buffers are smaller than people
+assume; and it answers a row RLS withheld with `null` rather than
+leaving the key unset for the next export to ask again.
+
+All three board-wide paths now hydrate before they build - the roadmap
+JSON export for `details` and `notes`, the roadmap CSV and the backlog
+CSV for `details` - and a failed read cancels the download and says so
+on the control that was pressed. Writing the file anyway is the outcome
+worth preventing: it downloads, it has the column heading, and it is
+blank underneath for every row.
+
+The builders stay pure, which is what keeps "every exported row carries
+its details" a benchmark rather than a manual check. A gate holds that
+too: neither export builder may touch `App.db`.
+
+`backlog.js` took its documented exit plan on the way past -
+`backlog-export.js` now holds the columns, the record builder and the
+wiring.
+
+This commit is inert on the wire: both pages still `select("*")`, so
+every row already has `details` and the presence guard makes no request
+for it. That is the point of the ordering - the safety net goes in
+before the thing it catches.
+
+### Still to do
 
 The `work_items_board` view and the lazy `details` fetch: the
-migration, the registry entry, `details` added to `lazyKeys`, a
-three-state `detailsHtml`, and the backlog modal. The mechanism is in
-place, so most of that is wiring.
+migration, the registry entry, both page fetches pointed at the view,
+`details` added to `lazyKeys`, a three-state `detailsHtml`, and the
+backlog modal. The mechanism and the export safety net are both in
+place, so what remains is wiring.
 
-**The exception is the exports, and it is verified rather than
-assumed.** `details` is written for EVERY exported row by two
-board-wide paths:
+Why the exports went first, kept as the record of a rule rather than a
+pending task: `details` is written for EVERY exported row by two
+board-wide paths - `flattenItem` in `roadmap-detail-export.js`, which
+`toCsvRoadmap` calls for every row on the board, and the backlog CSV
+record builder, the same shape. Both run over the whole set, not one
+open item, so neither is covered by the drawer's lazy load. Taking
+`details` off the page load first would have left a window where every
+export was quietly broken.
 
-- `flattenItem` in `roadmap-detail-export.js`, which `toCsvRoadmap`
-  calls for every row on the board.
-- the backlog CSV record builder, the same shape.
-
-Both run over the whole set, not one open item, so neither is covered
-by the drawer's lazy load. Taking `details` off the page load without
-fixing them first would produce a CSV with an empty Details column for
-every row - the exact silent data loss this file was written to avoid,
-and a failure nobody would notice until they opened the file.
-
-So phase two is ordered: **fix the exports first**, with a bulk fetch
-(`select("id, details").in("id", ids)`) at the moment export is
-pressed, and a benchmark asserting a non-empty `details` for every
-exported row. Only then point the board fetch at the view. Doing it
-the other way round leaves a window where the export is quietly
-broken.
-
-The per-item JSON export is already safe: it chains onto the in-flight
+The per-item JSON export was already safe: it chains onto the in-flight
 load (`inFlight.then`), which the perf gate holds.
 
 ## How to verify the 25%

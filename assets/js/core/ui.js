@@ -31,18 +31,24 @@
     return '<span class="badge ' + App.escape(s) + '">' + App.escape(s) + "</span>";
   };
 
+  // Say what happened on the control that was pressed, then put its
+  // label back. This is how an async action reports an outcome that has
+  // no other visible sign: a failed export writes no file, and silence
+  // reads as "nothing happened" rather than "that did not work".
+  App.flashLabel = function (button, text, ms) {
+    if (!button) return;
+    var previous = button.textContent;
+    button.textContent = text;
+    window.setTimeout(function () { button.textContent = previous; }, ms || 1600);
+  };
+
   App.copyText = function (text, button) {
-    // Capture the label before the async work so both outcomes can
-    // restore it; a denied clipboard permission must not fail silently.
-    var previous = button ? button.textContent : "";
+    // Both outcomes report; a denied clipboard permission must not fail
+    // silently.
     navigator.clipboard.writeText(text).then(function () {
-      if (!button) return;
-      button.textContent = "Copied";
-      window.setTimeout(function () { button.textContent = previous; }, 1200);
+      App.flashLabel(button, "Copied", 1200);
     }).catch(function () {
-      if (!button) return;
-      button.textContent = "Copy failed";
-      window.setTimeout(function () { button.textContent = previous; }, 1600);
+      App.flashLabel(button, "Copy failed");
     });
   };
 

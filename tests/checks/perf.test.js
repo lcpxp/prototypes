@@ -94,11 +94,63 @@ test("the roadmap page load does not fetch notes", () => {
 });
 
 test("the notes a drawer needs are fetched for one item, not all of them", () => {
-  const src = read("assets/js/pages/roadmap-data.js");
+  const src = read("assets/js/pages/work-items-data.js");
   assert.match(src, /tables\.workNotes/, "the loader is where the read belongs");
   assert.match(src, /\.eq\("work_item_id"/,
     "scoped to the open item - an unfiltered read here would put the whole " +
     "payload back on the first drawer open instead of on page load");
+});
+
+test("a bulk read is filtered to the rows that asked for it", () => {
+  // Every read in this file names its rows. An unfiltered one would put
+  // the payload back, on an export instead of on page load, and still
+  // return the right answer - so nothing else would fail.
+  const src = read("assets/js/pages/work-items-data.js");
+  for (const [, tail] of src.matchAll(/App\.db\.from\(([\s\S]*?)\.then/g)) {
+    assert.ok(/\.(in|eq)\(/.test(tail),
+      "every read in work-items-data.js must be filtered to named rows");
+  }
+  assert.match(src, /\.in\("id", ids\)/, "the export's details read is by id");
+  assert.match(src, /\.in\("work_item_id", ids\)/, "and so is its notes read");
+});
+
+// ------------------------------------------------------------------
+// The exports. A drawer that cannot load an item's prose shows a
+// message; an export that cannot load it writes a file with a column
+// heading and nothing underneath, and looks exactly like a successful
+// export. Both board-wide paths write these fields for EVERY row, so
+// both have to fetch before they build.
+// ------------------------------------------------------------------
+
+test("both board-wide exports fetch the heavy fields before building", () => {
+  const roadmap = read("assets/js/pages/roadmap-export.js");
+  assert.match(roadmap, /withHeavy\(s\.rows, \["details", "notes"\]/,
+    "the roadmap JSON export writes both fields, so it must fetch both");
+  assert.match(roadmap, /withHeavy\(s\.rows, \["details"\]/,
+    "the roadmap CSV export writes details");
+  const backlog = read("assets/js/pages/backlog-export.js");
+  assert.match(backlog, /loadForExport\(s\.rows, \["details"\]\)/,
+    "the backlog CSV export writes details");
+});
+
+test("a failed export read cancels the download rather than writing a blank column", () => {
+  for (const file of ["assets/js/pages/roadmap-export.js",
+    "assets/js/pages/backlog-export.js"]) {
+    const src = read(file);
+    assert.match(src, /App\.flashLabel\([\s\S]*?"Export failed"\)/,
+      `${file}: a failed fetch must report, not fall through to App.download`);
+  }
+});
+
+test("the export builders stay pure, so the fetch cannot hide inside one", () => {
+  // Data in, string or object out. The moment a builder does its own
+  // fetching it stops being testable without a database, and the
+  // "every row carries its details" benchmarks go with it.
+  for (const file of ["assets/js/pages/roadmap-detail-export.js",
+    "assets/js/pages/backlog-export.js"]) {
+    const src = read(file).replace(/^\s*\/\/.*$/gm, "");
+    assert.doesNotMatch(src, /App\.db\b/, `${file}: builders do not read the database`);
+  }
 });
 
 test("a lazily loaded region tells the reader which of three states it is in", () => {

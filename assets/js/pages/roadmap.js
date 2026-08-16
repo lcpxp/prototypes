@@ -352,7 +352,7 @@
       lookup: function (id) { return itemsById[id]; },
       getCtx: function () { return ctx; },
       lazyKeys: ["notes"],
-      load: App.roadmapData.loadNotes,
+      load: App.workItemsData.loadNotes,
       download: function (item) {
         App.roadmapExport.downloadJson(
           "roadmap-item-" + App.roadmapExport.safeName(item.title) + ".json",
@@ -430,8 +430,9 @@
         .order("sort_order", { ascending: true }),
       // Notes are NOT fetched here. Nothing on the board reads them -
       // only the drawer does, one item at a time - and carrying all 116
-      // put 63KB on every page load to show a handful. loadNotes below
-      // fetches them when a drawer opens. docs/plan/80-LOAD-SPEED.md.
+      // put 63KB on every page load to show a handful.
+      // App.workItemsData fetches them when a drawer opens, and again in
+      // bulk when an export is pressed. docs/plan/80-LOAD-SPEED.md.
       // Source-document titles for the provenance link (read gated on
       // backlog access, so a denied fetch just leaves the field blank).
       App.db.from(App.registry.tables.workDocuments)
