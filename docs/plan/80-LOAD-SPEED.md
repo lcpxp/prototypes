@@ -279,9 +279,36 @@ opened a moment ago cannot write a file with the notes missing.
 its own note had been carrying: `roadmap-data.js` now exists and holds
 the per-item reads, starting with the note ordering rule.
 
-**Still to do:** the `work_items_board` view and the lazy `details`
-fetch. The mechanism is now in place, so that is the migration, the
-registry entry, adding `details` to `lazyKeys`, and the backlog modal.
+### Still to do, and the one thing that makes it delicate
+
+The `work_items_board` view and the lazy `details` fetch: the
+migration, the registry entry, `details` added to `lazyKeys`, a
+three-state `detailsHtml`, and the backlog modal. The mechanism is in
+place, so most of that is wiring.
+
+**The exception is the exports, and it is verified rather than
+assumed.** `details` is written for EVERY exported row by two
+board-wide paths:
+
+- `roadmap-detail-export.js:197`, inside `flattenItem`, which
+  `toCsvRoadmap` calls for every row on the board.
+- `backlog.js:187`, the same shape in the backlog CSV.
+
+Both run over the whole set, not one open item, so neither is covered
+by the drawer's lazy load. Taking `details` off the page load without
+fixing them first would produce a CSV with an empty Details column for
+every row - the exact silent data loss this file was written to avoid,
+and a failure nobody would notice until they opened the file.
+
+So phase two is ordered: **fix the exports first**, with a bulk fetch
+(`select("id, details").in("id", ids)`) at the moment export is
+pressed, and a benchmark asserting a non-empty `details` for every
+exported row. Only then point the board fetch at the view. Doing it
+the other way round leaves a window where the export is quietly
+broken.
+
+The per-item JSON export is already safe: it chains onto the in-flight
+load (`inFlight.then`), which the perf gate holds.
 
 ## How to verify the 25%
 

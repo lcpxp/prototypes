@@ -1,37 +1,37 @@
 # Current state
 
-Updated: 2026-08-14 (reference closed, wave 3 done, audit clean)
+Updated: 2026-08-15 (reference closed, knowledge gate landed)
 
 ## In progress
-482 tests green on main; `npm run audit` clean, 0 files over soft
-without an exit plan. Programme is docs/plan/, start at
-00-PROGRAMME.md. Closed this session: 20-API-REFERENCE.md (392 rows,
-552 of 552 routes, every drift figure capped at 0) and code-review
-wave 3 (the glossary held; the journey model did not - CR3-02).
+507 tests green on main; `npm run audit` clean. Programme is
+docs/plan/, start at 00-PROGRAMME.md. Closed: 20-API-REFERENCE.md (392
+rows, 552 of 552 routes, every drift figure capped at 0), code-review
+wave 3 (glossary held, journey model did not - CR3-02), and the
+knowledge gate that holds content integrity as a ratchet.
 
 ## Next steps
-1. **80-LOAD-SPEED.md.** Baseline measured and written into the plan:
-   dropping `details` and the notes fetch takes 166,054 of 772,987
-   uncompressed bytes - **21.5%, under the 25% target**. Compressed
-   share is likely higher; the DevTools run settles it. Build not
-   started; wants a fresh session for the migration, board view, lazy
-   drawer and skeleton, both export paths and the backlog modal.
-2. **Embeddings.** Blocked on the decision below.
+1. **80-LOAD-SPEED phase 2.** Phase 1 landed: notes load when a drawer
+   opens, worth 63,098 bytes (8.2%) and one request; lazy-detail.js is
+   the reusable mechanism. Phase 2 is `details`, 102,956 more (13.3%),
+   21.5% total against a 25% target - the plan states that plainly.
+   ORDER MATTERS: fix the two board-wide CSV exports FIRST. Both
+   `flattenItem` and `backlog.js:187` write `details` for every row, so
+   taking it off page load first leaves a window where every export
+   silently loses a column. Verified, not assumed.
+2. **Embeddings**, below.
 
-## Embeddings: decided, deferred, not blocked on the owner
-DECIDED 15 Aug, mechanism is the session's call: enable `vector` and
-`pg_net`, have Postgres call the Edge Function and write back, so no
-vector crosses a chat session and no elevated key is needed. The
-RESCALE does NOT need the owner - a correction to what this file said
-on 14 Aug. docs/KNOWLEDGE-MODEL.md already holds 14 labelled items
-from the replayed 2026-07-27 batch with their outcomes; fit the affine
-floor and ceiling so the semantic bands land where those labels say.
-Deferred only because it is a five-part build wanting a fresh session.
+## Embeddings: decided, deferred, not owner-blocked
+DECIDED 15 Aug, the session's call: enable `vector` and `pg_net`, have
+Postgres call the Edge Function and write back, so no vector crosses a
+chat session and no elevated key is needed. The rescale does NOT need
+the owner - correcting what this file said on 14 Aug.
+docs/KNOWLEDGE-MODEL.md holds 14 labelled items from the replayed
+2026-07-27 batch; fit the affine floor and ceiling to them.
 
 ## Owner passes
-docs/HANDOVER-CONTEXT.md is the claude.ai prompt: 14 blank prototype
-ideas, 80 items with no summary, 20 orphan notes, 110 proposed links,
-who consumes Metrics and ShoppingCart, any Unity source, next areas.
+docs/HANDOVER-CONTEXT.md is the claude.ai prompt. Its figures are the
+ones `npm run audit` shows and the knowledge gate holds, so filling
+them lowers a ceiling that cannot climb back.
 
 ## Open decisions
 - 00-PROGRAMME.md: Unity grading, commented-out routes,

@@ -76,6 +76,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/ideas-render.js | 177 | ideas-render.js - The prototype ideas board's builders |
 | assets/js/pages/ideas.js | 71 | ideas.js - modules/prototypes/ideas.html. Fetch and wiring; every |
 | assets/js/pages/integrations.js | 126 | integrations.js - Integration overview for modules/integrations/. |
+| assets/js/pages/lazy-detail.js | 111 | lazy-detail.js - Fetching a row's heavy fields when the detail |
 | assets/js/pages/pci-interstitial.js | 144 | pci-interstitial.js - The PCI compliance "checkout interstitial" for |
 | assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
 | assets/js/pages/pci-portal.js | 302 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
@@ -91,6 +92,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 47 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/roadmap-data.js | 40 | roadmap-data.js - The roadmap's per-item reads: the fields fetched |
 | assets/js/pages/roadmap-detail-export.js | 223 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
 | assets/js/pages/roadmap-detail.js | 479 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-drawer.js | 97 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
@@ -132,7 +134,7 @@ document instead of walking the tree or reading whole files.
 | docs/plan/50-DASHBOARD.md | 278 | Rebuilding the dashboard |
 | docs/plan/60-PORTAL-REVIEW.md | 339 | Portal review, as a feature |
 | docs/plan/70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans |
-| docs/plan/80-LOAD-SPEED.md | 311 | 80 - Stop loading item detail text on first paint |
+| docs/plan/80-LOAD-SPEED.md | 338 | 80 - Stop loading item detail text on first paint |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
@@ -271,6 +273,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/detail.test.js | 199 | tests/unit/detail.test.js - The completeness contract. |
 | tests/unit/gallery-future.test.js | 91 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
 | tests/unit/ideas.test.js | 166 | tests/unit/ideas.test.js - The prototype ideas board |
+| tests/unit/lazy-detail.test.js | 184 | tests/unit/lazy-detail.test.js - The lazy detail loader |
 | tests/unit/links.test.js | 203 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
 | tests/unit/platform-knowledge.test.js | 249 | tests/unit/platform-knowledge.test.js - The stores the capability |
@@ -527,6 +530,10 @@ document instead of walking the tree or reading whole files.
 | modalHtml() | assets/js/pages/integrations.js:24 |
 | openModal() | assets/js/pages/integrations.js:56 |
 | tableHtml() | assets/js/pages/integrations.js:62 |
+| App.lazyDetail | assets/js/pages/lazy-detail.js:46 |
+| loaded() | assets/js/pages/lazy-detail.js:58 |
+| open() | assets/js/pages/lazy-detail.js:64 |
+| settle() | assets/js/pages/lazy-detail.js:79 |
 | close() | assets/js/pages/pci-interstitial.js:26 |
 | finish() | assets/js/pages/pci-interstitial.js:27 |
 | shell() | assets/js/pages/pci-interstitial.js:28 |
@@ -643,6 +650,7 @@ document instead of walking the tree or reading whole files.
 | fillPicker() | assets/js/pages/reference.js:189 |
 | wireContent() | assets/js/pages/reference.js:218 |
 | openHashTarget() | assets/js/pages/reference.js:247 |
+| loadNotes() | assets/js/pages/roadmap-data.js:23 |
 | toKpiItem() | assets/js/pages/roadmap-detail-export.js:18 |
 | toKpiRoadmap() | assets/js/pages/roadmap-detail-export.js:116 |
 | flattenItem() | assets/js/pages/roadmap-detail-export.js:149 |
@@ -878,6 +886,9 @@ document instead of walking the tree or reading whole files.
 | idea() | tests/unit/gallery-future.test.js:37 |
 | load() | tests/unit/ideas.test.js:17 |
 | idea() | tests/unit/ideas.test.js:36 |
+| load() | tests/unit/lazy-detail.test.js:20 |
+| fakeTimer() | tests/unit/lazy-detail.test.js:31 |
+| harness() | tests/unit/lazy-detail.test.js:49 |
 | load() | tests/unit/links.test.js:23 |
 | load() | tests/unit/pci-ixopay.test.js:16 |
 | load() | tests/unit/platform-knowledge.test.js:22 |
