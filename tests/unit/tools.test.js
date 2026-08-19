@@ -128,6 +128,13 @@ test("render skips a row it cannot draw rather than emitting a dead control", ()
   assert.equal(T.render(null), "");
 });
 
+// The nav slot as attach() now uses it: somewhere to put the buttons,
+// and a listener, since the warm-up click is delegated from here rather
+// than bound to each button as it is drawn.
+function navHost() {
+  return { innerHTML: "", addEventListener() {} };
+}
+
 // A query builder that resolves like the real one: `then` hands the
 // result on and returns a real promise, so a caller may chain. The
 // earlier fake returned itself, which made a second `.then` re-deliver
@@ -145,7 +152,7 @@ function fakeDb(result, calls) {
 
 test("attach reads portal_links through the registry, ordered", async () => {
   const calls = {};
-  const host = { innerHTML: "" };
+  const host = navHost();
   const App = load({
     document: {
       addEventListener() {},
@@ -168,7 +175,7 @@ test("attach reads portal_links through the registry, ordered", async () => {
 });
 
 test("attach leaves the nav untouched when the read fails", async () => {
-  const host = { innerHTML: "" };
+  const host = navHost();
   const App = load({
     document: {
       addEventListener() {},
@@ -192,7 +199,7 @@ test("the rows are read once, however many consumers ask for them", async () => 
   const from = db.from;
   db.from = function (table) { reads++; return from(table); };
   const App = load({
-    document: { addEventListener() {}, getElementById: () => ({ innerHTML: "" }) },
+    document: { addEventListener() {}, getElementById: () => navHost() },
     db: db,
   });
   App.onAuthed = (fn) => fn({});

@@ -55,7 +55,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
-| assets/js/core/tools.js | 121 | tools.js - The nav's outbound links to external tools, rendered as |
+| assets/js/core/tools.js | 217 | tools.js - The nav's outbound links to external tools, rendered as |
 | assets/js/core/ui.js | 318 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
 | assets/js/pages/appreview-detail.js | 207 | appreview-detail.js - The drawer body for one application. A pure |
@@ -112,7 +112,7 @@ document instead of walking the tree or reading whole files.
 | docs/CHANGELOG.md | 504 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
-| docs/HANDOVER-CONTEXT.md | 169 | Context-gathering handover |
+| docs/HANDOVER-CONTEXT.md | 188 | Context-gathering handover |
 | docs/HARNESS.md | 151 | Verification harness and working process |
 | docs/KNOWLEDGE-MODEL.md | 230 | The knowledge model |
 | docs/PLATFORM.md | 201 | Platform product-knowledge protocol |
@@ -305,7 +305,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/route-extract.test.js | 108 | tests/unit/route-extract.test.js - Benchmarks for the route |
 | tests/unit/search.test.js | 259 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
-| tests/unit/tools.test.js | 217 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
+| tests/unit/tools.test.js | 224 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 | tests/unit/work-items-data.test.js | 219 | tests/unit/work-items-data.test.js - The reads that replace what the |
 
@@ -380,6 +380,8 @@ document instead of walking the tree or reading whole files.
 | current() | assets/js/core/theme.js:38 |
 | apply() | assets/js/core/theme.js:42 |
 | searchCommand() | assets/js/core/tools.js:40 |
+| frontDoor() | assets/js/core/tools.js:70 |
+| onToolClick() | assets/js/core/tools.js:163 |
 | App.escape | assets/js/core/ui.js:11 |
 | App.methodBadge | assets/js/core/ui.js:21 |
 | App.statusBadge | assets/js/core/ui.js:29 |
@@ -949,7 +951,8 @@ document instead of walking the tree or reading whole files.
 | load() | tests/unit/search.test.js:15 |
 | loadSprints() | tests/unit/sprints.test.js:13 |
 | load() | tests/unit/tools.test.js:15 |
-| fakeDb() | tests/unit/tools.test.js:136 |
+| navHost() | tests/unit/tools.test.js:134 |
+| fakeDb() | tests/unit/tools.test.js:143 |
 | loadApp() | tests/unit/ui.test.js:13 |
 | fakeDb() | tests/unit/work-items-data.test.js:23 |
 | load() | tests/unit/work-items-data.test.js:45 |

@@ -11,6 +11,19 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Fixed
+- The **Splunk button in the toolbar no longer opens Splunk's error
+  page**. Going straight to the saved search gave Splunk nothing to
+  establish a session with when the browser arrived cold, so it answered
+  with its error page instead of the results, and the fix was always to
+  load Splunk's home page first by hand. The button now does that for
+  you: it opens the front door, waits a second and a half for the
+  session to settle, then opens the search in a tab of its own and
+  closes the front door behind it. If the browser refuses that second
+  tab - it often will, having spent the press on the first - the tab
+  already open is taken to the search instead, so the search arrives
+  either way. Middle-click and cmd-click are untouched and still open
+  the search directly. Only the Splunk button does this; every other
+  tool link is still a plain link.
 - The **roadmap's board-wide JSON export carries every item's notes
   again**. Moving notes off the page load left that export writing them
   only for items whose drawer had been opened, and the missing ones
