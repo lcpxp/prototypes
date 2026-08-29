@@ -87,7 +87,7 @@ test("RLS policies never use \"for all\"", () => {
 // ------------------------------------------------------------------
 
 test("neither list page loads the prose or the notes", () => {
-  for (const file of ["assets/js/pages/roadmap.js", "assets/js/pages/backlog.js"]) {
+  for (const file of ["assets/js/pages/roadmap/roadmap.js", "assets/js/pages/backlog.js"]) {
     const src = read(file);
     assert.doesNotMatch(src, /tables\.workNotes/,
       `${file} must not read work_notes on page load - nothing in either list ` +
@@ -130,7 +130,7 @@ test("a bulk read is filtered to the rows that asked for it", () => {
 // ------------------------------------------------------------------
 
 test("both board-wide exports fetch the heavy fields before building", () => {
-  const roadmap = read("assets/js/pages/roadmap-export.js");
+  const roadmap = read("assets/js/pages/roadmap/export.js");
   assert.match(roadmap, /withHeavy\(s\.rows, \["details", "notes"\]/,
     "the roadmap JSON export writes both fields, so it must fetch both");
   assert.match(roadmap, /withHeavy\(s\.rows, \["details"\]/,
@@ -141,7 +141,7 @@ test("both board-wide exports fetch the heavy fields before building", () => {
 });
 
 test("a failed export read cancels the download rather than writing a blank column", () => {
-  for (const file of ["assets/js/pages/roadmap-export.js",
+  for (const file of ["assets/js/pages/roadmap/export.js",
     "assets/js/pages/backlog-export.js"]) {
     const src = read(file);
     assert.match(src, /App\.flashLabel\([\s\S]*?"Export failed"\)/,
@@ -153,7 +153,7 @@ test("the export builders stay pure, so the fetch cannot hide inside one", () =>
   // Data in, string or object out. The moment a builder does its own
   // fetching it stops being testable without a database, and the
   // "every row carries its details" benchmarks go with it.
-  for (const file of ["assets/js/pages/roadmap-detail-export.js",
+  for (const file of ["assets/js/pages/roadmap/detail-export.js",
     "assets/js/pages/backlog-export.js"]) {
     const src = read(file).replace(/^\s*\/\/.*$/gm, "");
     assert.doesNotMatch(src, /App\.db\b/, `${file}: builders do not read the database`);
@@ -167,8 +167,8 @@ test("every lazily loaded region tells the reader which of three states it is in
   // a blank gap reads as a fact about the item rather than a moment in
   // the load.
   const surfaces = [
-    ["assets/js/pages/roadmap-detail.js", /function notesHtml\(item, state\)/],
-    ["assets/js/pages/roadmap-detail.js", /function detailsHtml\(item, state\)/],
+    ["assets/js/pages/roadmap/detail.js", /function notesHtml\(item, state\)/],
+    ["assets/js/pages/roadmap/detail.js", /function detailsHtml\(item, state\)/],
     ["assets/js/pages/backlog.js", /function itemFactsHtml\(item, names, state\)/],
   ];
   for (const [file, signature] of surfaces) {
@@ -186,7 +186,7 @@ test("both lazy surfaces go through the one loader", () => {
   // per surface: presence not truthiness, no placeholder before 40ms, a
   // placeholder that appeared holds 150ms, and a superseded open never
   // paints. Two hand-rolled copies is how one of them gets dropped.
-  for (const file of ["assets/js/pages/roadmap-drawer.js",
+  for (const file of ["assets/js/pages/roadmap/drawer.js",
     "assets/js/pages/backlog.js"]) {
     assert.match(read(file), /App\.lazyDetail\(/,
       `${file}: lazy loading goes through the shared mechanism`);
@@ -196,7 +196,7 @@ test("both lazy surfaces go through the one loader", () => {
 test("the item export waits for the fetch it depends on", () => {
   // Exporting a drawer opened a moment ago must not write a file with
   // the notes missing. A silently empty field in an export is data loss.
-  const src = read("assets/js/pages/roadmap-drawer.js");
+  const src = read("assets/js/pages/roadmap/drawer.js");
   assert.match(src, /inFlight\.then\(function \(\) \{ deps\.download\(item\); \}\)/,
     "the export must be chained onto the in-flight load, not fired beside it");
 });

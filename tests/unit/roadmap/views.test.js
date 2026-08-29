@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/roadmap-views.test.js - Benchmarks for the roadmap home's
+// tests/unit/roadmap/views.test.js - Benchmarks for the roadmap home's
 // pure builders (App.roadmapView in roadmap-views.js + the exec board in
 // roadmap-views-exec.js + the cascade half in roadmap-views-cascade.js).
 // Loaded in a Node vm alongside registry.js (departments) and ui.js
@@ -18,7 +18,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { loadView, sampleData } = require("../lib/roadmap.js");
+const { loadView, sampleData } = require("../../lib/roadmap.js");
 
 function count(html, re) { return (html.match(re) || []).length; }
 

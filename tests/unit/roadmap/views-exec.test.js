@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/roadmap-views-exec.test.js - Benchmarks for the Executive
+// tests/unit/roadmap/views-exec.test.js - Benchmarks for the Executive
 // (Categories) board, split from roadmap-views.test.js per its size-budget
 // exit plan. The Executive level is the department-first rollup: each
 // department, the categories it owns and their item counts; layout-
@@ -9,7 +9,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { loadView, sampleData } = require("../lib/roadmap.js");
+const { loadView, sampleData } = require("../../lib/roadmap.js");
 
 test("exec is department-first: departments own categories with counts, no titles when compact", () => {
   const V = loadView();

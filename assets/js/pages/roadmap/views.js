@@ -1,11 +1,11 @@
 // ------------------------------------------------------------------
 // roadmap-views.js - Pure HTML builders for the roadmap home
 // (modules/roadmap/). Data-in / string-out, no DOM, so they load in a
-// Node vm for unit testing (tests/unit/roadmap-views.test.js). The DOM
+// Node vm for unit testing (tests/unit/roadmap/views.test.js). The DOM
 // wiring, data fetch and switcher live in roadmap.js. The Timeline layout
 // lives in roadmap-views-timeline.js, the cascade family in
 // roadmap-views-cascade.js and the Executive board in
-// roadmap-views-exec.js, sharing these helpers via the private App._rmv
+// roadmap-views-exec.js, sharing these helpers via the shared App.roadmapViewsShared
 // namespace.
 //
 // Levels: Workstreams (workstream bars only), Categories (the
@@ -362,8 +362,8 @@
 
   // --- Team / Backlog helpers ---------------------------------------
   // The Detailed Category -> Area breakdown lives in
-  // roadmap-views-breakdown.js (App._rmv.breakdown); the Executive board
-  // in roadmap-views-exec.js (App._rmv.execBoard).
+  // roadmap-views-breakdown.js (App.roadmapViewsShared.breakdown); the Executive board
+  // in roadmap-views-exec.js (App.roadmapViewsShared.execBoard).
 
   // Team keeps active work at item level, plus delivered when shown.
   function teamList(items) {
@@ -376,13 +376,13 @@
     return show ? list : list.filter(function (i) { return i.status !== "done"; });
   }
   // The Detailed breakdown is built in roadmap-views-breakdown.js and
-  // attached to App._rmv at load; call it at render time.
-  function breakdown(list, ctx) { return App._rmv.breakdown(list, ctx); }
+  // attached to App.roadmapViewsShared at load; call it at render time.
+  function breakdown(list, ctx) { return App.roadmapViewsShared.breakdown(list, ctx); }
 
   // Shared internals for the layout family (roadmap-views-timeline.js,
   // roadmap-views-cascade.js) and the Executive board
   // (roadmap-views-exec.js, which attaches execBoard onto this namespace).
-  App._rmv = {
+  App.roadmapViewsShared = {
     BANDS: BANDS, ACTIVE_MAX: ACTIVE_MAX, PARKED: PARKED,
     presentationLabel: presentationLabel, colStart: colStart, colEnd: colEnd,
     productItems: productItems, isFix: isFix, byOrder: byOrder,

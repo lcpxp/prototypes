@@ -3,7 +3,7 @@
 // home: the Category -> Area -> item drill-down shown under the Work
 // Items and Backlog levels when Detailed is on. Split out of
 // roadmap-views.js per its size-budget exit plan; shares helpers via
-// App._rmv and attaches breakdown onto it (and App.roadmapView).
+// App.roadmapViewsShared and attaches breakdown onto it (and App.roadmapView).
 // Data-in / string-out, no DOM.
 // ------------------------------------------------------------------
 
@@ -11,7 +11,7 @@
   "use strict";
 
   window.App = window.App || {};
-  var R = App._rmv;
+  var R = App.roadmapViewsShared;
 
   // One item in the breakdown: title, owning department tag, band, its
   // summary, and its deliverables checklist.

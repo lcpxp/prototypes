@@ -5,7 +5,7 @@
 // to item rows when Detailed is on. Layout-independent: Timeline and
 // Cascade both defer to it, so the same summary prints either way.
 // Split out of roadmap-views.js to keep that file within budget;
-// shares helpers via the private App._rmv namespace and attaches
+// shares helpers via the shared App.roadmapViewsShared namespace and attaches
 // execBoard back onto it. Data-in / string-out, no DOM.
 // ------------------------------------------------------------------
 
@@ -13,7 +13,7 @@
   "use strict";
 
   window.App = window.App || {};
-  var R = App._rmv;
+  var R = App.roadmapViewsShared;
 
   // The Executive dataset: active work, plus delivered when shown, never
   // parked. Top-level items only (sub-steps roll into their parent).

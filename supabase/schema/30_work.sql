@@ -282,7 +282,7 @@ create table if not exists public.work_items (
   -- a delivery to the Previously completed column regardless of age. Null
   -- means derive Recently vs Previously from the freshness window on
   -- resolved_at; a timestamp holds the row in Previously. Clearing it back
-  -- to null is the undo. See markRecency in assets/js/pages/roadmap-views.js
+  -- to null is the undo. See markRecency in assets/js/pages/roadmap/views.js
   -- and the latch operation in docs/ROADMAP-PLAYBOOK.md.
   previously_completed_at timestamptz,
   created_at timestamptz not null default now(),

@@ -2,7 +2,7 @@
 // roadmap-views-timeline.js - The Timeline layout for the roadmap home:
 // the continuous Delivered|Now|Next|Later|Parked axis where a bar SPANS
 // the columns it runs across. Split out of roadmap-views.js per the size
-// budget's exit plan; shares helpers via App._rmv and extends
+// budget's exit plan; shares helpers via App.roadmapViewsShared and extends
 // App.roadmapView with timeline(). Data-in / string-out, no DOM.
 // ------------------------------------------------------------------
 
@@ -10,7 +10,7 @@
   "use strict";
 
   window.App = window.App || {};
-  var R = App._rmv;
+  var R = App.roadmapViewsShared;
 
   // Order: start band, then bugs sink below everything else in the band,
   // then span length - a run that extends into the next band sinks below

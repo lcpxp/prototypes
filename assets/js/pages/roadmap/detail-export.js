@@ -4,7 +4,7 @@
 // toCsvRoadmap). Split out of roadmap-detail.js per the size budget; the
 // drawer's value helpers come from App.roadmapDetailValues. Data-in /
 // object-or-string-out, no DOM, so it loads in a Node vm for unit testing
-// (tests/unit/roadmap-detail.test.js).
+// (tests/unit/roadmap/detail.test.js).
 // ------------------------------------------------------------------
 
 (function () {

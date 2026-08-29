@@ -53,7 +53,7 @@ are the two heavy columns. No board view touches either:
 `core/search.js` queries `work_notes.body` in its own request and does
 not depend on the page-load fetch. It must keep working untouched.
 
-The drawer is `assets/js/pages/roadmap-drawer.js`; `openDrawer(item)`
+The drawer is `assets/js/pages/roadmap/drawer.js`; `openDrawer(item)`
 sets `drawerBody.innerHTML` synchronously from
 `App.roadmapDetail.drawerHtml(item, ctx)`.
 

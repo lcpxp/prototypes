@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/roadmap-export.test.js - The roadmap's export dropdown
+// tests/unit/roadmap/export.test.js - The roadmap's export dropdown
 // wiring (App.roadmapExport.wire).
 //
 // The builders are held elsewhere (roadmap-detail-export.test.js). What
@@ -13,7 +13,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 // Just enough DOM: named buttons that record their listeners.
 function harness(loadForExport) {
@@ -36,7 +36,7 @@ function harness(loadForExport) {
   };
   sandbox.window = sandbox;
   vm.createContext(sandbox);
-  vm.runInContext(read("assets/js/pages/roadmap-export.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/roadmap/export.js"), sandbox,
     { filename: "roadmap-export.js" });
   const App = sandbox.App;
   const written = [];

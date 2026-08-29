@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/roadmap-detail-export.test.js - Benchmarks for the
+// tests/unit/roadmap/detail-export.test.js - Benchmarks for the
 // AI-optimised JSON export and the CSV builders (toKpiItem,
 // toKpiRoadmap, toCsvRoadmap, csvFromRows). Loaded in a Node vm and
 // sharing the drawer's fixture; sandbox objects are JSON round-tripped
@@ -12,7 +12,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = {
@@ -28,11 +28,11 @@ function load() {
     "assets/js/core/ui.js",
     "assets/js/core/detail.js",
     "assets/js/core/sprints.js",
-    "assets/js/pages/roadmap-views.js",
-    "assets/js/pages/roadmap-views-breakdown.js",
-    "assets/js/pages/roadmap-detail-values.js",
-    "assets/js/pages/roadmap-detail.js",
-    "assets/js/pages/roadmap-detail-export.js",
+    "assets/js/pages/roadmap/views.js",
+    "assets/js/pages/roadmap/views-breakdown.js",
+    "assets/js/pages/roadmap/detail-values.js",
+    "assets/js/pages/roadmap/detail.js",
+    "assets/js/pages/roadmap/detail-export.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App;
 }

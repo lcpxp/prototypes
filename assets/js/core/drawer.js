@@ -2,7 +2,7 @@
 // drawer.js - A shared slide-over dialog surface.
 //
 // The portal had a drawer, but only inside the roadmap page module
-// (assets/js/pages/roadmap-drawer.js), wired to that board's items and
+// (assets/js/pages/roadmap/drawer.js), wired to that board's items and
 // its ?item= deep link. This is the same interaction with nothing
 // page-specific in it, so a second feature does not need a second
 // implementation. The roadmap can move onto this later; it is left

@@ -5,7 +5,7 @@
 // renders as a slim continuation strip (A4). On Work Items and Backlog a
 // workstream's nested work items render as inset child cards right after
 // it; deliverables never appear (drawer only). Split out of
-// roadmap-views.js to stay within budget; shares helpers via App._rmv and
+// roadmap-views.js to stay within budget; shares helpers via App.roadmapViewsShared and
 // extends App.roadmapView with cascade(). Executive is layout-independent
 // (defers to execBoard). Data-in / string-out, no DOM.
 // ------------------------------------------------------------------
@@ -14,7 +14,7 @@
   "use strict";
 
   window.App = window.App || {};
-  var R = App._rmv;
+  var R = App.roadmapViewsShared;
 
   // A slim continuation strip: a spanning card's appearance in a band
   // after its start - title and (for a workstream) its tag only, no

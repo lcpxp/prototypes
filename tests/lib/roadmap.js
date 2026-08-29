@@ -20,11 +20,11 @@ function loadView() {
   for (const f of [
     "assets/js/core/registry.js",
     "assets/js/core/ui.js",
-    "assets/js/pages/roadmap-views.js",
-    "assets/js/pages/roadmap-views-timeline.js",
-    "assets/js/pages/roadmap-views-breakdown.js",
-    "assets/js/pages/roadmap-views-exec.js",
-    "assets/js/pages/roadmap-views-cascade.js",
+    "assets/js/pages/roadmap/views.js",
+    "assets/js/pages/roadmap/views-timeline.js",
+    "assets/js/pages/roadmap/views-breakdown.js",
+    "assets/js/pages/roadmap/views-exec.js",
+    "assets/js/pages/roadmap/views-cascade.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App.roadmapView;
 }

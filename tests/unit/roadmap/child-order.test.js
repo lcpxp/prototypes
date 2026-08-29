@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/roadmap-child-order.test.js - Benchmarks for how a
+// tests/unit/roadmap/child-order.test.js - Benchmarks for how a
 // workstream's nested work items stack and colour. Ordering: children
 // render in stage order (Now above Next above Later); within the same
 // start band a span that finishes sooner sits above one running longer.
@@ -10,7 +10,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert");
-const { loadView, sampleData } = require("../lib/roadmap.js");
+const { loadView, sampleData } = require("../../lib/roadmap.js");
 
 const V = loadView();
 

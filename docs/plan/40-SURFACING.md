@@ -64,7 +64,7 @@ Three mechanisms, in order of how much they buy.
 
 ### 1. A shared detail panel with a known-fields map and an overflow - LANDED
 
-`assets/js/pages/roadmap-detail.js` already has the right idea in one
+`assets/js/pages/roadmap/detail.js` already has the right idea in one
 place: `KNOWN_ATTRS` names the attribute keys the drawer renders by
 hand, and `extraAttrRows` renders *everything else in the bag* as a
 generic fact row, so a new or legacy key is never stored-but-invisible.

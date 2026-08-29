@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap
+// tests/unit/roadmap/views-custom.test.js - Benchmarks for the roadmap
 // board's narrowing affordances, split from roadmap-views.test.js per
 // its size-budget exit plan: the Department filter (byDepartment, owner
 // OR business-area association) and the Custom view (per-row pick
@@ -9,7 +9,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { loadView, sampleData } = require("../lib/roadmap.js");
+const { loadView, sampleData } = require("../../lib/roadmap.js");
 
 test("byDepartment narrows items and passes areas/categories through", () => {
   const V = loadView();
