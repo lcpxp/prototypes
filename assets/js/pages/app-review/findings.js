@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// appreview-findings.js - The cross-record half of the review model:
+// app-review/findings.js - The cross-record half of the review model:
 // duplicates, the partner-blocker rollup, and the findings that fire
 // when a record's own state disagrees with its evidence.
 //

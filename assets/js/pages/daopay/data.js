@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// daopay-data.js - Fixture data and the role switch for the Daopay EU
+// daopay/data.js - Fixture data and the role switch for the Daopay EU
 // onboarding replica (modules/prototypes/daopay/). In-memory only; no
 // Supabase table backs any of this.
 //

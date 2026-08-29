@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// portalreview-waves.js - modules/portal-review/index.html. The wave
+// portal-review/waves.js - modules/portal-review/index.html. The wave
 // list, plus the standing asks across every wave - which was the most
 // valuable panel on the original board, because a standing ask is one
 // that has outlived a wave and is therefore the thing most likely to

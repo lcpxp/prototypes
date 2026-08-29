@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// reference-topics.js - Pure HTML builders for api_topics rows: the
+// reference/topics.js - Pure HTML builders for api_topics rows: the
 // narrative sections of a spec (overview, conventions, runbooks,
 // accepted values, gap registers). Loaded after reference-render.js,
 // which supplies the shared codeblock builder. No DOM access, so the

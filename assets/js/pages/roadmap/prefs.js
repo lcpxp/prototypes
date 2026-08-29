@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// roadmap-prefs.js - The roadmap board's remembered view state
+// roadmap/prefs.js - The roadmap board's remembered view state
 // (App.roadmapPrefs): which level and layout, and the eight view-only
 // preferences that are NOT part of the shareable hash.
 //

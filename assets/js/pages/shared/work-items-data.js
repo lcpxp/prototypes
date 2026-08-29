@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// work-items-data.js - The reads over work_items and work_notes that the
+// shared/work-items-data.js - The reads over work_items and work_notes that the
 // list pages deliberately no longer carry.
 //
 // The roadmap board and the backlog table draw the same rows, and

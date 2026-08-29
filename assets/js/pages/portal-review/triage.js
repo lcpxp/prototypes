@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// portalreview-triage.js - modules/portal-review/triage.html. The
+// portal-review/triage.js - modules/portal-review/triage.html. The
 // promotion pass: every finding in the closing wave under the
 // disposition proposed for it, undecided first.
 //

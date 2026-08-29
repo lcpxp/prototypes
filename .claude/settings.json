@@ -1,4 +1,5 @@
 {
+  "comment": "Committed, shared permissions for a session in this repo: an allow list covering the routine commands (npm/node, read-only and write git, the search tools, a local http server, file reads and edits) and a deny list that blocks the hard rules mechanically - reading config.js or .env, force-pushing, git add -f, rm -rf. .claude/settings.local.json is per-developer and gitignored.",
   "permissions": {
     "allow": [
       "Bash(npm test:*)",

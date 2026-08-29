@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// daopay-sim.js - The simulation layer for the Daopay replica: the
+// daopay/sim.js - The simulation layer for the Daopay replica: the
 // toast stack, the email prompt, and the stepped progress modal that
 // stands in for e-signature and the automated handoff.
 //

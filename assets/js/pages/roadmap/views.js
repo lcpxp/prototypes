@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// roadmap-views.js - Pure HTML builders for the roadmap home
+// roadmap/views.js - Pure HTML builders for the roadmap home
 // (modules/roadmap/). Data-in / string-out, no DOM, so they load in a
 // Node vm for unit testing (tests/unit/roadmap/views.test.js). The DOM
 // wiring, data fetch and switcher live in roadmap.js. The Timeline layout

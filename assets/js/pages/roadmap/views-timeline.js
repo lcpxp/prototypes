@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// roadmap-views-timeline.js - The Timeline layout for the roadmap home:
+// roadmap/views-timeline.js - The Timeline layout for the roadmap home:
 // the continuous Delivered|Now|Next|Later|Parked axis where a bar SPANS
 // the columns it runs across. Split out of roadmap-views.js per the size
 // budget's exit plan; shares helpers via App.roadmapViewsShared and extends

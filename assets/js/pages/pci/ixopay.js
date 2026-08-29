@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// pci-ixopay.js - In-page mock of the IXOPAY vendor client and its
+// pci/ixopay.js - In-page mock of the IXOPAY vendor client and its
 // webhook/event bus for the PCI prototype. Shaped like a real client so
 // the demo can be swapped for the live integration later. Exposed as
 // App.pciIxopay; holds no real data and talks to no network. State is

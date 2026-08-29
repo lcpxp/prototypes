@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// dashboard-cards.js - The dashboard's four card sections: API
+// dashboard/cards.js - The dashboard's four card sections: API
 // reference, reviews, knowledge and tools (docs/plan/50-DASHBOARD.md).
 // Pure builders, data in and HTML out, no DOM and no fetching, so they
 // load in a Node vm for testing (tests/unit/dashboard/cards.test.js).

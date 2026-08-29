@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// daopay-app.js - The application summary page in the Daopay replica:
+// daopay/app.js - The application summary page in the Daopay replica:
 // composition, state and behaviour. The section markup lives in
 // daopay-sections.js; the modals, toasts and stepped progress live in
 // daopay-sim.js. This module owns what the application currently is,

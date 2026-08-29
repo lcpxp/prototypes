@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// portalreview-board.js - modules/portal-review/wave.html. One wave:
+// portal-review/board.js - modules/portal-review/wave.html. One wave:
 // the coverage rail, the walker, and every area with its findings.
 //
 // The board reads and never writes. The walker is the only interactive

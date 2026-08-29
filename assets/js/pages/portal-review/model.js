@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// portalreview-model.js - Every derivation the portal review board
+// portal-review/model.js - Every derivation the portal review board
 // needs, as pure functions (App.portalReview). Rows in, plain values
 // out, no DOM and no fetching, so they load in a Node vm for testing.
 //

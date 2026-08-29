@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// backlog-export.js - The backlog's CSV export: the column order, the
+// backlog/export.js - The backlog's CSV export: the column order, the
 // flat record builder and the wiring. Split out of backlog.js on the
 // exit plan its size-budget note has carried since the export landed.
 //

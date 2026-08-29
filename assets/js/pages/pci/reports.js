@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// pci-reports.js - Compliance reporting view for the PCI prototype,
+// pci/reports.js - Compliance reporting view for the PCI prototype,
 // rendered from the IXOPAY mock's getReport(): portfolio totals,
 // compliance status breakdown, webhooks outstanding, and the chases /
 // follow-ups IXOPAY has performed. Reads App.pciIxopay; in-memory only.

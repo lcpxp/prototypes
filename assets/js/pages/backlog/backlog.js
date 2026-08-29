@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// backlog.js - The master work list for modules/backlog/.
+// backlog/backlog.js - The master work list for modules/backlog/.
 // Renders every work_items row as one prioritised table - active,
 // parked and delivered, across every area and scope - filtered by
 // area, type and band, each row opening a modal with full detail, plus

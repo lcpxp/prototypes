@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// appreview-render.js - The board's HTML builders. Data in, string
+// app-review/render.js - The board's HTML builders. Data in, string
 // out: no fetching, no element lookups, no event wiring. That lives
 // in appreview-board.js, which owns the page state and calls these.
 //

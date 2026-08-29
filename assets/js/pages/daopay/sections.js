@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// daopay-sections.js - The markup for each section of the application
+// daopay/sections.js - The markup for each section of the application
 // summary page, in the portal's own order. Pure string builders: they
 // read the fixture and the role's capability list, and never touch the
 // DOM or hold state. daopay-app.js composes and wires them.

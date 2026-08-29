@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// roadmap-drawer.js - The item detail drawer surface for the roadmap
+// roadmap/drawer.js - The item detail drawer surface for the roadmap
 // home: open/close, the ?item=<id> deep-link URL sync, and in-drawer
 // navigation (a related-item link or a nested step row swaps the drawer to
 // that item). Split out of roadmap.js per the size budget; the board's own

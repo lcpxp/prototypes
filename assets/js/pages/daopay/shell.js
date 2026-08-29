@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// daopay-shell.js - Shared chrome for the Daopay replica pages: the
+// daopay/shell.js - Shared chrome for the Daopay replica pages: the
 // black portal header, the navigation sider, and the role switch that
 // flips between the PXP and Daopay views of the same page.
 // Renders into [data-pxp-shell]; the page modules fill .pxp-content.

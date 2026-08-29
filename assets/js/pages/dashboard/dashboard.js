@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// dashboard.js - Fetches and orchestrates the landing page
+// dashboard/dashboard.js - Fetches and orchestrates the landing page
 // (docs/plan/50-DASHBOARD.md). The builders are pure and live in
 // dashboard-strip.js and dashboard-cards.js; this file does the
 // requests, the grant gating and the wiring.

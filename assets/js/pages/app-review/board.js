@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// appreview-board.js - The triage board page for
+// app-review/board.js - The triage board page for
 // modules/app-review/wave.html: state, fetching, wiring and the
 // filter interactions. The HTML itself is built by
 // appreview-render.js, and the drawer body by appreview-detail.js.

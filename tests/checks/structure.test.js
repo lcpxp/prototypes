@@ -299,3 +299,20 @@ test("the login page loads exactly what the manifest says it does", () => {
   assert.ok(!srcs.some((s) => s.endsWith("guard.js")),
     "index.html must not load guard.js: it would redirect the login page.");
 });
+
+test("a page module's header names the file it is in", () => {
+  // Every one of these headers named a file that no longer existed after
+  // the directory move, and the codemap renders them as each file's
+  // purpose - so the map described the repo by its old filenames.
+  const wrong = [];
+  for (const file of trackedFiles()) {
+    if (!file.startsWith("assets/js/pages/") || !file.endsWith(".js")) continue;
+    const rel = file.slice("assets/js/pages/".length);
+    const header = read(file).split("\n").slice(0, 5).join("\n");
+    const m = /^\/\/ ([a-z0-9/-]+\.js) - /m.exec(header);
+    if (!m) continue;
+    if (m[1] !== rel) wrong.push(`${file}: header says "${m[1]}"`);
+  }
+  assert.deepEqual(wrong, [],
+    "Page modules whose header names another file:\n" + wrong.join("\n"));
+});

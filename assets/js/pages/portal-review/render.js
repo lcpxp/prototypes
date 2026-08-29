@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// portalreview-render.js - The portal review board's HTML builders
+// portal-review/render.js - The portal review board's HTML builders
 // (App.portalReviewRender). Pure: rows in, string out, no DOM.
 //
 // This file owns the display half of every vocabulary in

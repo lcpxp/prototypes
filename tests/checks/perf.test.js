@@ -212,3 +212,59 @@ test("the skeleton stands down for anyone who asked for less motion", () => {
   assert.match(reduced, /animation: none/,
     "the shimmer must stop, not just slow down");
 });
+
+// ------------------------------------------------------------------
+// Per-page asset weight. The load-speed workstream cut what the roadmap
+// board DOWNLOADS from the database; this guards what every page ships
+// before a single row arrives. There is no build step, so these are the
+// bytes a visitor actually fetches, and nothing else counts them.
+// ------------------------------------------------------------------
+
+const weightBudget = require("../page-weight-budget.json");
+
+function pageWeight(page) {
+  const dir = require("node:path").dirname(page);
+  const norm = require("node:path").normalize;
+  let bytes = 0;
+  let requests = 0;
+  const src = read(page);
+  const add = (href) => {
+    if (/^https?:/.test(href)) return; // external, and pinned by the check above
+    const target = norm(require("node:path").join(dir, href));
+    if (!trackedFiles().includes(target)) return;
+    bytes += Buffer.byteLength(read(target), "utf8");
+    requests += 1;
+  };
+  for (const m of src.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)) add(m[1]);
+  for (const m of src.matchAll(/<script[^>]+src="([^"]+)"/g)) add(m[1]);
+  return { bytes, requests };
+}
+
+test("no page ships more than its recorded asset weight", () => {
+  const over = [];
+  for (const [page, limit] of Object.entries(weightBudget.pages)) {
+    if (!trackedFiles().includes(page)) {
+      over.push(`${page}: budgeted but not in the repo`);
+      continue;
+    }
+    const { bytes, requests } = pageWeight(page);
+    if (bytes > limit.maxBytes) {
+      over.push(`${page}: ${bytes} bytes of local CSS+JS, ceiling ${limit.maxBytes}`);
+    }
+    if (requests > limit.maxRequests) {
+      over.push(`${page}: ${requests} local requests, ceiling ${limit.maxRequests}`);
+    }
+  }
+  assert.deepEqual(over, [], "Pages over their asset-weight ceiling:\n" +
+    over.join("\n") + "\nEither trim the page or raise the ceiling in " +
+    "tests/page-weight-budget.json, saying why in the commit.");
+});
+
+test("every page has a weight ceiling", () => {
+  const missing = trackedFiles()
+    .filter((f) => f.endsWith(".html"))
+    .filter((f) => !weightBudget.pages[f]);
+  assert.deepEqual(missing, [],
+    `Pages with no recorded weight: ${missing.join(", ")}. A new page needs a ` +
+    "ceiling, or it is the one page nothing measures.");
+});

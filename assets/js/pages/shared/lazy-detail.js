@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// lazy-detail.js - Fetching a row's heavy fields when the detail
+// shared/lazy-detail.js - Fetching a row's heavy fields when the detail
 // surface opens, instead of carrying them for every row on page load.
 //
 // The roadmap board downloads the prose of 268 work items and the 116

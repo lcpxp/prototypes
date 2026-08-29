@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// roadmap-views-breakdown.js - The Detailed breakdown for the roadmap
+// roadmap/views-breakdown.js - The Detailed breakdown for the roadmap
 // home: the Category -> Area -> item drill-down shown under the Work
 // Items and Backlog levels when Detailed is on. Split out of
 // roadmap-views.js per its size-budget exit plan; shares helpers via

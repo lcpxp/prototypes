@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// ideas-render.js - The prototype ideas board's builders
+// ideas/render.js - The prototype ideas board's builders
 // (App.ideasView). Pure: rows in, string out, no DOM and no fetching.
 //
 // This file owns the display half of the two vocabularies on

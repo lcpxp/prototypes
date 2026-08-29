@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// roadmap-detail-values.js - Formatting and derivation for the roadmap
+// roadmap/detail-values.js - Formatting and derivation for the roadmap
 // item drawer and both of its exports (App.roadmapDetailValues). Data
 // in, value out: no DOM and no HTML, so the drawer builders in
 // roadmap-detail.js and the export builders in roadmap-detail-export.js

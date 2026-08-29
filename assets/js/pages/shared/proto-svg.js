@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// proto-svg.js - Inline SVG diagram viewer for a prototype overview
+// shared/proto-svg.js - Inline SVG diagram viewer for a prototype overview
 // page. Fetches the diagram named in #proto-diagram[data-src],
 // sanitises it and injects it inline (fit-to-width, viewBox
 // preserved), with a click-to-enlarge overlay and download-original.

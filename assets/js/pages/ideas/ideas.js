@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// ideas.js - modules/prototypes/ideas.html. Fetch and wiring; every
+// ideas/ideas.js - modules/prototypes/ideas.html. Fetch and wiring; every
 // builder is pure and lives in ideas-render.js.
 //
 // Reads only. An idea is captured, prioritised, planned and promoted

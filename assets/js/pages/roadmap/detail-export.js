@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// roadmap-detail-export.js - The AI-optimised JSON and the flat CSV
+// roadmap/detail-export.js - The AI-optimised JSON and the flat CSV
 // exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap /
 // toCsvRoadmap). Split out of roadmap-detail.js per the size budget; the
 // drawer's value helpers come from App.roadmapDetailValues. Data-in /

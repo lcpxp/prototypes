@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// appreview-waves.js - The wave list for modules/app-review/index.html,
+// app-review/waves.js - The wave list for modules/app-review/index.html,
 // plus the standing watch list above it.
 //
 // The standing list is the point of the page. A wave's output is not

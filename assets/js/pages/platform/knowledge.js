@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// platform-knowledge.js - The parts of the platform knowledge base the
+// platform/knowledge.js - The parts of the platform knowledge base the
 // capability catalogue alone cannot show (App.platformKnowledge).
 //
 // modules/platform/ used to render product_capabilities and nothing

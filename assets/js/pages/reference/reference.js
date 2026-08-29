@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// reference.js - The reference viewer ("swagger") for modules/reference/.
+// reference/reference.js - The reference viewer ("swagger") for modules/reference/.
 // Loads data and wires events; all HTML building lives in
 // reference-render.js (App.referenceRender) and reference-topics.js
 // (App.referenceTopics).

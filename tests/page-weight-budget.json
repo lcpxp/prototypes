@@ -1,0 +1,102 @@
+{
+  "comment": "Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches.",
+  "note": "modules/roadmap/index.html is the outlier on every axis and the only page over 250KB. Two of the universal includes are prototype tools - daopay-admin-tool.js and send-tool.js, ~16KB together on all 23 protected pages - and whether they belong everywhere is an open question for the owner, recorded in docs/STATE.md.",
+  "pages": {
+    "dashboard.html": {
+      "maxRequests": 24,
+      "maxBytes": 191000
+    },
+    "index.html": {
+      "maxRequests": 13,
+      "maxBytes": 68000
+    },
+    "modules/app-review/index.html": {
+      "maxRequests": 23,
+      "maxBytes": 188000
+    },
+    "modules/app-review/wave.html": {
+      "maxRequests": 28,
+      "maxBytes": 230000
+    },
+    "modules/backlog/index.html": {
+      "maxRequests": 25,
+      "maxBytes": 197000
+    },
+    "modules/integrations/index.html": {
+      "maxRequests": 21,
+      "maxBytes": 165000
+    },
+    "modules/platform/index.html": {
+      "maxRequests": 25,
+      "maxBytes": 205000
+    },
+    "modules/portal-review/index.html": {
+      "maxRequests": 25,
+      "maxBytes": 201000
+    },
+    "modules/portal-review/triage.html": {
+      "maxRequests": 25,
+      "maxBytes": 199000
+    },
+    "modules/portal-review/wave.html": {
+      "maxRequests": 25,
+      "maxBytes": 201000
+    },
+    "modules/prototypes/daopay/application.html": {
+      "maxRequests": 27,
+      "maxBytes": 233000
+    },
+    "modules/prototypes/daopay/applications.html": {
+      "maxRequests": 26,
+      "maxBytes": 213000
+    },
+    "modules/prototypes/daopay/index.html": {
+      "maxRequests": 21,
+      "maxBytes": 160000
+    },
+    "modules/prototypes/gdpr/index.html": {
+      "maxRequests": 19,
+      "maxBytes": 153000
+    },
+    "modules/prototypes/ideas.html": {
+      "maxRequests": 24,
+      "maxBytes": 180000
+    },
+    "modules/prototypes/index.html": {
+      "maxRequests": 22,
+      "maxBytes": 169000
+    },
+    "modules/prototypes/pci/dashboard.html": {
+      "maxRequests": 21,
+      "maxBytes": 176000
+    },
+    "modules/prototypes/pci/demo.html": {
+      "maxRequests": 24,
+      "maxBytes": 212000
+    },
+    "modules/prototypes/pci/index.html": {
+      "maxRequests": 21,
+      "maxBytes": 160000
+    },
+    "modules/prototypes/pci/reports.html": {
+      "maxRequests": 23,
+      "maxBytes": 186000
+    },
+    "modules/prototypes/website-screening/index.html": {
+      "maxRequests": 19,
+      "maxBytes": 153000
+    },
+    "modules/reference/index.html": {
+      "maxRequests": 23,
+      "maxBytes": 187000
+    },
+    "modules/roadmap/index.html": {
+      "maxRequests": 41,
+      "maxBytes": 372000
+    },
+    "modules/users/index.html": {
+      "maxRequests": 21,
+      "maxBytes": 168000
+    }
+  }
+}

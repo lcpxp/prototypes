@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// daopay-list.js - The Applications list in the Daopay replica.
+// daopay/list.js - The Applications list in the Daopay replica.
 // Reproduces the portal's list: search by merchant name, filters,
 // striped table, pagination footer.
 //

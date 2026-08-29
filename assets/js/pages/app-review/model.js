@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// appreview-model.js - What the board derives from a single row: its
+// app-review/model.js - What the board derives from a single row: its
 // group, its age, its state marker, what it is waiting on, and the
 // orderings built from those. Pure functions, no DOM and no network,
 // so the rules that matter are testable on their own

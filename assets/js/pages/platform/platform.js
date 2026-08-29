@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// platform.js - The platform product-knowledge viewer for
+// platform/platform.js - The platform product-knowledge viewer for
 // modules/platform/. Read-only render of product_capabilities,
 // grouped by the same work_areas (scope 'product') used by the
 // roadmap and backlog, so "what exists today" and "what's planned"

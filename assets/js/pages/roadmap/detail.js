@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// roadmap-detail.js - Pure builders for the roadmap item drawer and the
+// roadmap/detail.js - Pure builders for the roadmap item drawer and the
 // AI-optimised JSON export (App.roadmapDetail). Data-in / string-or-
 // object-out, no DOM, so they load in a Node vm for unit testing
 // (tests/unit/roadmap/detail.test.js). The drawer wiring, open/close and

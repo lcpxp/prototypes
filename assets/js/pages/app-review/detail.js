@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// appreview-detail.js - The drawer body for one application. A pure
+// app-review/detail.js - The drawer body for one application. A pure
 // builder: rows in, HTML string out, with no fetching and no DOM
 // beyond what it returns (the same split roadmap-detail.js uses).
 //
