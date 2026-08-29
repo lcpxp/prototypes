@@ -3,7 +3,8 @@
 // narrative sections of a spec (overview, conventions, runbooks,
 // accepted values, gap registers). Loaded after reference-render.js,
 // which supplies the shared codeblock builder. No DOM access, so the
-// builders are benchmarked in tests/unit/reference-topics.test.js.
+// builders are benchmarked in tests/unit/reference-render.test.js,
+// which loads this module alongside it.
 //
 // blocks is a jsonb array of typed blocks (shapes documented in
 // supabase/schema/10_reference.sql), rendered by App.blocks. A kind

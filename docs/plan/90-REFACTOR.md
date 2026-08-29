@@ -111,8 +111,8 @@ second such channel into `tools.js`'s `ICONS`. Both degrade silently: a
 missing token falls through to neutral defaults and the row just goes
 grey. Static analysis cannot see either. Prune nothing; gate it instead.
 
-**Broken doc links.** `docs/ROADMAP-PROCESS.md` and `docs/SESSIONS.md` are
-cited but absent. Both citations live in immutable content - two applied
+**Broken doc links.** Two documents under `docs/` - a ROADMAP-PROCESS and
+a SESSIONS file, both long gone - are still cited but absent. Both citations live in immutable content - two applied
 migrations and the closed sessions archive - so "fixing" them would mean
 editing an applied migration. The gate excludes those two trees.
 

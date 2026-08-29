@@ -91,8 +91,8 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/portalreview-triage.js | 108 | portalreview-triage.js - modules/portal-review/triage.html. The |
 | assets/js/pages/portalreview-waves.js | 129 | portalreview-waves.js - modules/portal-review/index.html. The wave |
 | assets/js/pages/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
-| assets/js/pages/reference-render.js | 287 | reference-render.js - Pure HTML builders for the reference viewer. |
-| assets/js/pages/reference-topics.js | 47 | reference-topics.js - Pure HTML builders for api_topics rows: the |
+| assets/js/pages/reference-render.js | 288 | reference-render.js - Pure HTML builders for the reference viewer. |
+| assets/js/pages/reference-topics.js | 48 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail-export.js | 223 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
 | assets/js/pages/roadmap-detail-values.js | 124 | roadmap-detail-values.js - Formatting and derivation for the roadmap |
@@ -251,8 +251,10 @@ document instead of walking the tree or reading whole files.
 | supabase/schema/52_portal_review.sql | 249 | ------------------------------------------------------------------ |
 | supabase/schema/90_dashboard.sql | 176 | ------------------------------------------------------------------ |
 | supabase/seed.sql | 514 | ------------------------------------------------------------------ |
+| tests/checks/db-style-contract.test.js | 118 | tests/checks/db-style-contract.test.js - The database names styles. |
 | tests/checks/knowledge-drift.test.js | 142 | tests/checks/knowledge-drift.test.js - Keeps what the system was |
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
+| tests/checks/links.test.js | 112 | tests/checks/links.test.js - Internal references resolve. |
 | tests/checks/perf.test.js | 215 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/reference-drift.test.js | 167 | tests/checks/reference-drift.test.js - Keeps the API reference from |
 | tests/checks/render-coverage.test.js | 351 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
@@ -644,21 +646,21 @@ document instead of walking the tree or reading whole files.
 | sanitize() | assets/js/pages/proto-svg.js:22 |
 | fallback() | assets/js/pages/proto-svg.js:51 |
 | openOverlay() | assets/js/pages/proto-svg.js:59 |
-| codeblock() | assets/js/pages/reference-render.js:18 |
-| specOverview() | assets/js/pages/reference-render.js:32 |
-| paramsTable() | assets/js/pages/reference-render.js:69 |
-| headersTable() | assets/js/pages/reference-render.js:88 |
-| statusClass() | assets/js/pages/reference-render.js:106 |
-| responsesBlock() | assets/js/pages/reference-render.js:114 |
-| badgeList() | assets/js/pages/reference-render.js:134 |
-| curlExample() | assets/js/pages/reference-render.js:149 |
-| endpointBody() | assets/js/pages/reference-render.js:170 |
-| endpointBlock() | assets/js/pages/reference-render.js:185 |
-| groupByTag() | assets/js/pages/reference-render.js:204 |
-| matches() | assets/js/pages/reference-render.js:234 |
-| endpointsFromOpenApi() | assets/js/pages/reference-render.js:244 |
-| blockHtml() | assets/js/pages/reference-topics.js:22 |
-| topicBlock() | assets/js/pages/reference-topics.js:28 |
+| codeblock() | assets/js/pages/reference-render.js:19 |
+| specOverview() | assets/js/pages/reference-render.js:33 |
+| paramsTable() | assets/js/pages/reference-render.js:70 |
+| headersTable() | assets/js/pages/reference-render.js:89 |
+| statusClass() | assets/js/pages/reference-render.js:107 |
+| responsesBlock() | assets/js/pages/reference-render.js:115 |
+| badgeList() | assets/js/pages/reference-render.js:135 |
+| curlExample() | assets/js/pages/reference-render.js:150 |
+| endpointBody() | assets/js/pages/reference-render.js:171 |
+| endpointBlock() | assets/js/pages/reference-render.js:186 |
+| groupByTag() | assets/js/pages/reference-render.js:205 |
+| matches() | assets/js/pages/reference-render.js:235 |
+| endpointsFromOpenApi() | assets/js/pages/reference-render.js:245 |
+| blockHtml() | assets/js/pages/reference-topics.js:23 |
+| topicBlock() | assets/js/pages/reference-topics.js:29 |
 | context() | assets/js/pages/reference.js:32 |
 | render() | assets/js/pages/reference.js:36 |
 | hydrate() | assets/js/pages/reference.js:90 |
@@ -867,7 +869,13 @@ document instead of walking the tree or reading whole files.
 | write() | scripts/gen-snapshot.js:113 |
 | appSurfaces() | scripts/gen-surface.js:35 |
 | pageIncludes() | scripts/gen-surface.js:52 |
+| supabaseSql() | tests/checks/db-style-contract.test.js:28 |
+| seededColourTokens() | tests/checks/db-style-contract.test.js:35 |
+| seededIcons() | tests/checks/db-style-contract.test.js:43 |
+| iconKeys() | tests/checks/db-style-contract.test.js:52 |
 | seededKinds() | tests/checks/knowledge-links.test.js:22 |
+| deliberatelyAbsent() | tests/checks/links.test.js:49 |
+| citingFiles() | tests/checks/links.test.js:57 |
 | cdnPages() | tests/checks/perf.test.js:17 |
 | sqlWithoutComments() | tests/checks/perf.test.js:22 |
 | constraints() | tests/checks/render-coverage.test.js:49 |

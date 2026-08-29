@@ -6,7 +6,8 @@
 //
 // All content comes from Supabase (api_specs, api_endpoints). The
 // optional jsonb shapes these builders understand are documented on
-// the columns in supabase/schema.sql; every field is optional so
+// the columns in supabase/schema/10_reference.sql; every field is
+// optional so
 // sparse rows render cleanly.
 // ------------------------------------------------------------------
 
