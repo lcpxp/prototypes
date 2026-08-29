@@ -29,21 +29,13 @@
     { key: "timeline", label: "Timeline" },
     { key: "cascade", label: "Cascade" },
   ];
-  var LEVEL_STORE = "roadmap-level";
-  var LAYOUT_STORE = "roadmap-layout";
-  var DELIVERED_STORE = "roadmap-delivered";
-  var EXPAND_STORE = "roadmap-expanded";
-  var DEPT_STORE = "roadmap-department";
-  var CUSTOM_STORE = "roadmap-custom";
-  var PICK_STORE = "roadmap-unpicked";
-  var HIDEFIXES_STORE = "roadmap-hidefixes";
-  var HIDDEN_STORE = "roadmap-hidden-bands";
-  var WIDE_STORE = "roadmap-wide";
   // Every board column can be collapsed by clicking its header: it drops
   // that band's work and shrinks the column to a seam. Keys match the BANDS
   // in roadmap-views.js. Only these known keys are honoured from storage, so
   // a stale or hand-edited value can never hide something unexpected.
   var HIDEABLE = ["previously", "recently", "now", "next", "later", "parked"];
+
+  var P = App.roadmapPrefs;
 
   var data = { categories: [], areas: [], items: [] };
   var current = "workstreams";
@@ -62,85 +54,18 @@
   function find(list, key) { return list.filter(function (x) { return x.key === key; })[0]; }
 
   // The hash carries both: "#team/cascade". Layout defaults to Timeline.
+  // A stored level or layout is only the fallback for a visit with no
+  // hash, so a shared link always wins.
   function readState() {
     var parts = (window.location.hash || "").replace(/^#/, "").split("/");
-    current = find(LEVELS, parts[0]) ? parts[0] : stored(LEVEL_STORE, LEVELS, "workstreams");
-    layout = find(LAYOUTS, parts[1]) ? parts[1] : stored(LAYOUT_STORE, LAYOUTS, "timeline");
-  }
-  function stored(key, list, fallback) {
-    var v = null;
-    try { v = window.localStorage.getItem(key); } catch (e) { v = null; }
-    return find(list, v) ? v : fallback;
+    current = find(LEVELS, parts[0]) ? parts[0] : P.readLevel(LEVELS, "workstreams");
+    layout = find(LAYOUTS, parts[1]) ? parts[1] : P.readLayout(LAYOUTS, "timeline");
   }
   function hashFor() { return current + "/" + layout; }
 
-  // Delivered visibility is a view-only preference (localStorage), not
-  // part of the shareable hash.
-  function readDelivered() {
-    try { return window.localStorage.getItem(DELIVERED_STORE) !== "hidden"; }
-    catch (e) { return true; }
-  }
-
-  // Compact vs Detailed is a view-only preference (localStorage), not
-  // part of the shareable hash. Detailed expands the Executive rollup
-  // into its child items.
-  function readExpanded() {
-    try { return window.localStorage.getItem(EXPAND_STORE) === "expanded"; }
-    catch (e) { return false; }
-  }
-
-  // Expand board (wide) is a view-only preference (localStorage), not part
-  // of the shareable hash: it widens the Timeline grid so the board scrolls
-  // sideways rather than compressing every column to fit.
-  function readWide() {
-    try { return window.localStorage.getItem(WIDE_STORE) === "on"; }
-    catch (e) { return false; }
-  }
-
-  // Department is a view-only filter (localStorage), not part of the
-  // shareable hash. "" means all departments; an unknown stored key
-  // falls back to all, so a retired department never sticks.
-  function readDepartment() {
-    var v = "";
-    try { v = window.localStorage.getItem(DEPT_STORE) || ""; } catch (e) { v = ""; }
-    var known = (App.registry.departments || []).some(function (d) { return d.key === v; });
-    return known ? v : "";
-  }
-
-  // Custom view is a view-only preference (localStorage), not part of the
-  // shareable hash: it turns on the per-row picker whose deselections
-  // live in unpicked (an id -> true map).
-  function readCustom() {
-    try { return window.localStorage.getItem(CUSTOM_STORE) === "on"; } catch (e) { return false; }
-  }
-  function readUnpicked() {
-    try { return JSON.parse(window.localStorage.getItem(PICK_STORE) || "{}") || {}; }
-    catch (e) { return {}; }
-  }
-  function persistUnpicked() {
-    try { window.localStorage.setItem(PICK_STORE, JSON.stringify(unpicked)); }
-    catch (e) { /* ignore */ }
-  }
   // The body flag drives the custom-view CSS (the trailing checkbox column
   // and the print pruning); the markup itself comes from the builders.
   function syncCustomBody() { document.body.classList.toggle("rm-custom", customOn); }
-
-  // Collapsed columns are a view-only preference (localStorage), not part of
-  // the shareable hash: a map of band key -> true for each column the owner
-  // took off the board. Only known band keys are honoured, so a stale or
-  // hand-edited value can never hide anything unexpected.
-  function readHiddenBands() {
-    var out = {};
-    try {
-      var raw = JSON.parse(window.localStorage.getItem(HIDDEN_STORE) || "{}") || {};
-      HIDEABLE.forEach(function (k) { if (raw[k]) out[k] = true; });
-    } catch (e) { /* ignore */ }
-    return out;
-  }
-  function persistHidden() {
-    try { window.localStorage.setItem(HIDDEN_STORE, JSON.stringify(hiddenBands)); }
-    catch (e) { /* ignore */ }
-  }
 
   // The dataset the board and the export both draw, narrowed to the
   // selected department (categories and areas stay intact).
@@ -229,17 +154,17 @@
     // switch has no effect there; hide it rather than leave a dead toggle.
     layoutNav.hidden = current === "exec";
     nav.querySelectorAll("button[data-key]").forEach(function (b) {
-      b.addEventListener("click", function () { set(LEVEL_STORE, "current", b.getAttribute("data-key"), nav, layoutNav, host); });
+      b.addEventListener("click", function () { set(P.KEYS.level, "current", b.getAttribute("data-key"), nav, layoutNav, host); });
     });
     layoutNav.querySelectorAll("button[data-key]").forEach(function (b) {
-      b.addEventListener("click", function () { set(LAYOUT_STORE, "layout", b.getAttribute("data-key"), nav, layoutNav, host); });
+      b.addEventListener("click", function () { set(P.KEYS.layout, "layout", b.getAttribute("data-key"), nav, layoutNav, host); });
     });
   }
 
   function set(storeKey, which, value, nav, layoutNav, host) {
     if (which === "current") { if (!find(LEVELS, value) || value === current) return; current = value; }
     else { if (!find(LAYOUTS, value) || value === layout) return; layout = value; }
-    try { window.localStorage.setItem(storeKey, value); } catch (e) { /* ignore */ }
+    P.writeChoice(storeKey, value);
     if (window.location.hash.replace(/^#/, "") !== hashFor()) window.location.hash = hashFor();
     renderControls(nav, layoutNav, host);
     render(host);
@@ -250,15 +175,14 @@
     var nav = document.getElementById("roadmap-switch");
     var layoutNav = document.getElementById("roadmap-layout");
     readState();
-    showDelivered = readDelivered();
-    expanded = readExpanded();
-    wide = readWide();
-    department = readDepartment();
-    customOn = readCustom();
-    unpicked = readUnpicked();
-    try { hideFixes = window.localStorage.getItem(HIDEFIXES_STORE) === "on"; }
-    catch (e) { hideFixes = false; }
-    hiddenBands = readHiddenBands();
+    showDelivered = P.readDelivered();
+    expanded = P.readExpanded();
+    wide = P.readWide();
+    department = P.readDepartment();
+    customOn = P.readCustom();
+    unpicked = P.readUnpicked();
+    hideFixes = P.readHideFixes();
+    hiddenBands = P.readHiddenBands(HIDEABLE);
     syncCustomBody();
 
     var deptSelect = document.getElementById("roadmap-department");
@@ -272,8 +196,7 @@
       deptSelect.value = department;
       deptSelect.addEventListener("change", function () {
         department = deptSelect.value;
-        try { window.localStorage.setItem(DEPT_STORE, department); }
-        catch (e) { /* ignore */ }
+        P.writeDepartment(department);
         render(host);
       });
     }
@@ -283,8 +206,7 @@
       renderDelivered(delBtn);
       delBtn.addEventListener("click", function () {
         showDelivered = !showDelivered;
-        try { window.localStorage.setItem(DELIVERED_STORE, showDelivered ? "shown" : "hidden"); }
-        catch (e) { /* ignore */ }
+        P.writeDelivered(showDelivered);
         renderDelivered(delBtn);
         render(host);
       });
@@ -295,8 +217,7 @@
       renderExpanded(expandBtn);
       expandBtn.addEventListener("click", function () {
         expanded = !expanded;
-        try { window.localStorage.setItem(EXPAND_STORE, expanded ? "expanded" : "compact"); }
-        catch (e) { /* ignore */ }
+        P.writeExpanded(expanded);
         renderExpanded(expandBtn);
         render(host);
       });
@@ -307,8 +228,7 @@
       renderToggle(customBtn, customOn, "Custom view", "Exit custom view");
       customBtn.addEventListener("click", function () {
         customOn = !customOn;
-        try { window.localStorage.setItem(CUSTOM_STORE, customOn ? "on" : "off"); }
-        catch (e) { /* ignore */ }
+        P.writeCustom(customOn);
         renderToggle(customBtn, customOn, "Custom view", "Exit custom view");
         syncCustomBody();
         render(host);
@@ -320,8 +240,7 @@
       renderBugToggle(fixesBtn);
       fixesBtn.addEventListener("click", function () {
         hideFixes = !hideFixes;
-        try { window.localStorage.setItem(HIDEFIXES_STORE, hideFixes ? "on" : "off"); }
-        catch (e) { /* ignore */ }
+        P.writeHideFixes(hideFixes);
         renderBugToggle(fixesBtn);
         render(host);
       });
@@ -332,8 +251,7 @@
       renderWideToggle(wideBtn);
       wideBtn.addEventListener("click", function () {
         wide = !wide;
-        try { window.localStorage.setItem(WIDE_STORE, wide ? "on" : "off"); }
-        catch (e) { /* ignore */ }
+        P.writeWide(wide);
         renderWideToggle(wideBtn);
         render(host);
       });
@@ -368,7 +286,7 @@
       if (toggle) {
         var key = toggle.getAttribute("data-band");
         if (hiddenBands[key]) delete hiddenBands[key]; else hiddenBands[key] = true;
-        persistHidden();
+        P.writeHiddenBands(hiddenBands);
         render(host);
         return;
       }
@@ -389,7 +307,7 @@
       if (!box || !box.getAttribute || box.getAttribute("data-pick-id") === null) return;
       var id = box.getAttribute("data-pick-id");
       if (box.checked) delete unpicked[id]; else unpicked[id] = true;
-      persistUnpicked();
+      P.writeUnpicked(unpicked);
       render(host);
     });
 

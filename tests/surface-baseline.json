@@ -149,6 +149,9 @@
     "roadmapExport": [
       "assets/js/pages/roadmap-export.js"
     ],
+    "roadmapPrefs": [
+      "assets/js/pages/roadmap-prefs.js"
+    ],
     "roadmapView": [
       "assets/js/pages/roadmap-views-breakdown.js",
       "assets/js/pages/roadmap-views-cascade.js",
@@ -173,6 +176,9 @@
       "assets/js/core/sprints.js"
     ],
     "statusBadge": [
+      "assets/js/core/ui.js"
+    ],
+    "store": [
       "assets/js/core/ui.js"
     ],
     "theme": [
@@ -801,6 +807,7 @@
         "assets/js/pages/lazy-detail.js",
         "assets/js/pages/work-items-data.js",
         "assets/js/pages/roadmap-drawer.js",
+        "assets/js/pages/roadmap-prefs.js",
         "assets/js/pages/roadmap.js"
       ]
     },

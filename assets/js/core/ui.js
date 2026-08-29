@@ -118,6 +118,52 @@
   // fragment naming a rendered item (e.g. #capability-<id>), bring it
   // into view and flag it briefly. Pages call this after they render,
   // since their content is fetched asynchronously.
+  // ------------------------------------------------------------------
+  // Guarded localStorage. Storage throws in a private window and in an
+  // iframe with third-party cookies blocked, so every read and write has
+  // to be wrapped - and it was, eight times over in roadmap.js alone,
+  // each copy slightly different. A stored preference is a convenience:
+  // when storage is unavailable the fallback is returned and the page
+  // works, just without remembering.
+  //
+  // theme.js deliberately does NOT use this. It is the first script on
+  // the page and runs before ui.js exists.
+  // ------------------------------------------------------------------
+  App.store = {
+    get: function (key, fallback) {
+      try {
+        var v = window.localStorage.getItem(key);
+        return v === null ? (fallback === undefined ? null : fallback) : v;
+      } catch (e) {
+        return fallback === undefined ? null : fallback;
+      }
+    },
+    set: function (key, value) {
+      try {
+        window.localStorage.setItem(key, String(value));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+    getJSON: function (key, fallback) {
+      try {
+        var parsed = JSON.parse(window.localStorage.getItem(key));
+        return parsed === null || parsed === undefined ? fallback : parsed;
+      } catch (e) {
+        return fallback;
+      }
+    },
+    setJSON: function (key, value) {
+      try {
+        window.localStorage.setItem(key, JSON.stringify(value));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+  };
+
   App.deepLinkScroll = function () {
     var id = (window.location.hash || "").replace(/^#/, "");
     if (!id) return;

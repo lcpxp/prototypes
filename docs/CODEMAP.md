@@ -56,7 +56,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 84 | theme.js - Light/dark theme control. |
 | assets/js/core/tools.js | 217 | tools.js - The nav's outbound links to external tools, rendered as |
-| assets/js/core/ui.js | 318 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/core/ui.js | 364 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
 | assets/js/pages/appreview-detail.js | 207 | appreview-detail.js - The drawer body for one application. A pure |
 | assets/js/pages/appreview-findings.js | 145 | appreview-findings.js - The cross-record half of the review model: |
@@ -99,12 +99,13 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap-detail.js | 438 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-drawer.js | 97 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
 | assets/js/pages/roadmap-export.js | 101 | roadmap-export.js - The roadmap home's export dropdown wiring and the |
+| assets/js/pages/roadmap-prefs.js | 106 | roadmap-prefs.js - The roadmap board's remembered view state |
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
 | assets/js/pages/roadmap-views-cascade.js | 206 | roadmap-views-cascade.js - The Cascade layout for the roadmap home: |
 | assets/js/pages/roadmap-views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
 | assets/js/pages/roadmap-views-timeline.js | 213 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
 | assets/js/pages/roadmap-views.js | 413 | roadmap-views.js - Pure HTML builders for the roadmap home |
-| assets/js/pages/roadmap.js | 531 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
+| assets/js/pages/roadmap.js | 449 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 207 | users.js - User and access management for modules/users/. |
 | assets/js/pages/work-items-data.js | 172 | work-items-data.js - The reads over work_items and work_notes that the |
 | dashboard.html | 122 | Dashboard - LPio / LaunchPad IO |
@@ -165,7 +166,7 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/pci/reports.html | 73 | Compliance reporting - PXP replica - LPio |
 | modules/prototypes/website-screening/index.html | 46 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 72 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 134 | Roadmap - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 135 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 52 | Users - LPio / LaunchPad IO |
 | package.json | 17 |  |
 | scripts/audit.js | 169 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
@@ -276,7 +277,7 @@ document instead of walking the tree or reading whole files.
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 28 |  |
 | tests/size-budget.json | 201 |  |
-| tests/surface-baseline.json | 833 |  |
+| tests/surface-baseline.json | 840 |  |
 | tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
@@ -312,7 +313,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/tools-warm.test.js | 184 | tests/unit/tools-warm.test.js - Benchmarks for the Splunk warm-up in |
 | tests/unit/tools.test.js | 224 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
-| tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
+| tests/unit/ui.test.js | 130 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 | tests/unit/work-items-data.test.js | 219 | tests/unit/work-items-data.test.js - The reads that replace what the |
 
 ## JavaScript symbol index
@@ -396,11 +397,11 @@ document instead of walking the tree or reading whole files.
 | App.notice | assets/js/core/ui.js:59 |
 | App.download | assets/js/core/ui.js:69 |
 | App.csvFromRows | assets/js/core/ui.js:89 |
-| App.deepLinkScroll | assets/js/core/ui.js:121 |
-| isCurrentPage() | assets/js/core/ui.js:133 |
-| themeIcon() | assets/js/core/ui.js:141 |
-| renderNav() | assets/js/core/ui.js:158 |
-| App.onThemeChange | assets/js/core/ui.js:293 |
+| App.deepLinkScroll | assets/js/core/ui.js:167 |
+| isCurrentPage() | assets/js/core/ui.js:179 |
+| themeIcon() | assets/js/core/ui.js:187 |
+| renderNav() | assets/js/core/ui.js:204 |
+| App.onThemeChange | assets/js/core/ui.js:339 |
 | param() | assets/js/pages/appreview-board.js:32 |
 | day() | assets/js/pages/appreview-board.js:36 |
 | renderAll() | assets/js/pages/appreview-board.js:46 |
@@ -721,6 +722,8 @@ document instead of walking the tree or reading whole files.
 | wire() | assets/js/pages/roadmap-export.js:35 |
 | setOpen() | assets/js/pages/roadmap-export.js:38 |
 | withHeavy() | assets/js/pages/roadmap-export.js:72 |
+| readChoice() | assets/js/pages/roadmap-prefs.js:40 |
+| readFlag() | assets/js/pages/roadmap-prefs.js:46 |
 | breakdownItemRow() | assets/js/pages/roadmap-views-breakdown.js:18 |
 | breakdown() | assets/js/pages/roadmap-views-breakdown.js:31 |
 | areaSort() | assets/js/pages/roadmap-views-breakdown.js:34 |
@@ -795,31 +798,21 @@ document instead of walking the tree or reading whole files.
 | teamList() | assets/js/pages/roadmap-views.js:369 |
 | visibleDetail() | assets/js/pages/roadmap-views.js:375 |
 | breakdown() | assets/js/pages/roadmap-views.js:380 |
-| find() | assets/js/pages/roadmap.js:62 |
-| readState() | assets/js/pages/roadmap.js:65 |
-| stored() | assets/js/pages/roadmap.js:70 |
-| hashFor() | assets/js/pages/roadmap.js:75 |
-| readDelivered() | assets/js/pages/roadmap.js:79 |
-| readExpanded() | assets/js/pages/roadmap.js:87 |
-| readWide() | assets/js/pages/roadmap.js:95 |
-| readDepartment() | assets/js/pages/roadmap.js:103 |
-| readCustom() | assets/js/pages/roadmap.js:113 |
-| readUnpicked() | assets/js/pages/roadmap.js:116 |
-| persistUnpicked() | assets/js/pages/roadmap.js:120 |
-| syncCustomBody() | assets/js/pages/roadmap.js:126 |
-| readHiddenBands() | assets/js/pages/roadmap.js:132 |
-| persistHidden() | assets/js/pages/roadmap.js:140 |
-| viewData() | assets/js/pages/roadmap.js:147 |
-| exportRows() | assets/js/pages/roadmap.js:153 |
-| render() | assets/js/pages/roadmap.js:160 |
-| renderDelivered() | assets/js/pages/roadmap.js:178 |
-| renderExpanded() | assets/js/pages/roadmap.js:183 |
-| renderToggle() | assets/js/pages/roadmap.js:190 |
-| renderBugToggle() | assets/js/pages/roadmap.js:198 |
-| renderWideToggle() | assets/js/pages/roadmap.js:209 |
-| tabs() | assets/js/pages/roadmap.js:216 |
-| renderControls() | assets/js/pages/roadmap.js:225 |
-| set() | assets/js/pages/roadmap.js:239 |
+| find() | assets/js/pages/roadmap.js:54 |
+| readState() | assets/js/pages/roadmap.js:59 |
+| hashFor() | assets/js/pages/roadmap.js:64 |
+| syncCustomBody() | assets/js/pages/roadmap.js:68 |
+| viewData() | assets/js/pages/roadmap.js:72 |
+| exportRows() | assets/js/pages/roadmap.js:78 |
+| render() | assets/js/pages/roadmap.js:85 |
+| renderDelivered() | assets/js/pages/roadmap.js:103 |
+| renderExpanded() | assets/js/pages/roadmap.js:108 |
+| renderToggle() | assets/js/pages/roadmap.js:115 |
+| renderBugToggle() | assets/js/pages/roadmap.js:123 |
+| renderWideToggle() | assets/js/pages/roadmap.js:134 |
+| tabs() | assets/js/pages/roadmap.js:141 |
+| renderControls() | assets/js/pages/roadmap.js:150 |
+| set() | assets/js/pages/roadmap.js:164 |
 | notice() | assets/js/pages/users.js:15 |
 | roleBadge() | assets/js/pages/users.js:28 |
 | roleCell() | assets/js/pages/users.js:34 |
@@ -970,6 +963,9 @@ document instead of walking the tree or reading whole files.
 | navHost() | tests/unit/tools.test.js:134 |
 | fakeDb() | tests/unit/tools.test.js:143 |
 | loadApp() | tests/unit/ui.test.js:13 |
+| fakeStorage() | tests/unit/ui.test.js:68 |
+| throwingStorage() | tests/unit/ui.test.js:77 |
+| withStorage() | tests/unit/ui.test.js:84 |
 | fakeDb() | tests/unit/work-items-data.test.js:23 |
 | load() | tests/unit/work-items-data.test.js:45 |
 | plain() | tests/unit/work-items-data.test.js:61 |
