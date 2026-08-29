@@ -169,11 +169,11 @@ byte-identical goldens, and an identical transcript.
 - [x] 2 Unfreeze the capped files
 - [x] 3 Rebuild the size budget
 - [x] 4 Small provable cleanups
-- [ ] 5 Structure and naming, one move per file
+- [x] 5 Structure and naming, one move per file
 - [x] 6 Gate the two unwatched contracts (taken before 5, so the link gate protects the moves)
-- [ ] 7 One home for every instruction
-- [ ] 8 Navigation and performance
-- [ ] 9 Close out
+- [x] 7 One home for every instruction
+- [x] 8 Navigation and performance
+- [x] 9 Close out
 
 ## Open questions for the owner
 
@@ -189,6 +189,38 @@ the roadmap page.
 2. `send-tool.js` (8,257 B), "Acquirer send", same shape, same question.
 
 Together ~16KB uncompressed on every page load.
+
+## Outcome
+
+Fourteen commits, each verified in a browser against a worktree of the
+pre-refactor tree before it was pushed.
+
+| | before | after |
+|---|---:|---:|
+| tests | 545 | 573 |
+| gates in tests/checks/ | 11 | 14 |
+| size-budget exceptions | 41 | 1 (+15 acknowledgements) |
+| files at their hard cap | 3 | 0 |
+| files in assets/js/pages/ | 50 flat | 12 directories + 3 |
+| docs/CODEMAP.md | 966 lines, 624 private helpers | 519 lines, public surface first |
+| homes for the include order | 3, all stale | 1, enforced |
+| unnamed shared surfaces | 2 (`_rmd`, `_rmv`) | 0 |
+
+**No user-visible change, by design.** docs/CHANGELOG.md records what
+changed for users, so it correctly gets nothing from this workstream.
+Every commit was checked against 34 screenshots, three golden exports
+and a behaviour transcript, and none of them moved.
+
+No structural SQL changed, so `supabase/schema-snapshot.json` is
+untouched and the drift gate is still in step at 34 tables, 106
+policies, 54 migrations. The only two SQL edits are comments: why
+policies.sql is one file, and a moved path in a schema comment.
+
+New gates: `surface.test.js` (the App surface and every page's
+includes), `db-style-contract.test.js` (the two columns that name a
+token and an icon), `links.test.js` (internal references resolve), plus
+the naming convention, the include manifest and the per-page asset
+weight. Every one was made to fail on purpose before being trusted.
 
 ## Where this plan was wrong
 
@@ -211,3 +243,30 @@ Filled in as it happens; the part a later wave needs.
   localStorage keys with eight hand-rolled `try/catch` blocks. An exit
   plan written when a file crosses its cap is a guess; the seam is
   obvious only once something forces you to look again.
+
+- The plan ordered the structural move (5) before the gates (6). That
+  was backwards: the link gate catches a citation broken by a file move,
+  which is exactly what the move does 270 times. Taken first, it turned
+  from a record of the damage into a guard against it, and it caught two
+  stale citations that predated this work.
+- The harness had to be made honest before it could be trusted, and the
+  way to find that was to run it twice over IDENTICAL code. Three false
+  signals fell out: a frozen-clock problem (two prototypes render today's
+  date, and this session spanned midnight, so proto-pci-reports differed
+  by two days), two screenshots that vary run to run whatever the code
+  does, and a comparison against files absent from one of the two runs.
+  Any of the three, met mid-refactor, reads as a regression.
+- "26 unused design tokens" and "31 unhandled promise rejections" were
+  both wrong, and both would have caused damage: the first by greying out
+  the application-review board, the second by adding dead .catch blocks
+  to code that was already correct. A metric is not evidence.
+- The convention gate had to be narrowed twice. "Every page directory is
+  a registry key" is false - dashboard/ serves the root page and daopay/,
+  pci/ and ideas/ serve prototypes. "A module's page loads its own
+  directory" is false as stated too, because modules/prototypes/ draws
+  its ideas strip from pages/ideas/. The rule that survives is narrower
+  than the one that sounds right.
+- The one-home checks needed a proximity window and a reworded document.
+  CLAUDE.md legitimately names registry.js and supabase.js 150 lines
+  apart about different things, and HARNESS.md quoted a stale number
+  inside the sentence warning about stale numbers.

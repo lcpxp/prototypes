@@ -1,37 +1,34 @@
 # Current state
 
-Updated: 2026-08-29 (refactor workstream, phases 0-4 and 6 landed)
+Updated: 2026-08-29 (refactor workstream closed)
 
 ## In progress
-docs/plan/90-REFACTOR.md is the workstream record and the resume point.
-Landed on main, each verified in a browser against a worktree of the
-pre-refactor tree: the surface/include gates, the dead theme guard
-removed from 24 pages, roadmap-detail.js and roadmap.js unfrozen
-(App.roadmapDetailValues, App.roadmapPrefs, App.store), the size budget
-rebuilt (41 exceptions -> 1 + 15 acknowledgements), the esc() dead null
-checks and the audit's misreading .then/.catch metric, and the two
-database-to-style gates. 563 tests green, audit clean.
+Nothing. docs/plan/90-REFACTOR.md is the record: fourteen commits, each
+verified in a browser against a worktree of the pre-refactor tree before
+it was pushed. 573 tests green, audit clean, schema snapshot untouched
+and in step. No user-visible change, which is why docs/CHANGELOG.md has
+no entry from it.
 
 ## Next steps
-Phase 5 is the one left with real blast radius: nest assets/js/pages/
-(50 flat files) per module and mirror it in tests/unit/, merging the
-renames into the same move so every file moves once. 63 script srcs, 36
-hardcoded paths in tests/scripts, the vm loader lists and the COVERAGE
-map all move with them. Then phases 7 (includes.json manifest, the stale
-CLAUDE.md map, HARNESS.md's wrong md budget) and 8 (codemap rebuild, a
-navigation guide, per-page asset budget).
+Owner-supplied content is still the only queued work, and it is not
+blocking. docs/HANDOVER-CONTEXT.md is the claude.ai prompt for gathering
+it: 80 items with no summary, 39 closed with no resolution, 20 orphaned
+notes, 110 links still proposed, 14 ideas with no summary or value note.
+Those figures are the ones npm run audit shows and the knowledge gate
+holds, so filling them lowers a ceiling that cannot climb back.
 
 ## Verification the repo cannot do for itself
-- The harness is a session tool in the scratchpad, not in the repo: a
-  fixture-backed Supabase stub plus Chromium, comparing 34 screenshots,
-  three golden exports and a behaviour transcript against a git worktree
-  of the pre-refactor commit. It has to be rebuilt to re-verify.
-- A real signed-in pass over the app-review board with coloured triage
-  rows: the colour_token path now has a gate, but only a browser proves
-  the rows are still coloured.
+- A signed-in pass over the app-review board with coloured triage rows.
+  tests/checks/db-style-contract.test.js now proves every colour_token
+  has its token pair, but only a browser proves the rows are coloured.
+- The 25% load-speed target on COMPRESSED bytes (80-LOAD-SPEED.md).
+  tests/page-weight-budget.json now ratchets uncompressed per-page
+  weight; a DevTools run still settles the compressed figure.
+- Re-embedding after a wave of roadmap edits: `select * from
+  roadmap_embed_refresh();`. embeddings.stale is held at zero.
 
 ## Open decisions
 - Should daopay-admin-tool.js (7,935 B) and send-tool.js (8,257 B) load
   on all 23 protected pages, or only inside the DaoPay prototype? Both
-  render a nav icon, so dropping them is a visible change and is the
-  owner's call. ~16KB uncompressed per page load.
+  render a nav icon, so dropping them is a visible change and the
+  owner's call. ~16KB uncompressed on every page load.
