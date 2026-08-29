@@ -16,7 +16,7 @@
 
   window.App = window.App || {};
 
-  function esc(value) { return App.escape(value == null ? "" : value); }
+  var esc = App.escape;
   function plural(n, one, many) { return esc(n) + " " + (n === 1 ? one : many); }
 
   var FAMILY = { launchpad: "LaunchPad", unity: "Unity" };

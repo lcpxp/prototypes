@@ -15,7 +15,7 @@
   "use strict";
 
   function el(id) { return document.getElementById(id); }
-  function esc(v) { return App.escape(v == null ? "" : v); }
+  var esc = App.escape;
 
   function workItemHref(id) {
     var mod = App.registry.modules.find(function (m) { return m.key === "roadmap"; });

@@ -19,7 +19,7 @@
 
   window.App = window.App || {};
 
-  function esc(v) { return App.escape(v == null ? "" : v); }
+  var esc = App.escape;
   function day(v) { return v ? String(v).slice(0, 10) : ""; }
 
   // --- the five vocabularies ---------------------------------------

@@ -169,7 +169,7 @@ document instead of walking the tree or reading whole files.
 | modules/roadmap/index.html | 135 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 52 | Users - LPio / LaunchPad IO |
 | package.json | 17 |  |
-| scripts/audit.js | 173 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
+| scripts/audit.js | 222 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and |
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
@@ -329,7 +329,6 @@ document instead of walking the tree or reading whole files.
 | copy() | assets/js/core/daopay-admin-tool.js:89 |
 | fallback() | assets/js/core/daopay-admin-tool.js:102 |
 | buildDialog() | assets/js/core/daopay-admin-tool.js:114 |
-| esc() | assets/js/core/detail.js:39 |
 | labelOf() | assets/js/core/detail.js:43 |
 | isEmpty() | assets/js/core/detail.js:48 |
 | valueHtml() | assets/js/core/detail.js:58 |
@@ -519,10 +518,8 @@ document instead of walking the tree or reading whole files.
 | done() | assets/js/pages/daopay-sim.js:96 |
 | advance() | assets/js/pages/daopay-sim.js:132 |
 | advance() | assets/js/pages/daopay-sim.js:158 |
-| esc() | assets/js/pages/dashboard-cards.js:19 |
 | plural() | assets/js/pages/dashboard-cards.js:20 |
 | waveSize() | assets/js/pages/dashboard-cards.js:138 |
-| esc() | assets/js/pages/dashboard-strip.js:33 |
 | isFinished() | assets/js/pages/dashboard-strip.js:38 |
 | order() | assets/js/pages/dashboard-strip.js:45 |
 | band() | assets/js/pages/dashboard-strip.js:101 |
@@ -548,7 +545,6 @@ document instead of walking the tree or reading whole files.
 | isPci() | assets/js/pages/gallery.js:47 |
 | card() | assets/js/pages/gallery.js:53 |
 | renderFuture() | assets/js/pages/gallery.js:98 |
-| esc() | assets/js/pages/ideas-render.js:21 |
 | labelOf() | assets/js/pages/ideas-render.js:40 |
 | el() | assets/js/pages/ideas.js:13 |
 | prototypeHref() | assets/js/pages/ideas.js:15 |
@@ -601,7 +597,6 @@ document instead of walking the tree or reading whole files.
 | closeQuote() | assets/js/pages/pci-portal.js:289 |
 | addPciFee() | assets/js/pages/pci-portal.js:290 |
 | stat() | assets/js/pages/pci-reports.js:16 |
-| esc() | assets/js/pages/platform-knowledge.js:23 |
 | byOrder() | assets/js/pages/platform-knowledge.js:24 |
 | section() | assets/js/pages/platform-knowledge.js:26 |
 | gaps() | assets/js/pages/platform-knowledge.js:38 |
@@ -625,26 +620,22 @@ document instead of walking the tree or reading whole files.
 | pageHtml() | assets/js/pages/platform.js:173 |
 | rows() | assets/js/pages/platform.js:283 |
 | el() | assets/js/pages/portalreview-board.js:15 |
-| esc() | assets/js/pages/portalreview-board.js:16 |
 | waveId() | assets/js/pages/portalreview-board.js:18 |
 | workItemHref() | assets/js/pages/portalreview-board.js:22 |
 | walkNext() | assets/js/pages/portalreview-board.js:30 |
 | load() | assets/js/pages/portalreview-board.js:44 |
 | live() | assets/js/pages/portalreview-model.js:20 |
 | groupOf() | assets/js/pages/portalreview-model.js:35 |
-| esc() | assets/js/pages/portalreview-render.js:22 |
 | day() | assets/js/pages/portalreview-render.js:23 |
 | labelOf() | assets/js/pages/portalreview-render.js:80 |
 | chips() | assets/js/pages/portalreview-render.js:88 |
 | metaLine() | assets/js/pages/portalreview-render.js:107 |
 | trail() | assets/js/pages/portalreview-render.js:120 |
 | el() | assets/js/pages/portalreview-triage.js:17 |
-| esc() | assets/js/pages/portalreview-triage.js:18 |
 | workItemHref() | assets/js/pages/portalreview-triage.js:20 |
 | countsHtml() | assets/js/pages/portalreview-triage.js:36 |
 | load() | assets/js/pages/portalreview-triage.js:45 |
 | el() | assets/js/pages/portalreview-waves.js:15 |
-| esc() | assets/js/pages/portalreview-waves.js:16 |
 | waveHref() | assets/js/pages/portalreview-waves.js:18 |
 | standingHtml() | assets/js/pages/portalreview-waves.js:22 |
 | waveList() | assets/js/pages/portalreview-waves.js:41 |
@@ -696,7 +687,6 @@ document instead of walking the tree or reading whole files.
 | businessAreaLabels() | assets/js/pages/roadmap-detail-values.js:84 |
 | priorityBand() | assets/js/pages/roadmap-detail-values.js:89 |
 | priorityLabel() | assets/js/pages/roadmap-detail-values.js:95 |
-| esc() | assets/js/pages/roadmap-detail.js:45 |
 | row() | assets/js/pages/roadmap-detail.js:56 |
 | note() | assets/js/pages/roadmap-detail.js:61 |
 | assigneeText() | assets/js/pages/roadmap-detail.js:76 |
@@ -838,10 +828,10 @@ document instead of walking the tree or reading whole files.
 | testTotals() | scripts/audit.js:17 |
 | overSoft() | scripts/audit.js:37 |
 | tablesMissingPolicy() | scripts/audit.js:54 |
-| themeGuardAnomalies() | scripts/audit.js:67 |
-| thenBalance() | scripts/audit.js:78 |
-| stalePaths() | scripts/audit.js:92 |
-| snapshotSummary() | scripts/audit.js:107 |
+| themeGuardAnomalies() | scripts/audit.js:70 |
+| unhandledChains() | scripts/audit.js:100 |
+| stalePaths() | scripts/audit.js:136 |
+| snapshotSummary() | scripts/audit.js:151 |
 | toJs() | scripts/extract-calls.js:72 |
 | stripParamTypes() | scripts/extract-calls.js:76 |
 | lens() | scripts/extract-calls.js:92 |

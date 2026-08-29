@@ -20,7 +20,7 @@
 
   window.App = window.App || {};
 
-  function esc(v) { return App.escape(v == null ? "" : v); }
+  var esc = App.escape;
   function byOrder(a, b) { return (a.sort_order || 0) - (b.sort_order || 0); }
 
   function section(id, title, lede, body) {

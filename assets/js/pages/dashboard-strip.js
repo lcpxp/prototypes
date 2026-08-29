@@ -30,7 +30,7 @@
     blocked: "Blocked", done: "Delivered", dropped: "Dropped",
   };
 
-  function esc(value) { return App.escape(value == null ? "" : value); }
+  var esc = App.escape;
 
   // A workstream is finished when it is done AND has nothing open
   // under it. It belongs in Delivered on the roadmap, not on a strip

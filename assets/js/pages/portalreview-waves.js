@@ -13,7 +13,7 @@
   "use strict";
 
   function el(id) { return document.getElementById(id); }
-  function esc(v) { return App.escape(v == null ? "" : v); }
+  var esc = App.escape;
 
   function waveHref(wave) {
     return "wave.html?wave=" + encodeURIComponent(wave.id);

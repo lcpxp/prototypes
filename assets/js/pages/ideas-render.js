@@ -18,7 +18,7 @@
 
   window.App = window.App || {};
 
-  function esc(v) { return App.escape(v == null ? "" : v); }
+  var esc = App.escape;
 
   // Display order as well as vocabulary: shortlisted and planned lead,
   // because those are the ones a reader can act on. The inbox comes

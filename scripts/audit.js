@@ -63,28 +63,72 @@ function tablesMissingPolicy() {
   });
 }
 
-// 4. HTML pages whose inline theme guard count is not exactly one.
+// 4. HTML pages that do not apply the theme before first paint.
+//    theme.js must be the first script and must NOT be deferred. This
+//    replaced a count of an inline guard that read localStorage["theme"]
+//    - a key nothing ever wrote, so the guard never did anything.
 function themeGuardAnomalies() {
   return trackedFiles()
     .filter(function (f) { return f.endsWith(".html"); })
     .map(function (f) {
-      var n = (read(f).match(/localStorage\.getItem\("theme"\)/g) || []).length;
-      return n === 1 ? null : f + " (" + n + ")";
+      var c = read(f);
+      var first = (c.match(/<script[^>]+src="([^"]+)"/) || [])[1] || "";
+      if (!/core\/theme\.js$/.test(first)) return f + " (first script: " + (first || "none") + ")";
+      var tag = c.match(/<script\b[^>]*\ssrc="[^"]*core\/theme\.js"[^>]*>/);
+      if (tag && /\bdefer\b/.test(tag[0])) return f + " (theme.js deferred)";
+      if (/localStorage\.getItem\("theme"\)/.test(c)) return f + " (dead inline guard is back)";
+      return null;
     })
     .filter(Boolean);
 }
 
-// 5. Approximate .then/.catch balance in the shipped JS.
-function thenBalance() {
-  var thens = 0, catches = 0;
+// 5. Promise chains with no rejection handler.
+//
+//    This used to count ".then(" against ".catch(" and print "35 / 4",
+//    which reads like 31 unhandled rejections. It never was: the count
+//    could not see the TWO-ARGUMENT form, .then(onOk, onErr), which is
+//    how this repo handles the one path that actually throws
+//    (work-items-data.js, whose four callers all use it). It also could
+//    not see that the Supabase client RESOLVES with { data, error }
+//    rather than rejecting, so most chains have nothing to catch and a
+//    .catch would be dead code.
+//
+//    So: walk to the matching close paren of each .then(, and count a
+//    chain as handled if it takes a second argument or is followed by
+//    .catch. A metric that cries wolf gets ignored, and then so does
+//    the real thing.
+function unhandledChains() {
+  var total = 0, twoArg = 0, caught = 0, checked = 0;
+  var bare = [];
   trackedFiles()
     .filter(function (f) { return f.startsWith("assets/js/") && f.endsWith(".js"); })
     .forEach(function (f) {
-      var c = read(f);
-      thens += (c.match(/\.then\(/g) || []).length;
-      catches += (c.match(/\.catch\(/g) || []).length;
+      var src = read(f);
+      var re = /\.then\(/g, m;
+      while ((m = re.exec(src))) {
+        total++;
+        var i = m.index + 6, depth = 1, inStr = null, commaAtTop = false;
+        while (i < src.length && depth > 0) {
+          var ch = src[i], prev = src[i - 1];
+          if (inStr) { if (ch === inStr && prev !== "\\") inStr = null; }
+          else if (ch === '"' || ch === "'" || ch === "`") inStr = ch;
+          else if (ch === "(" || ch === "{" || ch === "[") depth++;
+          else if (ch === ")" || ch === "}" || ch === "]") { depth--; if (depth === 0) break; }
+          else if (ch === "," && depth === 1) commaAtTop = true;
+          i++;
+        }
+        if (commaAtTop) { twoArg++; continue; }
+        if (/^\s*\)?\s*\.catch\(/.test(src.slice(i, i + 220))) { caught++; continue; }
+        // The Supabase client resolves with { data, error }: a handler
+        // that reads .error IS the error path, and a .catch beside it
+        // would be dead code. Counting those as unhandled is what made
+        // the old metric useless.
+        var body = src.slice(m.index, i);
+        if (/\berror\b/.test(body) || /\bthrow\b/.test(body)) { checked++; continue; }
+        bare.push(f + ":" + src.slice(0, m.index).split("\n").length);
+      }
     });
-  return { thens: thens, catches: catches };
+  return { total: total, twoArg: twoArg, caught: caught, checked: checked, bare: bare };
 }
 
 // 6. Stale flat-layout path references (the security gate's dual config
@@ -166,7 +210,12 @@ head("Structure");
 var tg = themeGuardAnomalies();
 row("theme-guard anomalies", tg.length + (tg.length ? " (" + tg.join(", ") + ")" : ""));
 row("stale-path references", stalePaths());
-var tb = thenBalance();
-row(".then / .catch (assets/js)", tb.thens + " / " + tb.catches);
+var pc = unhandledChains();
+// An upper bound, not a defect count: it cannot see across a function
+// boundary, so a chain whose loader already folded the error away
+// (App.tools.load, App.links.loadTitles) still lands in the last figure.
+row("promise chains (assets/js)", pc.total + " total: " + pc.twoArg +
+  " two-arg, " + pc.caught + " .catch, " + pc.checked + " error-checked, " +
+  pc.bare.length + " without a visible handler");
 row("docs/STATE.md lines", read("docs/STATE.md").split("\n").length + " (cap 40)");
 console.log("");

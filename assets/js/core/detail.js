@@ -36,7 +36,7 @@
   window.App = window.App || {};
   App.detail = App.detail || {};
 
-  function esc(value) { return App.escape(value == null ? "" : value); }
+  var esc = App.escape;
 
   // "created_at" -> "Created at". Underscores become spaces so a column
   // nobody wrote a label for still reads as words rather than a key.

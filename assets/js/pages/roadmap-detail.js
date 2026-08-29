@@ -42,7 +42,7 @@
   var priorityLabel = V.priorityLabel;
 
 
-  function esc(v) { return App.escape(v); }
+  var esc = App.escape;
   // Single-word enum values (type, effort, impact, note kinds) read as
   // sentence case; underscores in attribute keys become spaces.
   // 1 -> "1st", 4 -> "4th"; blank for a missing or non-positive rank.

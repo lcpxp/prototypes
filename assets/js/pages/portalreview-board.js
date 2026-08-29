@@ -13,7 +13,7 @@
   var state = { areas: [], walked: {}, at: null };
 
   function el(id) { return document.getElementById(id); }
-  function esc(v) { return App.escape(v == null ? "" : v); }
+  var esc = App.escape;
 
   function waveId() {
     return new URLSearchParams(window.location.search).get("wave");
