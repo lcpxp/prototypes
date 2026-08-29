@@ -40,17 +40,16 @@ substance lives behind Supabase Row Level Security.
 ## JavaScript module order
 
 Each protected page loads scripts in a fixed order, each attaching to
-a shared window.App namespace:
+a shared window.App namespace. **The order lives in
+assets/js/core/includes.json** - ten universal modules, five loaded only
+by the pages that need them, each with the reason it is there. That file
+is the one home for it, read by tests/checks/structure.test.js, so this
+document does not restate it: a list here is a second home, and the last
+one was stale in six entries.
 
-    supabase CDN client   provides window.supabase
-    core/supabase.js      creates App.db from the built-in public config
-    core/registry.js      App.registry: modules, tables, roles
-    core/guard.js         App.requireAuth promise, App.onAuthed(fn)
-    core/ui.js            nav rendering, App.escape, badges, copy
-    core/search.js        App.search: the nav's global search
-    core/tools.js         App.tools: the nav's links out to external
-                          tools, built from portal_links rows
-    pages/<module>.js     waits on App.onAuthed before fetching
+Page modules come after the core, wait on App.onAuthed before fetching,
+and live in assets/js/pages/<module>/ mirroring modules/. A file there
+attaches App.<camelCase(module)>..., so a surface says where it lives.
 
 supabase.js carries the public project URL and anon key, so the site
 works with no configuration. An optional, gitignored core/config.js

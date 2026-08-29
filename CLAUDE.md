@@ -20,15 +20,23 @@ Full architecture: docs/ARCHITECTURE.md. Security model: docs/SECURITY.md.
 
     index.html            Login page (entry point, unguarded)
     dashboard.html        Post-login hub
-    modules/              One folder per module: reference/, prototypes/, users/
-    assets/css/           tokens.css (design tokens) plus layered stylesheets
-    assets/js/core/       Shared runtime: config, supabase, registry, guard, ui, auth
-    assets/js/pages/      One module per page (dashboard, reference, gallery, users)
+    modules/              One folder per module, named for its registry key
+    assets/css/           tokens.css (design tokens) plus layered stylesheets,
+                          loaded as a fixed stack: tokens, base, layout,
+                          components, pages, then page sheets
+    assets/js/core/       Shared runtime, loaded in a fixed order that lives
+                          in assets/js/core/includes.json - read it there
+    assets/js/pages/      One folder per module, mirroring modules/; files
+                          under it attach App.<camelCase(folder)>...
+                          shared/ holds what several modules use
     supabase/             schema/ (per-domain), policies.sql, seed.sql,
                           migrations/, functions/ (Edge Functions),
                           schema-snapshot.json (generated; the drift gate reads it)
     docs/                 Architecture, security, design, setup, roadmap,
                           KNOWLEDGE-MODEL.md (why the model is shaped as it is)
+
+    Counts go stale, so this map describes shape. For the current file
+    list read the generated docs/CODEMAP.md.
 
     assets/js/core/registry.js is the single source of truth for
     modules, table names and roles. Navigation, dashboard cards and
@@ -144,16 +152,11 @@ half-finished change.
 - Plain HTML, CSS and JavaScript. No frameworks, no build step, no
   new dependencies beyond the Supabase CDN client without explicit
   agreement from the repo owner recorded in docs/STATE.md open decisions.
-- Every new protected page loads its scripts from <head>, each with
-  defer, in this order: the Supabase CDN script, then core/supabase.js,
-  core/registry.js, core/guard.js, core/ui.js, core/search.js,
-  core/tools.js, then its own page module(s) from assets/js/pages/.
-  defer keeps them off the first-paint path and preserves execution
-  order. core/theme.js is the
-  one exception: it stays render-blocking in <head> to apply the theme
-  before paint. Pages below the repo root set data-root on body.
-  (supabase.js carries the public config; there is no separate config.js
-  include.)
+- Every new protected page loads its scripts from <head> in the order
+  set out in assets/js/core/includes.json, which is the ONE home for
+  that order - read it there, never from memory. It carries the reason
+  for each entry and which are universal. tests/checks/structure.test.js
+  enforces it. Pages below the repo root set data-root on body.
 - Interface copy is plain, specific and in sentence case. Buttons say
   what they do. Errors say what went wrong and how to fix it.
 - All dynamic content rendered into the DOM goes through App.escape.
@@ -245,9 +248,9 @@ half-finished change.
   enforce the security, structure, style and size rules above
   mechanically; the pre-commit hook runs them.
 - File size budgets: tests/size-budget.json is the one home for the
-  numbers (js/ts/css/sql/md soft 300 hard 500; html 250/400). Over
-  soft = schedule a split; over hard = split before extending.
-  Exceptions are listed in the JSON with an exit plan.
+  numbers - read them there. Over soft means record the seam it splits
+  on (an `acknowledged` entry); over hard means split before extending.
+  An acknowledgement cannot raise a cap.
 - Line count is only a proxy. The rule it stands in for - one concept
   documented in exactly one place, cited everywhere else - is
   enforced directly by the one-home gate in

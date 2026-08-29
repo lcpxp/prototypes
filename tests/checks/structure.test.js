@@ -8,6 +8,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { trackedFiles, read } = require("../lib/repo.js");
+const includes = require("../../assets/js/core/includes.json");
 
 const LOGIN_PAGE = "index.html";
 
@@ -34,17 +35,21 @@ function scriptSrcs(content) {
 }
 
 test("protected pages include scripts in the required order", () => {
+  // The order is DATA, in assets/js/core/includes.json, and this check
+  // reads it. It used to be a hand-written list of five entries here,
+  // with the full order restated in CLAUDE.md and in
+  // docs/ARCHITECTURE.md - three homes, all three stale, none of them
+  // naming links.js, detail.js, blocks.js, drawer.js, sprints.js or
+  // send-tool.js. Now the manifest is the one home and all fourteen are
+  // enforced.
   for (const page of protectedPages()) {
     const prefix = page.includes("/")
       ? "../".repeat(page.split("/").length - 1) : "";
     const srcs = scriptSrcs(read(page));
-    const required = [
-      /@supabase\/supabase-js/,
-      new RegExp(`^${prefix}assets/js/core/supabase\\.js$`),
-      new RegExp(`^${prefix}assets/js/core/registry\\.js$`),
-      new RegExp(`^${prefix}assets/js/core/guard\\.js$`),
-      new RegExp(`^${prefix}assets/js/core/ui\\.js$`),
-    ];
+    const required = includes.universal
+      .map((entry) => entry.external
+        ? new RegExp(entry.file.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+        : new RegExp(`^${prefix}${entry.file.replace(/\./g, "\\.")}$`));
     let cursor = -1;
     for (const re of required) {
       const idx = srcs.findIndex((s, i) => i > cursor && re.test(s));
@@ -257,4 +262,40 @@ test("a registry module with a page directory uses its own key", () => {
   assert.deepEqual(mismatched, [],
     "Modules whose page directory does not match their registry key:\n" +
     mismatched.join("\n"));
+});
+
+test("the include manifest matches what the pages actually load", () => {
+  // A manifest nobody checks is a fourth stale home for the include
+  // order, which is the problem it was written to end. Every optional
+  // entry names the pages that load it, and those lists have to be true.
+  const problems = [];
+  for (const entry of includes.optional) {
+    const name = entry.file.replace(/^.*\//, "");
+    const actual = trackedFiles()
+      .filter((f) => f.endsWith(".html"))
+      .filter((f) => read(f).includes("core/" + name))
+      .sort();
+    const claimed = [...entry.pages].sort();
+    if (actual.join("|") !== claimed.join("|")) {
+      problems.push(`${name}: manifest says [${claimed.join(", ")}] but the ` +
+        `pages that load it are [${actual.join(", ")}]`);
+    }
+  }
+  for (const entry of includes.universal) {
+    if (entry.external) continue;
+    assert.ok(trackedFiles().includes(entry.file),
+      `${entry.file}: named in the manifest but not in the repo`);
+  }
+  assert.deepEqual(problems, [],
+    "assets/js/core/includes.json disagrees with the pages:\n" + problems.join("\n"));
+});
+
+test("the login page loads exactly what the manifest says it does", () => {
+  const srcs = scriptSrcs(read(LOGIN_PAGE));
+  for (const file of includes["login-page"].loads) {
+    assert.ok(srcs.some((s) => s === file),
+      `${LOGIN_PAGE}: the manifest says it loads ${file}`);
+  }
+  assert.ok(!srcs.some((s) => s.endsWith("guard.js")),
+    "index.html must not load guard.js: it would redirect the login page.");
 });

@@ -16,7 +16,7 @@ document instead of walking the tree or reading whole files.
 | .github/workflows/deploy.yml | 53 |  |
 | .gitignore | 24 |  |
 | .gitmessage | 12 |  |
-| CLAUDE.md | 262 | CLAUDE.md |
+| CLAUDE.md | 265 | CLAUDE.md |
 | README.md | 29 | LPio |
 | assets/css/app-review-detail.css | 112 | app-review-detail.css - The application review detail drawer: the |
 | assets/css/app-review.css | 378 | app-review.css - The application review board and wave list. |
@@ -48,6 +48,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/detail.js | 142 | detail.js - The completeness contract for rendering a row. |
 | assets/js/core/drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
+| assets/js/core/includes.json | 115 |  |
 | assets/js/core/links.js | 144 | links.js - The typed knowledge graph, resolved for rendering. |
 | assets/js/core/registry.js | 319 | registry.js - Single source of truth for the hub's modules, the |
 | assets/js/core/search.js | 356 | search.js - Global header search (App.search). Renders results for |
@@ -110,12 +111,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/users.js | 207 | users.js - User and access management for modules/users/. |
 | dashboard.html | 122 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
-| docs/ARCHITECTURE.md | 281 | Architecture |
+| docs/ARCHITECTURE.md | 280 | Architecture |
 | docs/CHANGELOG.md | 517 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HANDOVER-CONTEXT.md | 188 | Context-gathering handover |
-| docs/HARNESS.md | 151 | Verification harness and working process |
+| docs/HARNESS.md | 161 | Verification harness and working process |
 | docs/KNOWLEDGE-MODEL.md | 230 | The knowledge model |
 | docs/PLATFORM.md | 201 | Platform product-knowledge protocol |
 | docs/PORTAL-REVIEW.md | 208 | Portal review playbook |
@@ -255,14 +256,15 @@ document instead of walking the tree or reading whole files.
 | tests/checks/knowledge-drift.test.js | 142 | tests/checks/knowledge-drift.test.js - Keeps what the system was |
 | tests/checks/knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | tests/checks/links.test.js | 112 | tests/checks/links.test.js - Internal references resolve. |
+| tests/checks/one-home.test.js | 136 | tests/checks/one-home.test.js - One concept, one home. |
 | tests/checks/perf.test.js | 215 | tests/checks/perf.test.js - Performance gates. |
 | tests/checks/reference-drift.test.js | 167 | tests/checks/reference-drift.test.js - Keeps the API reference from |
 | tests/checks/render-coverage.test.js | 351 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
-| tests/checks/roadmap-intake.test.js | 147 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
+| tests/checks/roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 115 | tests/checks/size.test.js - File size budgets. |
-| tests/checks/structure.test.js | 261 | tests/checks/structure.test.js - Page structure gates. |
+| tests/checks/structure.test.js | 302 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/checks/surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
 | tests/fixtures/controllers/ComposedController.cs | 22 |  |
@@ -886,9 +888,9 @@ document instead of walking the tree or reading whole files.
 | jwtRole() | tests/checks/security.test.js:27 |
 | budgeted() | tests/checks/size.test.js:28 |
 | linesOf() | tests/checks/size.test.js:36 |
-| htmlPages() | tests/checks/structure.test.js:26 |
-| protectedPages() | tests/checks/structure.test.js:29 |
-| scriptSrcs() | tests/checks/structure.test.js:32 |
+| htmlPages() | tests/checks/structure.test.js:27 |
+| protectedPages() | tests/checks/structure.test.js:30 |
+| scriptSrcs() | tests/checks/structure.test.js:33 |
 | currentSurfaces() | tests/checks/surface.test.js:29 |
 | currentIncludes() | tests/checks/surface.test.js:45 |
 | trackedFiles() | tests/lib/repo.js:13 |

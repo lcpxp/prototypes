@@ -68,20 +68,30 @@ repo.
 Budgets live in tests/size-budget.json and are enforced by
 tests/checks/size.test.js.
 
-- Source files (js/css/sql): soft 300 lines, hard 500. Published
-  agent-workflow guidance converges on keeping modules a few
-  hundred lines so one read-file action captures a whole module
-  cheaply; this repo's own CLAUDE.md already targeted 500.
-- HTML pages: soft 250, hard 400. Pages are shells; logic belongs
-  in assets/js modules.
-- Agent-facing docs (md): soft 200, hard 300. Instruction-following
-  measurably degrades as always-loaded context grows; guidance for
-  CLAUDE.md-class files is ~200 lines or less, with detail split
-  into on-demand docs like this one (progressive disclosure).
-- Exceptions are explicit, listed in the JSON with a note and an
-  exit plan - today several layered stylesheets and page modules that
-  sit over soft, each with a documented seam to split on when next
-  touched.
+**The numbers live in tests/size-budget.json and nowhere else.** Read
+them there. They were restated in this file for months, and the copy
+here had drifted: it named a markdown cap the JSON had already moved
+past, so a session reading this document planned a split the gate did
+not want. Quoting them again, even to warn about quoting them, would
+repeat the mistake.
+
+What the numbers mean:
+
+- Over soft: record an `acknowledged` entry naming the seam the file
+  splits on next. It cannot raise a cap, so the only way past hard is
+  to actually split. The gate rejects an entry with no seam, and one
+  whose file has come back under soft.
+- Over hard: split before extending.
+- An `exception` is a DIFFERENT cap with the reason for it, not a
+  bigger one. docs/STATE.md is the case that matters, and its cap is
+  tighter than its extension's.
+- Immutable trees - applied migrations, the sessions archive - are
+  exempt as a class, with the reason recorded once.
+
+The caps sit where the repo actually settled. The previous, tighter
+numbers produced 41 per-file exceptions across 39 files, each with an
+exit plan nobody took: a registry of exemptions rather than a
+constraint.
 
 When a file crosses its soft limit: finish the current task, then
 schedule a split as its own refactor commit before the file is

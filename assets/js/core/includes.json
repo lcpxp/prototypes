@@ -1,0 +1,114 @@
+{
+  "comment": "The core script include order, in one place. Every protected page loads these in this sequence; tests/checks/structure.test.js enforces it, and CLAUDE.md and docs/ARCHITECTURE.md cite this file rather than restating it. It was stated in three places before, and all three were stale: none of them mentioned links.js, detail.js, blocks.js, drawer.js, sprints.js or send-tool.js, and the gate checked five of the fourteen.",
+  "rules": {
+    "position": "In <head>. theme.js first and render-blocking so the stored theme is applied before first paint; everything after it carries defer, which keeps them off the first-paint path while preserving execution order.",
+    "after": "A page's own modules from assets/js/pages/ come after all of these, in dependency order.",
+    "config": "supabase.js carries the public URL and anon key, so there is no separate config include. The optional gitignored core/config.js may define window.APP_CONFIG before it.",
+    "optional": "The optional modules are inserted after ui.js, in dependency order, and their exact slot is the page's business - sprints.js sits last on the roadmap page, blocks.js before links.js on platform. Only the universal sequence is fixed and enforced."
+  },
+  "login-page": {
+    "file": "index.html",
+    "loads": [
+      "assets/js/core/theme.js",
+      "assets/js/core/supabase.js",
+      "assets/js/core/auth.js"
+    ],
+    "note": "No guard.js: it would redirect the login page to itself."
+  },
+  "universal": [
+    {
+      "file": "assets/js/core/theme.js",
+      "blocking": true,
+      "purpose": "Applies the stored or OS theme to <html> before first paint."
+    },
+    {
+      "file": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js",
+      "external": true,
+      "purpose": "The Supabase client. Pinned to an exact version so browsers cache it immutably (tests/checks/perf.test.js)."
+    },
+    {
+      "file": "assets/js/core/supabase.js",
+      "purpose": "Creates App.db from the public project config."
+    },
+    {
+      "file": "assets/js/core/registry.js",
+      "purpose": "App.registry: modules, table names, roles, link kinds, departments. The single source of truth for what the hub contains."
+    },
+    {
+      "file": "assets/js/core/guard.js",
+      "purpose": "App.requireAuth and App.onAuthed. Absent from index.html, which would redirect itself."
+    },
+    {
+      "file": "assets/js/core/ui.js",
+      "purpose": "Nav rendering, App.escape, badges, App.download, App.store."
+    },
+    {
+      "file": "assets/js/core/search.js",
+      "purpose": "App.search: the nav's global search across every reachable source."
+    },
+    {
+      "file": "assets/js/core/tools.js",
+      "purpose": "App.tools: nav links out to external tools, built from portal_links rows."
+    },
+    {
+      "file": "assets/js/core/send-tool.js",
+      "purpose": "App.sendTool: the nav's acquirer-send console snippet."
+    },
+    {
+      "file": "assets/js/core/daopay-admin-tool.js",
+      "purpose": "App.daopayAdminTool: the nav's DaoPay reviewer-role console snippet."
+    }
+  ],
+  "optional": [
+    {
+      "file": "assets/js/core/links.js",
+      "purpose": "App.links: typed knowledge links and their far-end titles. Platform and roadmap.",
+      "pages": [
+        "modules/platform/index.html",
+        "modules/roadmap/index.html"
+      ]
+    },
+    {
+      "file": "assets/js/core/blocks.js",
+      "purpose": "App.blocks: the typed-block renderer. Six pages.",
+      "pages": [
+        "modules/platform/index.html",
+        "modules/portal-review/index.html",
+        "modules/portal-review/triage.html",
+        "modules/portal-review/wave.html",
+        "modules/prototypes/ideas.html",
+        "modules/reference/index.html"
+      ]
+    },
+    {
+      "file": "assets/js/core/detail.js",
+      "purpose": "App.detail: the facts contract that makes a stored column visible without per-page markup. Ten pages.",
+      "pages": [
+        "modules/app-review/wave.html",
+        "modules/backlog/index.html",
+        "modules/integrations/index.html",
+        "modules/platform/index.html",
+        "modules/portal-review/index.html",
+        "modules/portal-review/triage.html",
+        "modules/portal-review/wave.html",
+        "modules/prototypes/ideas.html",
+        "modules/roadmap/index.html",
+        "modules/users/index.html"
+      ]
+    },
+    {
+      "file": "assets/js/core/drawer.js",
+      "purpose": "App.drawer: focus-trapping open/close. The app-review wave page.",
+      "pages": [
+        "modules/app-review/wave.html"
+      ]
+    },
+    {
+      "file": "assets/js/core/sprints.js",
+      "purpose": "App.sprints: sprint codes to date ranges. The roadmap page.",
+      "pages": [
+        "modules/roadmap/index.html"
+      ]
+    }
+  ]
+}

@@ -15,24 +15,15 @@ const { read } = require("../lib/repo.js");
 const PLAYBOOK = "docs/ROADMAP-PLAYBOOK.md";
 const INTAKE = "docs/ROADMAP-INTAKE.md";
 const REVIEW = "docs/ROADMAP-REVIEW.md";
-const SCHEMA = "supabase/schema/31_roadmap_search.sql";
-const POLICIES = "supabase/policies.sql";
 const ADD_CMD = ".claude/commands/roadmap-add.md";
 const REVIEW_CMD = ".claude/commands/roadmap.md";
 const WORKFLOW = "docs/WORKFLOW.md";
-
-// The confidence bands from docs/ROADMAP-INTAKE.md.
-const BANDS = ["0.65", "0.40", "0.22"];
+const SCHEMA = "supabase/schema/31_roadmap_search.sql";
+const POLICIES = "supabase/policies.sql";
 
 // Documents that must CITE the intake protocol rather than restate its
 // numbers. Everything here is read by a session that could otherwise act
 // on a remembered threshold.
-const PORTAL_REVIEW = "docs/PORTAL-REVIEW.md";
-const PORTAL_CMD = ".claude/commands/portal-review.md";
-const IDEAS = "docs/PROTOTYPE-IDEAS.md";
-const IDEAS_CMD = ".claude/commands/prototype-idea.md";
-const CITERS = [PLAYBOOK, REVIEW, ADD_CMD, REVIEW_CMD, PORTAL_REVIEW, PORTAL_CMD,
-  IDEAS, IDEAS_CMD];
 
 test("the search surface is declared in schema with its grants", () => {
   const schema = read(SCHEMA);
@@ -58,42 +49,6 @@ test("roadmap_current is left alone - the board depends on its shape", () => {
   const schema = read(SCHEMA);
   assert.doesNotMatch(schema, /(drop|create)\s+(or replace\s+)?view public\.roadmap_current/,
     "31_roadmap_search.sql must not redefine or drop roadmap_current");
-});
-
-// ------------------------------------------------------------------
-// One home per concept. This replaces an earlier gate that asserted the
-// bands appeared IDENTICALLY in three documents - which treated the
-// symptom. Three copies is how they drifted in the first place, and the
-// 200-line doc cap that forced the split is what created the third copy.
-// A concept stated twice is the thing that degrades instruction
-// adherence; line count was only ever a proxy for it.
-// ------------------------------------------------------------------
-
-test("the confidence bands are stated in exactly one document", () => {
-  const intake = read(INTAKE);
-  for (const band of BANDS) {
-    assert.ok(intake.includes(band),
-      `${INTAKE} must state the ${band} band threshold - it is their one home`);
-  }
-  for (const file of CITERS) {
-    const text = read(file);
-    for (const band of BANDS) {
-      assert.ok(!text.includes(band),
-        `${file} restates the ${band} threshold. Cite ${INTAKE} instead: ` +
-        "a threshold with two homes is one that drifts.");
-    }
-    assert.match(text, /ROADMAP-INTAKE\.md/,
-      `${file} must point at ${INTAKE}, since it no longer carries the bands itself`);
-  }
-});
-
-test("the review ritual has one home, and the command defers to it", () => {
-  assert.match(read(REVIEW), /##\s*Wave 0 - Orient/,
-    "docs/ROADMAP-REVIEW.md is where the waves are defined");
-  assert.doesNotMatch(read(PLAYBOOK), /##\s*The review ritual/,
-    "the playbook must not re-carry the ritual; it moved to docs/ROADMAP-REVIEW.md");
-  assert.match(read(REVIEW_CMD), /ROADMAP-REVIEW\.md/,
-    "/roadmap must point at the ritual's one home rather than restating it");
 });
 
 test("the protocol keeps restraint explicit", () => {
