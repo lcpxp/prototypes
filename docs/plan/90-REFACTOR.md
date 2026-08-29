@@ -166,11 +166,11 @@ byte-identical goldens, and an identical transcript.
 
 - [x] 0 Pin the App surface and per-page includes
 - [x] 1 Remove the dead theme guard
-- [ ] 2 Unfreeze the capped files
-- [ ] 3 Rebuild the size budget
-- [ ] 4 Small provable cleanups
+- [x] 2 Unfreeze the capped files
+- [x] 3 Rebuild the size budget
+- [x] 4 Small provable cleanups
 - [ ] 5 Structure and naming, one move per file
-- [ ] 6 Gate the two unwatched contracts
+- [x] 6 Gate the two unwatched contracts (taken before 5, so the link gate protects the moves)
 - [ ] 7 One home for every instruction
 - [ ] 8 Navigation and performance
 - [ ] 9 Close out
@@ -194,6 +194,16 @@ Together ~16KB uncompressed on every page load.
 
 Filled in as it happens; the part a later wave needs.
 
+- Phase 6 was moved BEFORE phase 5. The link gate catches a citation
+  broken by a file move, which is exactly what phase 5 does 270 times, so
+  building it first turns it from a record of the damage into a guard
+  against it.
+- Two "new file" traps, the same shape both times: `gen-surface.js` and
+  the link gate both read `git ls-files`, so a module that is written but
+  not yet `git add`ed is invisible to them. The surface baseline recorded
+  nothing for it and passed; the link gate did not scan its own header
+  until it was tracked, then flagged itself. Both now say so in a
+  comment. Write the file, add it, THEN regenerate.
 - Phase 2's documented seams were both wrong. `size-budget.json` proposed
   splitting the details/notes parsers out of `roadmap-detail.js` and the
   page-load fetch out of `roadmap.js`. The better seams were the DOM-free
