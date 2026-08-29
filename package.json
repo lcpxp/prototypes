@@ -10,6 +10,7 @@
     "setup": "git config core.hooksPath .githooks && git config commit.template .gitmessage && echo hooks+template configured",
     "snapshot": "node scripts/gen-snapshot.js",
     "coverage": "node scripts/gen-coverage.js",
-    "knowledge": "node scripts/gen-knowledge.js"
+    "knowledge": "node scripts/gen-knowledge.js",
+    "surface": "node scripts/gen-surface.js"
   }
 }

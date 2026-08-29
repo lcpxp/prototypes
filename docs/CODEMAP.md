@@ -109,7 +109,7 @@ document instead of walking the tree or reading whole files.
 | dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
-| docs/CHANGELOG.md | 504 | Changelog |
+| docs/CHANGELOG.md | 517 | Changelog |
 | docs/COPILOT.md | 207 | Copilot capture protocol |
 | docs/DESIGN.md | 140 | Design standards |
 | docs/HANDOVER-CONTEXT.md | 188 | Context-gathering handover |
@@ -137,6 +137,7 @@ document instead of walking the tree or reading whole files.
 | docs/plan/60-PORTAL-REVIEW.md | 339 | Portal review, as a feature |
 | docs/plan/70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans |
 | docs/plan/80-LOAD-SPEED.md | 451 | 80 - Stop loading item detail text on first paint |
+| docs/plan/90-REFACTOR.md | 182 | 90 - Refactor, optimise and re-navigate |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
@@ -165,7 +166,7 @@ document instead of walking the tree or reading whole files.
 | modules/reference/index.html | 80 | API reference - LPio / LaunchPad IO |
 | modules/roadmap/index.html | 141 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 60 | Users - LPio / LaunchPad IO |
-| package.json | 16 |  |
+| package.json | 17 |  |
 | scripts/audit.js | 169 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and |
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
@@ -173,6 +174,7 @@ document instead of walking the tree or reading whole files.
 | scripts/gen-coverage.js | 346 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
 | scripts/gen-knowledge.js | 164 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, |
 | scripts/gen-snapshot.js | 148 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
+| scripts/gen-surface.js | 80 | scripts/gen-surface.js - Regenerates tests/surface-baseline.json. |
 | supabase/functions/embed/index.ts | 61 |  |
 | supabase/knowledge-coverage.json | 83 |  |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
@@ -258,6 +260,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
+| tests/checks/surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
 | tests/fixtures/controllers/ComposedController.cs | 22 |  |
 | tests/fixtures/controllers/NamedSlotsController.cs | 17 |  |
 | tests/fixtures/controllers/NotAController.cs | 10 |  |
@@ -272,6 +275,7 @@ document instead of walking the tree or reading whole files.
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 28 |  |
 | tests/size-budget.json | 201 |  |
+| tests/surface-baseline.json | 832 |  |
 | tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
@@ -305,6 +309,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/route-extract.test.js | 108 | tests/unit/route-extract.test.js - Benchmarks for the route |
 | tests/unit/search.test.js | 259 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
+| tests/unit/tools-warm.test.js | 184 | tests/unit/tools-warm.test.js - Benchmarks for the Splunk warm-up in |
 | tests/unit/tools.test.js | 224 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
 | tests/unit/ui.test.js | 60 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
 | tests/unit/work-items-data.test.js | 219 | tests/unit/work-items-data.test.js - The reads that replace what the |
@@ -876,6 +881,8 @@ document instead of walking the tree or reading whole files.
 | build() | scripts/gen-knowledge.js:123 |
 | sorted() | scripts/gen-snapshot.js:103 |
 | write() | scripts/gen-snapshot.js:113 |
+| appSurfaces() | scripts/gen-surface.js:31 |
+| pageIncludes() | scripts/gen-surface.js:48 |
 | seededKinds() | tests/checks/knowledge-links.test.js:22 |
 | cdnPages() | tests/checks/perf.test.js:17 |
 | sqlWithoutComments() | tests/checks/perf.test.js:22 |
@@ -888,6 +895,8 @@ document instead of walking the tree or reading whole files.
 | htmlPages() | tests/checks/structure.test.js:19 |
 | protectedPages() | tests/checks/structure.test.js:22 |
 | scriptSrcs() | tests/checks/structure.test.js:25 |
+| currentSurfaces() | tests/checks/surface.test.js:29 |
+| currentIncludes() | tests/checks/surface.test.js:45 |
 | trackedFiles() | tests/lib/repo.js:13 |
 | read() | tests/lib/repo.js:19 |
 | isTextFile() | tests/lib/repo.js:23 |
@@ -950,6 +959,12 @@ document instead of walking the tree or reading whole files.
 | count() | tests/unit/roadmap-views.test.js:23 |
 | load() | tests/unit/search.test.js:15 |
 | loadSprints() | tests/unit/sprints.test.js:13 |
+| tab() | tests/unit/tools-warm.test.js:22 |
+| load() | tests/unit/tools-warm.test.js:36 |
+| navSlot() | tests/unit/tools-warm.test.js:133 |
+| anchor() | tests/unit/tools-warm.test.js:139 |
+| press() | tests/unit/tools-warm.test.js:145 |
+| attached() | tests/unit/tools-warm.test.js:152 |
 | load() | tests/unit/tools.test.js:15 |
 | navHost() | tests/unit/tools.test.js:134 |
 | fakeDb() | tests/unit/tools.test.js:143 |

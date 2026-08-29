@@ -1,0 +1,831 @@
+{
+  "comment": "Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect.",
+  "appSurfaces": {
+    "_rmd": [
+      "assets/js/pages/roadmap-detail.js"
+    ],
+    "_rmv": [
+      "assets/js/pages/roadmap-views.js"
+    ],
+    "access": [
+      "assets/js/core/guard.js"
+    ],
+    "accessReady": [
+      "assets/js/core/guard.js"
+    ],
+    "appReview": [
+      "assets/js/pages/appreview-model.js"
+    ],
+    "appReviewDetail": [
+      "assets/js/pages/appreview-detail.js"
+    ],
+    "appReviewFindings": [
+      "assets/js/pages/appreview-findings.js"
+    ],
+    "appReviewRender": [
+      "assets/js/pages/appreview-render.js"
+    ],
+    "backlogExport": [
+      "assets/js/pages/backlog-export.js"
+    ],
+    "backlogView": [
+      "assets/js/pages/backlog.js"
+    ],
+    "blocks": [
+      "assets/js/core/blocks.js"
+    ],
+    "canAccess": [
+      "assets/js/core/guard.js"
+    ],
+    "copyText": [
+      "assets/js/core/ui.js"
+    ],
+    "csvFromRows": [
+      "assets/js/core/ui.js"
+    ],
+    "daopayAdminTool": [
+      "assets/js/core/daopay-admin-tool.js"
+    ],
+    "dashboardCards": [
+      "assets/js/pages/dashboard-cards.js"
+    ],
+    "dashboardStrip": [
+      "assets/js/pages/dashboard-strip.js"
+    ],
+    "db": [
+      "assets/js/core/supabase.js"
+    ],
+    "deepLinkScroll": [
+      "assets/js/core/ui.js"
+    ],
+    "departmentLabel": [
+      "assets/js/core/registry.js"
+    ],
+    "detail": [
+      "assets/js/core/detail.js"
+    ],
+    "download": [
+      "assets/js/core/ui.js"
+    ],
+    "drawer": [
+      "assets/js/core/drawer.js"
+    ],
+    "escape": [
+      "assets/js/core/ui.js"
+    ],
+    "flashLabel": [
+      "assets/js/core/ui.js"
+    ],
+    "futurePrototypesTable": [
+      "assets/js/pages/gallery.js"
+    ],
+    "ideasView": [
+      "assets/js/pages/ideas-render.js"
+    ],
+    "itemHref": [
+      "assets/js/core/registry.js"
+    ],
+    "lazyDetail": [
+      "assets/js/pages/lazy-detail.js"
+    ],
+    "linkHref": [
+      "assets/js/core/registry.js"
+    ],
+    "links": [
+      "assets/js/core/links.js"
+    ],
+    "methodBadge": [
+      "assets/js/core/ui.js"
+    ],
+    "moduleHref": [
+      "assets/js/core/registry.js"
+    ],
+    "notice": [
+      "assets/js/core/ui.js"
+    ],
+    "onAuthed": [
+      "assets/js/core/guard.js"
+    ],
+    "onThemeChange": [
+      "assets/js/core/ui.js"
+    ],
+    "pciInterstitial": [
+      "assets/js/pages/pci-interstitial.js"
+    ],
+    "pciIxopay": [
+      "assets/js/pages/pci-ixopay.js"
+    ],
+    "platformKnowledge": [
+      "assets/js/pages/platform-knowledge.js"
+    ],
+    "platformView": [
+      "assets/js/pages/platform.js"
+    ],
+    "portalReview": [
+      "assets/js/pages/portalreview-model.js"
+    ],
+    "portalReviewRender": [
+      "assets/js/pages/portalreview-render.js"
+    ],
+    "refRender": [
+      "assets/js/pages/reference-render.js"
+    ],
+    "refTopics": [
+      "assets/js/pages/reference-topics.js"
+    ],
+    "registry": [
+      "assets/js/core/registry.js"
+    ],
+    "requireAuth": [
+      "assets/js/core/guard.js"
+    ],
+    "roadmapDetail": [
+      "assets/js/pages/roadmap-detail-export.js",
+      "assets/js/pages/roadmap-detail.js"
+    ],
+    "roadmapDrawer": [
+      "assets/js/pages/roadmap-drawer.js"
+    ],
+    "roadmapExport": [
+      "assets/js/pages/roadmap-export.js"
+    ],
+    "roadmapView": [
+      "assets/js/pages/roadmap-views-breakdown.js",
+      "assets/js/pages/roadmap-views-cascade.js",
+      "assets/js/pages/roadmap-views-exec.js",
+      "assets/js/pages/roadmap-views-timeline.js",
+      "assets/js/pages/roadmap-views.js"
+    ],
+    "root": [
+      "assets/js/core/guard.js",
+      "assets/js/core/registry.js"
+    ],
+    "search": [
+      "assets/js/core/search.js"
+    ],
+    "sendTool": [
+      "assets/js/core/send-tool.js"
+    ],
+    "session": [
+      "assets/js/core/guard.js"
+    ],
+    "sprints": [
+      "assets/js/core/sprints.js"
+    ],
+    "statusBadge": [
+      "assets/js/core/ui.js"
+    ],
+    "theme": [
+      "assets/js/core/theme.js"
+    ],
+    "tools": [
+      "assets/js/core/tools.js"
+    ],
+    "usersView": [
+      "assets/js/pages/users.js"
+    ],
+    "workItemsData": [
+      "assets/js/pages/work-items-data.js"
+    ]
+  },
+  "pageIncludes": {
+    "dashboard.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/roadmap-themes.css",
+        "assets/css/dashboard.css",
+        "assets/css/console-tool.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/dashboard-strip.js",
+        "assets/js/pages/dashboard-cards.js",
+        "assets/js/pages/dashboard.js"
+      ]
+    },
+    "index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/login.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/auth.js"
+      ]
+    },
+    "modules/app-review/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/app-review.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/appreview-model.js",
+        "assets/js/pages/appreview-findings.js",
+        "assets/js/pages/appreview-waves.js"
+      ]
+    },
+    "modules/app-review/wave.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/app-review.css",
+        "assets/css/app-review-detail.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/drawer.js",
+        "assets/js/pages/appreview-model.js",
+        "assets/js/pages/appreview-findings.js",
+        "assets/js/pages/appreview-render.js",
+        "assets/js/pages/appreview-detail.js",
+        "assets/js/pages/appreview-board.js"
+      ]
+    },
+    "modules/backlog/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/skeleton.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/lazy-detail.js",
+        "assets/js/pages/work-items-data.js",
+        "assets/js/pages/backlog-export.js",
+        "assets/js/pages/backlog.js"
+      ]
+    },
+    "modules/integrations/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/integrations.js"
+      ]
+    },
+    "modules/platform/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/platform.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/blocks.js",
+        "assets/js/core/links.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/platform-knowledge.js",
+        "assets/js/pages/platform.js"
+      ]
+    },
+    "modules/portal-review/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/portal-review.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/blocks.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/portalreview-model.js",
+        "assets/js/pages/portalreview-render.js",
+        "assets/js/pages/portalreview-waves.js"
+      ]
+    },
+    "modules/portal-review/triage.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/portal-review.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/blocks.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/portalreview-model.js",
+        "assets/js/pages/portalreview-render.js",
+        "assets/js/pages/portalreview-triage.js"
+      ]
+    },
+    "modules/portal-review/wave.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/portal-review.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/blocks.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/portalreview-model.js",
+        "assets/js/pages/portalreview-render.js",
+        "assets/js/pages/portalreview-board.js"
+      ]
+    },
+    "modules/prototypes/daopay/application.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/pxp.css",
+        "assets/css/pxp-daopay.css",
+        "assets/css/pxp-sim.css",
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/daopay-data.js",
+        "assets/js/pages/daopay-sim.js",
+        "assets/js/pages/daopay-shell.js",
+        "assets/js/pages/daopay-sections.js",
+        "assets/js/pages/daopay-app.js"
+      ]
+    },
+    "modules/prototypes/daopay/applications.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/pxp.css",
+        "assets/css/pxp-daopay.css",
+        "assets/css/pxp-sim.css",
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/daopay-data.js",
+        "assets/js/pages/daopay-sim.js",
+        "assets/js/pages/daopay-shell.js",
+        "assets/js/pages/daopay-list.js"
+      ]
+    },
+    "modules/prototypes/daopay/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/prototype.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/proto-svg.js"
+      ]
+    },
+    "modules/prototypes/gdpr/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js"
+      ]
+    },
+    "modules/prototypes/ideas.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/ideas.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/blocks.js",
+        "assets/js/core/detail.js",
+        "assets/js/pages/ideas-render.js",
+        "assets/js/pages/ideas.js"
+      ]
+    },
+    "modules/prototypes/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/ideas.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/ideas-render.js",
+        "assets/js/pages/gallery.js"
+      ]
+    },
+    "modules/prototypes/pci/dashboard.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/pxp.css",
+        "assets/css/pxp-pci.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js"
+      ]
+    },
+    "modules/prototypes/pci/demo.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/pxp.css",
+        "assets/css/pxp-pci.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/pci-ixopay.js",
+        "assets/js/pages/pci-interstitial.js",
+        "assets/js/pages/pci-portal.js"
+      ]
+    },
+    "modules/prototypes/pci/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/prototype.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/proto-svg.js"
+      ]
+    },
+    "modules/prototypes/pci/reports.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/pxp.css",
+        "assets/css/pxp-pci.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/pci-ixopay.js",
+        "assets/js/pages/pci-reports.js"
+      ]
+    },
+    "modules/prototypes/website-screening/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js"
+      ]
+    },
+    "modules/reference/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/blocks.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/reference-render.js",
+        "assets/js/pages/reference-topics.js",
+        "assets/js/pages/reference.js"
+      ]
+    },
+    "modules/roadmap/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/roadmap-themes.css",
+        "assets/css/roadmap.css",
+        "assets/css/roadmap-views.css",
+        "assets/css/roadmap-detail.css",
+        "assets/css/skeleton.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/links.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/sprints.js",
+        "assets/js/pages/roadmap-views.js",
+        "assets/js/pages/roadmap-views-timeline.js",
+        "assets/js/pages/roadmap-views-breakdown.js",
+        "assets/js/pages/roadmap-views-exec.js",
+        "assets/js/pages/roadmap-views-cascade.js",
+        "assets/js/pages/roadmap-detail.js",
+        "assets/js/pages/roadmap-detail-export.js",
+        "assets/js/pages/roadmap-export.js",
+        "assets/js/pages/lazy-detail.js",
+        "assets/js/pages/work-items-data.js",
+        "assets/js/pages/roadmap-drawer.js",
+        "assets/js/pages/roadmap.js"
+      ]
+    },
+    "modules/users/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/detail.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/send-tool.js",
+        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/pages/users.js"
+      ]
+    }
+  }
+}
