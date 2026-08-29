@@ -14,6 +14,12 @@
 // result overtake a newer one.
 // ------------------------------------------------------------------
 
+// Over the soft line budget and NOT split: search.js is a core module
+// in the fixed include order on 23 pages, so splitting it costs an
+// extra request on every page load and a 23-file edit. Roughly a
+// third of the file is the declarative source table.
+// ------------------------------------------------------------------
+
 (function () {
   "use strict";
 

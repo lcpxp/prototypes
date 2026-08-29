@@ -49,14 +49,14 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | assets/js/core/guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and |
 | assets/js/core/links.js | 144 | links.js - The typed knowledge graph, resolved for rendering. |
-| assets/js/core/registry.js | 314 | registry.js - Single source of truth for the hub's modules, the |
-| assets/js/core/search.js | 350 | search.js - Global header search (App.search). Renders results for |
+| assets/js/core/registry.js | 319 | registry.js - Single source of truth for the hub's modules, the |
+| assets/js/core/search.js | 356 | search.js - Global header search (App.search). Renders results for |
 | assets/js/core/send-tool.js | 195 | send-tool.js - A nav icon that opens the acquirer send snippet: a |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | assets/js/core/theme.js | 84 | theme.js - Light/dark theme control. |
 | assets/js/core/tools.js | 217 | tools.js - The nav's outbound links to external tools, rendered as |
-| assets/js/core/ui.js | 364 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
+| assets/js/core/ui.js | 370 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy, |
 | assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
 | assets/js/pages/appreview-detail.js | 207 | appreview-detail.js - The drawer body for one application. A pure |
 | assets/js/pages/appreview-findings.js | 145 | appreview-findings.js - The cross-record half of the review model: |
@@ -169,7 +169,7 @@ document instead of walking the tree or reading whole files.
 | modules/roadmap/index.html | 135 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 52 | Users - LPio / LaunchPad IO |
 | package.json | 17 |  |
-| scripts/audit.js | 169 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
+| scripts/audit.js | 173 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and |
 | scripts/extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits |
 | scripts/gen-codemap.js | 107 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
@@ -233,7 +233,7 @@ document instead of walking the tree or reading whole files.
 | supabase/migrations/20260816115048_embed_text_window.sql | 21 | gte-small has a 512-token context and truncates past it, so sending a |
 | supabase/migrations/20260816115506_roadmap_find_semantic_channel.sql | 163 | ------------------------------------------------------------------ |
 | supabase/migrations/20260816115826_embed_batch_of_four.sql | 104 | Two corrections found while writing the schema file, applied so the |
-| supabase/policies.sql | 500 | ------------------------------------------------------------------ |
+| supabase/policies.sql | 505 | ------------------------------------------------------------------ |
 | supabase/reference-coverage.json | 80 |  |
 | supabase/schema-snapshot.json | 1311 |  |
 | supabase/schema/00_core.sql | 79 | ------------------------------------------------------------------ |
@@ -259,7 +259,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/roadmap-intake.test.js | 147 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | tests/checks/schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
-| tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
+| tests/checks/size.test.js | 115 | tests/checks/size.test.js - File size budgets. |
 | tests/checks/structure.test.js | 179 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/checks/surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -276,7 +276,7 @@ document instead of walking the tree or reading whole files.
 | tests/lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 28 |  |
-| tests/size-budget.json | 201 |  |
+| tests/size-budget.json | 46 |  |
 | tests/surface-baseline.json | 840 |  |
 | tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
@@ -345,29 +345,29 @@ document instead of walking the tree or reading whole files.
 | App.canAccess | assets/js/core/guard.js:88 |
 | App.onAuthed | assets/js/core/guard.js:116 |
 | enforceModule() | assets/js/core/guard.js:124 |
-| App.moduleHref | assets/js/core/registry.js:228 |
-| App.itemHref | assets/js/core/registry.js:238 |
-| App.linkHref | assets/js/core/registry.js:281 |
-| App.departmentLabel | assets/js/core/registry.js:307 |
-| sources() | assets/js/core/search.js:49 |
-| canReach() | assets/js/core/search.js:112 |
-| moduleByKey() | assets/js/core/search.js:116 |
-| specHref() | assets/js/core/search.js:120 |
-| noteHref() | assets/js/core/search.js:130 |
-| hrefFor() | assets/js/core/search.js:144 |
-| targetMod() | assets/js/core/search.js:155 |
-| clean() | assets/js/core/search.js:164 |
-| selectFor() | assets/js/core/search.js:168 |
-| snippet() | assets/js/core/search.js:180 |
-| highlight() | assets/js/core/search.js:196 |
-| badgeHtml() | assets/js/core/search.js:206 |
-| buildHtml() | assets/js/core/search.js:215 |
-| attach() | assets/js/core/search.js:250 |
-| close() | assets/js/core/search.js:260 |
-| open() | assets/js/core/search.js:269 |
-| paint() | assets/js/core/search.js:274 |
-| setActive() | assets/js/core/search.js:283 |
-| run() | assets/js/core/search.js:295 |
+| App.moduleHref | assets/js/core/registry.js:233 |
+| App.itemHref | assets/js/core/registry.js:243 |
+| App.linkHref | assets/js/core/registry.js:286 |
+| App.departmentLabel | assets/js/core/registry.js:312 |
+| sources() | assets/js/core/search.js:55 |
+| canReach() | assets/js/core/search.js:118 |
+| moduleByKey() | assets/js/core/search.js:122 |
+| specHref() | assets/js/core/search.js:126 |
+| noteHref() | assets/js/core/search.js:136 |
+| hrefFor() | assets/js/core/search.js:150 |
+| targetMod() | assets/js/core/search.js:161 |
+| clean() | assets/js/core/search.js:170 |
+| selectFor() | assets/js/core/search.js:174 |
+| snippet() | assets/js/core/search.js:186 |
+| highlight() | assets/js/core/search.js:202 |
+| badgeHtml() | assets/js/core/search.js:212 |
+| buildHtml() | assets/js/core/search.js:221 |
+| attach() | assets/js/core/search.js:256 |
+| close() | assets/js/core/search.js:266 |
+| open() | assets/js/core/search.js:275 |
+| paint() | assets/js/core/search.js:280 |
+| setActive() | assets/js/core/search.js:289 |
+| run() | assets/js/core/search.js:301 |
 | copy() | assets/js/core/send-tool.js:102 |
 | fallback() | assets/js/core/send-tool.js:115 |
 | buildDialog() | assets/js/core/send-tool.js:127 |
@@ -389,19 +389,19 @@ document instead of walking the tree or reading whole files.
 | searchCommand() | assets/js/core/tools.js:40 |
 | frontDoor() | assets/js/core/tools.js:70 |
 | onToolClick() | assets/js/core/tools.js:163 |
-| App.escape | assets/js/core/ui.js:11 |
-| App.methodBadge | assets/js/core/ui.js:21 |
-| App.statusBadge | assets/js/core/ui.js:29 |
-| App.flashLabel | assets/js/core/ui.js:38 |
-| App.copyText | assets/js/core/ui.js:45 |
-| App.notice | assets/js/core/ui.js:59 |
-| App.download | assets/js/core/ui.js:69 |
-| App.csvFromRows | assets/js/core/ui.js:89 |
-| App.deepLinkScroll | assets/js/core/ui.js:167 |
-| isCurrentPage() | assets/js/core/ui.js:179 |
-| themeIcon() | assets/js/core/ui.js:187 |
-| renderNav() | assets/js/core/ui.js:204 |
-| App.onThemeChange | assets/js/core/ui.js:339 |
+| App.escape | assets/js/core/ui.js:17 |
+| App.methodBadge | assets/js/core/ui.js:27 |
+| App.statusBadge | assets/js/core/ui.js:35 |
+| App.flashLabel | assets/js/core/ui.js:44 |
+| App.copyText | assets/js/core/ui.js:51 |
+| App.notice | assets/js/core/ui.js:65 |
+| App.download | assets/js/core/ui.js:75 |
+| App.csvFromRows | assets/js/core/ui.js:95 |
+| App.deepLinkScroll | assets/js/core/ui.js:173 |
+| isCurrentPage() | assets/js/core/ui.js:185 |
+| themeIcon() | assets/js/core/ui.js:193 |
+| renderNav() | assets/js/core/ui.js:210 |
+| App.onThemeChange | assets/js/core/ui.js:345 |
 | param() | assets/js/pages/appreview-board.js:32 |
 | day() | assets/js/pages/appreview-board.js:36 |
 | renderAll() | assets/js/pages/appreview-board.js:46 |
@@ -836,12 +836,12 @@ document instead of walking the tree or reading whole files.
 | row() | scripts/audit.js:12 |
 | head() | scripts/audit.js:13 |
 | testTotals() | scripts/audit.js:17 |
-| overSoft() | scripts/audit.js:34 |
-| tablesMissingPolicy() | scripts/audit.js:50 |
-| themeGuardAnomalies() | scripts/audit.js:63 |
-| thenBalance() | scripts/audit.js:74 |
-| stalePaths() | scripts/audit.js:88 |
-| snapshotSummary() | scripts/audit.js:103 |
+| overSoft() | scripts/audit.js:37 |
+| tablesMissingPolicy() | scripts/audit.js:54 |
+| themeGuardAnomalies() | scripts/audit.js:67 |
+| thenBalance() | scripts/audit.js:78 |
+| stalePaths() | scripts/audit.js:92 |
+| snapshotSummary() | scripts/audit.js:107 |
 | toJs() | scripts/extract-calls.js:72 |
 | stripParamTypes() | scripts/extract-calls.js:76 |
 | lens() | scripts/extract-calls.js:92 |
@@ -886,6 +886,8 @@ document instead of walking the tree or reading whole files.
 | schemaText() | tests/checks/schema-drift.test.js:35 |
 | migrationFiles() | tests/checks/schema-drift.test.js:38 |
 | jwtRole() | tests/checks/security.test.js:27 |
+| budgeted() | tests/checks/size.test.js:28 |
+| linesOf() | tests/checks/size.test.js:36 |
 | htmlPages() | tests/checks/structure.test.js:19 |
 | protectedPages() | tests/checks/structure.test.js:22 |
 | scriptSrcs() | tests/checks/structure.test.js:25 |

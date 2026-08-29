@@ -6,6 +6,11 @@
 //
 // Module paths are relative to the repo root. Always build links
 // with App.moduleHref so pages below the root resolve correctly.
+//
+// Over the soft line budget by design, and not split: this is the one
+// answer to "what does this system contain", and splitting it would
+// make that a multi-file question - the exact thing it exists to
+// prevent. CLAUDE.md forbids any of these living anywhere else.
 // ------------------------------------------------------------------
 
 (function () {

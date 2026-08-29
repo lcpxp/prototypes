@@ -30,13 +30,17 @@ function testTotals() {
   };
 }
 
-// 2. Files over their soft budget with no documented exception.
+// 2. Files over their soft budget with nothing recorded about it.
+//    The exempt trees and the acknowledgements are read from
+//    tests/size-budget.json rather than restated here: this figure and
+//    the gate in tests/checks/size.test.js must never disagree.
 function overSoft() {
   var out = [];
+  var exemptTrees = Object.keys(budget["exempt-trees"] || {});
   trackedFiles().forEach(function (f) {
     if (budget.generated.includes(f)) return;
-    if (f.startsWith("docs/sessions-archive/")) return;
-    if (budget.exceptions[f]) return;
+    if (exemptTrees.some(function (t) { return f.indexOf(t) === 0; })) return;
+    if (budget.exceptions[f] || (budget.acknowledged || {})[f]) return;
     var rule = budget.byExtension[path.extname(f)];
     if (!rule) return;
     var n = read(f).split("\n").length;
@@ -120,7 +124,7 @@ row("pass / fail / total", t.pass + " / " + t.fail + " / " + t.tests);
 
 head("Size");
 var os = overSoft();
-row("over soft, no exception", os.length);
+row("over soft, unacknowledged", os.length);
 os.forEach(function (f) { row("", f); });
 
 head("Security");

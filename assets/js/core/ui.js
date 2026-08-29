@@ -1,6 +1,12 @@
 // ------------------------------------------------------------------
-// ui.js - Shared UI: top navigation, HTML escaping, badges, copy.
+// ui.js - Shared UI: top navigation, HTML escaping, badges, copy,
+// downloads and the guarded localStorage helper (App.store).
 // Renders navigation into <header id="app-nav"></header>.
+//
+// Loaded on all 23 protected pages in a fixed include order, so it is
+// NOT split: a new core module costs an extra request on every page and
+// a 23-file edit. That is also why App.store lives here rather than in
+// a core module of its own.
 // ------------------------------------------------------------------
 
 (function () {

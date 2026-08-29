@@ -10,6 +10,11 @@
 --     allow, plus the user list.
 --   * Only admins (profiles.role = 'admin') can write.
 --
+-- Deliberately ONE file, and over the soft line budget because of it.
+-- Splitting it would make "which tables can be written, and by whom" a
+-- multi-file question, which is the one question this file exists to
+-- answer in a single pass. There is no exit plan and that is intended.
+--
 -- If a table is ever added without enabling RLS and adding policies,
 -- its contents are exposed to anyone with the anon key. Treat any
 -- new table as public until this file covers it.

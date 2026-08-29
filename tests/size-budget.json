@@ -1,200 +1,45 @@
 {
-  "comment": "Line budgets per file type. soft = warning (plan a split); hard = test failure (split before extending). Source files ~500 so a single read stays cheap. Docs share that hard cap: line count is only a PROXY for what actually degrades instruction adherence, which is one concept stated in two places saying slightly different things. That is enforced directly by the one-home-per-concept gate in tests/checks/roadmap-intake.test.js. The old 200/300 doc cap forced splits that produced the very duplication the gate now catches - the confidence bands ended up stated in three files - and generated an exceptions block longer than several of the files it exempted.",
+  "comment": "Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones.",
+  "why-these-numbers": "Source files sit at 400/600 so one read-file action captures a whole module cheaply. The previous 300/500 produced 41 per-file exceptions across 39 files - a registry of exemptions rather than a constraint, each carrying an exit plan nobody took. Raising the cap to what the repo had actually settled at, and requiring an acknowledgement rather than a bespoke cap, took that to one exception and fifteen acknowledgements.",
   "byExtension": {
-    ".js": {
-      "soft": 300,
-      "hard": 500
-    },
-    ".ts": {
-      "soft": 300,
-      "hard": 500
-    },
-    ".css": {
-      "soft": 300,
-      "hard": 500
-    },
-    ".html": {
-      "soft": 250,
-      "hard": 400
-    },
-    ".sql": {
-      "soft": 300,
-      "hard": 500
-    },
-    ".md": {
-      "soft": 300,
-      "hard": 500
-    }
+    ".js": { "soft": 400, "hard": 600 },
+    ".ts": { "soft": 400, "hard": 600 },
+    ".css": { "soft": 400, "hard": 600 },
+    ".html": { "soft": 300, "hard": 450 },
+    ".sql": { "soft": 400, "hard": 600 },
+    ".md": { "soft": 400, "hard": 600 }
   },
   "generated": [
     "docs/CODEMAP.md",
     "llms.txt",
-    "supabase/schema-snapshot.json"
+    "supabase/schema-snapshot.json",
+    "tests/surface-baseline.json"
   ],
+  "exempt-trees": {
+    "docs/sessions-archive/": "Closed, read-only history. Never reflowed to a budget.",
+    "supabase/migrations/": "Applied migrations are immutable once run (CLAUDE.md). Their length tracks the schema they create, and editing one to fit a budget would rewrite history the database has already applied."
+  },
   "exceptions": {
     "docs/STATE.md": {
       "hard": 40,
-      "note": "Fixed-size current state; overwritten each checkpoint, never grown. The 40-line cap is the point."
-    },
-    "supabase/seed.sql": {
-      "hard": 550,
-      "note": "Sample data, not logic; length tracks the number of seeded rows. Exit plan: split per domain (seed/ directory, one file per schema domain) if it nears this cap."
-    },
-    "supabase/schema/30_work.sql": {
-      "hard": 500,
-      "note": "The work-items DOMAIN in one file (areas, taxonomy, documents, items, phases, dependencies, notes), much of the length being the rationale beside each constraint. The surfaces built on it are already split out: 31_roadmap_search.sql (intake) and 32_roadmap_board.sql (board view and the move operation). Exit plan: work_documents and work_notes are the next seam - they are intake concerns, not roadmap ones."
-    },
-    "supabase/schema/50_review.sql": {
-      "hard": 500,
-      "note": "The application-review domain (waves, applications, evidence, revisions, two lookups, two guards) in one file, like 30_work.sql. Much of the length is the rationale for each column: these rules were each learned by getting them wrong, and the reasoning has to sit next to the constraint that encodes it. Exit plan: the two guard functions are the clean seam - move them to 51_review_guards.sql if it nears the cap."
-    },
-    "supabase/migrations/20260730120000_app_review.sql": {
-      "hard": 500,
-      "note": "Applied migrations are immutable history, never edited after the fact, so they are not split or reflowed. Length tracks the schema it creates."
-    },
-    "supabase/policies.sql": {
-      "hard": 500,
-      "note": "Deliberately one file: this is the security boundary, and every policy in the project must be readable in a single pass. Splitting it would make 'which tables can be written, and by whom' a multi-file question. Exit plan: none while that holds."
-    },
-    "assets/css/app-review.css": {
-      "hard": 500,
-      "note": "The review board: headline split, legend and filters, do-now strip, and the row treatments (tints, rails, markers, flags). The drawer is already split into app-review-detail.css. Exit plan: the legend and filter block is the next seam."
-    },
-    "tests/unit/appreview-model.test.js": {
-      "hard": 500,
-      "note": "One dataset drives the single-row derivations together: grouping, the three-way split, age, triggers, ordering and filtering. The cross-record cases are already split into appreview-findings.test.js. Exit plan: age and ordering are the next seam."
-    },
-    "assets/css/components.css": {
-      "hard": 500,
-      "note": "Over soft. Exit plan: shed badge and table styles into components-data.css, linked wherever components.css is."
-    },
-    "assets/css/layout.css": {
-      "hard": 500,
-      "note": "Over soft. Exit plan: the nav and page-head blocks are the split seam when it grows further."
-    },
-    "assets/css/pages.css": {
-      "hard": 500,
-      "note": "Just over soft; split per page section if it grows."
-    },
-    "assets/css/tokens.css": {
-      "hard": 500,
-      "note": "Design tokens plus dark-theme overrides; inherently long, not logic."
-    },
-    "assets/css/roadmap.css": {
-      "hard": 500,
-      "note": "Over soft since the bug-icon toggle and the export dropdown. Exit plan: shed the print @media block into a roadmap-print.css."
-    },
-    "assets/js/pages/roadmap-views.js": {
-      "hard": 540,
-      "note": "Over soft (shared helpers + placement model). The Timeline layout (roadmap-views-timeline.js), cascade family (roadmap-views-cascade.js), exec board (roadmap-views-exec.js) and Detailed breakdown (roadmap-views-breakdown.js) are all split out; the context/placement helpers are the next seam if it grows again."
-    },
-    "assets/js/pages/roadmap.js": {
-      "hard": 540,
-      "note": "Over soft (fetch, switcher, board click/change wiring). The drawer surface is in roadmap-drawer.js, the export dropdown wiring in roadmap-export.js and the per-item reads in work-items-data.js; the page-load fetch and the phase/link enrichment block in onAuthed are the next extract seam (roadmap-fetch.js) if it grows again."
-    },
-    "assets/js/pages/roadmap-detail.js": {
-      "hard": 500,
-      "note": "Over soft: the drawer builders plus the value helpers shared with roadmap-detail-export.js (App._rmd). The JSON/CSV export builders are already split out; the details/notes parsers are the next seam."
-    },
-    "assets/js/pages/backlog.js": {
-      "hard": 500,
-      "note": "Over soft (358). The exit plan was taken on 2026-08-16 - the CSV columns, record builder and wiring are in backlog-export.js. Next seam: the two modal fact builders, which need only App.detail and the name lookups."
-    },
-    "assets/js/pages/reference.js": {
-      "hard": 500,
-      "note": "Over soft; loadSpec/hydrate could move to a reference-data.js."
-    },
-    "tests/unit/roadmap-views.test.js": {
-      "hard": 500,
-      "note": "Over soft: one dataset (tests/lib/roadmap.js) drives the level/layout benchmarks together. The custom-view/department-filter cases are in roadmap-views-custom.test.js and the exec-board cases in roadmap-views-exec.test.js; the placement-ordering cases (bug sink, priority ties, parked theme clustering) are the next split seam."
-    },
-    "assets/css/roadmap-detail.css": {
-      "hard": 500,
-      "note": "Over soft before this session (325) and grown to 335 by the flat-link and link-type treatments that render a link whose target has no page. Exit plan: the drawer's notes and phases blocks are the seam - move them to roadmap-detail-notes.css, linked wherever roadmap-detail.css is."
-    },
-    "tests/unit/roadmap-detail.test.js": {
-      "hard": 500,
-      "note": "Over soft: the drawer benchmarks against one fixture. The exit plan was taken on 2026-08-13 - the KPI/CSV export cases moved to roadmap-detail-export.test.js when the completeness benchmarks pushed this past its hard cap. Next seam: the cross-type link cases, which need only the fixture and App.links."
-    },
-    "tests/unit/roadmap-detail-export.test.js": {
-      "hard": 500,
-      "note": "Over soft on arrival: the KPI/CSV export cases split out of roadmap-detail.test.js on 2026-08-13, carrying the shared fixture with them. Exit plan: the CSV cases would split again from the KPI ones, but both read the same fixture, so a third copy of it costs more than it saves."
-    },
-    "scripts/gen-coverage.js": {
-      "hard": 500,
-      "note": "Over soft (346) since the consumer dimension landed: the reconciliation now answers three questions at once - is a route documented, does anything call it, and does the row say so - and the collapse rules that connect them carry the reasoning for each. Much of the length is that reasoning, which has to sit beside the rule it constrains: two bugs found on 2026-08-14 were both cases of a rule that read as obviously right and produced a confidently wrong figure. Exit plan: the SQL constant is the clean seam - move it to scripts/lib/coverage-sql.js, which leaves the arithmetic and its rationale in one readable pass."
-    },
-    "scripts/extract-calls.js": {
-      "hard": 500,
-      "note": "Over soft (335) on arrival. Roughly half the file is the nine rules and the reasoning beside each one, which has to sit next to the code it constrains: every rule here was needed to make the real comparison come out right, and a rule got wrong produces a confidently wrong answer - a live route filed as abandoned - rather than no answer. NOT split from extract-routes.js's idiom: the two extractors are read together, and gen-coverage.js requires both. Exit plan: the expression evaluator (lens, evaluate, toJs, stripParamTypes, firstArg) is the clean seam - move it to scripts/lib/ts-eval.js if this passes 400."
-    },
-    "assets/js/core/search.js": {
-      "hard": 500,
-      "note": "Over soft (337) since global search grew from six sources to fourteen - work notes, documents, glossary terms, journey stages, API topics and specs, prototype ideas and review findings were all unfindable from the nav before. Roughly a third of the file is the declarative source table. NOT split, deliberately: search.js is a core module in the fixed include order on 23 pages, so splitting it costs an extra request on every page load and a 23-file edit. Exit plan: if it passes 400, sources() and the href builders move to core/search-sources.js and every page gains the include."
-    },
-    "assets/css/roadmap-views.css": {
-      "hard": 500,
-      "note": "Over soft (438) and the closest of these to the hard cap. One stylesheet for six board layouts - timeline, cascade, exec, breakdown, custom and the shared placement grid - which share a coordinate model and a set of rails; splitting them means duplicating that model or inventing a shared file that is most of it. Exit plan: the Timeline block is self-contained and goes first, into roadmap-views-timeline.css linked wherever this is. Do that before adding a seventh view."
-    },
-    "assets/js/core/registry.js": {
-      "hard": 500,
-      "note": "Just over soft (307) and by design: this is the single source of truth for modules, table names, roles, link kinds, link entity types, spec families and departments, and CLAUDE.md forbids any of those living anywhere else. Splitting it would make 'what does this system contain' a multi-file question, which is the thing it exists to prevent. Exit plan: none while that holds. If it must be cut, linkEntities is the only block with no other reader."
-    },
-    "assets/js/core/ui.js": {
-      "hard": 500,
-      "note": "Just over soft (311). Shared runtime: nav rendering, escaping, badges, href builders, the sign-out path. Loaded on every page in a fixed include order, so a split costs an extra request on 23 pages and a 23-file edit, as with search.js. Exit plan: if it passes 400, the badge and href helpers move to core/ui-render.js and every page gains the include."
-    },
-    "assets/js/pages/pci-portal.js": {
-      "hard": 500,
-      "note": "Just over soft (301). A prototype: the seven-step PCI prescreen wizard, its stepper and its in-memory sample data in one file so the whole prototype reads in one pass. Prototypes are demonstrations, not shared code, and splitting one across files makes it harder to read for no reuse gain. Exit plan: none unless it approaches the hard cap, at which point the step content moves to pci-portal-steps.js."
-    },
-    "assets/js/pages/platform.js": {
-      "hard": 500,
-      "note": "Over soft (326). The platform page: capability kinds and where each renders, the knowledge sections, the coverage lines. The pure builders already hang off App.platformView and are DOM-free so they can be benchmarked. Exit plan: the capability-kind table and its renderers are the seam - platform-capabilities.js - when the next section lands."
-    },
-    "docs/CHANGELOG.md": {
-      "hard": 620,
-      "note": "Over the shared 500 cap (504) and growing by design: an append-only record of what changed for users, pre-1.0, so nothing has rolled up yet. Raised rather than split because splitting it would put 'what changed' in two places, which is the duplication these budgets exist to prevent - and the file is read newest-first, so length costs a reader nothing. Exit plan: the documented one - when the owner cuts a release, Unreleased becomes a dated version heading and the file resets to a short Unreleased section. That is the event that shrinks it, not a split."
-    },
-    "docs/ROADMAP-INTAKE.md": {
-      "hard": 500,
-      "note": "Over soft (405) and deliberately not split. It is the ONE home for the confidence-band thresholds and the calibration behind them, and the one-home gate in tests/checks/roadmap-intake.test.js fails if any of that is restated elsewhere. The last attempt to split this file is what put the bands in three places. Exit plan: none. A longer single file beats the same threshold stated in three shorter ones."
-    },
-    "docs/plan/20-API-REFERENCE.md": {
-      "hard": 500,
-      "note": "Over soft (412). The reference workstream, now closed: the three inventories, the reconciliation as it moved from 56% to 100%, the twelve corrected rows and the thirteenth wrong claim, the merchant collapse, and the register. Much of the length is the record of where the plan was wrong, which is what a later wave needs. Exit plan: on the next release, fold the closed sections into a short outcome and keep the corrections table."
-    },
-    "docs/plan/30-KNOWLEDGE.md": {
-      "hard": 500,
-      "note": "Just over soft (320). The knowledge workstream: the provenance ladder, the link vocabulary and the capability model, each stated once here and cited elsewhere. Exit plan: none while the one-home gate holds it; the link vocabulary is the only block with a second potential home, and it is deliberately here rather than in 33_links.sql."
-    },
-    "docs/plan/40-SURFACING.md": {
-      "hard": 500,
-      "note": "Over soft (339). The surfacing workstream: the completeness contract, the typed-block vocabulary and the four ways a value can be covered, which the render-coverage gate enforces directly. Exit plan: fold the landed sections into an outcome once the load-speed work (80) has settled, since that touches the same renderers."
-    },
-    "docs/plan/80-LOAD-SPEED.md": {
-      "hard": 500,
-      "note": "Over soft (450). The load-speed workstream, now closed: the established facts, the three corrections to the brief it was written from, the design, the regression phase one shipped and how it was found, and the before/after measurements for both phases. Much of the length is the record of where the plan was wrong, which is the part a later wave needs. Exit plan: on the next release, fold the two landed sections into a short outcome and keep the measurements table and the regression note."
-    },
-    "docs/plan/60-PORTAL-REVIEW.md": {
-      "hard": 500,
-      "note": "Over soft (339). The portal-review workstream: the wave lifecycle, the 39-area map and the triage protocol. docs/PORTAL-REVIEW.md is the operating protocol and this is the build record, so the two are not duplicates. Exit plan: fold the build record into an outcome once a second wave has been run and the method has stopped changing."
-    },
-    "modules/prototypes/daopay/index.html": {
-      "hard": 400,
-      "note": "Over the html soft cap (258 > 250) and comfortably under hard. A prototype page: the DaoPay onboarding walkthrough, its markup in one file so the whole thing reads in one pass. Exit plan: none unless it approaches 400."
-    },
-    "supabase/migrations/20260809130647_knowledge_links_typed_vocabulary.sql": {
-      "hard": 500,
-      "note": "Applied migrations are immutable history, never edited after the fact, so they are not split or reflowed. Length tracks the vocabulary it installs and the data it migrates onto it."
-    },
-    "supabase/schema/33_links.sql": {
-      "hard": 500,
-      "note": "Over soft (344). The knowledge-link domain in one file: the table, the eight typed kinds, the eleven entity types, the validity window and the confidence model, with the reasoning beside each constraint. These rules were learned by getting them wrong and the reasoning has to sit next to what encodes it. Exit plan: the entity-type check is the clean seam if the vocabulary grows again."
-    },
-    "tests/checks/render-coverage.test.js": {
-      "hard": 500,
-      "note": "Over soft (350). The gate that makes 'nothing stored is invisible' mechanical: it checks constraint vocabularies, link entity types, anchor reachability, contract adopters and the core/detail.js include across every module page. Splitting it would separate the rule from the reason each clause exists, and each clause exists because something was buried once. Exit plan: the vocabulary checks split from the page checks if it passes 450."
+      "note": "TIGHTER than its extension, not looser. A fixed-size current state, overwritten each checkpoint and never grown. The 40-line cap is the point of the file."
     }
+  },
+  "acknowledged": {
+    "docs/CHANGELOG.md": { "seam": "Not a split. When the owner cuts a release, Unreleased becomes a dated heading and the file resets to a short Unreleased section. That is the event that shrinks it. Splitting would put 'what changed' in two places." },
+    "supabase/seed.sql": { "seam": "Sample data, not logic; length tracks the number of seeded rows. Split per domain into a seed/ directory, one file per schema domain." },
+    "supabase/policies.sql": { "seam": "None, deliberately. This is the security boundary and every policy must be readable in one pass; splitting makes 'which tables can be written, and by whom' a multi-file question. The reasoning now sits in the file's own header." },
+    "assets/css/components.css": { "seam": "Badge and table styles move to components-data.css, linked wherever components.css is." },
+    "tests/unit/roadmap-views.test.js": { "seam": "The placement-ordering cases (bug sink, priority ties, parked theme clustering) split next; they need only the shared fixture." },
+    "docs/plan/80-LOAD-SPEED.md": { "seam": "Closed workstream. Fold the two landed sections into a short outcome on the next release, keeping the measurements table and the regression note." },
+    "assets/js/pages/roadmap.js": { "seam": "The page-load fetch and the phase/link enrichment block in onAuthed move to roadmap-fetch.js." },
+    "supabase/schema/30_work.sql": { "seam": "work_documents and work_notes are intake concerns, not roadmap ones, and are the next file." },
+    "assets/css/tokens.css": { "seam": "Design tokens plus dark-theme overrides; inherently long and not logic. Split the dark block into tokens-dark.css if it grows." },
+    "assets/css/roadmap-views.css": { "seam": "The Timeline block is self-contained and goes first, into roadmap-views-timeline.css. Do that before adding a seventh view." },
+    "assets/js/pages/roadmap-detail.js": { "seam": "The details and notes parsers split next; the value helpers already left for roadmap-detail-values.js." },
+    "docs/ROADMAP-INTAKE.md": { "seam": "None, deliberately. It is the ONE home for the confidence bands, and the one-home gate fails if they are restated elsewhere. The last attempt to split this file is what put them in three places." },
+    "assets/js/pages/roadmap-views.js": { "seam": "The context and placement helpers; the four layout families are already split out." },
+    "docs/plan/20-API-REFERENCE.md": { "seam": "Closed workstream. Fold the closed sections into a short outcome on the next release, keeping the corrections table." },
+    "assets/css/roadmap.css": { "seam": "The print @media block moves to roadmap-print.css." }
   }
 }
