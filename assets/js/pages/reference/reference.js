@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------
 // reference.js - The reference viewer ("swagger") for modules/reference/.
 // Loads data and wires events; all HTML building lives in
-// reference-render.js (App.refRender) and reference-topics.js
-// (App.refTopics).
+// reference-render.js (App.referenceRender) and reference-topics.js
+// (App.referenceTopics).
 //
 // Reads from four Supabase tables:
 //   api_specs      one row per spec, plus environments/auth/contact
@@ -34,7 +34,7 @@
   }
 
   function render(endpoints, term) {
-    var R = App.refRender;
+    var R = App.referenceRender;
     var sideHtml = "";
     var mainHtml = "";
 
@@ -43,7 +43,7 @@
       current.topics.forEach(function (topic) {
         sideHtml += '<li><a href="#topic-' + App.escape(topic.id) + '">' +
           "<span>" + App.escape(topic.title) + "</span></a></li>";
-        mainHtml += App.refTopics.topicBlock(topic);
+        mainHtml += App.referenceTopics.topicBlock(topic);
       });
       sideHtml += "</ul></div>";
     }
@@ -108,7 +108,7 @@
       var element = document.getElementById("ep-" + ep.id);
       if (element) {
         element.querySelector(".endpoint-body").innerHTML =
-          App.refRender.endpointBody(ep, context());
+          App.referenceRender.endpointBody(ep, context());
       }
     });
   }
@@ -116,7 +116,7 @@
   function applyFilter() {
     var term = search.value.trim();
     render((current.endpoints || []).filter(function (ep) {
-      return App.refRender.matches(ep, term);
+      return App.referenceRender.matches(ep, term);
     }), term);
   }
 
@@ -139,7 +139,7 @@
       (family ? ' <span class="badge">' + App.escape(family.label) + "</span>" : "") +
       ' <span class="card-meta">' +
       App.escape(spec.description || "") + "</span>";
-    overview.innerHTML = App.refRender.specOverview(spec);
+    overview.innerHTML = App.referenceRender.specOverview(spec);
     current.servers = spec.servers || [];
 
     var results = await Promise.all([
@@ -179,7 +179,7 @@
           .single();
         spec.spec = docResult.error ? null : docResult.data.spec;
       }
-      if (spec.spec) endpoints = App.refRender.endpointsFromOpenApi(spec.spec);
+      if (spec.spec) endpoints = App.referenceRender.endpointsFromOpenApi(spec.spec);
     }
     current.endpoints = endpoints || [];
     search.value = "";

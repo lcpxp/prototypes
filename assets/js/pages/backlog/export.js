@@ -4,7 +4,7 @@
 // exit plan its size-budget note has carried since the export landed.
 //
 // The builder is pure - rows plus a name lookup in, CSV text out - so
-// tests/unit/backlog-export.test.js holds it with no DOM. The wiring
+// tests/unit/backlog/export.test.js holds it with no DOM. The wiring
 // fetches details for the rows it is about to write, because the list
 // does not carry that column (docs/plan/80-LOAD-SPEED.md).
 //

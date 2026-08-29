@@ -120,8 +120,8 @@ counts of links out. Opening one gives the five-zone panel from
 blocks), context (links, and the prototype it became).
 
 Page module split, to stay inside budget and keep builders testable:
-`assets/js/pages/ideas.js` for fetch and wiring,
-`assets/js/pages/ideas-render.js` for pure builders, with unit
+`assets/js/pages/ideas/ideas.js` for fetch and wiring,
+`assets/js/pages/ideas/render.js` for pure builders, with unit
 benchmarks alongside `tests/unit/gallery-future.test.js`.
 
 ## Capture and review

@@ -2,7 +2,7 @@
 // dashboard-strip.js - The now/next strip, the dashboard's headline
 // (docs/plan/50-DASHBOARD.md). A pure builder: rows in, HTML string
 // out, no DOM and no fetching, so it loads in a Node vm for testing
-// (tests/unit/dashboard-strip.test.js). The same split roadmap-detail.js
+// (tests/unit/dashboard/strip.test.js). The same split roadmap-detail.js
 // uses.
 //
 // Rows come from dashboard_summary().workstreams, already ordered

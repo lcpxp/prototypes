@@ -87,7 +87,7 @@ test("RLS policies never use \"for all\"", () => {
 // ------------------------------------------------------------------
 
 test("neither list page loads the prose or the notes", () => {
-  for (const file of ["assets/js/pages/roadmap/roadmap.js", "assets/js/pages/backlog.js"]) {
+  for (const file of ["assets/js/pages/roadmap/roadmap.js", "assets/js/pages/backlog/backlog.js"]) {
     const src = read(file);
     assert.doesNotMatch(src, /tables\.workNotes/,
       `${file} must not read work_notes on page load - nothing in either list ` +
@@ -101,7 +101,7 @@ test("neither list page loads the prose or the notes", () => {
 });
 
 test("the notes a drawer needs are fetched for one item, not all of them", () => {
-  const src = read("assets/js/pages/work-items-data.js");
+  const src = read("assets/js/pages/shared/work-items-data.js");
   assert.match(src, /tables\.workNotes/, "the loader is where the read belongs");
   assert.match(src, /\.eq\("work_item_id"/,
     "scoped to the open item - an unfiltered read here would put the whole " +
@@ -112,7 +112,7 @@ test("a bulk read is filtered to the rows that asked for it", () => {
   // Every read in this file names its rows. An unfiltered one would put
   // the payload back, on an export instead of on page load, and still
   // return the right answer - so nothing else would fail.
-  const src = read("assets/js/pages/work-items-data.js");
+  const src = read("assets/js/pages/shared/work-items-data.js");
   for (const [, tail] of src.matchAll(/App\.db\.from\(([\s\S]*?)\.then/g)) {
     assert.ok(/\.(in|eq)\(/.test(tail),
       "every read in work-items-data.js must be filtered to named rows");
@@ -135,14 +135,14 @@ test("both board-wide exports fetch the heavy fields before building", () => {
     "the roadmap JSON export writes both fields, so it must fetch both");
   assert.match(roadmap, /withHeavy\(s\.rows, \["details"\]/,
     "the roadmap CSV export writes details");
-  const backlog = read("assets/js/pages/backlog-export.js");
+  const backlog = read("assets/js/pages/backlog/export.js");
   assert.match(backlog, /loadForExport\(s\.rows, \["details"\]\)/,
     "the backlog CSV export writes details");
 });
 
 test("a failed export read cancels the download rather than writing a blank column", () => {
   for (const file of ["assets/js/pages/roadmap/export.js",
-    "assets/js/pages/backlog-export.js"]) {
+    "assets/js/pages/backlog/export.js"]) {
     const src = read(file);
     assert.match(src, /App\.flashLabel\([\s\S]*?"Export failed"\)/,
       `${file}: a failed fetch must report, not fall through to App.download`);
@@ -154,7 +154,7 @@ test("the export builders stay pure, so the fetch cannot hide inside one", () =>
   // fetching it stops being testable without a database, and the
   // "every row carries its details" benchmarks go with it.
   for (const file of ["assets/js/pages/roadmap/detail-export.js",
-    "assets/js/pages/backlog-export.js"]) {
+    "assets/js/pages/backlog/export.js"]) {
     const src = read(file).replace(/^\s*\/\/.*$/gm, "");
     assert.doesNotMatch(src, /App\.db\b/, `${file}: builders do not read the database`);
   }
@@ -169,7 +169,7 @@ test("every lazily loaded region tells the reader which of three states it is in
   const surfaces = [
     ["assets/js/pages/roadmap/detail.js", /function notesHtml\(item, state\)/],
     ["assets/js/pages/roadmap/detail.js", /function detailsHtml\(item, state\)/],
-    ["assets/js/pages/backlog.js", /function itemFactsHtml\(item, names, state\)/],
+    ["assets/js/pages/backlog/backlog.js", /function itemFactsHtml\(item, names, state\)/],
   ];
   for (const [file, signature] of surfaces) {
     const src = read(file);
@@ -187,7 +187,7 @@ test("both lazy surfaces go through the one loader", () => {
   // placeholder that appeared holds 150ms, and a superseded open never
   // paints. Two hand-rolled copies is how one of them gets dropped.
   for (const file of ["assets/js/pages/roadmap/drawer.js",
-    "assets/js/pages/backlog.js"]) {
+    "assets/js/pages/backlog/backlog.js"]) {
     assert.match(read(file), /App\.lazyDetail\(/,
       `${file}: lazy loading goes through the shared mechanism`);
   }

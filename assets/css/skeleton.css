@@ -13,7 +13,7 @@
    copies of one placeholder is how they drift apart. Linked by every
    page that lazily loads anything.
 
-   The timing rules live in assets/js/pages/lazy-detail.js: nothing
+   The timing rules live in assets/js/pages/shared/lazy-detail.js: nothing
    appears before 40ms, and anything that did appear holds 150ms.
    ------------------------------------------------------------------ */
 

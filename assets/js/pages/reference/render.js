@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------
 // reference-render.js - Pure HTML builders for the reference viewer.
 // No DOM access: every function takes data and returns a string, so
-// the rendering is benchmarked in tests/unit/reference-render.test.js.
+// the rendering is benchmarked in tests/unit/reference/render.test.js.
 // reference.js loads data and wires events; this file only renders.
 //
 // All content comes from Supabase (api_specs, api_endpoints). The
@@ -270,7 +270,7 @@
     return endpoints;
   }
 
-  App.refRender = {
+  App.referenceRender = {
     codeblock: codeblock,
     specOverview: specOverview,
     paramsTable: paramsTable,

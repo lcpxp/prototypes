@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/dashboard-cards.test.js - The dashboard's four card
+// tests/unit/dashboard/cards.test.js - The dashboard's four card
 // sections (docs/plan/50-DASHBOARD.md).
 //
 // The rule they share: a link is worth more when it carries the state
@@ -12,7 +12,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = {
@@ -26,7 +26,7 @@ function load() {
     "assets/js/core/ui.js",
     "assets/js/core/registry.js",
     "assets/js/core/tools.js",
-    "assets/js/pages/dashboard-cards.js",
+    "assets/js/pages/dashboard/cards.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App.dashboardCards;
 }

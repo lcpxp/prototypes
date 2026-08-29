@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------
-// tests/unit/reference-render.test.js - Benchmarks for the reference
-// viewer's HTML builders (assets/js/pages/reference-render.js).
+// tests/unit/reference/render.test.js - Benchmarks for the reference
+// viewer's HTML builders (assets/js/pages/reference/render.js).
 // The builders are pure (data in, string out), so they load in a
 // Node vm alongside ui.js, which supplies App.escape and the badges.
 // ------------------------------------------------------------------
@@ -8,7 +8,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function loadApp() {
   const sandbox = {
@@ -24,15 +24,15 @@ function loadApp() {
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
   vm.runInContext(read("assets/js/core/blocks.js"), sandbox, { filename: "blocks.js" });
-  vm.runInContext(read("assets/js/pages/reference-render.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/reference/render.js"), sandbox,
     { filename: "reference-render.js" });
-  vm.runInContext(read("assets/js/pages/reference-topics.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/reference/topics.js"), sandbox,
     { filename: "reference-topics.js" });
   return sandbox.App;
 }
 
 test("endpointBlock escapes hostile content everywhere", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   const html = R.endpointBlock({
     id: '"><img>',
     method: "get",
@@ -47,7 +47,7 @@ test("endpointBlock escapes hostile content everywhere", () => {
 });
 
 test("endpointBlock shows deprecated and public badges only when set", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   const plain = R.endpointBlock({ id: "1", method: "get", path: "/a" });
   assert.ok(!plain.includes("deprecated"));
   assert.ok(!plain.includes('badge public'));
@@ -60,7 +60,7 @@ test("endpointBlock shows deprecated and public badges only when set", () => {
 });
 
 test("responsesBlock renders the catalogue with status-family badges", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   const html = R.responsesBlock([
     { status: 201, description: "Created", example: { id: "x" } },
     { status: 404, description: "Missing" },
@@ -73,7 +73,7 @@ test("responsesBlock renders the catalogue with status-family badges", () => {
 });
 
 test("responsesBlock falls back to the legacy single example", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   assert.equal(R.responsesBlock([], null), "");
   const html = R.responsesBlock(null, { ok: true });
   assert.ok(html.includes("Response example"));
@@ -81,7 +81,7 @@ test("responsesBlock falls back to the legacy single example", () => {
 });
 
 test("specOverview renders environments, auth and contact; empty stays empty", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   assert.equal(R.specOverview({ servers: [], auth: {} }), "");
   const html = R.specOverview({
     servers: [{ name: "Sandbox", base_url: "https://sandbox.example.com", note: "test" }],
@@ -96,7 +96,7 @@ test("specOverview renders environments, auth and contact; empty stays empty", (
 });
 
 test("matches filters on method, path, tag, summary and description", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   const ep = { method: "post", path: "/v1/merchants", tag: "Merchants",
     summary: "Create a merchant", description: "Starts onboarding" };
   assert.ok(R.matches(ep, ""));
@@ -107,7 +107,7 @@ test("matches filters on method, path, tag, summary and description", () => {
 });
 
 test("endpointsFromOpenApi carries the deprecated flag through", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   const endpoints = R.endpointsFromOpenApi({
     paths: { "/old": { get: { deprecated: true, summary: "Old" } } },
   });
@@ -116,7 +116,7 @@ test("endpointsFromOpenApi carries the deprecated flag through", () => {
 });
 
 test("badgeList renders typed badges, escapes labels, defaults the tone", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   assert.equal(R.badgeList([]), "");
   const html = R.badgeList([
     { label: "Step 1", tone: "info" },
@@ -128,7 +128,7 @@ test("badgeList renders typed badges, escapes labels, defaults the tone", () => 
 });
 
 test("a lean endpoint renders a placeholder body; hydrated renders detail", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   const lean = R.endpointBody({ _lean: true, id: "1" });
   assert.ok(lean.includes("Loading detail"));
   const full = R.endpointBody({
@@ -140,7 +140,7 @@ test("a lean endpoint renders a placeholder body; hydrated renders detail", () =
 });
 
 test("curlExample uses the first environment, auth and request body", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   const servers = [{ base_url: "https://api.example.com" }];
   assert.equal(R.curlExample({ method: "get", path: "/a" }, []), "");
   assert.equal(R.curlExample({ method: "query", path: "GetThings" }, servers), "");
@@ -160,7 +160,7 @@ test("curlExample uses the first environment, auth and request body", () => {
 });
 
 test("groupByTag orders and describes tags from the catalogue", () => {
-  const R = loadApp().refRender;
+  const R = loadApp().referenceRender;
   const endpoints = [
     { id: "1", method: "get", path: "/b", tag: "Beta" },
     { id: "2", method: "get", path: "/a", tag: "Alpha" },
@@ -177,7 +177,7 @@ test("groupByTag orders and describes tags from the catalogue", () => {
 });
 
 test("topic blocks render each kind and escape content", () => {
-  const T = loadApp().refTopics;
+  const T = loadApp().referenceTopics;
   assert.ok(T.blockHtml({ kind: "p", text: "<i>hi</i>" }).includes("&lt;i&gt;"));
   assert.ok(T.blockHtml({ kind: "note", tone: "warn", text: "careful" })
     .includes("notice tone-warn"));
@@ -199,7 +199,7 @@ test("topic blocks render each kind and escape content", () => {
 });
 
 test("topicBlock wraps title, intro and blocks in a collapsible section", () => {
-  const T = loadApp().refTopics;
+  const T = loadApp().referenceTopics;
   const html = T.topicBlock({
     id: "t1", title: "Conventions <", intro: "How it works.",
     blocks: [{ kind: "p", text: "Detail." }],

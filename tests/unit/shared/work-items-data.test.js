@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/work-items-data.test.js - The reads that replace what the
+// tests/unit/shared/work-items-data.test.js - The reads that replace what the
 // list pages stopped carrying (docs/plan/80-LOAD-SPEED.md).
 //
 // The bulk path is the dangerous one. A drawer that fails to load its
@@ -16,7 +16,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 // A minimal PostgREST-shaped stub: from().select().in()/.eq().order()
 // is a thenable, and every call is recorded on `sent`.
@@ -50,7 +50,7 @@ function load(reply) {
   vm.runInContext(read("assets/js/core/registry.js"), sandbox,
     { filename: "registry.js" });
   sandbox.App.db = db;
-  vm.runInContext(read("assets/js/pages/work-items-data.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/shared/work-items-data.js"), sandbox,
     { filename: "work-items-data.js" });
   return { data: sandbox.App.workItemsData, sent, tables: sandbox.App.registry.tables };
 }

@@ -146,7 +146,7 @@ decide whether the next round is more capture or filling the holes.
 
 One rule this enforces mechanically: every kind allowed by the
 constraint on product_capabilities.kind must have a place on the page
-(tests/unit/platform-knowledge.test.js). Three kinds were added in
+(tests/unit/platform/knowledge.test.js). Three kinds were added in
 August 2026 and rendered nowhere for a week because the page filtered
 for kind='capability'; anything unplaced now falls through to a
 backstop section rather than vanishing.

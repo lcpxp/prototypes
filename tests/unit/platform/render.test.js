@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/platform-render.test.js - Benchmarks for the platform
+// tests/unit/platform/render.test.js - Benchmarks for the platform
 // viewer's pure builders (App.platformView in assets/js/pages/
 // platform.js). The builders are data-in / string-out, so they load
 // in a Node vm alongside ui.js (which supplies App.escape and
@@ -10,7 +10,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function loadView() {
   const sandbox = {
@@ -25,7 +25,7 @@ function loadView() {
   vm.runInContext(read("assets/js/core/blocks.js"), sandbox, { filename: "blocks.js" });
   vm.runInContext(read("assets/js/core/detail.js"), sandbox, { filename: "detail.js" });
   sandbox.App.onAuthed = function () {};
-  vm.runInContext(read("assets/js/pages/platform.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/platform/platform.js"), sandbox,
     { filename: "platform.js" });
   return sandbox.App.platformView;
 }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------
-// tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped
-// role (assets/js/pages/daopay-data.js and daopay-app.js). The role is
+// tests/unit/daopay/role.test.js - Benchmarks for the Daopay scoped
+// role (assets/js/pages/daopay/data.js and daopay-app.js). The role is
 // the whole point of the prototype, so the control boundary is pinned
 // here rather than left to a visual check: what a Daopay user may do,
 // what they may not, and that the list is scoped by acquirer.
@@ -13,7 +13,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load(search) {
   const sandbox = {
@@ -22,7 +22,7 @@ function load(search) {
   };
   sandbox.window = sandbox;
   vm.createContext(sandbox);
-  vm.runInContext(read("assets/js/pages/daopay-data.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/daopay/data.js"), sandbox,
     { filename: "daopay-data.js" });
   return sandbox.window.DaopayDemo;
 }
@@ -185,15 +185,15 @@ test("the application page branches on capability, never on the role name", () =
   // in the rendering modules would put a second, drifting copy of it
   // there - which is exactly how a control ends up visible to the
   // wrong role.
-  for (const file of ["assets/js/pages/daopay-app.js",
-    "assets/js/pages/daopay-sections.js"]) {
+  for (const file of ["assets/js/pages/daopay/app.js",
+    "assets/js/pages/daopay/sections.js"]) {
     assert.doesNotMatch(read(file), /role\s*[=!]==?\s*["']daopay["']/,
       `${file} must ask DaopayDemo.can(), not compare role names.`);
   }
 });
 
 test("no real identities survived from the source screenshots", () => {
-  const source = read("assets/js/pages/daopay-data.js");
+  const source = read("assets/js/pages/daopay/data.js");
   for (const banned of [/pxpfinancial/i, /partner\.pxp/i, /revolut/i, /altopay/i]) {
     assert.doesNotMatch(source, banned,
       `Fixture data must not carry real identities (${banned}).`);

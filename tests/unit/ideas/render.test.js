@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/ideas.test.js - The prototype ideas board
+// tests/unit/ideas/render.test.js - The prototype ideas board
 // (docs/plan/70-PROTOTYPE-IDEAS.md).
 //
 // The list existed as three columns - name, note, sort_order - with no
@@ -12,7 +12,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = {
@@ -27,7 +27,7 @@ function load() {
     "assets/js/core/registry.js",
     "assets/js/core/blocks.js",
     "assets/js/core/detail.js",
-    "assets/js/pages/ideas-render.js",
+    "assets/js/pages/ideas/render.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App.ideasView;
 }

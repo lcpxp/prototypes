@@ -264,7 +264,7 @@ the remaining 102,956 (`details`, 13.3%) still to come behind the
 board view. One fewer request on the critical path as well as fewer
 bytes: the notes read is gone entirely rather than narrowed.
 
-`assets/js/pages/lazy-detail.js` is the mechanism, and it is the part
+`assets/js/pages/shared/lazy-detail.js` is the mechanism, and it is the part
 worth reusing rather than the wiring. It owns four decisions:
 
 - **Loaded is presence, not truthiness.** An item whose notes are
@@ -321,7 +321,7 @@ Two lessons, both cheap to state and expensive to relearn:
 Phase two's mandated first step, and it also closes the regression
 above.
 
-`assets/js/pages/work-items-data.js` (the renamed `roadmap-data.js`,
+`assets/js/pages/shared/work-items-data.js` (the renamed `roadmap-data.js`,
 now shared with the backlog because it is one table and one rule) gained
 `loadForExport(rows, keys)`: presence-guarded, so a row already carrying
 a field costs no request and a genuinely empty field is never asked for

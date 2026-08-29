@@ -208,14 +208,14 @@ its own commit.
 | File | Change |
 |---|---|
 | `dashboard.html` | New section scaffold, seven regions with headings and empty states. Budget: 250 soft, 400 hard - it will land near 150 |
-| `assets/js/pages/dashboard.js` | Fetch and orchestrate; keep under the 300 soft budget by splitting |
-| `assets/js/pages/dashboard-strip.js` | The now/next builder - pure, data in, HTML out, unit tested |
-| `assets/js/pages/dashboard-cards.js` | Spec cards, tool cards, knowledge figures |
+| `assets/js/pages/dashboard/dashboard.js` | Fetch and orchestrate; keep under the 300 soft budget by splitting |
+| `assets/js/pages/dashboard/strip.js` | The now/next builder - pure, data in, HTML out, unit tested |
+| `assets/js/pages/dashboard/cards.js` | Spec cards, tool cards, knowledge figures |
 | `assets/css/dashboard.css` | New page sheet, loaded after the five core sheets |
 | `assets/js/core/registry.js` | No change expected; if a section needs a new module key it goes here first |
 | `supabase/schema/90_dashboard.sql` | `dashboard_summary()` |
 | `supabase/schema/20_portal.sql` | `portal_links.description` |
-| `tests/unit/dashboard-strip.test.js` | Band ordering, the cap, blocked-first, done-drops-out, empty state |
+| `tests/unit/dashboard/strip.test.js` | Band ordering, the cap, blocked-first, done-drops-out, empty state |
 
 Builders are pure and load in a Node vm for testing, the same pattern
 `roadmap-detail.js` uses. No DOM in a builder.

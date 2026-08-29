@@ -215,7 +215,7 @@ the drift gate is green. `codereview` needs no new policy: RLS on
 `work_documents` already gates on the backlog grant.
 
 The backlog page filters documents by kind for display; check
-`assets/js/pages/backlog.js` renders the new kind rather than dropping
+`assets/js/pages/backlog/backlog.js` renders the new kind rather than dropping
 it, and add the case to `tests/unit/` alongside the existing document
 benchmarks. That check is the workstream's own instance of the rule in
 40-SURFACING.md: a new enum value that renders nowhere is a bug on the

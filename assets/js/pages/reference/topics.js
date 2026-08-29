@@ -3,7 +3,7 @@
 // narrative sections of a spec (overview, conventions, runbooks,
 // accepted values, gap registers). Loaded after reference-render.js,
 // which supplies the shared codeblock builder. No DOM access, so the
-// builders are benchmarked in tests/unit/reference-render.test.js,
+// builders are benchmarked in tests/unit/reference/render.test.js,
 // which loads this module alongside it.
 //
 // blocks is a jsonb array of typed blocks (shapes documented in
@@ -21,7 +21,7 @@
   // what a `kv` or a `values` block looks like. This passes the
   // viewer's richer code treatment through; everything else is shared.
   function blockHtml(block) {
-    return App.blocks.render(block, { codeblock: App.refRender.codeblock });
+    return App.blocks.render(block, { codeblock: App.referenceRender.codeblock });
   }
 
   // One collapsible topic section, same shell as an endpoint block
@@ -40,7 +40,7 @@
     return html + "</div></details>";
   }
 
-  App.refTopics = {
+  App.referenceTopics = {
     blockHtml: blockHtml,
     topicBlock: topicBlock,
   };

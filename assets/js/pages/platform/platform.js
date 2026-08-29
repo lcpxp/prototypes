@@ -8,7 +8,7 @@
 // docs/PLATFORM.md for the ingest and retrieval protocol.
 //
 // The pure HTML builders hang off App.platformView, DOM-free, so they
-// are unit-tested without a browser (tests/unit/platform-render.test.js).
+// are unit-tested without a browser (tests/unit/platform/render.test.js).
 // blocks reuses the api_topics typed-block vocabulary (p, note, kv,
 // table, code, values); unknown kinds are skipped so new block types
 // can ship in the database before this viewer learns about them.

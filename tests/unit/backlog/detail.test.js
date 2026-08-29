@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/backlog-detail.test.js - The backlog's two modals, both
+// tests/unit/backlog/detail.test.js - The backlog's two modals, both
 // on the completeness contract (docs/plan/40-SURFACING.md).
 //
 // They were hand-written pair lists: sixteen labels for a work item,
@@ -12,7 +12,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = {
@@ -29,7 +29,7 @@ function load() {
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   // The page module boots on authentication; a no-op keeps it inert.
   sandbox.App.onAuthed = function () {};
-  vm.runInContext(read("assets/js/pages/backlog.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/backlog/backlog.js"), sandbox,
     { filename: "backlog.js" });
   return sandbox.App.backlogView;
 }

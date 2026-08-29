@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------
-// tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's
-// mock IXOPAY client (assets/js/pages/pci-ixopay.js). Loads the IIFE in
+// tests/unit/pci/ixopay.test.js - Benchmarks for the PCI prototype's
+// mock IXOPAY client (assets/js/pages/pci/ixopay.js). Loads the IIFE in
 // a Node vm with a synchronous setTimeout so invitation.sent fires
 // inline. Covers the compliance check, the full-payload enrolment, the
 // status lifecycle (invited -> chased -> in_progress -> compliant |
@@ -11,13 +11,13 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = { setTimeout: (fn) => { fn(); return 0; }, clearTimeout() {} };
   sandbox.window = sandbox;
   vm.createContext(sandbox);
-  vm.runInContext(read("assets/js/pages/pci-ixopay.js"), sandbox, { filename: "pci-ixopay.js" });
+  vm.runInContext(read("assets/js/pages/pci/ixopay.js"), sandbox, { filename: "pci-ixopay.js" });
   return sandbox.App.pciIxopay;
 }
 

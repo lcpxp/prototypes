@@ -63,37 +63,35 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/app-review/model.js | 240 | appreview-model.js - What the board derives from a single row: its |
 | assets/js/pages/app-review/render.js | 292 | appreview-render.js - The board's HTML builders. Data in, string |
 | assets/js/pages/app-review/waves.js | 163 | appreview-waves.js - The wave list for modules/app-review/index.html, |
-| assets/js/pages/backlog-export.js | 87 | backlog-export.js - The backlog's CSV export: the column order, the |
-| assets/js/pages/backlog.js | 393 | backlog.js - The master work list for modules/backlog/. |
-| assets/js/pages/daopay-app.js | 275 | daopay-app.js - The application summary page in the Daopay replica: |
-| assets/js/pages/daopay-data.js | 251 | daopay-data.js - Fixture data and the role switch for the Daopay EU |
-| assets/js/pages/daopay-list.js | 114 | daopay-list.js - The Applications list in the Daopay replica. |
-| assets/js/pages/daopay-sections.js | 238 | daopay-sections.js - The markup for each section of the application |
-| assets/js/pages/daopay-shell.js | 96 | daopay-shell.js - Shared chrome for the Daopay replica pages: the |
-| assets/js/pages/daopay-sim.js | 169 | daopay-sim.js - The simulation layer for the Daopay replica: the |
-| assets/js/pages/dashboard-cards.js | 240 | dashboard-cards.js - The dashboard's four card sections: API |
-| assets/js/pages/dashboard-strip.js | 131 | dashboard-strip.js - The now/next strip, the dashboard's headline |
-| assets/js/pages/dashboard.js | 261 | dashboard.js - Fetches and orchestrates the landing page |
+| assets/js/pages/backlog/backlog.js | 393 | backlog.js - The master work list for modules/backlog/. |
+| assets/js/pages/backlog/export.js | 87 | backlog-export.js - The backlog's CSV export: the column order, the |
+| assets/js/pages/daopay/app.js | 275 | daopay-app.js - The application summary page in the Daopay replica: |
+| assets/js/pages/daopay/data.js | 251 | daopay-data.js - Fixture data and the role switch for the Daopay EU |
+| assets/js/pages/daopay/list.js | 114 | daopay-list.js - The Applications list in the Daopay replica. |
+| assets/js/pages/daopay/sections.js | 238 | daopay-sections.js - The markup for each section of the application |
+| assets/js/pages/daopay/shell.js | 96 | daopay-shell.js - Shared chrome for the Daopay replica pages: the |
+| assets/js/pages/daopay/sim.js | 169 | daopay-sim.js - The simulation layer for the Daopay replica: the |
+| assets/js/pages/dashboard/cards.js | 240 | dashboard-cards.js - The dashboard's four card sections: API |
+| assets/js/pages/dashboard/dashboard.js | 261 | dashboard.js - Fetches and orchestrates the landing page |
+| assets/js/pages/dashboard/strip.js | 131 | dashboard-strip.js - The now/next strip, the dashboard's headline |
 | assets/js/pages/gallery.js | 115 | gallery.js - Prototype registry for modules/prototypes/. |
-| assets/js/pages/ideas-render.js | 177 | ideas-render.js - The prototype ideas board's builders |
-| assets/js/pages/ideas.js | 71 | ideas.js - modules/prototypes/ideas.html. Fetch and wiring; every |
+| assets/js/pages/ideas/ideas.js | 71 | ideas.js - modules/prototypes/ideas.html. Fetch and wiring; every |
+| assets/js/pages/ideas/render.js | 177 | ideas-render.js - The prototype ideas board's builders |
 | assets/js/pages/integrations.js | 126 | integrations.js - Integration overview for modules/integrations/. |
-| assets/js/pages/lazy-detail.js | 111 | lazy-detail.js - Fetching a row's heavy fields when the detail |
-| assets/js/pages/pci-interstitial.js | 144 | pci-interstitial.js - The PCI compliance "checkout interstitial" for |
-| assets/js/pages/pci-ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
-| assets/js/pages/pci-portal.js | 302 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
-| assets/js/pages/pci-reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
-| assets/js/pages/platform-knowledge.js | 202 | platform-knowledge.js - The parts of the platform knowledge base the |
-| assets/js/pages/platform.js | 327 | platform.js - The platform product-knowledge viewer for |
+| assets/js/pages/pci/interstitial.js | 144 | pci-interstitial.js - The PCI compliance "checkout interstitial" for |
+| assets/js/pages/pci/ixopay.js | 132 | pci-ixopay.js - In-page mock of the IXOPAY vendor client and its |
+| assets/js/pages/pci/portal.js | 302 | pci-portal.js - The PXP Partner Portal replica: the "Merchant |
+| assets/js/pages/pci/reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
+| assets/js/pages/platform/knowledge.js | 202 | platform-knowledge.js - The parts of the platform knowledge base the |
+| assets/js/pages/platform/platform.js | 327 | platform.js - The platform product-knowledge viewer for |
 | assets/js/pages/portal-review/board.js | 142 | portalreview-board.js - modules/portal-review/wave.html. One wave: |
 | assets/js/pages/portal-review/model.js | 208 | portalreview-model.js - Every derivation the portal review board |
 | assets/js/pages/portal-review/render.js | 249 | portalreview-render.js - The portal review board's HTML builders |
 | assets/js/pages/portal-review/triage.js | 108 | portalreview-triage.js - modules/portal-review/triage.html. The |
 | assets/js/pages/portal-review/waves.js | 129 | portalreview-waves.js - modules/portal-review/index.html. The wave |
-| assets/js/pages/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
-| assets/js/pages/reference-render.js | 288 | reference-render.js - Pure HTML builders for the reference viewer. |
-| assets/js/pages/reference-topics.js | 48 | reference-topics.js - Pure HTML builders for api_topics rows: the |
-| assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/reference/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
+| assets/js/pages/reference/render.js | 288 | reference-render.js - Pure HTML builders for the reference viewer. |
+| assets/js/pages/reference/topics.js | 48 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/roadmap/detail-export.js | 223 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
 | assets/js/pages/roadmap/detail-values.js | 124 | roadmap-detail-values.js - Formatting and derivation for the roadmap |
 | assets/js/pages/roadmap/detail.js | 438 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
@@ -106,8 +104,10 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap/views-exec.js | 102 | roadmap-views-exec.js - The Executive (Categories) board for the |
 | assets/js/pages/roadmap/views-timeline.js | 213 | roadmap-views-timeline.js - The Timeline layout for the roadmap home: |
 | assets/js/pages/roadmap/views.js | 413 | roadmap-views.js - Pure HTML builders for the roadmap home |
+| assets/js/pages/shared/lazy-detail.js | 111 | lazy-detail.js - Fetching a row's heavy fields when the detail |
+| assets/js/pages/shared/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
+| assets/js/pages/shared/work-items-data.js | 172 | work-items-data.js - The reads over work_items and work_notes that the |
 | assets/js/pages/users.js | 207 | users.js - User and access management for modules/users/. |
-| assets/js/pages/work-items-data.js | 172 | work-items-data.js - The reads over work_items and work_notes that the |
 | dashboard.html | 122 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
@@ -283,24 +283,23 @@ document instead of walking the tree or reading whole files.
 | tests/unit/app-review/detail.test.js | 130 | tests/unit/app-review/detail.test.js - The application drawer's Record |
 | tests/unit/app-review/findings.test.js | 136 | tests/unit/app-review/findings.test.js - Benchmarks for the |
 | tests/unit/app-review/model.test.js | 318 | tests/unit/app-review/model.test.js - Benchmarks for the application |
-| tests/unit/backlog-detail.test.js | 131 | tests/unit/backlog-detail.test.js - The backlog's two modals, both |
-| tests/unit/backlog-export.test.js | 155 | tests/unit/backlog-export.test.js - The backlog CSV export |
+| tests/unit/backlog/detail.test.js | 131 | tests/unit/backlog/detail.test.js - The backlog's two modals, both |
+| tests/unit/backlog/export.test.js | 155 | tests/unit/backlog/export.test.js - The backlog CSV export |
 | tests/unit/blocks.test.js | 119 | tests/unit/blocks.test.js - The typed-block renderer. |
 | tests/unit/call-extract.test.js | 156 | tests/unit/call-extract.test.js - Benchmarks for the call-site |
 | tests/unit/coverage-reconcile.test.js | 278 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage |
-| tests/unit/daopay-role.test.js | 207 | tests/unit/daopay-role.test.js - Benchmarks for the Daopay scoped |
-| tests/unit/dashboard-cards.test.js | 270 | tests/unit/dashboard-cards.test.js - The dashboard's four card |
-| tests/unit/dashboard-strip.test.js | 164 | tests/unit/dashboard-strip.test.js - The dashboard's headline strip |
+| tests/unit/daopay/role.test.js | 207 | tests/unit/daopay/role.test.js - Benchmarks for the Daopay scoped |
+| tests/unit/dashboard/cards.test.js | 270 | tests/unit/dashboard/cards.test.js - The dashboard's four card |
+| tests/unit/dashboard/strip.test.js | 164 | tests/unit/dashboard/strip.test.js - The dashboard's headline strip |
 | tests/unit/detail.test.js | 199 | tests/unit/detail.test.js - The completeness contract. |
 | tests/unit/gallery-future.test.js | 91 | tests/unit/gallery-future.test.js - Benchmarks for the prototype |
-| tests/unit/ideas.test.js | 166 | tests/unit/ideas.test.js - The prototype ideas board |
-| tests/unit/lazy-detail.test.js | 184 | tests/unit/lazy-detail.test.js - The lazy detail loader |
+| tests/unit/ideas/render.test.js | 166 | tests/unit/ideas/render.test.js - The prototype ideas board |
 | tests/unit/links.test.js | 203 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
-| tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
-| tests/unit/platform-knowledge.test.js | 249 | tests/unit/platform-knowledge.test.js - The stores the capability |
-| tests/unit/platform-render.test.js | 167 | tests/unit/platform-render.test.js - Benchmarks for the platform |
+| tests/unit/pci/ixopay.test.js | 81 | tests/unit/pci/ixopay.test.js - Benchmarks for the PCI prototype's |
+| tests/unit/platform/knowledge.test.js | 249 | tests/unit/platform/knowledge.test.js - The stores the capability |
+| tests/unit/platform/render.test.js | 167 | tests/unit/platform/render.test.js - Benchmarks for the platform |
 | tests/unit/portal-review/model.test.js | 286 | tests/unit/portal-review/model.test.js - The portal review board's model |
-| tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
+| tests/unit/reference/render.test.js | 212 | tests/unit/reference/render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/render-fallbacks.test.js | 163 | tests/unit/render-fallbacks.test.js - Two renderers that handled the |
 | tests/unit/roadmap/child-order.test.js | 84 | tests/unit/roadmap/child-order.test.js - Benchmarks for how a |
@@ -312,11 +311,12 @@ document instead of walking the tree or reading whole files.
 | tests/unit/roadmap/views.test.js | 475 | tests/unit/roadmap/views.test.js - Benchmarks for the roadmap home's |
 | tests/unit/route-extract.test.js | 108 | tests/unit/route-extract.test.js - Benchmarks for the route |
 | tests/unit/search.test.js | 259 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
+| tests/unit/shared/lazy-detail.test.js | 184 | tests/unit/shared/lazy-detail.test.js - The lazy detail loader |
+| tests/unit/shared/work-items-data.test.js | 219 | tests/unit/shared/work-items-data.test.js - The reads that replace what the |
 | tests/unit/sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine |
 | tests/unit/tools-warm.test.js | 184 | tests/unit/tools-warm.test.js - Benchmarks for the Splunk warm-up in |
 | tests/unit/tools.test.js | 224 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
 | tests/unit/ui.test.js | 130 | tests/unit/ui.test.js - Benchmarks for assets/js/core/ui.js. |
-| tests/unit/work-items-data.test.js | 219 | tests/unit/work-items-data.test.js - The reads that replace what the |
 
 ## JavaScript symbol index
 
@@ -453,174 +453,170 @@ document instead of walking the tree or reading whole files.
 | triggerCell() | assets/js/pages/app-review/waves.js:35 |
 | watchingHtml() | assets/js/pages/app-review/waves.js:48 |
 | wavesHtml() | assets/js/pages/app-review/waves.js:87 |
-| toCsvRecord() | assets/js/pages/backlog-export.js:31 |
-| toCsv() | assets/js/pages/backlog-export.js:57 |
-| wire() | assets/js/pages/backlog-export.js:68 |
-| bandOf() | assets/js/pages/backlog.js:34 |
-| fmtDate() | assets/js/pages/backlog.js:40 |
-| badges() | assets/js/pages/backlog.js:44 |
-| dateCell() | assets/js/pages/backlog.js:65 |
-| itemFactsHtml() | assets/js/pages/backlog.js:73 |
-| documentFactsHtml() | assets/js/pages/backlog.js:116 |
-| names() | assets/js/pages/backlog.js:141 |
-| openItemModal() | assets/js/pages/backlog.js:147 |
-| openDocumentModal() | assets/js/pages/backlog.js:163 |
-| filteredItems() | assets/js/pages/backlog.js:169 |
-| ordered() | assets/js/pages/backlog.js:185 |
-| exportSource() | assets/js/pages/backlog.js:196 |
-| renderItems() | assets/js/pages/backlog.js:210 |
-| renderDocuments() | assets/js/pages/backlog.js:247 |
-| fillFilters() | assets/js/pages/backlog.js:283 |
-| save() | assets/js/pages/daopay-app.js:31 |
-| stamp() | assets/js/pages/daopay-app.js:33 |
-| pad() | assets/js/pages/daopay-app.js:35 |
-| generateContract() | assets/js/pages/daopay-app.js:43 |
-| generateKyc() | assets/js/pages/daopay-app.js:57 |
-| sendContract() | assets/js/pages/daopay-app.js:74 |
-| handoff() | assets/js/pages/daopay-app.js:112 |
-| approveAndSendKyc() | assets/js/pages/daopay-app.js:126 |
-| applyStatus() | assets/js/pages/daopay-app.js:157 |
-| closeMenus() | assets/js/pages/daopay-app.js:206 |
-| wire() | assets/js/pages/daopay-app.js:212 |
-| run() | assets/js/pages/daopay-app.js:260 |
-| free() | assets/js/pages/daopay-app.js:262 |
-| render() | assets/js/pages/daopay-app.js:266 |
-| currentRole() | assets/js/pages/daopay-data.js:41 |
-| can() | assets/js/pages/daopay-data.js:46 |
-| tone() | assets/js/pages/daopay-data.js:185 |
-| statusOptions() | assets/js/pages/daopay-data.js:190 |
-| persist() | assets/js/pages/daopay-data.js:222 |
-| resetState() | assets/js/pages/daopay-data.js:234 |
-| rows() | assets/js/pages/daopay-list.js:29 |
-| chip() | assets/js/pages/daopay-list.js:36 |
-| merchantCell() | assets/js/pages/daopay-list.js:41 |
-| actionsCell() | assets/js/pages/daopay-list.js:49 |
-| body() | assets/js/pages/daopay-list.js:55 |
-| render() | assets/js/pages/daopay-list.js:74 |
-| chip() | assets/js/pages/daopay-sections.js:27 |
-| btn() | assets/js/pages/daopay-sections.js:32 |
-| statusBar() | assets/js/pages/daopay-sections.js:38 |
-| summary() | assets/js/pages/daopay-sections.js:46 |
-| steps() | assets/js/pages/daopay-sections.js:89 |
-| contractTable() | assets/js/pages/daopay-sections.js:100 |
-| contracts() | assets/js/pages/daopay-sections.js:123 |
-| kyc() | assets/js/pages/daopay-sections.js:134 |
-| checks() | assets/js/pages/daopay-sections.js:144 |
-| bank() | assets/js/pages/daopay-sections.js:181 |
-| documents() | assets/js/pages/daopay-sections.js:190 |
-| fees() | assets/js/pages/daopay-sections.js:207 |
-| record() | assets/js/pages/daopay-sections.js:219 |
-| navItems() | assets/js/pages/daopay-shell.js:38 |
-| withRole() | assets/js/pages/daopay-shell.js:51 |
-| roleSwitch() | assets/js/pages/daopay-shell.js:57 |
-| header() | assets/js/pages/daopay-shell.js:65 |
-| stack() | assets/js/pages/daopay-sim.js:34 |
-| remove() | assets/js/pages/daopay-sim.js:57 |
-| openModal() | assets/js/pages/daopay-sim.js:67 |
-| done() | assets/js/pages/daopay-sim.js:96 |
-| advance() | assets/js/pages/daopay-sim.js:132 |
-| advance() | assets/js/pages/daopay-sim.js:158 |
-| plural() | assets/js/pages/dashboard-cards.js:20 |
-| waveSize() | assets/js/pages/dashboard-cards.js:138 |
-| isFinished() | assets/js/pages/dashboard-strip.js:38 |
-| order() | assets/js/pages/dashboard-strip.js:45 |
-| band() | assets/js/pages/dashboard-strip.js:101 |
-| el() | assets/js/pages/dashboard.js:33 |
-| canReach() | assets/js/pages/dashboard.js:35 |
-| hide() | assets/js/pages/dashboard.js:40 |
-| fill() | assets/js/pages/dashboard.js:45 |
-| moduleByKey() | assets/js/pages/dashboard.js:52 |
-| hrefFor() | assets/js/pages/dashboard.js:56 |
-| renderNowNext() | assets/js/pages/dashboard.js:63 |
-| renderReference() | assets/js/pages/dashboard.js:74 |
-| renderReviews() | assets/js/pages/dashboard.js:87 |
-| renderKnowledge() | assets/js/pages/dashboard.js:100 |
-| renderTools() | assets/js/pages/dashboard.js:107 |
-| cardHtml() | assets/js/pages/dashboard.js:115 |
-| renderModules() | assets/js/pages/dashboard.js:131 |
-| activitySources() | assets/js/pages/dashboard.js:146 |
-| loadActivity() | assets/js/pages/dashboard.js:164 |
-| loadCoverage() | assets/js/pages/dashboard.js:213 |
-| showDeniedNotice() | assets/js/pages/dashboard.js:223 |
-| load() | assets/js/pages/dashboard.js:233 |
+| bandOf() | assets/js/pages/backlog/backlog.js:34 |
+| fmtDate() | assets/js/pages/backlog/backlog.js:40 |
+| badges() | assets/js/pages/backlog/backlog.js:44 |
+| dateCell() | assets/js/pages/backlog/backlog.js:65 |
+| itemFactsHtml() | assets/js/pages/backlog/backlog.js:73 |
+| documentFactsHtml() | assets/js/pages/backlog/backlog.js:116 |
+| names() | assets/js/pages/backlog/backlog.js:141 |
+| openItemModal() | assets/js/pages/backlog/backlog.js:147 |
+| openDocumentModal() | assets/js/pages/backlog/backlog.js:163 |
+| filteredItems() | assets/js/pages/backlog/backlog.js:169 |
+| ordered() | assets/js/pages/backlog/backlog.js:185 |
+| exportSource() | assets/js/pages/backlog/backlog.js:196 |
+| renderItems() | assets/js/pages/backlog/backlog.js:210 |
+| renderDocuments() | assets/js/pages/backlog/backlog.js:247 |
+| fillFilters() | assets/js/pages/backlog/backlog.js:283 |
+| toCsvRecord() | assets/js/pages/backlog/export.js:31 |
+| toCsv() | assets/js/pages/backlog/export.js:57 |
+| wire() | assets/js/pages/backlog/export.js:68 |
+| save() | assets/js/pages/daopay/app.js:31 |
+| stamp() | assets/js/pages/daopay/app.js:33 |
+| pad() | assets/js/pages/daopay/app.js:35 |
+| generateContract() | assets/js/pages/daopay/app.js:43 |
+| generateKyc() | assets/js/pages/daopay/app.js:57 |
+| sendContract() | assets/js/pages/daopay/app.js:74 |
+| handoff() | assets/js/pages/daopay/app.js:112 |
+| approveAndSendKyc() | assets/js/pages/daopay/app.js:126 |
+| applyStatus() | assets/js/pages/daopay/app.js:157 |
+| closeMenus() | assets/js/pages/daopay/app.js:206 |
+| wire() | assets/js/pages/daopay/app.js:212 |
+| run() | assets/js/pages/daopay/app.js:260 |
+| free() | assets/js/pages/daopay/app.js:262 |
+| render() | assets/js/pages/daopay/app.js:266 |
+| currentRole() | assets/js/pages/daopay/data.js:41 |
+| can() | assets/js/pages/daopay/data.js:46 |
+| tone() | assets/js/pages/daopay/data.js:185 |
+| statusOptions() | assets/js/pages/daopay/data.js:190 |
+| persist() | assets/js/pages/daopay/data.js:222 |
+| resetState() | assets/js/pages/daopay/data.js:234 |
+| rows() | assets/js/pages/daopay/list.js:29 |
+| chip() | assets/js/pages/daopay/list.js:36 |
+| merchantCell() | assets/js/pages/daopay/list.js:41 |
+| actionsCell() | assets/js/pages/daopay/list.js:49 |
+| body() | assets/js/pages/daopay/list.js:55 |
+| render() | assets/js/pages/daopay/list.js:74 |
+| chip() | assets/js/pages/daopay/sections.js:27 |
+| btn() | assets/js/pages/daopay/sections.js:32 |
+| statusBar() | assets/js/pages/daopay/sections.js:38 |
+| summary() | assets/js/pages/daopay/sections.js:46 |
+| steps() | assets/js/pages/daopay/sections.js:89 |
+| contractTable() | assets/js/pages/daopay/sections.js:100 |
+| contracts() | assets/js/pages/daopay/sections.js:123 |
+| kyc() | assets/js/pages/daopay/sections.js:134 |
+| checks() | assets/js/pages/daopay/sections.js:144 |
+| bank() | assets/js/pages/daopay/sections.js:181 |
+| documents() | assets/js/pages/daopay/sections.js:190 |
+| fees() | assets/js/pages/daopay/sections.js:207 |
+| record() | assets/js/pages/daopay/sections.js:219 |
+| navItems() | assets/js/pages/daopay/shell.js:38 |
+| withRole() | assets/js/pages/daopay/shell.js:51 |
+| roleSwitch() | assets/js/pages/daopay/shell.js:57 |
+| header() | assets/js/pages/daopay/shell.js:65 |
+| stack() | assets/js/pages/daopay/sim.js:34 |
+| remove() | assets/js/pages/daopay/sim.js:57 |
+| openModal() | assets/js/pages/daopay/sim.js:67 |
+| done() | assets/js/pages/daopay/sim.js:96 |
+| advance() | assets/js/pages/daopay/sim.js:132 |
+| advance() | assets/js/pages/daopay/sim.js:158 |
+| plural() | assets/js/pages/dashboard/cards.js:20 |
+| waveSize() | assets/js/pages/dashboard/cards.js:138 |
+| el() | assets/js/pages/dashboard/dashboard.js:33 |
+| canReach() | assets/js/pages/dashboard/dashboard.js:35 |
+| hide() | assets/js/pages/dashboard/dashboard.js:40 |
+| fill() | assets/js/pages/dashboard/dashboard.js:45 |
+| moduleByKey() | assets/js/pages/dashboard/dashboard.js:52 |
+| hrefFor() | assets/js/pages/dashboard/dashboard.js:56 |
+| renderNowNext() | assets/js/pages/dashboard/dashboard.js:63 |
+| renderReference() | assets/js/pages/dashboard/dashboard.js:74 |
+| renderReviews() | assets/js/pages/dashboard/dashboard.js:87 |
+| renderKnowledge() | assets/js/pages/dashboard/dashboard.js:100 |
+| renderTools() | assets/js/pages/dashboard/dashboard.js:107 |
+| cardHtml() | assets/js/pages/dashboard/dashboard.js:115 |
+| renderModules() | assets/js/pages/dashboard/dashboard.js:131 |
+| activitySources() | assets/js/pages/dashboard/dashboard.js:146 |
+| loadActivity() | assets/js/pages/dashboard/dashboard.js:164 |
+| loadCoverage() | assets/js/pages/dashboard/dashboard.js:213 |
+| showDeniedNotice() | assets/js/pages/dashboard/dashboard.js:223 |
+| load() | assets/js/pages/dashboard/dashboard.js:233 |
+| isFinished() | assets/js/pages/dashboard/strip.js:38 |
+| order() | assets/js/pages/dashboard/strip.js:45 |
+| band() | assets/js/pages/dashboard/strip.js:101 |
 | App.futurePrototypesTable | assets/js/pages/gallery.js:18 |
 | isPci() | assets/js/pages/gallery.js:47 |
 | card() | assets/js/pages/gallery.js:53 |
 | renderFuture() | assets/js/pages/gallery.js:98 |
-| labelOf() | assets/js/pages/ideas-render.js:40 |
-| el() | assets/js/pages/ideas.js:13 |
-| prototypeHref() | assets/js/pages/ideas.js:15 |
-| load() | assets/js/pages/ideas.js:21 |
+| el() | assets/js/pages/ideas/ideas.js:13 |
+| prototypeHref() | assets/js/pages/ideas/ideas.js:15 |
+| load() | assets/js/pages/ideas/ideas.js:21 |
+| labelOf() | assets/js/pages/ideas/render.js:40 |
 | safeUrl() | assets/js/pages/integrations.js:15 |
 | modalHtml() | assets/js/pages/integrations.js:24 |
 | openModal() | assets/js/pages/integrations.js:56 |
 | tableHtml() | assets/js/pages/integrations.js:62 |
-| App.lazyDetail | assets/js/pages/lazy-detail.js:46 |
-| loaded() | assets/js/pages/lazy-detail.js:58 |
-| open() | assets/js/pages/lazy-detail.js:64 |
-| settle() | assets/js/pages/lazy-detail.js:79 |
-| close() | assets/js/pages/pci-interstitial.js:26 |
-| finish() | assets/js/pages/pci-interstitial.js:27 |
-| shell() | assets/js/pages/pci-interstitial.js:28 |
-| q() | assets/js/pages/pci-interstitial.js:31 |
-| on() | assets/js/pages/pci-interstitial.js:32 |
-| head() | assets/js/pages/pci-interstitial.js:34 |
-| foot() | assets/js/pages/pci-interstitial.js:38 |
-| ask() | assets/js/pages/pci-interstitial.js:44 |
-| compliantPath() | assets/js/pages/pci-interstitial.js:61 |
-| enrolReview() | assets/js/pages/pci-interstitial.js:88 |
-| enrolEmail() | assets/js/pages/pci-interstitial.js:110 |
-| sent() | assets/js/pages/pci-interstitial.js:129 |
-| makeRef() | assets/js/pages/pci-ixopay.js:27 |
-| isoInMonths() | assets/js/pages/pci-ixopay.js:28 |
-| count() | assets/js/pages/pci-ixopay.js:29 |
-| emitWebhook() | assets/js/pages/pci-ixopay.js:31 |
-| emitEvent() | assets/js/pages/pci-ixopay.js:36 |
-| advance() | assets/js/pages/pci-ixopay.js:41 |
-| el() | assets/js/pages/pci-portal.js:15 |
-| renderStepper() | assets/js/pages/pci-portal.js:46 |
-| nav() | assets/js/pages/pci-portal.js:64 |
-| field() | assets/js/pages/pci-portal.js:71 |
-| stepApplication() | assets/js/pages/pci-portal.js:75 |
-| stepSites() | assets/js/pages/pci-portal.js:104 |
-| feeRow() | assets/js/pages/pci-portal.js:120 |
-| pciFeeRow() | assets/js/pages/pci-portal.js:127 |
-| stepProducts() | assets/js/pages/pci-portal.js:136 |
-| stepPass() | assets/js/pages/pci-portal.js:158 |
-| stepSummary() | assets/js/pages/pci-portal.js:163 |
-| renderStep() | assets/js/pages/pci-portal.js:178 |
-| wireStep() | assets/js/pages/pci-portal.js:190 |
-| onContinue() | assets/js/pages/pci-portal.js:211 |
-| goTo() | assets/js/pages/pci-portal.js:226 |
-| openSiteModal() | assets/js/pages/pci-portal.js:236 |
-| buildDrawer() | assets/js/pages/pci-portal.js:260 |
-| renderQuote() | assets/js/pages/pci-portal.js:273 |
-| openQuote() | assets/js/pages/pci-portal.js:288 |
-| closeQuote() | assets/js/pages/pci-portal.js:289 |
-| addPciFee() | assets/js/pages/pci-portal.js:290 |
-| stat() | assets/js/pages/pci-reports.js:16 |
-| byOrder() | assets/js/pages/platform-knowledge.js:24 |
-| section() | assets/js/pages/platform-knowledge.js:26 |
-| gaps() | assets/js/pages/platform-knowledge.js:38 |
-| stat() | assets/js/pages/platform-knowledge.js:56 |
-| coverageHtml() | assets/js/pages/platform-knowledge.js:61 |
-| lifecycleHtml() | assets/js/pages/platform-knowledge.js:116 |
-| glossaryHtml() | assets/js/pages/platform-knowledge.js:136 |
-| factsHtml() | assets/js/pages/platform-knowledge.js:155 |
-| sourcesHtml() | assets/js/pages/platform-knowledge.js:179 |
-| kindsIn() | assets/js/pages/platform.js:38 |
-| blockHtml() | assets/js/pages/platform.js:45 |
-| maturityChips() | assets/js/pages/platform.js:49 |
-| capabilityLinks() | assets/js/pages/platform.js:63 |
-| day() | assets/js/pages/platform.js:92 |
-| capabilityFacts() | assets/js/pages/platform.js:100 |
-| capabilityCard() | assets/js/pages/platform.js:112 |
-| byOrder() | assets/js/pages/platform.js:125 |
-| groupByArea() | assets/js/pages/platform.js:129 |
-| sectionHeading() | assets/js/pages/platform.js:144 |
-| renderUnknown() | assets/js/pages/platform.js:156 |
-| pageHtml() | assets/js/pages/platform.js:173 |
-| rows() | assets/js/pages/platform.js:283 |
+| close() | assets/js/pages/pci/interstitial.js:26 |
+| finish() | assets/js/pages/pci/interstitial.js:27 |
+| shell() | assets/js/pages/pci/interstitial.js:28 |
+| q() | assets/js/pages/pci/interstitial.js:31 |
+| on() | assets/js/pages/pci/interstitial.js:32 |
+| head() | assets/js/pages/pci/interstitial.js:34 |
+| foot() | assets/js/pages/pci/interstitial.js:38 |
+| ask() | assets/js/pages/pci/interstitial.js:44 |
+| compliantPath() | assets/js/pages/pci/interstitial.js:61 |
+| enrolReview() | assets/js/pages/pci/interstitial.js:88 |
+| enrolEmail() | assets/js/pages/pci/interstitial.js:110 |
+| sent() | assets/js/pages/pci/interstitial.js:129 |
+| makeRef() | assets/js/pages/pci/ixopay.js:27 |
+| isoInMonths() | assets/js/pages/pci/ixopay.js:28 |
+| count() | assets/js/pages/pci/ixopay.js:29 |
+| emitWebhook() | assets/js/pages/pci/ixopay.js:31 |
+| emitEvent() | assets/js/pages/pci/ixopay.js:36 |
+| advance() | assets/js/pages/pci/ixopay.js:41 |
+| el() | assets/js/pages/pci/portal.js:15 |
+| renderStepper() | assets/js/pages/pci/portal.js:46 |
+| nav() | assets/js/pages/pci/portal.js:64 |
+| field() | assets/js/pages/pci/portal.js:71 |
+| stepApplication() | assets/js/pages/pci/portal.js:75 |
+| stepSites() | assets/js/pages/pci/portal.js:104 |
+| feeRow() | assets/js/pages/pci/portal.js:120 |
+| pciFeeRow() | assets/js/pages/pci/portal.js:127 |
+| stepProducts() | assets/js/pages/pci/portal.js:136 |
+| stepPass() | assets/js/pages/pci/portal.js:158 |
+| stepSummary() | assets/js/pages/pci/portal.js:163 |
+| renderStep() | assets/js/pages/pci/portal.js:178 |
+| wireStep() | assets/js/pages/pci/portal.js:190 |
+| onContinue() | assets/js/pages/pci/portal.js:211 |
+| goTo() | assets/js/pages/pci/portal.js:226 |
+| openSiteModal() | assets/js/pages/pci/portal.js:236 |
+| buildDrawer() | assets/js/pages/pci/portal.js:260 |
+| renderQuote() | assets/js/pages/pci/portal.js:273 |
+| openQuote() | assets/js/pages/pci/portal.js:288 |
+| closeQuote() | assets/js/pages/pci/portal.js:289 |
+| addPciFee() | assets/js/pages/pci/portal.js:290 |
+| stat() | assets/js/pages/pci/reports.js:16 |
+| byOrder() | assets/js/pages/platform/knowledge.js:24 |
+| section() | assets/js/pages/platform/knowledge.js:26 |
+| gaps() | assets/js/pages/platform/knowledge.js:38 |
+| stat() | assets/js/pages/platform/knowledge.js:56 |
+| coverageHtml() | assets/js/pages/platform/knowledge.js:61 |
+| lifecycleHtml() | assets/js/pages/platform/knowledge.js:116 |
+| glossaryHtml() | assets/js/pages/platform/knowledge.js:136 |
+| factsHtml() | assets/js/pages/platform/knowledge.js:155 |
+| sourcesHtml() | assets/js/pages/platform/knowledge.js:179 |
+| kindsIn() | assets/js/pages/platform/platform.js:38 |
+| blockHtml() | assets/js/pages/platform/platform.js:45 |
+| maturityChips() | assets/js/pages/platform/platform.js:49 |
+| capabilityLinks() | assets/js/pages/platform/platform.js:63 |
+| day() | assets/js/pages/platform/platform.js:92 |
+| capabilityFacts() | assets/js/pages/platform/platform.js:100 |
+| capabilityCard() | assets/js/pages/platform/platform.js:112 |
+| byOrder() | assets/js/pages/platform/platform.js:125 |
+| groupByArea() | assets/js/pages/platform/platform.js:129 |
+| sectionHeading() | assets/js/pages/platform/platform.js:144 |
+| renderUnknown() | assets/js/pages/platform/platform.js:156 |
+| pageHtml() | assets/js/pages/platform/platform.js:173 |
+| rows() | assets/js/pages/platform/platform.js:283 |
 | el() | assets/js/pages/portal-review/board.js:15 |
 | waveId() | assets/js/pages/portal-review/board.js:18 |
 | workItemHref() | assets/js/pages/portal-review/board.js:22 |
@@ -643,33 +639,30 @@ document instead of walking the tree or reading whole files.
 | waveList() | assets/js/pages/portal-review/waves.js:41 |
 | mapHtml() | assets/js/pages/portal-review/waves.js:58 |
 | load() | assets/js/pages/portal-review/waves.js:83 |
-| sanitize() | assets/js/pages/proto-svg.js:22 |
-| fallback() | assets/js/pages/proto-svg.js:51 |
-| openOverlay() | assets/js/pages/proto-svg.js:59 |
-| codeblock() | assets/js/pages/reference-render.js:19 |
-| specOverview() | assets/js/pages/reference-render.js:33 |
-| paramsTable() | assets/js/pages/reference-render.js:70 |
-| headersTable() | assets/js/pages/reference-render.js:89 |
-| statusClass() | assets/js/pages/reference-render.js:107 |
-| responsesBlock() | assets/js/pages/reference-render.js:115 |
-| badgeList() | assets/js/pages/reference-render.js:135 |
-| curlExample() | assets/js/pages/reference-render.js:150 |
-| endpointBody() | assets/js/pages/reference-render.js:171 |
-| endpointBlock() | assets/js/pages/reference-render.js:186 |
-| groupByTag() | assets/js/pages/reference-render.js:205 |
-| matches() | assets/js/pages/reference-render.js:235 |
-| endpointsFromOpenApi() | assets/js/pages/reference-render.js:245 |
-| blockHtml() | assets/js/pages/reference-topics.js:23 |
-| topicBlock() | assets/js/pages/reference-topics.js:29 |
-| context() | assets/js/pages/reference.js:32 |
-| render() | assets/js/pages/reference.js:36 |
-| hydrate() | assets/js/pages/reference.js:90 |
-| applyFilter() | assets/js/pages/reference.js:116 |
-| setAllOpen() | assets/js/pages/reference.js:123 |
-| loadSpec() | assets/js/pages/reference.js:130 |
-| fillPicker() | assets/js/pages/reference.js:189 |
-| wireContent() | assets/js/pages/reference.js:218 |
-| openHashTarget() | assets/js/pages/reference.js:247 |
+| context() | assets/js/pages/reference/reference.js:32 |
+| render() | assets/js/pages/reference/reference.js:36 |
+| hydrate() | assets/js/pages/reference/reference.js:90 |
+| applyFilter() | assets/js/pages/reference/reference.js:116 |
+| setAllOpen() | assets/js/pages/reference/reference.js:123 |
+| loadSpec() | assets/js/pages/reference/reference.js:130 |
+| fillPicker() | assets/js/pages/reference/reference.js:189 |
+| wireContent() | assets/js/pages/reference/reference.js:218 |
+| openHashTarget() | assets/js/pages/reference/reference.js:247 |
+| codeblock() | assets/js/pages/reference/render.js:19 |
+| specOverview() | assets/js/pages/reference/render.js:33 |
+| paramsTable() | assets/js/pages/reference/render.js:70 |
+| headersTable() | assets/js/pages/reference/render.js:89 |
+| statusClass() | assets/js/pages/reference/render.js:107 |
+| responsesBlock() | assets/js/pages/reference/render.js:115 |
+| badgeList() | assets/js/pages/reference/render.js:135 |
+| curlExample() | assets/js/pages/reference/render.js:150 |
+| endpointBody() | assets/js/pages/reference/render.js:171 |
+| endpointBlock() | assets/js/pages/reference/render.js:186 |
+| groupByTag() | assets/js/pages/reference/render.js:205 |
+| matches() | assets/js/pages/reference/render.js:235 |
+| endpointsFromOpenApi() | assets/js/pages/reference/render.js:245 |
+| blockHtml() | assets/js/pages/reference/topics.js:23 |
+| topicBlock() | assets/js/pages/reference/topics.js:29 |
 | toKpiItem() | assets/js/pages/roadmap/detail-export.js:18 |
 | toKpiRoadmap() | assets/js/pages/roadmap/detail-export.js:116 |
 | flattenItem() | assets/js/pages/roadmap/detail-export.js:149 |
@@ -805,6 +798,24 @@ document instead of walking the tree or reading whole files.
 | teamList() | assets/js/pages/roadmap/views.js:369 |
 | visibleDetail() | assets/js/pages/roadmap/views.js:375 |
 | breakdown() | assets/js/pages/roadmap/views.js:380 |
+| App.lazyDetail | assets/js/pages/shared/lazy-detail.js:46 |
+| loaded() | assets/js/pages/shared/lazy-detail.js:58 |
+| open() | assets/js/pages/shared/lazy-detail.js:64 |
+| settle() | assets/js/pages/shared/lazy-detail.js:79 |
+| sanitize() | assets/js/pages/shared/proto-svg.js:22 |
+| fallback() | assets/js/pages/shared/proto-svg.js:51 |
+| openOverlay() | assets/js/pages/shared/proto-svg.js:59 |
+| ranked() | assets/js/pages/shared/work-items-data.js:27 |
+| has() | assets/js/pages/shared/work-items-data.js:34 |
+| pending() | assets/js/pages/shared/work-items-data.js:42 |
+| batches() | assets/js/pages/shared/work-items-data.js:52 |
+| loadNotes() | assets/js/pages/shared/work-items-data.js:58 |
+| loadDetail() | assets/js/pages/shared/work-items-data.js:69 |
+| loadDrawer() | assets/js/pages/shared/work-items-data.js:87 |
+| loadModal() | assets/js/pages/shared/work-items-data.js:96 |
+| loadDetails() | assets/js/pages/shared/work-items-data.js:102 |
+| loadNotesFor() | assets/js/pages/shared/work-items-data.js:123 |
+| loadForExport() | assets/js/pages/shared/work-items-data.js:156 |
 | notice() | assets/js/pages/users.js:15 |
 | roleBadge() | assets/js/pages/users.js:28 |
 | roleCell() | assets/js/pages/users.js:34 |
@@ -814,17 +825,6 @@ document instead of walking the tree or reading whole files.
 | load() | assets/js/pages/users.js:121 |
 | saveToggle() | assets/js/pages/users.js:156 |
 | saveRole() | assets/js/pages/users.js:175 |
-| ranked() | assets/js/pages/work-items-data.js:27 |
-| has() | assets/js/pages/work-items-data.js:34 |
-| pending() | assets/js/pages/work-items-data.js:42 |
-| batches() | assets/js/pages/work-items-data.js:52 |
-| loadNotes() | assets/js/pages/work-items-data.js:58 |
-| loadDetail() | assets/js/pages/work-items-data.js:69 |
-| loadDrawer() | assets/js/pages/work-items-data.js:87 |
-| loadModal() | assets/js/pages/work-items-data.js:96 |
-| loadDetails() | assets/js/pages/work-items-data.js:102 |
-| loadNotesFor() | assets/js/pages/work-items-data.js:123 |
-| loadForExport() | assets/js/pages/work-items-data.js:156 |
 | row() | scripts/audit.js:12 |
 | head() | scripts/audit.js:13 |
 | testTotals() | scripts/audit.js:17 |
@@ -907,34 +907,31 @@ document instead of walking the tree or reading whole files.
 | categories() | tests/unit/app-review/model.test.js:39 |
 | statuses() | tests/unit/app-review/model.test.js:55 |
 | app() | tests/unit/app-review/model.test.js:68 |
-| load() | tests/unit/backlog-detail.test.js:17 |
-| item() | tests/unit/backlog-detail.test.js:43 |
-| doc() | tests/unit/backlog-detail.test.js:52 |
-| load() | tests/unit/backlog-export.test.js:17 |
-| item() | tests/unit/backlog-export.test.js:41 |
-| parse() | tests/unit/backlog-export.test.js:52 |
+| load() | tests/unit/backlog/detail.test.js:17 |
+| item() | tests/unit/backlog/detail.test.js:43 |
+| doc() | tests/unit/backlog/detail.test.js:52 |
+| load() | tests/unit/backlog/export.test.js:17 |
+| item() | tests/unit/backlog/export.test.js:41 |
+| parse() | tests/unit/backlog/export.test.js:52 |
 | load() | tests/unit/blocks.test.js:18 |
-| load() | tests/unit/daopay-role.test.js:18 |
-| load() | tests/unit/dashboard-cards.test.js:17 |
-| load() | tests/unit/dashboard-strip.test.js:16 |
-| ws() | tests/unit/dashboard-strip.test.js:30 |
+| load() | tests/unit/daopay/role.test.js:18 |
+| load() | tests/unit/dashboard/cards.test.js:17 |
+| load() | tests/unit/dashboard/strip.test.js:16 |
+| ws() | tests/unit/dashboard/strip.test.js:30 |
 | load() | tests/unit/detail.test.js:20 |
 | loadBuilder() | tests/unit/gallery-future.test.js:21 |
 | idea() | tests/unit/gallery-future.test.js:37 |
-| load() | tests/unit/ideas.test.js:17 |
-| idea() | tests/unit/ideas.test.js:36 |
-| load() | tests/unit/lazy-detail.test.js:20 |
-| fakeTimer() | tests/unit/lazy-detail.test.js:31 |
-| harness() | tests/unit/lazy-detail.test.js:49 |
+| load() | tests/unit/ideas/render.test.js:17 |
+| idea() | tests/unit/ideas/render.test.js:36 |
 | load() | tests/unit/links.test.js:23 |
-| load() | tests/unit/pci-ixopay.test.js:16 |
-| load() | tests/unit/platform-knowledge.test.js:22 |
-| sample() | tests/unit/platform-knowledge.test.js:44 |
-| loadView() | tests/unit/platform-render.test.js:15 |
-| sampleData() | tests/unit/platform-render.test.js:33 |
+| load() | tests/unit/pci/ixopay.test.js:16 |
+| load() | tests/unit/platform/knowledge.test.js:22 |
+| sample() | tests/unit/platform/knowledge.test.js:44 |
+| loadView() | tests/unit/platform/render.test.js:15 |
+| sampleData() | tests/unit/platform/render.test.js:33 |
 | load() | tests/unit/portal-review/model.test.js:18 |
 | f() | tests/unit/portal-review/model.test.js:47 |
-| loadApp() | tests/unit/reference-render.test.js:13 |
+| loadApp() | tests/unit/reference/render.test.js:13 |
 | loadApp() | tests/unit/registry.test.js:12 |
 | sandboxWith() | tests/unit/render-fallbacks.test.js:27 |
 | familyData() | tests/unit/roadmap/child-order.test.js:20 |
@@ -952,6 +949,13 @@ document instead of walking the tree or reading whole files.
 | familyData() | tests/unit/roadmap/views-custom.test.js:84 |
 | count() | tests/unit/roadmap/views.test.js:23 |
 | load() | tests/unit/search.test.js:15 |
+| load() | tests/unit/shared/lazy-detail.test.js:20 |
+| fakeTimer() | tests/unit/shared/lazy-detail.test.js:31 |
+| harness() | tests/unit/shared/lazy-detail.test.js:49 |
+| fakeDb() | tests/unit/shared/work-items-data.test.js:23 |
+| load() | tests/unit/shared/work-items-data.test.js:45 |
+| plain() | tests/unit/shared/work-items-data.test.js:61 |
+| rows() | tests/unit/shared/work-items-data.test.js:63 |
 | loadSprints() | tests/unit/sprints.test.js:13 |
 | tab() | tests/unit/tools-warm.test.js:22 |
 | load() | tests/unit/tools-warm.test.js:36 |
@@ -966,10 +970,6 @@ document instead of walking the tree or reading whole files.
 | fakeStorage() | tests/unit/ui.test.js:68 |
 | throwingStorage() | tests/unit/ui.test.js:77 |
 | withStorage() | tests/unit/ui.test.js:84 |
-| fakeDb() | tests/unit/work-items-data.test.js:23 |
-| load() | tests/unit/work-items-data.test.js:45 |
-| plain() | tests/unit/work-items-data.test.js:61 |
-| rows() | tests/unit/work-items-data.test.js:63 |
 
 ## Conventions for agents
 

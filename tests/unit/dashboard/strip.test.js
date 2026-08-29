@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/dashboard-strip.test.js - The dashboard's headline strip
+// tests/unit/dashboard/strip.test.js - The dashboard's headline strip
 // (docs/plan/50-DASHBOARD.md).
 //
 // The strip answers one question - what is being worked on now, and
@@ -11,7 +11,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = {
@@ -21,7 +21,7 @@ function load() {
   sandbox.window = sandbox;
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
-  vm.runInContext(read("assets/js/pages/dashboard-strip.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/dashboard/strip.js"), sandbox,
     { filename: "dashboard-strip.js" });
   return sandbox.App.dashboardStrip;
 }

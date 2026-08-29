@@ -65,7 +65,7 @@
   function dateCell(value) { return App.escape(fmtDate(value)); }
 
   // Pure builders: row plus a lookup context, HTML out, no DOM. That is
-  // what lets tests/unit/backlog-detail.test.js hold them.
+  // what lets tests/unit/backlog/detail.test.js hold them.
   // names = { areaTitle, docTitle }
   // `state` is App.lazyDetail's: "ready", "waiting" or "failed". It only
   // reaches the details row; everything else on the modal was on the row

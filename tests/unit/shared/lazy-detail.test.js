@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/lazy-detail.test.js - The lazy detail loader
+// tests/unit/shared/lazy-detail.test.js - The lazy detail loader
 // (docs/plan/80-LOAD-SPEED.md).
 //
 // Moving a row's prose off the first paint is easy. The four things
@@ -15,13 +15,13 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = { window: null, setTimeout, clearTimeout, Date, Promise, Object, Math };
   sandbox.window = sandbox;
   vm.createContext(sandbox);
-  vm.runInContext(read("assets/js/pages/lazy-detail.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/shared/lazy-detail.js"), sandbox,
     { filename: "lazy-detail.js" });
   return sandbox.App.lazyDetail;
 }

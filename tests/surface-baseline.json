@@ -20,10 +20,10 @@
       "assets/js/pages/app-review/render.js"
     ],
     "backlogExport": [
-      "assets/js/pages/backlog-export.js"
+      "assets/js/pages/backlog/export.js"
     ],
     "backlogView": [
-      "assets/js/pages/backlog.js"
+      "assets/js/pages/backlog/backlog.js"
     ],
     "blocks": [
       "assets/js/core/blocks.js"
@@ -41,10 +41,10 @@
       "assets/js/core/daopay-admin-tool.js"
     ],
     "dashboardCards": [
-      "assets/js/pages/dashboard-cards.js"
+      "assets/js/pages/dashboard/cards.js"
     ],
     "dashboardStrip": [
-      "assets/js/pages/dashboard-strip.js"
+      "assets/js/pages/dashboard/strip.js"
     ],
     "db": [
       "assets/js/core/supabase.js"
@@ -74,13 +74,13 @@
       "assets/js/pages/gallery.js"
     ],
     "ideasView": [
-      "assets/js/pages/ideas-render.js"
+      "assets/js/pages/ideas/render.js"
     ],
     "itemHref": [
       "assets/js/core/registry.js"
     ],
     "lazyDetail": [
-      "assets/js/pages/lazy-detail.js"
+      "assets/js/pages/shared/lazy-detail.js"
     ],
     "linkHref": [
       "assets/js/core/registry.js"
@@ -104,16 +104,16 @@
       "assets/js/core/ui.js"
     ],
     "pciInterstitial": [
-      "assets/js/pages/pci-interstitial.js"
+      "assets/js/pages/pci/interstitial.js"
     ],
     "pciIxopay": [
-      "assets/js/pages/pci-ixopay.js"
+      "assets/js/pages/pci/ixopay.js"
     ],
     "platformKnowledge": [
-      "assets/js/pages/platform-knowledge.js"
+      "assets/js/pages/platform/knowledge.js"
     ],
     "platformView": [
-      "assets/js/pages/platform.js"
+      "assets/js/pages/platform/platform.js"
     ],
     "portalReview": [
       "assets/js/pages/portal-review/model.js"
@@ -121,11 +121,11 @@
     "portalReviewRender": [
       "assets/js/pages/portal-review/render.js"
     ],
-    "refRender": [
-      "assets/js/pages/reference-render.js"
+    "referenceRender": [
+      "assets/js/pages/reference/render.js"
     ],
-    "refTopics": [
-      "assets/js/pages/reference-topics.js"
+    "referenceTopics": [
+      "assets/js/pages/reference/topics.js"
     ],
     "registry": [
       "assets/js/core/registry.js"
@@ -191,7 +191,7 @@
       "assets/js/pages/users.js"
     ],
     "workItemsData": [
-      "assets/js/pages/work-items-data.js"
+      "assets/js/pages/shared/work-items-data.js"
     ]
   },
   "pageIncludes": {
@@ -217,9 +217,9 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/dashboard-strip.js",
-        "assets/js/pages/dashboard-cards.js",
-        "assets/js/pages/dashboard.js"
+        "assets/js/pages/dashboard/strip.js",
+        "assets/js/pages/dashboard/cards.js",
+        "assets/js/pages/dashboard/dashboard.js"
       ]
     },
     "index.html": {
@@ -317,10 +317,10 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/lazy-detail.js",
-        "assets/js/pages/work-items-data.js",
-        "assets/js/pages/backlog-export.js",
-        "assets/js/pages/backlog.js"
+        "assets/js/pages/shared/lazy-detail.js",
+        "assets/js/pages/shared/work-items-data.js",
+        "assets/js/pages/backlog/export.js",
+        "assets/js/pages/backlog/backlog.js"
       ]
     },
     "modules/integrations/index.html": {
@@ -371,8 +371,8 @@
         "assets/js/core/detail.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/platform-knowledge.js",
-        "assets/js/pages/platform.js"
+        "assets/js/pages/platform/knowledge.js",
+        "assets/js/pages/platform/platform.js"
       ]
     },
     "modules/portal-review/index.html": {
@@ -483,11 +483,11 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/daopay-data.js",
-        "assets/js/pages/daopay-sim.js",
-        "assets/js/pages/daopay-shell.js",
-        "assets/js/pages/daopay-sections.js",
-        "assets/js/pages/daopay-app.js"
+        "assets/js/pages/daopay/data.js",
+        "assets/js/pages/daopay/sim.js",
+        "assets/js/pages/daopay/shell.js",
+        "assets/js/pages/daopay/sections.js",
+        "assets/js/pages/daopay/app.js"
       ]
     },
     "modules/prototypes/daopay/applications.html": {
@@ -514,10 +514,10 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/daopay-data.js",
-        "assets/js/pages/daopay-sim.js",
-        "assets/js/pages/daopay-shell.js",
-        "assets/js/pages/daopay-list.js"
+        "assets/js/pages/daopay/data.js",
+        "assets/js/pages/daopay/sim.js",
+        "assets/js/pages/daopay/shell.js",
+        "assets/js/pages/daopay/list.js"
       ]
     },
     "modules/prototypes/daopay/index.html": {
@@ -541,7 +541,7 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/proto-svg.js"
+        "assets/js/pages/shared/proto-svg.js"
       ]
     },
     "modules/prototypes/gdpr/index.html": {
@@ -589,8 +589,8 @@
         "assets/js/core/daopay-admin-tool.js",
         "assets/js/core/blocks.js",
         "assets/js/core/detail.js",
-        "assets/js/pages/ideas-render.js",
-        "assets/js/pages/ideas.js"
+        "assets/js/pages/ideas/render.js",
+        "assets/js/pages/ideas/ideas.js"
       ]
     },
     "modules/prototypes/index.html": {
@@ -614,7 +614,7 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/ideas-render.js",
+        "assets/js/pages/ideas/render.js",
         "assets/js/pages/gallery.js"
       ]
     },
@@ -664,9 +664,9 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/pci-ixopay.js",
-        "assets/js/pages/pci-interstitial.js",
-        "assets/js/pages/pci-portal.js"
+        "assets/js/pages/pci/ixopay.js",
+        "assets/js/pages/pci/interstitial.js",
+        "assets/js/pages/pci/portal.js"
       ]
     },
     "modules/prototypes/pci/index.html": {
@@ -690,7 +690,7 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/proto-svg.js"
+        "assets/js/pages/shared/proto-svg.js"
       ]
     },
     "modules/prototypes/pci/reports.html": {
@@ -715,8 +715,8 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/pci-ixopay.js",
-        "assets/js/pages/pci-reports.js"
+        "assets/js/pages/pci/ixopay.js",
+        "assets/js/pages/pci/reports.js"
       ]
     },
     "modules/prototypes/website-screening/index.html": {
@@ -762,9 +762,9 @@
         "assets/js/core/blocks.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/reference-render.js",
-        "assets/js/pages/reference-topics.js",
-        "assets/js/pages/reference.js"
+        "assets/js/pages/reference/render.js",
+        "assets/js/pages/reference/topics.js",
+        "assets/js/pages/reference/reference.js"
       ]
     },
     "modules/roadmap/index.html": {
@@ -804,8 +804,8 @@
         "assets/js/pages/roadmap/detail.js",
         "assets/js/pages/roadmap/detail-export.js",
         "assets/js/pages/roadmap/export.js",
-        "assets/js/pages/lazy-detail.js",
-        "assets/js/pages/work-items-data.js",
+        "assets/js/pages/shared/lazy-detail.js",
+        "assets/js/pages/shared/work-items-data.js",
         "assets/js/pages/roadmap/drawer.js",
         "assets/js/pages/roadmap/prefs.js",
         "assets/js/pages/roadmap/roadmap.js"

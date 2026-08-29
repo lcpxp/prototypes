@@ -2,7 +2,7 @@
 // dashboard-cards.js - The dashboard's four card sections: API
 // reference, reviews, knowledge and tools (docs/plan/50-DASHBOARD.md).
 // Pure builders, data in and HTML out, no DOM and no fetching, so they
-// load in a Node vm for testing (tests/unit/dashboard-cards.test.js).
+// load in a Node vm for testing (tests/unit/dashboard/cards.test.js).
 //
 // The theme running through all four: a link is worth more when it
 // carries the state of what it links to. A card that says "API

@@ -96,7 +96,7 @@ const COVERAGE = {
   "work_items.department": { file: "assets/js/core/registry.js" },
   // Owned by a stricter benchmark that checks the KINDS registry rather
   // than a mention anywhere in the file. One concept, one home.
-  "product_capabilities.kind": { ownedBy: "tests/unit/platform-knowledge.test.js" },
+  "product_capabilities.kind": { ownedBy: "tests/unit/platform/knowledge.test.js" },
   "api_specs.family": { file: "assets/js/core/registry.js" },
 
   // Rendered without a per-value branch. The reason is the claim.
@@ -110,8 +110,8 @@ const COVERAGE = {
   "api_specs.status": { generic: "App.statusBadge renders any status" },
   "api_endpoints.method": { generic: "App.methodBadge renders any method, unknown ones unstyled" },
   "prototypes.status": { generic: "App.statusBadge renders any status" },
-  "future_prototypes.status": { file: "assets/js/pages/ideas-render.js" },
-  "future_prototypes.effort": { file: "assets/js/pages/ideas-render.js" },
+  "future_prototypes.status": { file: "assets/js/pages/ideas/render.js" },
+  "future_prototypes.effort": { file: "assets/js/pages/ideas/render.js" },
   "integrations.status": { generic: "App.statusBadge renders any status" },
   "integrations.direction": { generic: "the integrations table prints the raw direction" },
   "product_capabilities.maturity": { generic: "App.statusBadge renders any maturity" },
@@ -267,8 +267,8 @@ test("an anchored destination is actually reachable on its page", () => {
 const CONTRACT_ADOPTERS = [
   "assets/js/pages/integrations.js",
   "assets/js/pages/roadmap/detail.js",
-  "assets/js/pages/platform.js",
-  "assets/js/pages/backlog.js",
+  "assets/js/pages/platform/platform.js",
+  "assets/js/pages/backlog/backlog.js",
   "assets/js/pages/app-review/detail.js",
 ];
 
@@ -333,9 +333,9 @@ test("the block renderer has a fallback, so no kind is dropped", () => {
   assert.match(src, /default:\s*\n\s*return unknownBlock\(block\)/,
     "an unrecognised block kind must render generically. Returning '' " +
     "is how a new kind shipped to the database and showed nothing.");
-  assert.doesNotMatch(read("assets/js/pages/platform.js"), /case "values":/,
+  assert.doesNotMatch(read("assets/js/pages/platform/platform.js"), /case "values":/,
     "the vocabulary has one home: assets/js/core/blocks.js");
-  assert.doesNotMatch(read("assets/js/pages/reference-topics.js"), /case "values":/,
+  assert.doesNotMatch(read("assets/js/pages/reference/topics.js"), /case "values":/,
     "the vocabulary has one home: assets/js/core/blocks.js");
 });
 

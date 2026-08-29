@@ -10,7 +10,7 @@
 // the part that matters: which few, and that the count is honest about
 // what it is hiding.
 //
-// The board's own builders are benchmarked in tests/unit/ideas.test.js.
+// The board's own builders are benchmarked in tests/unit/ideas/render.test.js.
 // ------------------------------------------------------------------
 "use strict";
 const test = require("node:test");
@@ -26,7 +26,7 @@ function loadBuilder() {
   sandbox.window = sandbox;
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
-  vm.runInContext(read("assets/js/pages/ideas-render.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/ideas/render.js"), sandbox,
     { filename: "ideas-render.js" });
   sandbox.App.onAuthed = function () {};
   vm.runInContext(read("assets/js/pages/gallery.js"), sandbox,

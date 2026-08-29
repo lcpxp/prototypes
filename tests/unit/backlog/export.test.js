@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/backlog-export.test.js - The backlog CSV export
+// tests/unit/backlog/export.test.js - The backlog CSV export
 // (App.backlogExport), split out of backlog.js with the builder.
 //
 // The benchmark that matters is the details one. That column is no
@@ -12,7 +12,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = {
@@ -25,7 +25,7 @@ function load() {
   for (const f of [
     "assets/js/core/ui.js",
     "assets/js/core/registry.js",
-    "assets/js/pages/backlog-export.js",
+    "assets/js/pages/backlog/export.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App;
 }

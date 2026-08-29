@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/platform-knowledge.test.js - The stores the capability
+// tests/unit/platform/knowledge.test.js - The stores the capability
 // catalogue could not show.
 //
 // modules/platform/ rendered product_capabilities and nothing else. On
@@ -14,7 +14,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 // Same sandbox shape as platform-render.test.js: ui.js supplies
 // App.escape and App.statusBadge, and a no-op onAuthed keeps the page
@@ -34,9 +34,9 @@ function load() {
   vm.runInContext(read("assets/js/core/links.js"), sandbox, { filename: "links.js" });
   vm.runInContext(read("assets/js/core/detail.js"), sandbox, { filename: "detail.js" });
   sandbox.App.onAuthed = function () {};
-  vm.runInContext(read("assets/js/pages/platform-knowledge.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/platform/knowledge.js"), sandbox,
     { filename: "platform-knowledge.js" });
-  vm.runInContext(read("assets/js/pages/platform.js"), sandbox,
+  vm.runInContext(read("assets/js/pages/platform/platform.js"), sandbox,
     { filename: "platform.js" });
   return sandbox.App;
 }
@@ -238,7 +238,7 @@ test("all seven stored kinds have a place on the page", () => {
   const schema = read("supabase/schema/40_platform.sql");
   const allowed = (schema.match(/check \(kind in \(([^)]+)\)\)/) || [])[1] || "";
   const kinds = [...allowed.matchAll(/'(\w+)'/g)].map((m) => m[1]);
-  const page = read("assets/js/pages/platform.js");
+  const page = read("assets/js/pages/platform/platform.js");
   const registry = (page.match(/var KINDS = \[([\s\S]*?)\];/) || [])[1] || "";
   for (const kind of kinds) {
     assert.match(registry, new RegExp(`key: "${kind}"`),
