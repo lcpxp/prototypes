@@ -9,6 +9,11 @@
 // Sets data-theme on <html>; tokens.css keys the dark palette and
 // color-scheme off that attribute. The nav toggle (rendered by
 // ui.js) reads and drives App.theme.
+//
+// This is the first script on every page and the only blocking one, so
+// it runs before ui.js exists and cannot use App.store - hence the
+// guarded stored() below rather than the shared helper. That is the
+// reason for the duplication, and the only one.
 // ------------------------------------------------------------------
 
 (function () {

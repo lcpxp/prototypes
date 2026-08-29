@@ -54,7 +54,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/send-tool.js | 195 | send-tool.js - A nav icon that opens the acquirer send snippet: a |
 | assets/js/core/sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). Pure, no DOM, |
 | assets/js/core/supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
-| assets/js/core/theme.js | 79 | theme.js - Light/dark theme control. |
+| assets/js/core/theme.js | 84 | theme.js - Light/dark theme control. |
 | assets/js/core/tools.js | 217 | tools.js - The nav's outbound links to external tools, rendered as |
 | assets/js/core/ui.js | 318 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy. |
 | assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
@@ -106,7 +106,7 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/roadmap.js | 531 | roadmap.js - The roadmap home for modules/roadmap/. A read-only, |
 | assets/js/pages/users.js | 207 | users.js - User and access management for modules/users/. |
 | assets/js/pages/work-items-data.js | 172 | work-items-data.js - The reads over work_items and work_notes that the |
-| dashboard.html | 130 | Dashboard - LPio / LaunchPad IO |
+| dashboard.html | 122 | Dashboard - LPio / LaunchPad IO |
 | docs/APP-REVIEW.md | 258 | Application review playbook |
 | docs/ARCHITECTURE.md | 281 | Architecture |
 | docs/CHANGELOG.md | 517 | Changelog |
@@ -137,35 +137,35 @@ document instead of walking the tree or reading whole files.
 | docs/plan/60-PORTAL-REVIEW.md | 339 | Portal review, as a feature |
 | docs/plan/70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans |
 | docs/plan/80-LOAD-SPEED.md | 451 | 80 - Stop loading item detail text on first paint |
-| docs/plan/90-REFACTOR.md | 182 | 90 - Refactor, optimise and re-navigate |
+| docs/plan/90-REFACTOR.md | 204 | 90 - Refactor, optimise and re-navigate |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
-| index.html | 76 | Sign in - LPio / LaunchPad IO |
-| modules/app-review/index.html | 78 | Application review - LPio / LaunchPad IO |
-| modules/app-review/wave.html | 103 | Wave - Application review - LPio / LaunchPad IO |
-| modules/backlog/index.html | 102 | Backlog - LPio / LaunchPad IO |
-| modules/integrations/index.html | 67 | Integrations - LPio / LaunchPad IO |
-| modules/platform/index.html | 67 | Platform - LPio / LaunchPad IO |
-| modules/portal-review/index.html | 88 | Portal review - LPio / LaunchPad IO |
-| modules/portal-review/triage.html | 61 | Triage - Portal review - LPio / LaunchPad IO |
-| modules/portal-review/wave.html | 70 | Wave - Portal review - LPio / LaunchPad IO |
-| modules/prototypes/daopay/application.html | 55 | Application summary - PXP replica - LPio |
-| modules/prototypes/daopay/applications.html | 54 | Applications - PXP replica - LPio |
+| index.html | 68 | Sign in - LPio / LaunchPad IO |
+| modules/app-review/index.html | 70 | Application review - LPio / LaunchPad IO |
+| modules/app-review/wave.html | 95 | Wave - Application review - LPio / LaunchPad IO |
+| modules/backlog/index.html | 94 | Backlog - LPio / LaunchPad IO |
+| modules/integrations/index.html | 59 | Integrations - LPio / LaunchPad IO |
+| modules/platform/index.html | 59 | Platform - LPio / LaunchPad IO |
+| modules/portal-review/index.html | 80 | Portal review - LPio / LaunchPad IO |
+| modules/portal-review/triage.html | 53 | Triage - Portal review - LPio / LaunchPad IO |
+| modules/portal-review/wave.html | 62 | Wave - Portal review - LPio / LaunchPad IO |
+| modules/prototypes/daopay/application.html | 47 | Application summary - PXP replica - LPio |
+| modules/prototypes/daopay/applications.html | 46 | Applications - PXP replica - LPio |
 | modules/prototypes/daopay/daopay-flow.svg | 171 |  |
-| modules/prototypes/daopay/index.html | 259 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
-| modules/prototypes/gdpr/index.html | 53 | GDPR compliance prototype - LPio / LaunchPad IO |
-| modules/prototypes/ideas.html | 63 | Prototype ideas - LPio / LaunchPad IO |
-| modules/prototypes/index.html | 68 | Prototypes - LPio / LaunchPad IO |
-| modules/prototypes/pci/dashboard.html | 71 | Dashboard - PXP replica - LPio |
-| modules/prototypes/pci/demo.html | 91 | Merchant Prescreen and Quote - PXP replica - LPio |
-| modules/prototypes/pci/index.html | 160 | PCI compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/daopay/index.html | 251 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
+| modules/prototypes/gdpr/index.html | 45 | GDPR compliance prototype - LPio / LaunchPad IO |
+| modules/prototypes/ideas.html | 55 | Prototype ideas - LPio / LaunchPad IO |
+| modules/prototypes/index.html | 60 | Prototypes - LPio / LaunchPad IO |
+| modules/prototypes/pci/dashboard.html | 63 | Dashboard - PXP replica - LPio |
+| modules/prototypes/pci/demo.html | 83 | Merchant Prescreen and Quote - PXP replica - LPio |
+| modules/prototypes/pci/index.html | 152 | PCI compliance prototype - LPio / LaunchPad IO |
 | modules/prototypes/pci/pci-workflow.svg | 62 |  |
-| modules/prototypes/pci/reports.html | 81 | Compliance reporting - PXP replica - LPio |
-| modules/prototypes/website-screening/index.html | 54 | Website screening prototype - LPio / LaunchPad IO |
-| modules/reference/index.html | 80 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 141 | Roadmap - LPio / LaunchPad IO |
-| modules/users/index.html | 60 | Users - LPio / LaunchPad IO |
+| modules/prototypes/pci/reports.html | 73 | Compliance reporting - PXP replica - LPio |
+| modules/prototypes/website-screening/index.html | 46 | Website screening prototype - LPio / LaunchPad IO |
+| modules/reference/index.html | 72 | API reference - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 133 | Roadmap - LPio / LaunchPad IO |
+| modules/users/index.html | 52 | Users - LPio / LaunchPad IO |
 | package.json | 17 |  |
 | scripts/audit.js | 169 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
 | scripts/extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and |
@@ -258,7 +258,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 35 | tests/checks/size.test.js - File size budgets. |
-| tests/checks/structure.test.js | 162 | tests/checks/structure.test.js - Page structure gates. |
+| tests/checks/structure.test.js | 179 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/checks/surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
 | tests/fixtures/controllers/ComposedController.cs | 22 |  |
@@ -380,10 +380,10 @@ document instead of walking the tree or reading whole files.
 | currentSprint() | assets/js/core/sprints.js:77 |
 | sprintToQuarter() | assets/js/core/sprints.js:80 |
 | bandForSprint() | assets/js/core/sprints.js:93 |
-| stored() | assets/js/core/theme.js:25 |
-| systemTheme() | assets/js/core/theme.js:34 |
-| current() | assets/js/core/theme.js:38 |
-| apply() | assets/js/core/theme.js:42 |
+| stored() | assets/js/core/theme.js:30 |
+| systemTheme() | assets/js/core/theme.js:39 |
+| current() | assets/js/core/theme.js:43 |
+| apply() | assets/js/core/theme.js:47 |
 | searchCommand() | assets/js/core/tools.js:40 |
 | frontDoor() | assets/js/core/tools.js:70 |
 | onToolClick() | assets/js/core/tools.js:163 |

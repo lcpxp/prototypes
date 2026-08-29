@@ -111,14 +111,31 @@ test("every page is marked noindex", () => {
   }
 });
 
-test("every page has exactly one theme guard", () => {
-  // The inline theme guard must run once, before the stylesheets, to
-  // set data-theme ahead of first paint. A past multi-edit duplicated
-  // it once per stylesheet link on the module pages; this pins it to one.
+test("theme.js is the first script on the page, and blocking", () => {
+  // The theme has to be applied before first paint or the page flashes
+  // the wrong palette. theme.js does that, and it must run before the
+  // stylesheets so it is not waiting on CSSOM to execute.
+  //
+  // This replaces a check that pinned an inline guard reading
+  // localStorage["theme"]. theme.js writes "lpio-theme" and nothing ever
+  // wrote the bare key, so that guard never did anything on any page -
+  // it was 24 copies of dead code the suite was holding in place.
   for (const page of htmlPages()) {
-    const n = (read(page).match(/localStorage\.getItem\("theme"\)/g) || []).length;
-    assert.equal(n, 1,
-      `${page}: the inline theme guard must appear exactly once, found ${n}.`);
+    const content = read(page);
+    const srcs = scriptSrcs(content);
+    assert.ok(srcs.length > 0, `${page}: no scripts at all.`);
+    assert.match(srcs[0], /core\/theme\.js$/,
+      `${page}: theme.js must be the FIRST script, found "${srcs[0]}".`);
+    const themeTag = content.match(/<script\b[^>]*\ssrc="[^"]*core\/theme\.js"[^>]*>/);
+    assert.ok(themeTag && !/\bdefer\b/.test(themeTag[0]),
+      `${page}: theme.js must stay render-blocking (no defer).`);
+    // It must also precede the stylesheets it is meant to beat.
+    assert.ok(content.indexOf("core/theme.js") < content.indexOf('rel="stylesheet"'),
+      `${page}: theme.js must come before the first stylesheet link.`);
+    // And the dead inline guard must not come back.
+    assert.doesNotMatch(content, /localStorage\.getItem\("theme"\)/,
+      `${page}: the inline guard read localStorage["theme"], which nothing ` +
+      'writes - theme.js uses "lpio-theme". It was dead on arrival; do not restore it.');
   }
 });
 

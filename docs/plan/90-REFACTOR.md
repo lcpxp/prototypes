@@ -140,10 +140,32 @@ The sweep's 404 check was itself tested: a deliberately renamed script
 made the page report `OK` with 39 App surfaces and 140 nodes - it looked
 fine and would have passed the unit suite - while the sweep caught it.
 
+The reference is a git worktree of the pre-refactor commit served beside
+the working tree, so every phase compares against the same fixed point
+rather than against the previous phase. Two things had to be pinned
+before the comparison meant anything, both found by running the harness
+twice over IDENTICAL code:
+
+- **The clock is frozen** at 2026-08-27T12:00:00Z. Two prototypes render
+  today's date into their tables and the roadmap JSON export stamps
+  `generated_at`; a session spanning midnight made proto-pci-reports
+  differ by two days and read as a regression. Freezing it also made the
+  JSON export byte-comparable, which it was not before.
+- **Two screenshots are transient** and differ run to run whatever the
+  code does: `prefs-set.png` and `theme-dark.png`, both taken
+  mid-interaction. They are skipped loudly, not quietly, and what they
+  showed is covered deterministically elsewhere - the preference keys and
+  board shape in the transcript, plus `prefs-after-reload.png`, which is
+  pixel-stable.
+
+With those two fixed, two runs of identical code produce no unexplained
+difference: 34 of 34 comparable screenshots pixel-identical, three
+byte-identical goldens, and an identical transcript.
+
 ## Phases
 
 - [x] 0 Pin the App surface and per-page includes
-- [ ] 1 Remove the dead theme guard
+- [x] 1 Remove the dead theme guard
 - [ ] 2 Unfreeze the capped files
 - [ ] 3 Rebuild the size budget
 - [ ] 4 Small provable cleanups
