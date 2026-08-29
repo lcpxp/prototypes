@@ -1,9 +1,6 @@
 {
   "comment": "Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect.",
   "appSurfaces": {
-    "_rmd": [
-      "assets/js/pages/roadmap-detail.js"
-    ],
     "_rmv": [
       "assets/js/pages/roadmap-views.js"
     ],
@@ -142,6 +139,9 @@
     "roadmapDetail": [
       "assets/js/pages/roadmap-detail-export.js",
       "assets/js/pages/roadmap-detail.js"
+    ],
+    "roadmapDetailValues": [
+      "assets/js/pages/roadmap-detail-values.js"
     ],
     "roadmapDrawer": [
       "assets/js/pages/roadmap-drawer.js"
@@ -794,6 +794,7 @@
         "assets/js/pages/roadmap-views-breakdown.js",
         "assets/js/pages/roadmap-views-exec.js",
         "assets/js/pages/roadmap-views-cascade.js",
+        "assets/js/pages/roadmap-detail-values.js",
         "assets/js/pages/roadmap-detail.js",
         "assets/js/pages/roadmap-detail-export.js",
         "assets/js/pages/roadmap-export.js",

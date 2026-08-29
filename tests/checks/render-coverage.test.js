@@ -85,10 +85,10 @@ function linkEntitiesBlock() {
 const COVERAGE = {
   // Hand-written label per value: the renderer must name each one, or a
   // row carrying it renders blank.
-  "work_items.status": { file: "assets/js/pages/roadmap-detail.js" },
-  "work_items.prd_status": { file: "assets/js/pages/roadmap-detail.js" },
-  "work_items.project_status": { file: "assets/js/pages/roadmap-detail.js" },
-  "work_item_phases.phase": { file: "assets/js/pages/roadmap-detail.js" },
+  "work_items.status": { file: "assets/js/pages/roadmap-detail-values.js" },
+  "work_items.prd_status": { file: "assets/js/pages/roadmap-detail-values.js" },
+  "work_items.project_status": { file: "assets/js/pages/roadmap-detail-values.js" },
+  "work_item_phases.phase": { file: "assets/js/pages/roadmap-detail-values.js" },
   "work_notes.kind": { file: "assets/js/pages/roadmap-detail.js" },
   "work_items.horizon": { file: "assets/js/pages/roadmap-views.js" },
   "work_items.end_horizon": { file: "assets/js/pages/roadmap-views.js" },

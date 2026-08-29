@@ -95,7 +95,8 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/reference-topics.js | 47 | reference-topics.js - Pure HTML builders for api_topics rows: the |
 | assets/js/pages/reference.js | 309 | reference.js - The reference viewer ("swagger") for modules/reference/. |
 | assets/js/pages/roadmap-detail-export.js | 223 | roadmap-detail-export.js - The AI-optimised JSON and the flat CSV |
-| assets/js/pages/roadmap-detail.js | 498 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
+| assets/js/pages/roadmap-detail-values.js | 124 | roadmap-detail-values.js - Formatting and derivation for the roadmap |
+| assets/js/pages/roadmap-detail.js | 438 | roadmap-detail.js - Pure builders for the roadmap item drawer and the |
 | assets/js/pages/roadmap-drawer.js | 97 | roadmap-drawer.js - The item detail drawer surface for the roadmap |
 | assets/js/pages/roadmap-export.js | 101 | roadmap-export.js - The roadmap home's export dropdown wiring and the |
 | assets/js/pages/roadmap-views-breakdown.js | 60 | roadmap-views-breakdown.js - The Detailed breakdown for the roadmap |
@@ -164,7 +165,7 @@ document instead of walking the tree or reading whole files.
 | modules/prototypes/pci/reports.html | 73 | Compliance reporting - PXP replica - LPio |
 | modules/prototypes/website-screening/index.html | 46 | Website screening prototype - LPio / LaunchPad IO |
 | modules/reference/index.html | 72 | API reference - LPio / LaunchPad IO |
-| modules/roadmap/index.html | 133 | Roadmap - LPio / LaunchPad IO |
+| modules/roadmap/index.html | 134 | Roadmap - LPio / LaunchPad IO |
 | modules/users/index.html | 52 | Users - LPio / LaunchPad IO |
 | package.json | 17 |  |
 | scripts/audit.js | 169 | scripts/audit.js - One-screen repo health report. Read-only; reuses |
@@ -174,7 +175,7 @@ document instead of walking the tree or reading whole files.
 | scripts/gen-coverage.js | 346 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, |
 | scripts/gen-knowledge.js | 164 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, |
 | scripts/gen-snapshot.js | 148 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
-| scripts/gen-surface.js | 80 | scripts/gen-surface.js - Regenerates tests/surface-baseline.json. |
+| scripts/gen-surface.js | 84 | scripts/gen-surface.js - Regenerates tests/surface-baseline.json. |
 | supabase/functions/embed/index.ts | 61 |  |
 | supabase/knowledge-coverage.json | 83 |  |
 | supabase/migrations/20260713000000_module_access_and_function_hardening.sql | 93 | ------------------------------------------------------------------ |
@@ -275,7 +276,7 @@ document instead of walking the tree or reading whole files.
 | tests/lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap |
 | tests/reference-budget.json | 28 |  |
 | tests/size-budget.json | 201 |  |
-| tests/surface-baseline.json | 832 |  |
+| tests/surface-baseline.json | 833 |  |
 | tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
 | tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
 | tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
@@ -300,8 +301,8 @@ document instead of walking the tree or reading whole files.
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/render-fallbacks.test.js | 163 | tests/unit/render-fallbacks.test.js - Two renderers that handled the |
 | tests/unit/roadmap-child-order.test.js | 84 | tests/unit/roadmap-child-order.test.js - Benchmarks for how a |
-| tests/unit/roadmap-detail-export.test.js | 211 | tests/unit/roadmap-detail-export.test.js - Benchmarks for the |
-| tests/unit/roadmap-detail.test.js | 376 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
+| tests/unit/roadmap-detail-export.test.js | 212 | tests/unit/roadmap-detail-export.test.js - Benchmarks for the |
+| tests/unit/roadmap-detail.test.js | 377 | tests/unit/roadmap-detail.test.js - Benchmarks for the item detail |
 | tests/unit/roadmap-export.test.js | 119 | tests/unit/roadmap-export.test.js - The roadmap's export dropdown |
 | tests/unit/roadmap-views-custom.test.js | 258 | tests/unit/roadmap-views-custom.test.js - Benchmarks for the roadmap |
 | tests/unit/roadmap-views-exec.test.js | 49 | tests/unit/roadmap-views-exec.test.js - Benchmarks for the Executive |
@@ -679,38 +680,38 @@ document instead of walking the tree or reading whole files.
 | toKpiRoadmap() | assets/js/pages/roadmap-detail-export.js:116 |
 | flattenItem() | assets/js/pages/roadmap-detail-export.js:149 |
 | toCsvRoadmap() | assets/js/pages/roadmap-detail-export.js:209 |
-| esc() | assets/js/pages/roadmap-detail.js:33 |
-| day() | assets/js/pages/roadmap-detail.js:34 |
-| dateRange() | assets/js/pages/roadmap-detail.js:35 |
-| byPhase() | assets/js/pages/roadmap-detail.js:40 |
-| sprintRange() | assets/js/pages/roadmap-detail.js:44 |
-| cap() | assets/js/pages/roadmap-detail.js:50 |
-| keyLabel() | assets/js/pages/roadmap-detail.js:51 |
-| titleOf() | assets/js/pages/roadmap-detail.js:52 |
-| listText() | assets/js/pages/roadmap-detail.js:56 |
-| ordinal() | assets/js/pages/roadmap-detail.js:58 |
-| clean() | assets/js/pages/roadmap-detail.js:67 |
-| attrs() | assets/js/pages/roadmap-detail.js:79 |
-| bandText() | assets/js/pages/roadmap-detail.js:80 |
-| row() | assets/js/pages/roadmap-detail.js:88 |
-| businessAreaLabels() | assets/js/pages/roadmap-detail.js:93 |
-| note() | assets/js/pages/roadmap-detail.js:98 |
-| assigneeText() | assets/js/pages/roadmap-detail.js:116 |
-| priorityBand() | assets/js/pages/roadmap-detail.js:132 |
-| priorityLabel() | assets/js/pages/roadmap-detail.js:138 |
-| progressCell() | assets/js/pages/roadmap-detail.js:148 |
-| relatedRows() | assets/js/pages/roadmap-detail.js:173 |
-| milestoneText() | assets/js/pages/roadmap-detail.js:213 |
-| sourceText() | assets/js/pages/roadmap-detail.js:223 |
-| parseDetails() | assets/js/pages/roadmap-detail.js:238 |
-| detailsHtml() | assets/js/pages/roadmap-detail.js:264 |
-| extraAttrRows() | assets/js/pages/roadmap-detail.js:284 |
-| noteRow() | assets/js/pages/roadmap-detail.js:298 |
-| notesHtml() | assets/js/pages/roadmap-detail.js:313 |
-| phasesHtml() | assets/js/pages/roadmap-detail.js:331 |
-| factFields() | assets/js/pages/roadmap-detail.js:374 |
-| factsHtml() | assets/js/pages/roadmap-detail.js:434 |
-| drawerHtml() | assets/js/pages/roadmap-detail.js:446 |
+| day() | assets/js/pages/roadmap-detail-values.js:37 |
+| dateRange() | assets/js/pages/roadmap-detail-values.js:38 |
+| byPhase() | assets/js/pages/roadmap-detail-values.js:43 |
+| sprintRange() | assets/js/pages/roadmap-detail-values.js:47 |
+| cap() | assets/js/pages/roadmap-detail-values.js:51 |
+| keyLabel() | assets/js/pages/roadmap-detail-values.js:52 |
+| titleOf() | assets/js/pages/roadmap-detail-values.js:53 |
+| listText() | assets/js/pages/roadmap-detail-values.js:57 |
+| ordinal() | assets/js/pages/roadmap-detail-values.js:58 |
+| clean() | assets/js/pages/roadmap-detail-values.js:64 |
+| attrs() | assets/js/pages/roadmap-detail-values.js:75 |
+| bandText() | assets/js/pages/roadmap-detail-values.js:76 |
+| businessAreaLabels() | assets/js/pages/roadmap-detail-values.js:84 |
+| priorityBand() | assets/js/pages/roadmap-detail-values.js:89 |
+| priorityLabel() | assets/js/pages/roadmap-detail-values.js:95 |
+| esc() | assets/js/pages/roadmap-detail.js:45 |
+| row() | assets/js/pages/roadmap-detail.js:56 |
+| note() | assets/js/pages/roadmap-detail.js:61 |
+| assigneeText() | assets/js/pages/roadmap-detail.js:76 |
+| progressCell() | assets/js/pages/roadmap-detail.js:98 |
+| relatedRows() | assets/js/pages/roadmap-detail.js:123 |
+| milestoneText() | assets/js/pages/roadmap-detail.js:163 |
+| sourceText() | assets/js/pages/roadmap-detail.js:173 |
+| parseDetails() | assets/js/pages/roadmap-detail.js:188 |
+| detailsHtml() | assets/js/pages/roadmap-detail.js:214 |
+| extraAttrRows() | assets/js/pages/roadmap-detail.js:234 |
+| noteRow() | assets/js/pages/roadmap-detail.js:248 |
+| notesHtml() | assets/js/pages/roadmap-detail.js:263 |
+| phasesHtml() | assets/js/pages/roadmap-detail.js:281 |
+| factFields() | assets/js/pages/roadmap-detail.js:324 |
+| factsHtml() | assets/js/pages/roadmap-detail.js:384 |
+| drawerHtml() | assets/js/pages/roadmap-detail.js:396 |
 | App.roadmapDrawer | assets/js/pages/roadmap-drawer.js:19 |
 | setItemParam() | assets/js/pages/roadmap-drawer.js:29 |
 | openDrawer() | assets/js/pages/roadmap-drawer.js:59 |
@@ -881,8 +882,8 @@ document instead of walking the tree or reading whole files.
 | build() | scripts/gen-knowledge.js:123 |
 | sorted() | scripts/gen-snapshot.js:103 |
 | write() | scripts/gen-snapshot.js:113 |
-| appSurfaces() | scripts/gen-surface.js:31 |
-| pageIncludes() | scripts/gen-surface.js:48 |
+| appSurfaces() | scripts/gen-surface.js:35 |
+| pageIncludes() | scripts/gen-surface.js:52 |
 | seededKinds() | tests/checks/knowledge-links.test.js:22 |
 | cdnPages() | tests/checks/perf.test.js:17 |
 | sqlWithoutComments() | tests/checks/perf.test.js:22 |
@@ -946,12 +947,12 @@ document instead of walking the tree or reading whole files.
 | familyData() | tests/unit/roadmap-child-order.test.js:20 |
 | order() | tests/unit/roadmap-child-order.test.js:41 |
 | load() | tests/unit/roadmap-detail-export.test.js:17 |
-| sample() | tests/unit/roadmap-detail-export.test.js:39 |
-| ctxOf() | tests/unit/roadmap-detail-export.test.js:65 |
-| plain() | tests/unit/roadmap-detail-export.test.js:66 |
+| sample() | tests/unit/roadmap-detail-export.test.js:40 |
+| ctxOf() | tests/unit/roadmap-detail-export.test.js:66 |
+| plain() | tests/unit/roadmap-detail-export.test.js:67 |
 | load() | tests/unit/roadmap-detail.test.js:16 |
-| sample() | tests/unit/roadmap-detail.test.js:38 |
-| ctxOf() | tests/unit/roadmap-detail.test.js:64 |
+| sample() | tests/unit/roadmap-detail.test.js:39 |
+| ctxOf() | tests/unit/roadmap-detail.test.js:65 |
 | harness() | tests/unit/roadmap-export.test.js:19 |
 | hydrate() | tests/unit/roadmap-export.test.js:62 |
 | wired() | tests/unit/roadmap-export.test.js:70 |

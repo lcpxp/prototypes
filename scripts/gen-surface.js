@@ -12,6 +12,10 @@
 // side effect of a refactor, so regenerating it without looking is the
 // one way to make this gate worthless.
 //
+// It reads `git ls-files`, so a NEW module must be git-added before you
+// regenerate - otherwise its surface is silently missing from the
+// baseline and the gate passes while recording nothing.
+//
 // Run: npm run surface
 // ------------------------------------------------------------------
 "use strict";

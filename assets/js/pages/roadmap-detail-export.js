@@ -2,7 +2,7 @@
 // roadmap-detail-export.js - The AI-optimised JSON and the flat CSV
 // exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap /
 // toCsvRoadmap). Split out of roadmap-detail.js per the size budget; the
-// drawer's value helpers are shared through App._rmd. Data-in /
+// drawer's value helpers come from App.roadmapDetailValues. Data-in /
 // object-or-string-out, no DOM, so it loads in a Node vm for unit testing
 // (tests/unit/roadmap-detail.test.js).
 // ------------------------------------------------------------------
@@ -11,7 +11,7 @@
   "use strict";
 
   window.App = window.App || {};
-  var H = App._rmd;
+  var H = App.roadmapDetailValues;
 
   // --- AI-optimised JSON -------------------------------------------
 

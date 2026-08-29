@@ -15,73 +15,41 @@
 
   window.App = window.App || {};
 
-  var STATUS = {
-    idea: "Idea", planned: "Planned", in_progress: "In progress",
-    blocked: "Blocked", done: "Delivered", dropped: "Dropped",
-  };
-  var PRD_STATUS = {
-    n_a: "N/A", in_progress: "In progress", pre_approved: "Pre-approved",
-    approved: "Approved", rejected: "Rejected",
-  };
-  var PROJECT_STATUS = {
-    planned: "Planned", in_progress: "In progress", pending: "Pending",
-    on_hold: "On hold", completed: "Completed",
-  };
-  var PHASE = { discovery: "Discovery", build: "Build", certification: "Certification", launch: "Launch" };
-  var PHASE_ORDER = ["discovery", "build", "certification", "launch"];
+  // Formatting and derivation live in roadmap-detail-values.js, shared
+  // with the export builders. Bound here as locals so every builder
+  // below reads exactly as it did before the split.
+  var V = App.roadmapDetailValues;
+  var STATUS = V.STATUS;
+  var PRD_STATUS = V.PRD_STATUS;
+  var PROJECT_STATUS = V.PROJECT_STATUS;
+  var PHASE = V.PHASE;
+  var PHASE_ORDER = V.PHASE_ORDER;
+  var KNOWN_ATTRS = V.KNOWN_ATTRS;
+  var day = V.day;
+  var dateRange = V.dateRange;
+  var byPhase = V.byPhase;
+  var sprintRange = V.sprintRange;
+  var cap = V.cap;
+  var keyLabel = V.keyLabel;
+  var titleOf = V.titleOf;
+  var listText = V.listText;
+  var ordinal = V.ordinal;
+  var clean = V.clean;
+  var attrs = V.attrs;
+  var bandText = V.bandText;
+  var businessAreaLabels = V.businessAreaLabels;
+  var priorityBand = V.priorityBand;
+  var priorityLabel = V.priorityLabel;
+
 
   function esc(v) { return App.escape(v); }
-  function day(x) { return x ? String(x).slice(0, 10) : ""; }
-  function dateRange(a, b) {
-    a = day(a); b = day(b);
-    if (a && b) return a + " to " + b;
-    return a || b || "";
-  }
-  function byPhase(a, b) {
-    return (PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase)) ||
-      ((a.sort_order || 0) - (b.sort_order || 0));
-  }
-  function sprintRange(code) {
-    var r = App.sprints && App.sprints.sprintToRange(code);
-    return r ? code + " (" + r.start + " to " + r.end + ")" : code;
-  }
   // Single-word enum values (type, effort, impact, note kinds) read as
   // sentence case; underscores in attribute keys become spaces.
-  function cap(v) { return v ? String(v).charAt(0).toUpperCase() + String(v).slice(1) : ""; }
-  function keyLabel(k) { return cap(String(k).replace(/_/g, " ")); }
-  function titleOf(id, ctx) {
-    var it = id && ctx.itemById ? ctx.itemById[id] : null;
-    return it ? it.title : "";
-  }
-  function listText(v) { return Array.isArray(v) ? v.join(", ") : (v == null ? "" : String(v)); }
   // 1 -> "1st", 4 -> "4th"; blank for a missing or non-positive rank.
-  function ordinal(n) {
-    n = parseInt(n, 10);
-    if (!n || n < 1) return "";
-    var s = ["th", "st", "nd", "rd"], v = n % 100;
-    return n + (s[(v - 20) % 10] || s[v] || s[0]);
-  }
 
   // Drop null/undefined/blank/empty so the export stays lean for an AI
   // reader: only fields that carry information survive.
-  function clean(obj) {
-    var out = {};
-    Object.keys(obj).forEach(function (k) {
-      var v = obj[k];
-      if (v === null || v === undefined || v === "") return;
-      if (Array.isArray(v) && v.length === 0) return;
-      if (typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === 0) return;
-      out[k] = v;
-    });
-    return out;
-  }
 
-  function attrs(item) { return item.attributes || {}; }
-  function bandText(item) {
-    var b = App.roadmapView.bandLabel(item);
-    return item.end_horizon && item.end_horizon !== item.horizon
-      ? b + " to " + App.roadmapView.endBandLabel(item) : b;
-  }
 
   // --- Drawer HTML -------------------------------------------------
 
@@ -90,11 +58,6 @@
   }
   // Business area associations resolved to their display labels (owner
   // department excluded; that is the separate Department field).
-  function businessAreaLabels(item) {
-    return (item.associated_departments || []).map(function (d) {
-      return App.departmentLabel(d) || d;
-    });
-  }
   function note(label, text) {
     return text ? '<section class="rmd-note"><h3>' + esc(label) + "</h3><p>" +
       esc(text) + "</p></section>" : "";
@@ -106,9 +69,6 @@
   // priority_band are internal ordering scaffolding: assignee_rank folds
   // into the assignee line, priority_band into the priority band, so both
   // are handled and neither auto-dumps as a raw "Assignee rank: 1" row.
-  var KNOWN_ATTRS = ["pnl_vertical", "team", "region", "customer", "resources",
-    "cost", "merchant_value", "pxp_value", "blockers", "prd_link",
-    "assignee_rank", "priority_band"];
 
   // Ownership line: the assignee, an optional supporter, and the item's
   // rank within that owner's queue stated in words ("Xavier - 1st of 5")
@@ -129,16 +89,6 @@
   // The reader-facing priority band (P1, P2 ...). priority_band carries it
   // directly where set; otherwise it derives from the priority sort integer
   // (band x 10), so the raw number never reaches the panel.
-  function priorityBand(item) {
-    var pb = attrs(item).priority_band;
-    if (pb != null) return parseInt(pb, 10);
-    if (item.priority == null) return null;
-    return Math.max(1, Math.floor(item.priority / 10));
-  }
-  function priorityLabel(item) {
-    var b = priorityBand(item);
-    return (b == null || isNaN(b)) ? "" : "P" + b;
-  }
 
   // Progress as a thin bar plus a percentage, so a value of 1 reads as
   // "1% complete" rather than snapping to the "Not started" bucket. The
@@ -482,16 +432,6 @@
       '<button class="button" type="button" id="rmd-export">Export JSON</button></div>';
   }
 
-  // The JSON/CSV export builders share these value helpers with the
-  // drawer; they live in roadmap-detail-export.js (App.roadmapDetail gets
-  // toKpiItem/toKpiRoadmap/toCsvRoadmap there) to keep this file inside its
-  // size budget. Data maps and formatters, no DOM.
-  App._rmd = {
-    attrs: attrs, byPhase: byPhase, PHASE: PHASE, clean: clean,
-    KNOWN_ATTRS: KNOWN_ATTRS, titleOf: titleOf, businessAreaLabels: businessAreaLabels,
-    bandText: bandText, STATUS: STATUS, priorityBand: priorityBand,
-    PRD_STATUS: PRD_STATUS, PROJECT_STATUS: PROJECT_STATUS, day: day,
-  };
 
   App.roadmapDetail = { drawerHtml: drawerHtml };
 })();

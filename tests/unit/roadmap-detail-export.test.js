@@ -30,6 +30,7 @@ function load() {
     "assets/js/core/sprints.js",
     "assets/js/pages/roadmap-views.js",
     "assets/js/pages/roadmap-views-breakdown.js",
+    "assets/js/pages/roadmap-detail-values.js",
     "assets/js/pages/roadmap-detail.js",
     "assets/js/pages/roadmap-detail-export.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
