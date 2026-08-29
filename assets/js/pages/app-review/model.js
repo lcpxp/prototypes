@@ -3,7 +3,7 @@
 // group, its age, its state marker, what it is waiting on, and the
 // orderings built from those. Pure functions, no DOM and no network,
 // so the rules that matter are testable on their own
-// (tests/unit/appreview-model.test.js).
+// (tests/unit/app-review/model.test.js).
 //
 // The cross-record half - duplicates, the partner rollup and the
 // findings that need the evidence trail - is in appreview-findings.js.

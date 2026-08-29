@@ -6,7 +6,7 @@
    Split from app-review.css, which styles the board. Behaviour -
    Escape, backdrop click, focus return and focus containment - is in
    assets/js/core/drawer.js; the body markup is built by
-   assets/js/pages/appreview-detail.js.
+   assets/js/pages/app-review/detail.js.
 ------------------------------------------------------------------- */
 
 .ar-scrim {

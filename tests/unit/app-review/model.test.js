@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/appreview-model.test.js - Benchmarks for the application
+// tests/unit/app-review/model.test.js - Benchmarks for the application
 // review derivations (App.appReview in appreview-model.js), loaded in
 // a Node vm. These cover the rules that were got wrong before they
 // were got right, so a regression here is a repeat of a real mistake:
@@ -15,13 +15,13 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function loadModel() {
   const sandbox = { document: { addEventListener() {} }, setTimeout };
   sandbox.window = sandbox;
   vm.createContext(sandbox);
-  const file = "assets/js/pages/appreview-model.js";
+  const file = "assets/js/pages/app-review/model.js";
   vm.runInContext(read(file), sandbox, { filename: file });
   return sandbox.App.appReview;
 }

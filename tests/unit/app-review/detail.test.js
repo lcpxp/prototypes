@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/appreview-detail.test.js - The application drawer's Record
+// tests/unit/app-review/detail.test.js - The application drawer's Record
 // block, on the completeness contract (docs/plan/40-SURFACING.md).
 //
 // It was nine hand-written pairs against a table with twenty-eight
@@ -11,7 +11,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = {
@@ -25,9 +25,9 @@ function load() {
     "assets/js/core/ui.js",
     "assets/js/core/registry.js",
     "assets/js/core/detail.js",
-    "assets/js/pages/appreview-model.js",
-    "assets/js/pages/appreview-findings.js",
-    "assets/js/pages/appreview-detail.js",
+    "assets/js/pages/app-review/model.js",
+    "assets/js/pages/app-review/findings.js",
+    "assets/js/pages/app-review/detail.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App.appReviewDetail;
 }

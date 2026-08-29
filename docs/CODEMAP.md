@@ -57,12 +57,12 @@ document instead of walking the tree or reading whole files.
 | assets/js/core/theme.js | 84 | theme.js - Light/dark theme control. |
 | assets/js/core/tools.js | 217 | tools.js - The nav's outbound links to external tools, rendered as |
 | assets/js/core/ui.js | 370 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy, |
-| assets/js/pages/appreview-board.js | 233 | appreview-board.js - The triage board page for |
-| assets/js/pages/appreview-detail.js | 207 | appreview-detail.js - The drawer body for one application. A pure |
-| assets/js/pages/appreview-findings.js | 145 | appreview-findings.js - The cross-record half of the review model: |
-| assets/js/pages/appreview-model.js | 240 | appreview-model.js - What the board derives from a single row: its |
-| assets/js/pages/appreview-render.js | 292 | appreview-render.js - The board's HTML builders. Data in, string |
-| assets/js/pages/appreview-waves.js | 163 | appreview-waves.js - The wave list for modules/app-review/index.html, |
+| assets/js/pages/app-review/board.js | 233 | appreview-board.js - The triage board page for |
+| assets/js/pages/app-review/detail.js | 207 | appreview-detail.js - The drawer body for one application. A pure |
+| assets/js/pages/app-review/findings.js | 145 | appreview-findings.js - The cross-record half of the review model: |
+| assets/js/pages/app-review/model.js | 240 | appreview-model.js - What the board derives from a single row: its |
+| assets/js/pages/app-review/render.js | 292 | appreview-render.js - The board's HTML builders. Data in, string |
+| assets/js/pages/app-review/waves.js | 163 | appreview-waves.js - The wave list for modules/app-review/index.html, |
 | assets/js/pages/backlog-export.js | 87 | backlog-export.js - The backlog's CSV export: the column order, the |
 | assets/js/pages/backlog.js | 393 | backlog.js - The master work list for modules/backlog/. |
 | assets/js/pages/daopay-app.js | 275 | daopay-app.js - The application summary page in the Daopay replica: |
@@ -85,11 +85,11 @@ document instead of walking the tree or reading whole files.
 | assets/js/pages/pci-reports.js | 54 | pci-reports.js - Compliance reporting view for the PCI prototype, |
 | assets/js/pages/platform-knowledge.js | 202 | platform-knowledge.js - The parts of the platform knowledge base the |
 | assets/js/pages/platform.js | 327 | platform.js - The platform product-knowledge viewer for |
-| assets/js/pages/portalreview-board.js | 142 | portalreview-board.js - modules/portal-review/wave.html. One wave: |
-| assets/js/pages/portalreview-model.js | 208 | portalreview-model.js - Every derivation the portal review board |
-| assets/js/pages/portalreview-render.js | 249 | portalreview-render.js - The portal review board's HTML builders |
-| assets/js/pages/portalreview-triage.js | 108 | portalreview-triage.js - modules/portal-review/triage.html. The |
-| assets/js/pages/portalreview-waves.js | 129 | portalreview-waves.js - modules/portal-review/index.html. The wave |
+| assets/js/pages/portal-review/board.js | 142 | portalreview-board.js - modules/portal-review/wave.html. One wave: |
+| assets/js/pages/portal-review/model.js | 208 | portalreview-model.js - Every derivation the portal review board |
+| assets/js/pages/portal-review/render.js | 249 | portalreview-render.js - The portal review board's HTML builders |
+| assets/js/pages/portal-review/triage.js | 108 | portalreview-triage.js - modules/portal-review/triage.html. The |
+| assets/js/pages/portal-review/waves.js | 129 | portalreview-waves.js - modules/portal-review/index.html. The wave |
 | assets/js/pages/proto-svg.js | 125 | proto-svg.js - Inline SVG diagram viewer for a prototype overview |
 | assets/js/pages/reference-render.js | 288 | reference-render.js - Pure HTML builders for the reference viewer. |
 | assets/js/pages/reference-topics.js | 48 | reference-topics.js - Pure HTML builders for api_topics rows: the |
@@ -127,7 +127,7 @@ document instead of walking the tree or reading whole files.
 | docs/SECURITY.md | 110 | Security model |
 | docs/SETUP.md | 54 | Setup and day-to-day use |
 | docs/SPRINTS.md | 109 | Sprints and dates |
-| docs/STATE.md | 34 | Current state |
+| docs/STATE.md | 38 | Current state |
 | docs/VALUE-CAPTURE.md | 71 | Value capture session |
 | docs/WORKFLOW.md | 132 | Work intake and backlog workflow |
 | docs/plan/00-PROGRAMME.md | 275 | Alignment programme |
@@ -139,7 +139,7 @@ document instead of walking the tree or reading whole files.
 | docs/plan/60-PORTAL-REVIEW.md | 339 | Portal review, as a feature |
 | docs/plan/70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans |
 | docs/plan/80-LOAD-SPEED.md | 451 | 80 - Stop loading item detail text on first paint |
-| docs/plan/90-REFACTOR.md | 204 | 90 - Refactor, optimise and re-navigate |
+| docs/plan/90-REFACTOR.md | 214 | 90 - Refactor, optimise and re-navigate |
 | docs/sessions-archive/2026-07-log-final.md | 902 | Session log |
 | docs/sessions-archive/2026-07.md | 189 | Session log archive - 2026-07 (earlier entries) |
 | docs/sessions-archive/README.md | 13 | Session archive (closed) |
@@ -280,9 +280,9 @@ document instead of walking the tree or reading whole files.
 | tests/reference-budget.json | 28 |  |
 | tests/size-budget.json | 46 |  |
 | tests/surface-baseline.json | 840 |  |
-| tests/unit/appreview-detail.test.js | 130 | tests/unit/appreview-detail.test.js - The application drawer's Record |
-| tests/unit/appreview-findings.test.js | 136 | tests/unit/appreview-findings.test.js - Benchmarks for the |
-| tests/unit/appreview-model.test.js | 318 | tests/unit/appreview-model.test.js - Benchmarks for the application |
+| tests/unit/app-review/detail.test.js | 130 | tests/unit/app-review/detail.test.js - The application drawer's Record |
+| tests/unit/app-review/findings.test.js | 136 | tests/unit/app-review/findings.test.js - Benchmarks for the |
+| tests/unit/app-review/model.test.js | 318 | tests/unit/app-review/model.test.js - Benchmarks for the application |
 | tests/unit/backlog-detail.test.js | 131 | tests/unit/backlog-detail.test.js - The backlog's two modals, both |
 | tests/unit/backlog-export.test.js | 155 | tests/unit/backlog-export.test.js - The backlog CSV export |
 | tests/unit/blocks.test.js | 119 | tests/unit/blocks.test.js - The typed-block renderer. |
@@ -299,7 +299,7 @@ document instead of walking the tree or reading whole files.
 | tests/unit/pci-ixopay.test.js | 81 | tests/unit/pci-ixopay.test.js - Benchmarks for the PCI prototype's |
 | tests/unit/platform-knowledge.test.js | 249 | tests/unit/platform-knowledge.test.js - The stores the capability |
 | tests/unit/platform-render.test.js | 167 | tests/unit/platform-render.test.js - Benchmarks for the platform |
-| tests/unit/portalreview.test.js | 286 | tests/unit/portalreview.test.js - The portal review board's model |
+| tests/unit/portal-review/model.test.js | 286 | tests/unit/portal-review/model.test.js - The portal review board's model |
 | tests/unit/reference-render.test.js | 212 | tests/unit/reference-render.test.js - Benchmarks for the reference |
 | tests/unit/registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, |
 | tests/unit/render-fallbacks.test.js | 163 | tests/unit/render-fallbacks.test.js - Two renderers that handled the |
@@ -403,56 +403,56 @@ document instead of walking the tree or reading whole files.
 | themeIcon() | assets/js/core/ui.js:193 |
 | renderNav() | assets/js/core/ui.js:210 |
 | App.onThemeChange | assets/js/core/ui.js:345 |
-| param() | assets/js/pages/appreview-board.js:32 |
-| day() | assets/js/pages/appreview-board.js:36 |
-| renderAll() | assets/js/pages/appreview-board.js:46 |
-| renderFiltered() | assets/js/pages/appreview-board.js:63 |
-| renderWaveHead() | assets/js/pages/appreview-board.js:73 |
-| openApplication() | assets/js/pages/appreview-board.js:91 |
-| toggleCategory() | assets/js/pages/appreview-board.js:105 |
-| soloGroup() | assets/js/pages/appreview-board.js:115 |
-| wire() | assets/js/pages/appreview-board.js:128 |
-| loadEvidence() | assets/js/pages/appreview-board.js:161 |
-| day() | assets/js/pages/appreview-detail.js:30 |
-| block() | assets/js/pages/appreview-detail.js:36 |
-| paragraph() | assets/js/pages/appreview-detail.js:42 |
-| confirmation() | assets/js/pages/appreview-detail.js:52 |
-| findingsHtml() | assets/js/pages/appreview-detail.js:66 |
-| trailHtml() | assets/js/pages/appreview-detail.js:77 |
-| triggerHtml() | assets/js/pages/appreview-detail.js:104 |
-| dateRow() | assets/js/pages/appreview-detail.js:131 |
-| metadataHtml() | assets/js/pages/appreview-detail.js:133 |
-| App.appReviewDetail | assets/js/pages/appreview-detail.js:175 |
-| duplicateKeys() | assets/js/pages/appreview-findings.js:27 |
-| duplicateKeyOf() | assets/js/pages/appreview-findings.js:39 |
-| partnerBlockers() | assets/js/pages/appreview-findings.js:47 |
-| findings() | assets/js/pages/appreview-findings.js:64 |
-| groupOf() | assets/js/pages/appreview-model.js:59 |
-| split() | assets/js/pages/appreview-model.js:67 |
-| categoryCounts() | assets/js/pages/appreview-model.js:77 |
-| ageOf() | assets/js/pages/appreview-model.js:103 |
-| marker() | assets/js/pages/appreview-model.js:128 |
-| triggerOf() | assets/js/pages/appreview-model.js:150 |
-| doNowOrder() | assets/js/pages/appreview-model.js:165 |
-| carryForward() | assets/js/pages/appreview-model.js:186 |
-| visible() | assets/js/pages/appreview-model.js:210 |
-| index() | assets/js/pages/appreview-model.js:218 |
-| rowStyle() | assets/js/pages/appreview-render.js:28 |
-| markerGlyph() | assets/js/pages/appreview-render.js:48 |
-| splitHtml() | assets/js/pages/appreview-render.js:72 |
-| partnerPanelHtml() | assets/js/pages/appreview-render.js:86 |
-| doNowItem() | assets/js/pages/appreview-render.js:106 |
-| doNowHtml() | assets/js/pages/appreview-render.js:119 |
-| legendHtml() | assets/js/pages/appreview-render.js:159 |
-| flagsHtml() | assets/js/pages/appreview-render.js:200 |
-| ageCell() | assets/js/pages/appreview-render.js:227 |
-| rowHtml() | assets/js/pages/appreview-render.js:239 |
-| boardHtml() | assets/js/pages/appreview-render.js:264 |
-| waveHref() | assets/js/pages/appreview-waves.js:19 |
-| day() | assets/js/pages/appreview-waves.js:25 |
-| triggerCell() | assets/js/pages/appreview-waves.js:35 |
-| watchingHtml() | assets/js/pages/appreview-waves.js:48 |
-| wavesHtml() | assets/js/pages/appreview-waves.js:87 |
+| param() | assets/js/pages/app-review/board.js:32 |
+| day() | assets/js/pages/app-review/board.js:36 |
+| renderAll() | assets/js/pages/app-review/board.js:46 |
+| renderFiltered() | assets/js/pages/app-review/board.js:63 |
+| renderWaveHead() | assets/js/pages/app-review/board.js:73 |
+| openApplication() | assets/js/pages/app-review/board.js:91 |
+| toggleCategory() | assets/js/pages/app-review/board.js:105 |
+| soloGroup() | assets/js/pages/app-review/board.js:115 |
+| wire() | assets/js/pages/app-review/board.js:128 |
+| loadEvidence() | assets/js/pages/app-review/board.js:161 |
+| day() | assets/js/pages/app-review/detail.js:30 |
+| block() | assets/js/pages/app-review/detail.js:36 |
+| paragraph() | assets/js/pages/app-review/detail.js:42 |
+| confirmation() | assets/js/pages/app-review/detail.js:52 |
+| findingsHtml() | assets/js/pages/app-review/detail.js:66 |
+| trailHtml() | assets/js/pages/app-review/detail.js:77 |
+| triggerHtml() | assets/js/pages/app-review/detail.js:104 |
+| dateRow() | assets/js/pages/app-review/detail.js:131 |
+| metadataHtml() | assets/js/pages/app-review/detail.js:133 |
+| App.appReviewDetail | assets/js/pages/app-review/detail.js:175 |
+| duplicateKeys() | assets/js/pages/app-review/findings.js:27 |
+| duplicateKeyOf() | assets/js/pages/app-review/findings.js:39 |
+| partnerBlockers() | assets/js/pages/app-review/findings.js:47 |
+| findings() | assets/js/pages/app-review/findings.js:64 |
+| groupOf() | assets/js/pages/app-review/model.js:59 |
+| split() | assets/js/pages/app-review/model.js:67 |
+| categoryCounts() | assets/js/pages/app-review/model.js:77 |
+| ageOf() | assets/js/pages/app-review/model.js:103 |
+| marker() | assets/js/pages/app-review/model.js:128 |
+| triggerOf() | assets/js/pages/app-review/model.js:150 |
+| doNowOrder() | assets/js/pages/app-review/model.js:165 |
+| carryForward() | assets/js/pages/app-review/model.js:186 |
+| visible() | assets/js/pages/app-review/model.js:210 |
+| index() | assets/js/pages/app-review/model.js:218 |
+| rowStyle() | assets/js/pages/app-review/render.js:28 |
+| markerGlyph() | assets/js/pages/app-review/render.js:48 |
+| splitHtml() | assets/js/pages/app-review/render.js:72 |
+| partnerPanelHtml() | assets/js/pages/app-review/render.js:86 |
+| doNowItem() | assets/js/pages/app-review/render.js:106 |
+| doNowHtml() | assets/js/pages/app-review/render.js:119 |
+| legendHtml() | assets/js/pages/app-review/render.js:159 |
+| flagsHtml() | assets/js/pages/app-review/render.js:200 |
+| ageCell() | assets/js/pages/app-review/render.js:227 |
+| rowHtml() | assets/js/pages/app-review/render.js:239 |
+| boardHtml() | assets/js/pages/app-review/render.js:264 |
+| waveHref() | assets/js/pages/app-review/waves.js:19 |
+| day() | assets/js/pages/app-review/waves.js:25 |
+| triggerCell() | assets/js/pages/app-review/waves.js:35 |
+| watchingHtml() | assets/js/pages/app-review/waves.js:48 |
+| wavesHtml() | assets/js/pages/app-review/waves.js:87 |
 | toCsvRecord() | assets/js/pages/backlog-export.js:31 |
 | toCsv() | assets/js/pages/backlog-export.js:57 |
 | wire() | assets/js/pages/backlog-export.js:68 |
@@ -621,28 +621,28 @@ document instead of walking the tree or reading whole files.
 | renderUnknown() | assets/js/pages/platform.js:156 |
 | pageHtml() | assets/js/pages/platform.js:173 |
 | rows() | assets/js/pages/platform.js:283 |
-| el() | assets/js/pages/portalreview-board.js:15 |
-| waveId() | assets/js/pages/portalreview-board.js:18 |
-| workItemHref() | assets/js/pages/portalreview-board.js:22 |
-| walkNext() | assets/js/pages/portalreview-board.js:30 |
-| load() | assets/js/pages/portalreview-board.js:44 |
-| live() | assets/js/pages/portalreview-model.js:20 |
-| groupOf() | assets/js/pages/portalreview-model.js:35 |
-| day() | assets/js/pages/portalreview-render.js:23 |
-| labelOf() | assets/js/pages/portalreview-render.js:80 |
-| chips() | assets/js/pages/portalreview-render.js:88 |
-| metaLine() | assets/js/pages/portalreview-render.js:107 |
-| trail() | assets/js/pages/portalreview-render.js:120 |
-| el() | assets/js/pages/portalreview-triage.js:17 |
-| workItemHref() | assets/js/pages/portalreview-triage.js:20 |
-| countsHtml() | assets/js/pages/portalreview-triage.js:36 |
-| load() | assets/js/pages/portalreview-triage.js:45 |
-| el() | assets/js/pages/portalreview-waves.js:15 |
-| waveHref() | assets/js/pages/portalreview-waves.js:18 |
-| standingHtml() | assets/js/pages/portalreview-waves.js:22 |
-| waveList() | assets/js/pages/portalreview-waves.js:41 |
-| mapHtml() | assets/js/pages/portalreview-waves.js:58 |
-| load() | assets/js/pages/portalreview-waves.js:83 |
+| el() | assets/js/pages/portal-review/board.js:15 |
+| waveId() | assets/js/pages/portal-review/board.js:18 |
+| workItemHref() | assets/js/pages/portal-review/board.js:22 |
+| walkNext() | assets/js/pages/portal-review/board.js:30 |
+| load() | assets/js/pages/portal-review/board.js:44 |
+| live() | assets/js/pages/portal-review/model.js:20 |
+| groupOf() | assets/js/pages/portal-review/model.js:35 |
+| day() | assets/js/pages/portal-review/render.js:23 |
+| labelOf() | assets/js/pages/portal-review/render.js:80 |
+| chips() | assets/js/pages/portal-review/render.js:88 |
+| metaLine() | assets/js/pages/portal-review/render.js:107 |
+| trail() | assets/js/pages/portal-review/render.js:120 |
+| el() | assets/js/pages/portal-review/triage.js:17 |
+| workItemHref() | assets/js/pages/portal-review/triage.js:20 |
+| countsHtml() | assets/js/pages/portal-review/triage.js:36 |
+| load() | assets/js/pages/portal-review/triage.js:45 |
+| el() | assets/js/pages/portal-review/waves.js:15 |
+| waveHref() | assets/js/pages/portal-review/waves.js:18 |
+| standingHtml() | assets/js/pages/portal-review/waves.js:22 |
+| waveList() | assets/js/pages/portal-review/waves.js:41 |
+| mapHtml() | assets/js/pages/portal-review/waves.js:58 |
+| load() | assets/js/pages/portal-review/waves.js:83 |
 | sanitize() | assets/js/pages/proto-svg.js:22 |
 | fallback() | assets/js/pages/proto-svg.js:51 |
 | openOverlay() | assets/js/pages/proto-svg.js:59 |
@@ -897,16 +897,16 @@ document instead of walking the tree or reading whole files.
 | lineOf() | tests/lib/repo.js:28 |
 | loadView() | tests/lib/roadmap.js:12 |
 | sampleData() | tests/lib/roadmap.js:36 |
-| load() | tests/unit/appreview-detail.test.js:16 |
-| app() | tests/unit/appreview-detail.test.js:46 |
-| loadFindings() | tests/unit/appreview-findings.test.js:20 |
-| plain() | tests/unit/appreview-findings.test.js:31 |
-| app() | tests/unit/appreview-findings.test.js:35 |
-| loadModel() | tests/unit/appreview-model.test.js:20 |
-| plain() | tests/unit/appreview-model.test.js:33 |
-| categories() | tests/unit/appreview-model.test.js:39 |
-| statuses() | tests/unit/appreview-model.test.js:55 |
-| app() | tests/unit/appreview-model.test.js:68 |
+| load() | tests/unit/app-review/detail.test.js:16 |
+| app() | tests/unit/app-review/detail.test.js:46 |
+| loadFindings() | tests/unit/app-review/findings.test.js:20 |
+| plain() | tests/unit/app-review/findings.test.js:31 |
+| app() | tests/unit/app-review/findings.test.js:35 |
+| loadModel() | tests/unit/app-review/model.test.js:20 |
+| plain() | tests/unit/app-review/model.test.js:33 |
+| categories() | tests/unit/app-review/model.test.js:39 |
+| statuses() | tests/unit/app-review/model.test.js:55 |
+| app() | tests/unit/app-review/model.test.js:68 |
 | load() | tests/unit/backlog-detail.test.js:17 |
 | item() | tests/unit/backlog-detail.test.js:43 |
 | doc() | tests/unit/backlog-detail.test.js:52 |
@@ -932,8 +932,8 @@ document instead of walking the tree or reading whole files.
 | sample() | tests/unit/platform-knowledge.test.js:44 |
 | loadView() | tests/unit/platform-render.test.js:15 |
 | sampleData() | tests/unit/platform-render.test.js:33 |
-| load() | tests/unit/portalreview.test.js:18 |
-| f() | tests/unit/portalreview.test.js:47 |
+| load() | tests/unit/portal-review/model.test.js:18 |
+| f() | tests/unit/portal-review/model.test.js:47 |
 | loadApp() | tests/unit/reference-render.test.js:13 |
 | loadApp() | tests/unit/registry.test.js:12 |
 | sandboxWith() | tests/unit/render-fallbacks.test.js:27 |

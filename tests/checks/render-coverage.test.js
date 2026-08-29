@@ -119,19 +119,19 @@ const COVERAGE = {
   "profiles.role": { generic: "roleBadge renders whatever role the row carries - it was a binary else-branch until 2026-08-13 and printed 'member' for anything not admin" },
   "link_kinds.family": { generic: "groups links in a drawer; never shown as text" },
   "review_waves.state": { generic: "the review board prints the raw state" },
-  "review_waves.kind": { file: "assets/js/pages/portalreview-render.js" },
-  "review_findings.kind": { file: "assets/js/pages/portalreview-render.js" },
-  "review_findings.state": { file: "assets/js/pages/portalreview-render.js" },
-  "review_findings.emphasis": { file: "assets/js/pages/portalreview-render.js" },
-  "review_findings.visibility": { file: "assets/js/pages/portalreview-render.js" },
-  "review_findings.disposition": { file: "assets/js/pages/portalreview-render.js" },
+  "review_waves.kind": { file: "assets/js/pages/portal-review/render.js" },
+  "review_findings.kind": { file: "assets/js/pages/portal-review/render.js" },
+  "review_findings.state": { file: "assets/js/pages/portal-review/render.js" },
+  "review_findings.emphasis": { file: "assets/js/pages/portal-review/render.js" },
+  "review_findings.visibility": { file: "assets/js/pages/portal-review/render.js" },
+  "review_findings.disposition": { file: "assets/js/pages/portal-review/render.js" },
   "review_applications.evidence_confidence": { generic: "a label map with a raw fallback, so an unmapped value still shows" },
   "review_applications.blocker_scope": { generic: "the board flags any scope the row carries - 'record' had no branch at all until 2026-08-13 and carried no flag" },
   "review_applications.next_trigger_type": { generic: "the review board derives the trigger line from it" },
   "review_evidence.source": { generic: "the evidence list prints the raw source" },
   "review_evidence.direction": { generic: "the evidence list prints the raw direction" },
   "review_evidence.signal": { derived: "never shown as text: a typed signal drives the contradiction findings structurally, so its effect is visible rather than its value" },
-  "triage_categories.group_key": { file: "assets/js/pages/appreview-model.js" },
+  "triage_categories.group_key": { file: "assets/js/pages/app-review/model.js" },
 
   // Was the one declared hole in this file, closed 2026-08-13: a link
   // an assistant proposed now carries a `proposed` badge in both the
@@ -248,7 +248,7 @@ test("an anchored destination is actually reachable on its page", () => {
     // gate has to look where the rows actually are.
     const named = /page: "([\w.-]+)"/.exec(line);
     const page = read(modules[anchored[1]] + (named ? named[1] : "index.html"));
-    const scripts = [...page.matchAll(/src="[^"]*assets\/js\/pages\/([\w-]+\.js)"/g)]
+    const scripts = [...page.matchAll(/src="[^"]*assets\/js\/pages\/([\w/-]+\.js)"/g)]
       .map((m) => "assets/js/pages/" + m[1]);
     assert.ok(scripts.length, `${key}: module ${anchored[1]} loads no page module`);
     assert.ok(scripts.some((f) => /App\.deepLinkScroll\(\)/.test(read(f))),
@@ -269,7 +269,7 @@ const CONTRACT_ADOPTERS = [
   "assets/js/pages/roadmap-detail.js",
   "assets/js/pages/platform.js",
   "assets/js/pages/backlog.js",
-  "assets/js/pages/appreview-detail.js",
+  "assets/js/pages/app-review/detail.js",
 ];
 
 test("a surface that adopted the completeness contract still uses it", () => {

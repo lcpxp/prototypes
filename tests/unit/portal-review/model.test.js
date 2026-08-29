@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/portalreview.test.js - The portal review board's model
+// tests/unit/portal-review/model.test.js - The portal review board's model
 // and its renderer (docs/plan/60-PORTAL-REVIEW.md).
 //
 // Two things carry most of the weight here. First, that nothing
@@ -13,7 +13,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function load() {
   const sandbox = {
@@ -27,8 +27,8 @@ function load() {
     "assets/js/core/ui.js",
     "assets/js/core/registry.js",
     "assets/js/core/blocks.js",
-    "assets/js/pages/portalreview-model.js",
-    "assets/js/pages/portalreview-render.js",
+    "assets/js/pages/portal-review/model.js",
+    "assets/js/pages/portal-review/render.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App;
 }

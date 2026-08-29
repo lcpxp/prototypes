@@ -116,9 +116,9 @@ test("the register never prints the columns it lays out by hand", () => {
 // --- review_applications.blocker_scope -----------------------------
 
 const review = sandboxWith([
-  "assets/js/pages/appreview-model.js",
-  "assets/js/pages/appreview-findings.js",
-  "assets/js/pages/appreview-render.js",
+  "assets/js/pages/app-review/model.js",
+  "assets/js/pages/app-review/findings.js",
+  "assets/js/pages/app-review/render.js",
 ]).appReviewRender;
 
 const ctx = { dupes: {}, categories: {} };

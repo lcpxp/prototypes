@@ -7,7 +7,7 @@
 // row (its group, age, marker, trigger, ordering). Everything here
 // needs to see more than one row, or needs the evidence trail, so it
 // reads differently and is tested separately
-// (tests/unit/appreview-findings.test.js).
+// (tests/unit/app-review/findings.test.js).
 //
 // Findings are derived from TYPED signals on evidence rows, never by
 // matching words in prose: rewording a summary must not be able to

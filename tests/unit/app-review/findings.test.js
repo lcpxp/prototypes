@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// tests/unit/appreview-findings.test.js - Benchmarks for the
+// tests/unit/app-review/findings.test.js - Benchmarks for the
 // cross-record half of the review model (App.appReviewFindings in
 // appreview-findings.js): duplicates, the partner rollup, and the
 // findings that fire when a record's state disagrees with its
@@ -15,13 +15,13 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const vm = require("node:vm");
-const { read } = require("../lib/repo.js");
+const { read } = require("../../lib/repo.js");
 
 function loadFindings() {
   const sandbox = { document: { addEventListener() {} }, setTimeout };
   sandbox.window = sandbox;
   vm.createContext(sandbox);
-  const file = "assets/js/pages/appreview-findings.js";
+  const file = "assets/js/pages/app-review/findings.js";
   vm.runInContext(read(file), sandbox, { filename: file });
   return sandbox.App.appReviewFindings;
 }

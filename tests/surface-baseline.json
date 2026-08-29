@@ -11,16 +11,16 @@
       "assets/js/core/guard.js"
     ],
     "appReview": [
-      "assets/js/pages/appreview-model.js"
+      "assets/js/pages/app-review/model.js"
     ],
     "appReviewDetail": [
-      "assets/js/pages/appreview-detail.js"
+      "assets/js/pages/app-review/detail.js"
     ],
     "appReviewFindings": [
-      "assets/js/pages/appreview-findings.js"
+      "assets/js/pages/app-review/findings.js"
     ],
     "appReviewRender": [
-      "assets/js/pages/appreview-render.js"
+      "assets/js/pages/app-review/render.js"
     ],
     "backlogExport": [
       "assets/js/pages/backlog-export.js"
@@ -119,10 +119,10 @@
       "assets/js/pages/platform.js"
     ],
     "portalReview": [
-      "assets/js/pages/portalreview-model.js"
+      "assets/js/pages/portal-review/model.js"
     ],
     "portalReviewRender": [
-      "assets/js/pages/portalreview-render.js"
+      "assets/js/pages/portal-review/render.js"
     ],
     "refRender": [
       "assets/js/pages/reference-render.js"
@@ -259,9 +259,9 @@
         "assets/js/core/tools.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/appreview-model.js",
-        "assets/js/pages/appreview-findings.js",
-        "assets/js/pages/appreview-waves.js"
+        "assets/js/pages/app-review/model.js",
+        "assets/js/pages/app-review/findings.js",
+        "assets/js/pages/app-review/waves.js"
       ]
     },
     "modules/app-review/wave.html": {
@@ -288,11 +288,11 @@
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
         "assets/js/core/drawer.js",
-        "assets/js/pages/appreview-model.js",
-        "assets/js/pages/appreview-findings.js",
-        "assets/js/pages/appreview-render.js",
-        "assets/js/pages/appreview-detail.js",
-        "assets/js/pages/appreview-board.js"
+        "assets/js/pages/app-review/model.js",
+        "assets/js/pages/app-review/findings.js",
+        "assets/js/pages/app-review/render.js",
+        "assets/js/pages/app-review/detail.js",
+        "assets/js/pages/app-review/board.js"
       ]
     },
     "modules/backlog/index.html": {
@@ -398,9 +398,9 @@
         "assets/js/core/detail.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/portalreview-model.js",
-        "assets/js/pages/portalreview-render.js",
-        "assets/js/pages/portalreview-waves.js"
+        "assets/js/pages/portal-review/model.js",
+        "assets/js/pages/portal-review/render.js",
+        "assets/js/pages/portal-review/waves.js"
       ]
     },
     "modules/portal-review/triage.html": {
@@ -426,9 +426,9 @@
         "assets/js/core/detail.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/portalreview-model.js",
-        "assets/js/pages/portalreview-render.js",
-        "assets/js/pages/portalreview-triage.js"
+        "assets/js/pages/portal-review/model.js",
+        "assets/js/pages/portal-review/render.js",
+        "assets/js/pages/portal-review/triage.js"
       ]
     },
     "modules/portal-review/wave.html": {
@@ -454,9 +454,9 @@
         "assets/js/core/detail.js",
         "assets/js/core/send-tool.js",
         "assets/js/core/daopay-admin-tool.js",
-        "assets/js/pages/portalreview-model.js",
-        "assets/js/pages/portalreview-render.js",
-        "assets/js/pages/portalreview-board.js"
+        "assets/js/pages/portal-review/model.js",
+        "assets/js/pages/portal-review/render.js",
+        "assets/js/pages/portal-review/board.js"
       ]
     },
     "modules/prototypes/daopay/application.html": {
