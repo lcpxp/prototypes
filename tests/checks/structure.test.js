@@ -11,6 +11,13 @@ const { trackedFiles, read } = require("../lib/repo.js");
 
 const LOGIN_PAGE = "index.html";
 
+// Surfaces that belong to the shared runtime. A page module that sets
+// one is extending core behaviour, not claiming a name of its own.
+const SHARED_SURFACES = ["escape", "db", "notice", "onAuthed", "store",
+  "download", "flashLabel", "deepLinkScroll", "links", "tools", "detail",
+  "workItemsData", "copyText", "methodBadge", "statusBadge", "drawer",
+  "lazyDetail", "blocks", "sprints", "registry", "root", "theme"];
+
 // The single agreed external stylesheet: Inter for the PXP replica.
 // Pinned exactly, so a future edit cannot widen it into "any Google font".
 const GOOGLE_FONTS_INTER =
@@ -175,4 +182,79 @@ test("docs/STATE.md is a fixed-size state file, not a log", () => {
     "docs/STATE.md must have no Completed section - finished work lives in commits.");
   const lines = state.split("\n").length;
   assert.ok(lines <= 40, `docs/STATE.md must be 40 lines or fewer, found ${lines}.`);
+});
+
+test("a nested page module attaches surfaces named for its directory", () => {
+  // assets/js/pages/<module>/*.js must attach App.<camelCase(module)>...
+  // so a surface says where it lives. App.refRender used to sit in
+  // reference-render.js and App.portalReviewRender in
+  // portalreview-render.js: three spellings of one name, none derivable
+  // from the others, and an agent reading the wrong file first.
+  //
+  // Files directly under pages/ are single-file pages and are not
+  // constrained - there is no directory for them to disagree with.
+  const camel = (dir) => dir.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  const problems = [];
+  for (const file of trackedFiles()) {
+    const m = /^assets\/js\/pages\/([a-z][a-z0-9-]*)\/[a-z0-9-]+\.js$/.exec(file);
+    if (!m) continue;
+    const expected = camel(m[1]);
+    const attached = [...read(file).matchAll(
+      /^\s*(?:window\.)?App\.([A-Za-z_][A-Za-z0-9_]*)\s*(?:\.[A-Za-z0-9_]+\s*)?=/gm)]
+      .map((x) => x[1]);
+    for (const surface of new Set(attached)) {
+      // A module may read shared core surfaces; only what it ATTACHES
+      // has to carry its name, and only if it is a page-level surface.
+      if (surface === expected) continue;
+      if (surface.startsWith(expected)) continue;
+      if (SHARED_SURFACES.includes(surface)) continue;
+      problems.push(`${file} attaches App.${surface}, which does not start ` +
+        `with App.${expected} - so nothing says it lives in ${m[1]}/`);
+    }
+  }
+  assert.deepEqual(problems, [], "Page modules whose surface disagrees with " +
+    "their directory:\n" + problems.join("\n"));
+});
+
+test("every page directory is actually loaded by a page", () => {
+  // The real risk of a directory is an orphaned one: files nothing
+  // includes, which read as live code and are not. Registry membership
+  // is the wrong test for it - dashboard/ serves the root page, and
+  // daopay/, pci/ and ideas/ serve prototypes under modules/prototypes/,
+  // none of which are registry modules.
+  const pages = trackedFiles().filter((f) => f.endsWith(".html")).map(read).join("\n");
+  const dirs = new Set();
+  for (const file of trackedFiles()) {
+    const m = /^assets\/js\/pages\/([a-z][a-z0-9-]*)\//.exec(file);
+    if (m) dirs.add(m[1]);
+  }
+  const orphaned = [...dirs].filter((d) => !pages.includes(`assets/js/pages/${d}/`));
+  assert.deepEqual(orphaned, [],
+    `Page directories no page loads: ${orphaned.join(", ")}. Either wire them ` +
+    "up or delete them - unreferenced code reads as live and is not.");
+});
+
+test("a registry module with a page directory uses its own key", () => {
+  // Where a module DOES have both, the two must agree: modules/roadmap/
+  // is served by assets/js/pages/roadmap/, not by pages/rm/.
+  const registry = read("assets/js/core/registry.js");
+  const keys = [...registry.matchAll(/key: "([a-z0-9-]+)"/g)].map((m) => m[1]);
+  const mismatched = [];
+  for (const key of keys) {
+    const page = `modules/${key}/index.html`;
+    const dir = `assets/js/pages/${key}/`;
+    if (!trackedFiles().includes(page)) continue;
+    // Only where the directory exists: a page may legitimately load
+    // another module's files (modules/prototypes/ draws the ideas strip
+    // from pages/ideas/), so loading a foreign directory is not a fault.
+    // Owning one and not loading it is.
+    if (!trackedFiles().some((f) => f.startsWith(dir))) continue;
+    if (!read(page).includes(dir)) {
+      mismatched.push(`${key}: ${dir} exists but modules/${key}/index.html ` +
+        "does not load anything from it");
+    }
+  }
+  assert.deepEqual(mismatched, [],
+    "Modules whose page directory does not match their registry key:\n" +
+    mismatched.join("\n"));
 });

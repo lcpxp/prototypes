@@ -262,7 +262,7 @@ document instead of walking the tree or reading whole files.
 | tests/checks/schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the |
 | tests/checks/security.test.js | 116 | tests/checks/security.test.js - Security gates. |
 | tests/checks/size.test.js | 115 | tests/checks/size.test.js - File size budgets. |
-| tests/checks/structure.test.js | 179 | tests/checks/structure.test.js - Page structure gates. |
+| tests/checks/structure.test.js | 261 | tests/checks/structure.test.js - Page structure gates. |
 | tests/checks/style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | tests/checks/surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
 | tests/fixtures/controllers/ComposedController.cs | 22 |  |
@@ -886,9 +886,9 @@ document instead of walking the tree or reading whole files.
 | jwtRole() | tests/checks/security.test.js:27 |
 | budgeted() | tests/checks/size.test.js:28 |
 | linesOf() | tests/checks/size.test.js:36 |
-| htmlPages() | tests/checks/structure.test.js:19 |
-| protectedPages() | tests/checks/structure.test.js:22 |
-| scriptSrcs() | tests/checks/structure.test.js:25 |
+| htmlPages() | tests/checks/structure.test.js:26 |
+| protectedPages() | tests/checks/structure.test.js:29 |
+| scriptSrcs() | tests/checks/structure.test.js:32 |
 | currentSurfaces() | tests/checks/surface.test.js:29 |
 | currentIncludes() | tests/checks/surface.test.js:45 |
 | trackedFiles() | tests/lib/repo.js:13 |
