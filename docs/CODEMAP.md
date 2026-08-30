@@ -334,7 +334,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the database. |
 | security.test.js | 205 | tests/checks/security.test.js - Security gates. |
-| size.test.js | 115 | tests/checks/size.test.js - File size budgets. |
+| size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -403,7 +403,7 @@ Shared fixtures and the budgets the gates read.
 | lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
 | page-weight-budget.json | 103 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
-| size-budget.json | 46 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
+| size-budget.json | 95 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
 | surface-baseline.json | 817 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
@@ -460,7 +460,7 @@ Architecture, security, design, and the operating protocols.
 | COPILOT.md | 207 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
-| HARNESS.md | 161 | Verification harness and working process How every change to this repository is made, verified and recorded. |
+| HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
 | KNOWLEDGE-MODEL.md | 230 | The knowledge model Why the roadmap and platform knowledge are shaped the way they are. |
 | NAVIGATION.md | 64 | Navigation *I want to change X - what do I read?** docs/CODEMAP.md answers *where is it*. |
 | PLATFORM.md | 201 | Platform product-knowledge protocol How the durable, structured answer to "what is Launchpad, what does it do, what is in place today" gets built and kept current. |

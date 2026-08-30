@@ -82,6 +82,17 @@ test("an acknowledgement names a seam, and is not a stale one", () => {
       problems.push(`${file}: an acknowledgement must say where the file splits next`);
       continue;
     }
+    // ...and WHEN. Every one of these was once an "exit plan" that read
+    // as a queued task, so they aged into a backlog nobody worked and
+    // nobody re-judged. A decision names its own trigger: a line number
+    // to revisit at, a release, or never - and "never" has to be said
+    // out loud rather than left implied by silence.
+    const trigger = /\b\d{3}\b|\bnever\b|\brelease\b|\bhard cap\b|\brevisit\b|\bdo not split\b/i;
+    if (!trigger.test(entry.seam)) {
+      problems.push(`${file}: the acknowledgement says where it splits but not ` +
+        "when. Name the line count to revisit at, the release that folds it, " +
+        "or say never - an intention with no trigger is how these became stale.");
+    }
     const rule = budget.byExtension[path.extname(file)];
     if (rule && linesOf(file) <= rule.soft) {
       problems.push(`${file}: back under its soft limit (${linesOf(file)} <= ` +

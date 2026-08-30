@@ -77,10 +77,20 @@ repeat the mistake.
 
 What the numbers mean:
 
-- Over soft: record an `acknowledged` entry naming the seam the file
-  splits on next. It cannot raise a cap, so the only way past hard is
-  to actually split. The gate rejects an entry with no seam, and one
+- Over soft: record an `acknowledged` entry. It is a DECISION not to
+  split, naming both the seam and the TRIGGER that would change it - a
+  line count to revisit at, the release that folds it, or never. It
+  cannot raise a cap, so the only way past hard is to actually split.
+  The gate rejects an entry with no seam, one with no trigger, and one
   whose file has come back under soft.
+- The trigger requirement exists because the first version of these
+  read as queued tasks. They aged into a backlog nobody worked and
+  nobody re-judged, which is how a limit ends up with 41 exceptions.
+- Splitting is not free and the decision has to price it. There is no
+  build step, so shedding part of a stylesheet or a page module adds an
+  HTTP request to every page that loads it. On 2026-08-30 all fifteen
+  over-soft files were re-judged on that basis and none was worth
+  splitting; each sits at least 120 lines under its hard cap.
 - Over hard: split before extending.
 - An `exception` is a DIFFERENT cap with the reason for it, not a
   bigger one. docs/STATE.md is the case that matters, and its cap is

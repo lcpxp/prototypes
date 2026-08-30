@@ -2,12 +2,30 @@
   "comment": "Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones.",
   "why-these-numbers": "Source files sit at 400/600 so one read-file action captures a whole module cheaply. The previous 300/500 produced 41 per-file exceptions across 39 files - a registry of exemptions rather than a constraint, each carrying an exit plan nobody took. Raising the cap to what the repo had actually settled at, and requiring an acknowledgement rather than a bespoke cap, took that to one exception and fifteen acknowledgements.",
   "byExtension": {
-    ".js": { "soft": 400, "hard": 600 },
-    ".ts": { "soft": 400, "hard": 600 },
-    ".css": { "soft": 400, "hard": 600 },
-    ".html": { "soft": 300, "hard": 450 },
-    ".sql": { "soft": 400, "hard": 600 },
-    ".md": { "soft": 400, "hard": 600 }
+    ".js": {
+      "soft": 400,
+      "hard": 600
+    },
+    ".ts": {
+      "soft": 400,
+      "hard": 600
+    },
+    ".css": {
+      "soft": 400,
+      "hard": 600
+    },
+    ".html": {
+      "soft": 300,
+      "hard": 450
+    },
+    ".sql": {
+      "soft": 400,
+      "hard": 600
+    },
+    ".md": {
+      "soft": 400,
+      "hard": 600
+    }
   },
   "generated": [
     "docs/CODEMAP.md",
@@ -26,20 +44,51 @@
     }
   },
   "acknowledged": {
-    "docs/CHANGELOG.md": { "seam": "Not a split. When the owner cuts a release, Unreleased becomes a dated heading and the file resets to a short Unreleased section. That is the event that shrinks it. Splitting would put 'what changed' in two places." },
-    "supabase/seed.sql": { "seam": "Sample data, not logic; length tracks the number of seeded rows. Split per domain into a seed/ directory, one file per schema domain." },
-    "supabase/policies.sql": { "seam": "None, deliberately. This is the security boundary and every policy must be readable in one pass; splitting makes 'which tables can be written, and by whom' a multi-file question. The reasoning now sits in the file's own header." },
-    "assets/css/components.css": { "seam": "Badge and table styles move to components-data.css, linked wherever components.css is." },
-    "tests/unit/roadmap/views.test.js": { "seam": "The placement-ordering cases (bug sink, priority ties, parked theme clustering) split next; they need only the shared fixture." },
-    "docs/plan/80-LOAD-SPEED.md": { "seam": "Closed workstream. Fold the two landed sections into a short outcome on the next release, keeping the measurements table and the regression note." },
-    "assets/js/pages/roadmap/roadmap.js": { "seam": "The page-load fetch and the phase/link enrichment block in onAuthed move to roadmap-fetch.js." },
-    "supabase/schema/30_work.sql": { "seam": "work_documents and work_notes are intake concerns, not roadmap ones, and are the next file." },
-    "assets/css/tokens.css": { "seam": "Design tokens plus dark-theme overrides; inherently long and not logic. Split the dark block into tokens-dark.css if it grows." },
-    "assets/css/roadmap-views.css": { "seam": "The Timeline block is self-contained and goes first, into roadmap-views-timeline.css. Do that before adding a seventh view." },
-    "assets/js/pages/roadmap/detail.js": { "seam": "The details and notes parsers split next; the value helpers already left for roadmap-detail-values.js." },
-    "docs/ROADMAP-INTAKE.md": { "seam": "None, deliberately. It is the ONE home for the confidence bands, and the one-home gate fails if they are restated elsewhere. The last attempt to split this file is what put them in three places." },
-    "assets/js/pages/roadmap/views.js": { "seam": "The context and placement helpers; the four layout families are already split out." },
-    "docs/plan/20-API-REFERENCE.md": { "seam": "Closed workstream. Fold the closed sections into a short outcome on the next release, keeping the corrections table." },
-    "assets/css/roadmap.css": { "seam": "The print @media block moves to roadmap-print.css." }
-  }
+    "docs/CHANGELOG.md": {
+      "seam": "Do not split: it would put 'what changed' in two places. It shrinks by RELEASE, not by split - Unreleased becomes a dated heading and the file resets. Read newest-first, so length costs a reader nothing."
+    },
+    "supabase/seed.sql": {
+      "seam": "Do not split while it is one readable pass of sample rows. Length tracks the number of rows, not complexity. If it nears the hard cap, split per domain into a seed/ directory."
+    },
+    "supabase/policies.sql": {
+      "seam": "Never split. This is the security boundary and 'which tables can be written, and by whom' must stay a single-pass question. It grows with every new table, so it is the one file here likely to reach the cap - when it does, raise the cap and say why, do not fragment the answer."
+    },
+    "assets/css/components.css": {
+      "seam": "Not worth splitting: it loads on all 24 pages, so shedding badge and table styles into components-data.css would add a request to every one of them to save 78 lines. Revisit only if it passes 550."
+    },
+    "tests/unit/roadmap/views.test.js": {
+      "seam": "Not worth splitting: the placement-ordering cases share one fixture with the rest, so a split duplicates the fixture. No runtime cost either way, so the only gain would be cosmetic. Revisit if the fixture itself is extracted."
+    },
+    "docs/plan/80-LOAD-SPEED.md": {
+      "seam": "Closed workstream record. Most of the length is the account of where the plan was wrong, which is the part a later wave needs. Folds into a short outcome at the next release, not before."
+    },
+    "assets/js/pages/roadmap/roadmap.js": {
+      "seam": "Not yet. The roadmap page already loads twelve modules and is the heaviest page in the site; a roadmap-fetch.js would make it thirteen. The page-load fetch and the phase/link enrichment in onAuthed are the seam when it passes 550."
+    },
+    "supabase/schema/30_work.sql": {
+      "seam": "The work-items domain in one file, most of its length being the rationale beside each constraint. work_documents and work_notes are the seam - they are intake concerns, not roadmap ones - when it passes 550."
+    },
+    "assets/css/tokens.css": {
+      "seam": "Do not split. Tokens plus the dark-theme overrides: inherently long, no logic, and every value in the design system resolves here. A tokens-dark.css would add a request to all 24 pages for no reading gain."
+    },
+    "assets/css/roadmap-views.css": {
+      "seam": "Not yet, and the closest of the stylesheets to a real seam: six board layouts share one coordinate model, so splitting means duplicating that model or inventing a shared file that is most of it. Revisit when a seventh view is added, or at 550 - whichever comes first."
+    },
+    "assets/js/pages/roadmap/detail.js": {
+      "seam": "Not yet. The value helpers already left for detail-values.js, which is what unfroze this file. The details and notes parsers are the next seam, at 550."
+    },
+    "docs/ROADMAP-INTAKE.md": {
+      "seam": "Never split. It is the ONE home for the confidence bands, and one-home.test.js fails if they are restated elsewhere. The last attempt to split this file is what put them in three places."
+    },
+    "assets/js/pages/roadmap/views.js": {
+      "seam": "Not yet. The four layout families are already separate files; what is left is the shared placement model they all read. Splitting it further means another request on the heaviest page. The context and placement helpers are the seam at 550."
+    },
+    "docs/plan/20-API-REFERENCE.md": {
+      "seam": "Closed workstream record. Folds into a short outcome at the next release, keeping the corrections table."
+    },
+    "assets/css/roadmap.css": {
+      "seam": "Not yet. The print @media block is self-contained and would move cleanly, but it would cost the roadmap page a request. At 550, take it."
+    }
+  },
+  "why-acknowledgements-are-decisions": "An acknowledgement is a DECISION not to split, with the condition that would change it - not a queued task. Every one below was re-judged on 2026-08-30 against a question the earlier exit plans did not ask: what does the split COST? Splitting a stylesheet or a page module adds an HTTP request to every page that loads it, and this repo has no build step to hide that. The same session had just removed 21 requests by merging two nav tools; reintroducing them to shorten a file that sits 120 lines under its hard cap would be a bad trade made for tidiness. So the answer for all fifteen is currently 'not yet', each with the trigger that would change it. Reaching the hard cap is always such a trigger."
 }
