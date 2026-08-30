@@ -38,7 +38,7 @@
       "assets/js/core/ui.js"
     ],
     "daopayAdminTool": [
-      "assets/js/core/daopay-admin-tool.js"
+      "assets/js/core/console-tools.js"
     ],
     "dashboardCards": [
       "assets/js/pages/dashboard/cards.js"
@@ -167,7 +167,7 @@
       "assets/js/core/search.js"
     ],
     "sendTool": [
-      "assets/js/core/send-tool.js"
+      "assets/js/core/console-tools.js"
     ],
     "session": [
       "assets/js/core/guard.js"
@@ -215,8 +215,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/dashboard/strip.js",
         "assets/js/pages/dashboard/cards.js",
         "assets/js/pages/dashboard/dashboard.js"
@@ -257,8 +256,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/app-review/model.js",
         "assets/js/pages/app-review/findings.js",
         "assets/js/pages/app-review/waves.js"
@@ -285,8 +283,7 @@
         "assets/js/core/detail.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/core/drawer.js",
         "assets/js/pages/app-review/model.js",
         "assets/js/pages/app-review/findings.js",
@@ -315,8 +312,7 @@
         "assets/js/core/detail.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/shared/lazy-detail.js",
         "assets/js/pages/shared/work-items-data.js",
         "assets/js/pages/backlog/export.js",
@@ -342,8 +338,7 @@
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
         "assets/js/core/detail.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/integrations.js"
       ]
     },
@@ -369,8 +364,7 @@
         "assets/js/core/blocks.js",
         "assets/js/core/links.js",
         "assets/js/core/detail.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/platform/knowledge.js",
         "assets/js/pages/platform/platform.js"
       ]
@@ -396,8 +390,7 @@
         "assets/js/core/tools.js",
         "assets/js/core/blocks.js",
         "assets/js/core/detail.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/portal-review/model.js",
         "assets/js/pages/portal-review/render.js",
         "assets/js/pages/portal-review/waves.js"
@@ -424,8 +417,7 @@
         "assets/js/core/tools.js",
         "assets/js/core/blocks.js",
         "assets/js/core/detail.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/portal-review/model.js",
         "assets/js/pages/portal-review/render.js",
         "assets/js/pages/portal-review/triage.js"
@@ -452,8 +444,7 @@
         "assets/js/core/tools.js",
         "assets/js/core/blocks.js",
         "assets/js/core/detail.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/portal-review/model.js",
         "assets/js/pages/portal-review/render.js",
         "assets/js/pages/portal-review/board.js"
@@ -481,8 +472,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/daopay/data.js",
         "assets/js/pages/daopay/sim.js",
         "assets/js/pages/daopay/shell.js",
@@ -512,8 +502,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/daopay/data.js",
         "assets/js/pages/daopay/sim.js",
         "assets/js/pages/daopay/shell.js",
@@ -539,8 +528,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/shared/proto-svg.js"
       ]
     },
@@ -562,8 +550,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js"
+        "assets/js/core/console-tools.js"
       ]
     },
     "modules/prototypes/ideas.html": {
@@ -585,8 +572,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/core/blocks.js",
         "assets/js/core/detail.js",
         "assets/js/pages/ideas/render.js",
@@ -612,8 +598,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/ideas/render.js",
         "assets/js/pages/gallery.js"
       ]
@@ -638,8 +623,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js"
+        "assets/js/core/console-tools.js"
       ]
     },
     "modules/prototypes/pci/demo.html": {
@@ -662,8 +646,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/pci/ixopay.js",
         "assets/js/pages/pci/interstitial.js",
         "assets/js/pages/pci/portal.js"
@@ -688,8 +671,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/shared/proto-svg.js"
       ]
     },
@@ -713,8 +695,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/pci/ixopay.js",
         "assets/js/pages/pci/reports.js"
       ]
@@ -737,8 +718,7 @@
         "assets/js/core/ui.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js"
+        "assets/js/core/console-tools.js"
       ]
     },
     "modules/reference/index.html": {
@@ -760,8 +740,7 @@
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
         "assets/js/core/blocks.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/reference/render.js",
         "assets/js/pages/reference/topics.js",
         "assets/js/pages/reference/reference.js"
@@ -792,8 +771,7 @@
         "assets/js/core/tools.js",
         "assets/js/core/links.js",
         "assets/js/core/detail.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/core/sprints.js",
         "assets/js/pages/roadmap/views.js",
         "assets/js/pages/roadmap/views-timeline.js",
@@ -830,8 +808,7 @@
         "assets/js/core/detail.js",
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
-        "assets/js/core/send-tool.js",
-        "assets/js/core/daopay-admin-tool.js",
+        "assets/js/core/console-tools.js",
         "assets/js/pages/users.js"
       ]
     }

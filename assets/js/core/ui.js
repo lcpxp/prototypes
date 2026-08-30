@@ -255,11 +255,11 @@
     // that returns nothing - shows no button at all.
     if (App.tools) html += '<span class="nav-tools" id="nav-tools"></span>';
 
-    // Send tool: an empty slot filled by send-tool.js. Same contract as
+    // Send tool: an empty slot filled by console-tools.js. Same contract as
     // the tools slot - a page without the script shows no button.
     if (App.sendTool) html += '<span class="nav-send" id="nav-send"></span>';
 
-    // DaoPay admin tool: an empty slot filled by daopay-admin-tool.js.
+    // DaoPay admin tool: an empty slot filled by console-tools.js.
     // Same contract as the slots above - a page without the script shows
     // no button.
     if (App.daopayAdminTool) {

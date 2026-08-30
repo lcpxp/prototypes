@@ -25,7 +25,7 @@ Everything one file can call in another. A surface in
 | `App.canAccess` | assets/js/core/guard.js:88 |
 | `App.copyText` | assets/js/core/ui.js:51 |
 | `App.csvFromRows` | assets/js/core/ui.js:95 |
-| `App.daopayAdminTool` | assets/js/core/daopay-admin-tool.js:85<br>assets/js/core/daopay-admin-tool.js:166 |
+| `App.daopayAdminTool` | assets/js/core/console-tools.js:289<br>assets/js/core/console-tools.js:290 |
 | `App.dashboardCards` | assets/js/pages/dashboard/cards.js:25 (+9 more) |
 | `App.dashboardStrip` | assets/js/pages/dashboard/strip.js:53 (+4 more) |
 | `App.db` | assets/js/core/supabase.js:31 (+2 more) |
@@ -66,7 +66,7 @@ Everything one file can call in another. A surface in
 | `App.roadmapViewsShared` | assets/js/pages/roadmap/views.js:385 |
 | `App.root` | assets/js/core/guard.js:29 (+7 more) |
 | `App.search` | assets/js/core/search.js:347 |
-| `App.sendTool` | assets/js/core/send-tool.js:98<br>assets/js/core/send-tool.js:179 |
+| `App.sendTool` | assets/js/core/console-tools.js:209<br>assets/js/core/console-tools.js:210 |
 | `App.session` | assets/js/core/guard.js:39 |
 | `App.sprints` | assets/js/core/sprints.js:103 |
 | `App.statusBadge` | assets/js/core/ui.js:35 |
@@ -87,15 +87,14 @@ Shared runtime. Loaded on every protected page in the order set by assets/js/cor
 | auth.js | 54 | auth.js - Login page logic for index.html. |
 | blocks.js | 139 | blocks.js - The typed-block renderer, in one place. |
 | config.example.js | 18 | config.example.js - OPTIONAL local override. |
-| daopay-admin-tool.js | 182 | daopay-admin-tool.js - A nav icon that opens two browser-console snippets for the DaoPay reviewer role: one that creates a portal user holding the role, and one that lists who currently holds it. |
+| console-tools.js | 311 | console-tools.js - The nav's console-snippet tools: Acquirer send (App.sendTool) and DaoPay admin (App.daopayAdminTool). |
 | detail.js | 142 | detail.js - The completeness contract for rendering a row. |
 | drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and enforces per-module access. |
-| includes.json | 115 | The core script include order, in one place. Every protected page loads these in this sequence; tests/checks/structure.test.js enforces it, and CLAUDE.md and docs/ARCHITECTURE.md cite this file rather than restating it. It was stated in three places before, and all three were stale: none of them mentioned links.js, detail.js, blocks.js, drawer.js, sprints.js or send-tool.js, and the gate checked five of the fourteen. |
+| includes.json | 111 | The core script include order, in one place. Every protected page loads these in this sequence; tests/checks/structure.test.js enforces it, and CLAUDE.md and docs/ARCHITECTURE.md cite this file rather than restating it. It was stated in three places before, and all three were stale: none of them mentioned links.js, detail.js, blocks.js, drawer.js, sprints.js or send-tool.js, and the gate checked five of the fourteen. |
 | links.js | 144 | links.js - The typed knowledge graph, resolved for rendering. |
 | registry.js | 319 | registry.js - Single source of truth for the hub's modules, the Supabase tables they read, and role names. |
 | search.js | 356 | search.js - Global header search (App.search). |
-| send-tool.js | 195 | send-tool.js - A nav icon that opens the acquirer send snippet: a browser-console script that fires an application's document push and onboarding record from the partner portal, plus a collapsed handover prompt for reporting the result back. |
 | sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). |
 | supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | theme.js | 84 | theme.js - Light/dark theme control. |
@@ -196,30 +195,30 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 
 | File | Lines | Purpose |
 |---|---:|---|
-| app-review/index.html | 70 | Application review - LPio / LaunchPad IO |
-| app-review/wave.html | 95 | Wave - Application review - LPio / LaunchPad IO |
-| backlog/index.html | 94 | Backlog - LPio / LaunchPad IO |
-| integrations/index.html | 59 | Integrations - LPio / LaunchPad IO |
-| platform/index.html | 59 | Platform - LPio / LaunchPad IO |
-| portal-review/index.html | 80 | Portal review - LPio / LaunchPad IO |
-| portal-review/triage.html | 53 | Triage - Portal review - LPio / LaunchPad IO |
-| portal-review/wave.html | 62 | Wave - Portal review - LPio / LaunchPad IO |
-| prototypes/daopay/application.html | 47 | Application summary - PXP replica - LPio |
-| prototypes/daopay/applications.html | 46 | Applications - PXP replica - LPio |
+| app-review/index.html | 69 | Application review - LPio / LaunchPad IO |
+| app-review/wave.html | 94 | Wave - Application review - LPio / LaunchPad IO |
+| backlog/index.html | 93 | Backlog - LPio / LaunchPad IO |
+| integrations/index.html | 58 | Integrations - LPio / LaunchPad IO |
+| platform/index.html | 58 | Platform - LPio / LaunchPad IO |
+| portal-review/index.html | 79 | Portal review - LPio / LaunchPad IO |
+| portal-review/triage.html | 52 | Triage - Portal review - LPio / LaunchPad IO |
+| portal-review/wave.html | 61 | Wave - Portal review - LPio / LaunchPad IO |
+| prototypes/daopay/application.html | 46 | Application summary - PXP replica - LPio |
+| prototypes/daopay/applications.html | 45 | Applications - PXP replica - LPio |
 | prototypes/daopay/daopay-flow.svg | 171 |  |
-| prototypes/daopay/index.html | 251 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
-| prototypes/gdpr/index.html | 45 | GDPR compliance prototype - LPio / LaunchPad IO |
-| prototypes/ideas.html | 55 | Prototype ideas - LPio / LaunchPad IO |
-| prototypes/index.html | 60 | Prototypes - LPio / LaunchPad IO |
-| prototypes/pci/dashboard.html | 63 | Dashboard - PXP replica - LPio |
-| prototypes/pci/demo.html | 83 | Merchant Prescreen and Quote - PXP replica - LPio |
-| prototypes/pci/index.html | 152 | PCI compliance prototype - LPio / LaunchPad IO |
+| prototypes/daopay/index.html | 250 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
+| prototypes/gdpr/index.html | 44 | GDPR compliance prototype - LPio / LaunchPad IO |
+| prototypes/ideas.html | 54 | Prototype ideas - LPio / LaunchPad IO |
+| prototypes/index.html | 59 | Prototypes - LPio / LaunchPad IO |
+| prototypes/pci/dashboard.html | 62 | Dashboard - PXP replica - LPio |
+| prototypes/pci/demo.html | 82 | Merchant Prescreen and Quote - PXP replica - LPio |
+| prototypes/pci/index.html | 151 | PCI compliance prototype - LPio / LaunchPad IO |
 | prototypes/pci/pci-workflow.svg | 62 |  |
-| prototypes/pci/reports.html | 73 | Compliance reporting - PXP replica - LPio |
-| prototypes/website-screening/index.html | 46 | Website screening prototype - LPio / LaunchPad IO |
-| reference/index.html | 72 | API reference - LPio / LaunchPad IO |
-| roadmap/index.html | 135 | Roadmap - LPio / LaunchPad IO |
-| users/index.html | 52 | Users - LPio / LaunchPad IO |
+| prototypes/pci/reports.html | 72 | Compliance reporting - PXP replica - LPio |
+| prototypes/website-screening/index.html | 45 | Website screening prototype - LPio / LaunchPad IO |
+| reference/index.html | 71 | API reference - LPio / LaunchPad IO |
+| roadmap/index.html | 134 | Roadmap - LPio / LaunchPad IO |
+| users/index.html | 51 | Users - LPio / LaunchPad IO |
 
 ### supabase/migrations/
 
@@ -405,7 +404,7 @@ Shared fixtures and the budgets the gates read.
 | page-weight-budget.json | 103 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
 | size-budget.json | 46 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
-| surface-baseline.json | 840 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
+| surface-baseline.json | 817 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
 
@@ -510,7 +509,7 @@ Repository root.
 | .gitmessage | 12 | <type>: <imperative summary, max 60 chars> |
 | CLAUDE.md | 265 |  |
 | README.md | 29 | LPio A login-gated project hub: dashboard, API reference material and prototypes, organised as modules around a central dashboard. |
-| dashboard.html | 122 | Dashboard - LPio / LaunchPad IO |
+| dashboard.html | 121 | Dashboard - LPio / LaunchPad IO |
 | index.html | 68 | Sign in - LPio / LaunchPad IO |
 | package.json | 17 | LPio / LaunchPad IO - static shell of a login-gated project hub. Content lives in Supabase. |
 

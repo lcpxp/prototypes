@@ -51,12 +51,8 @@
       "purpose": "App.tools: nav links out to external tools, built from portal_links rows."
     },
     {
-      "file": "assets/js/core/send-tool.js",
-      "purpose": "App.sendTool: the nav's acquirer-send console snippet."
-    },
-    {
-      "file": "assets/js/core/daopay-admin-tool.js",
-      "purpose": "App.daopayAdminTool: the nav's DaoPay reviewer-role console snippet."
+      "file": "assets/js/core/console-tools.js",
+      "purpose": "App.sendTool and App.daopayAdminTool: the nav's two console-snippet tools. One file because they were built the same way twice."
     }
   ],
   "optional": [
