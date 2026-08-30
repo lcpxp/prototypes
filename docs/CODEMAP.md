@@ -436,7 +436,7 @@ Workstream records. Each keeps the account of where its plan was wrong, which is
 | 60-PORTAL-REVIEW.md | 339 | Portal review, as a feature *BUILT 2026-08-13.** Schema, area map, pages, protocol and command all landed. |
 | 70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans *BUILT 2026-08-13.** Schema, board, gallery strip, protocol and command all landed. |
 | 80-LOAD-SPEED.md | 451 | 80 - Stop loading item detail text on first paint The last workstream in the programme, and deliberately the narrowest. |
-| 90-REFACTOR.md | 273 | 90 - Refactor, optimise and re-navigate The ninth workstream, opened 2026-08-27. |
+| 90-REFACTOR.md | 313 | 90 - Refactor, optimise and re-navigate The ninth workstream, opened 2026-08-27. |
 
 ### docs/sessions-archive/
 
@@ -473,7 +473,7 @@ Architecture, security, design, and the operating protocols.
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINTS.md | 109 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 40 | Current state Updated: 2026-08-30 (refactor workstream closed; sense check logged below) # In progress Nothing. |
+| STATE.md | 36 | Current state Updated: 2026-08-30 (refactor workstream closed, sense-check items done) # In progress Nothing. |
 | VALUE-CAPTURE.md | 71 | Value capture session |
 | WORKFLOW.md | 132 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 

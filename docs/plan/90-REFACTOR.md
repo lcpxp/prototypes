@@ -222,6 +222,36 @@ token and an icon), `links.test.js` (internal references resolve), plus
 the naming convention, the include manifest and the per-page asset
 weight. Every one was made to fail on purpose before being trusted.
 
+## After the sense check
+
+A pass over the finished workstream, asking what it had NOT achieved,
+found three things worth doing and did them.
+
+**Two SQL rules were being kept by hand.** Supabase's linter flagged
+`roadmap_move_workstream` and `work_item_embed_text` for a mutable
+search_path; twenty-one other functions pin it, and the July session had
+remediated this exact class of finding once already. Chasing it found
+worse: policies.sql *claimed* the three embed functions were "executable
+by NOBODY" and had no REVOKE behind the paragraph, so a rebuild would
+have published all three on PostgREST. A comment is not a grant. Both
+are gated now.
+
+**The refactor had made every page heavier** - about 2.7KB, against a
+brief that asked for speed. The two nav console tools were built the
+same way twice, with byte-identical copy helpers, and both loaded on all
+23 protected pages. Merging them gave back 2,602 bytes and one request
+per page:
+
+| | before the workstream | after | after the merge |
+|---|---:|---:|---:|
+| bytes across 24 pages | 3,894,661 | +65,869 | **+6,023** |
+| local requests | 468 | 468 | **447** |
+
+**Fifteen acknowledgements read as queued tasks.** Re-judged against a
+question the exit plans never asked - what does a split cost, with no
+build step? - none was worth taking. Each is now a decision with a
+trigger, and the gate rejects one without.
+
 ## Where this plan was wrong
 
 Filled in as it happens; the part a later wave needs.
@@ -270,3 +300,13 @@ Filled in as it happens; the part a later wave needs.
   CLAUDE.md legitimately names registry.js and supabase.js 150 lines
   apart about different things, and HARNESS.md quoted a stale number
   inside the sentence warning about stale numbers.
+- The sense check was worth more than any single phase. Three of the
+  plan's own findings were wrong in ways that would have caused damage,
+  and the biggest real win - 21 requests and the whole weight cost -
+  was not in the plan at all. The lesson is not "plan better": it is
+  that finishing is the wrong moment to stop looking.
+- Two generated artefacts went stale the moment a migration landed,
+  because the staleness gate compares against the newest migration
+  whatever it touched. Re-deriving them surfaced 33 stale embeddings
+  and a knowledge backlog the owner had quietly cleared. A gate firing
+  for a slightly wrong reason still told me something true.
