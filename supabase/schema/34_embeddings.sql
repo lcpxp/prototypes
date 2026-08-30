@@ -70,6 +70,7 @@ create or replace function public.work_item_embed_text(
 returns text
 language sql
 immutable
+set search_path = public
 as $$
   select left(btrim(concat_ws(E'\n', p_title, p_summary, p_details, p_resolution)), 2000);
 $$;

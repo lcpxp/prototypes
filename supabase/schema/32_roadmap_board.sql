@@ -70,6 +70,7 @@ create or replace function public.roadmap_move_workstream(
   p_target_horizon text)
 returns integer
 language plpgsql
+set search_path = public
 as $$
 declare
   bands text[] := array['now', 'next', 'later', 'someday'];

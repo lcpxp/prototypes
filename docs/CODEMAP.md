@@ -281,6 +281,8 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20260816115048_embed_text_window.sql | 21 | gte-small has a 512-token context and truncates past it, so sending a 9KB write-up buys nothing except edge-worker memory - and a batch of sixteen untrimmed items failed outright with WORKER_RESOURCE_LIMIT (HTTP 546). |
 | 20260816115506_roadmap_find_semantic_channel.sql | 163 | ---------------------------------------------------------------- The semantic channel, blended into roadmap_find. |
 | 20260816115826_embed_batch_of_four.sql | 104 | Two corrections found while writing the schema file, applied so the repo and the database say the same thing. |
+| 20260830214715_pin_search_path_on_remaining_functions.sql | 77 | ---------------------------------------------------------------- pin_search_path_on_remaining_functions Sixteen of the eighteen functions in supabase/schema/ already set search_path = public, as do all three in policies.sql. |
+| 20260830215036_revoke_execute_on_embed_functions.sql | 24 | ------------------------------------------------------------------ |
 
 ### supabase/schema/
 
@@ -293,9 +295,9 @@ Schema, one file per domain, run in lexical order.
 | 20_portal.sql | 196 | ---------------------------------------------------------------- 20_portal.sql - Portal content domains: the integrations overview, the prototype gallery registry and the nav's outbound tool links. |
 | 30_work.sql | 449 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
 | 31_roadmap_search.sql | 289 | Roadmap search: the contextualisation read surface. |
-| 32_roadmap_board.sql | 157 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
+| 32_roadmap_board.sql | 158 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
 | 33_links.sql | 345 | ---------------------------------------------------------------- 33_links.sql - The knowledge graph: typed, dated, owner-confirmed links between anything the system knows. |
-| 34_embeddings.sql | 239 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
+| 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
 | 40_platform.sql | 78 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
 | 50_review.sql | 317 | ---------------------------------------------------------------- 50_review.sql - Application review: waves of merchant application triage against LaunchPad records (see docs/APP-REVIEW.md). |
@@ -311,9 +313,9 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
 | knowledge-coverage.json | 83 |  |
-| policies.sql | 505 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
+| policies.sql | 513 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1311 |  |
+| schema-snapshot.json | 1319 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -332,7 +334,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | render-coverage.test.js | 351 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the database. |
-| security.test.js | 116 | tests/checks/security.test.js - Security gates. |
+| security.test.js | 205 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 115 | tests/checks/size.test.js - File size budgets. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
@@ -415,7 +417,7 @@ Generators: the codemap, the schema snapshot, coverage, knowledge, the audit.
 | extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and emits the routes it actually calls: one entry per this.http.<verb> call site, with the URL expression resolved to a route key. |
 | extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits its route inventory as JSON: one entry per [Http*] action attribute, composed onto its controller [Route], with the version resolved. |
 | gen-codemap.js | 208 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
-| gen-coverage.js | 346 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, the repo's committed account of how far the API reference matches the code it documents. |
+| gen-coverage.js | 387 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, the repo's committed account of how far the API reference matches the code it documents. |
 | gen-knowledge.js | 164 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, the repo's committed account of whether what the system was told is still anchored, sourced and reachable. |
 | gen-snapshot.js | 148 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
 | gen-surface.js | 84 | scripts/gen-surface.js - Regenerates tests/surface-baseline.json. |
@@ -472,7 +474,7 @@ Architecture, security, design, and the operating protocols.
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINTS.md | 109 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 35 | Current state Updated: 2026-08-29 (refactor workstream closed) # In progress Nothing. |
+| STATE.md | 40 | Current state Updated: 2026-08-30 (refactor workstream closed; sense check logged below) # In progress Nothing. |
 | VALUE-CAPTURE.md | 71 | Value capture session |
 | WORKFLOW.md | 132 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 

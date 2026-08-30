@@ -282,6 +282,14 @@
     {
       "name": "embed_batch_of_four",
       "version": "20260816115826"
+    },
+    {
+      "name": "pin_search_path_on_remaining_functions",
+      "version": "20260830214715"
+    },
+    {
+      "name": "revoke_execute_on_embed_functions",
+      "version": "20260830215036"
     }
   ],
   "policies": [

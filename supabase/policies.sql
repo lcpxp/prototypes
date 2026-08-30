@@ -457,6 +457,14 @@ grant select on public.work_items_board to authenticated;
 -- second copy of it.
 -- ---------------------------------------------------------------
 
+-- The revokes themselves. Until 2026-08-30 the paragraph above was the
+-- only record of them: the live database had them revoked, and this
+-- file merely said so, which meant a rebuild from the repo would have
+-- published all three on PostgREST. A comment is not a grant.
+revoke execute on function public.embed_texts(text[], integer) from public, anon, authenticated;
+revoke execute on function public.roadmap_embed_refresh(integer, integer) from public, anon, authenticated;
+revoke execute on function public.roadmap_embed_query(text) from public, anon, authenticated;
+
 drop policy if exists "work_item_embeddings: members read" on public.work_item_embeddings;
 create policy "work_item_embeddings: members read"
   on public.work_item_embeddings for select

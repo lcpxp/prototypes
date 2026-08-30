@@ -113,3 +113,92 @@ test("seed data uses only generic example addresses", () => {
   assert.deepEqual(emails, [],
     "seed.sql contains non-example email domains: " + emails.join(", "));
 });
+
+// ------------------------------------------------------------------
+// Every function pins its search_path.
+//
+// A function with a role-mutable search_path can be made to resolve an
+// unqualified name against a schema the caller controls. Supabase's
+// linter reports it as function_search_path_mutable.
+//
+// This was remediated once by hand on 2026-07-13 and regressed twice
+// afterwards - roadmap_move_workstream and work_item_embed_text both
+// shipped without it - because the convention was carried by habit and
+// nothing checked. Twenty-one functions follow it; the two that did not
+// were found by reading the live advisors, not the repo.
+// ------------------------------------------------------------------
+
+test("every SQL function sets search_path", () => {
+  const sqlFiles = trackedFiles().filter((f) =>
+    (f.startsWith("supabase/schema/") || f === "supabase/policies.sql") &&
+    f.endsWith(".sql"));
+  const missing = [];
+  let checked = 0;
+  for (const file of sqlFiles) {
+    const src = read(file);
+    // Each definition runs from `create ... function` to its body marker.
+    const re = /create (?:or replace )?function\s+public\.(\w+)\s*\(([\s\S]*?)\)\s*\n?returns[\s\S]*?\bas\s+\$\$/g;
+    let m;
+    while ((m = re.exec(src)) !== null) {
+      checked += 1;
+      const head = m[0];
+      if (!/set\s+search_path\s*=/.test(head)) {
+        missing.push(`${file}: public.${m[1]} does not set search_path`);
+      }
+    }
+  }
+  assert.ok(checked >= 20,
+    `Expected to find the project's functions; matched only ${checked}. ` +
+    "The definition pattern may have changed - fix this check rather than " +
+    "letting it pass by matching nothing.");
+  assert.deepEqual(missing, [],
+    "Functions with a mutable search_path:\n" + missing.join("\n") +
+    "\nAdd `set search_path = public` above the `as $$` body, and apply it " +
+    "as a migration - the live database has to change too.");
+});
+
+test("every SECURITY DEFINER function is revoked, or is an accepted helper", () => {
+  // SECURITY DEFINER runs as the function's owner, bypassing RLS, and
+  // Postgres grants EXECUTE to PUBLIC by default - so a new one lands on
+  // PostgREST at /rest/v1/rpc/<name> unless it is revoked.
+  //
+  // Three are deliberately callable: the RLS policies call them, and each
+  // returns only the CALLER's own access (own_role() is literally
+  // `where id = auth.uid()`). Supabase's advisor flags those three, and
+  // that warning is expected and accepted.
+  //
+  // Everything else must be revoked IN THIS REPO. On 2026-08-30 the three
+  // embed functions were revoked in the live database and merely
+  // described as revoked here, with no REVOKE behind the paragraph - so a
+  // rebuild would have published all three. A comment is not a grant.
+  const CALLABLE = ["has_module_access", "is_admin", "own_role"];
+  const sqlFiles = trackedFiles().filter((f) =>
+    (f.startsWith("supabase/schema/") || f === "supabase/policies.sql") && f.endsWith(".sql"));
+  const all = sqlFiles.map(read).join("\n");
+  const definers = [];
+  for (const file of sqlFiles) {
+    const re = /create (?:or replace )?function\s+public\.(\w+)[\s\S]*?\bas\s+\$\$/g;
+    let m;
+    while ((m = re.exec(read(file))) !== null) {
+      if (/security\s+definer/i.test(m[0])) definers.push(m[1]);
+    }
+  }
+  assert.ok(definers.length >= 5,
+    `Matched only ${definers.length} SECURITY DEFINER functions; the ` +
+    "definition pattern may have changed. Fix this check rather than " +
+    "letting it pass by matching nothing.");
+  const exposed = [];
+  for (const fn of definers) {
+    if (CALLABLE.includes(fn)) continue;
+    const revoked = new RegExp(
+      `revoke execute on function public\\.${fn}\\s*\\([^)]*\\)[^;]*from[^;]*authenticated`, "i");
+    if (!revoked.test(all)) {
+      exposed.push(`public.${fn} is SECURITY DEFINER and never revoked from authenticated`);
+    }
+  }
+  assert.deepEqual(exposed, [],
+    "SECURITY DEFINER functions reachable over PostgREST:\n" + exposed.join("\n") +
+    "\nAdd `revoke execute on function public.<name>(<args>) from public, anon, " +
+    "authenticated;` to policies.sql and apply it as a migration - or, if it " +
+    `must be callable, add it to CALLABLE here with the reason.`);
+});

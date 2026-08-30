@@ -311,10 +311,51 @@ if (require.main === module) {
     console.log(SQL);
     process.exit(0);
   }
+  // --restamp: re-verify the DATABASE half against a fresh query and, if
+  // it is unchanged, move generated_on forward. It exists because the
+  // staleness gate compares the artefact's date against the newest
+  // migration whatever that migration touched, and a migration about
+  // function security cannot change an endpoint count. Without this the
+  // only ways out were to hand-edit a generated file or to weaken the
+  // gate. It refuses if anything the database drives has actually moved,
+  // so it can never launder real drift into a fresh date. The source and
+  // consumer halves are content digests of a checkout this repo does not
+  // contain: an unchanged digest is its own claim, and --restamp does not
+  // touch them.
+  if (args.includes("--restamp")) {
+    const payload = JSON.parse(fs.readFileSync(0, "utf8"));
+    const fresh = payload.specs || payload;
+    const current = JSON.parse(fs.readFileSync(OUT, "utf8"));
+    const drift = [];
+    for (const row of fresh) {
+      const held = current.specs[row.title];
+      if (!held) { drift.push(`${row.title}: in the database, absent from the artefact`); continue; }
+      for (const key of ["version", "status", "family", "endpoints", "tags", "topics"]) {
+        if (held[key] !== row[key]) {
+          drift.push(`${row.title}.${key}: artefact ${held[key]}, database ${row[key]}`);
+        }
+      }
+    }
+    for (const title of Object.keys(current.specs)) {
+      if (!fresh.some((r) => r.title === title)) drift.push(`${title}: in the artefact, absent from the database`);
+    }
+    if (drift.length) {
+      console.error("Cannot re-stamp: the database half has moved.\n  " +
+        drift.join("\n  ") + "\nRe-derive properly with --source instead.");
+      process.exit(1);
+    }
+    current.generated_on = new Date().toISOString().slice(0, 10);
+    fs.writeFileSync(OUT, JSON.stringify(current, null, 2) + "\n");
+    console.log("re-stamped " + path.relative(ROOT, OUT) + " to " +
+      current.generated_on + "; " + fresh.length + " specs re-verified, no drift");
+    process.exit(0);
+  }
+
   const source = args[args.indexOf("--source") + 1];
   if (!source || source.startsWith("--")) {
     console.error("Usage: node scripts/gen-coverage.js --write --source <dir> " +
-      "[--consumer <portal-src>] < result.json");
+      "[--consumer <portal-src>] < result.json\n" +
+      "       node scripts/gen-coverage.js --write --restamp < result.json");
     process.exit(2);
   }
   // The consumer checkout is optional: without it the artefact keeps
