@@ -326,7 +326,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | db-style-contract.test.js | 118 | tests/checks/db-style-contract.test.js - The database names styles. |
 | knowledge-drift.test.js | 142 | tests/checks/knowledge-drift.test.js - Keeps what the system was told from quietly decaying. |
 | knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
-| links.test.js | 112 | tests/checks/links.test.js - Internal references resolve. |
+| links.test.js | 160 | tests/checks/links.test.js - Internal references resolve. |
 | one-home.test.js | 136 | tests/checks/one-home.test.js - One concept, one home. |
 | perf.test.js | 271 | tests/checks/perf.test.js - Performance gates. |
 | reference-drift.test.js | 167 | tests/checks/reference-drift.test.js - Keeps the API reference from drifting further from the code it documents. |
@@ -462,7 +462,7 @@ Architecture, security, design, and the operating protocols.
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
 | KNOWLEDGE-MODEL.md | 230 | The knowledge model Why the roadmap and platform knowledge are shaped the way they are. |
-| NAVIGATION.md | 64 | Navigation *I want to change X - what do I read?** docs/CODEMAP.md answers *where is it*. |
+| NAVIGATION.md | 65 | Navigation *I want to change X - what do I read?** docs/CODEMAP.md answers *where is it*. |
 | PLATFORM.md | 201 | Platform product-knowledge protocol How the durable, structured answer to "what is Launchpad, what does it do, what is in place today" gets built and kept current. |
 | PORTAL-REVIEW.md | 208 | Portal review playbook How a portal review wave is opened, walked, answered, verified, triaged and closed. |
 | PROTOTYPE-IDEAS.md | 150 | Prototype ideas and plans How an idea for a prototype is captured, prioritised, planned and promoted. |

@@ -109,3 +109,51 @@ test("the immutable trees are excluded on purpose, and still are", () => {
       `${missing} exists now, so the exclusion for ${tree} may be narrower than it was.`);
   }
 });
+
+// The inverse of the first test, and the gap it left. That one proves
+// every path a file cites resolves; it cannot see a document nobody
+// cites at all. docs/VALUE-CAPTURE.md sat that way - a complete working
+// manual for a session that had never run, holding the only copy of how
+// to backfill the two value fields, cited from nothing and so reachable
+// only by listing the directory. A doc no path leads to is worse than a
+// missing one: it costs nothing to keep and is never read.
+//
+// Three files are excluded as citers, for the same reason KNOWN_ABSENT
+// exists above: naming a problem in order to document it must not be
+// what makes the problem disappear. docs/CODEMAP.md and llms.txt name
+// every tracked file by construction, so counting them would make every
+// document trivially cited and this gate could never fire. And this
+// file names the orphan it was written for - a gate's internals are not
+// somewhere a reader navigates, so a citation from here is not one.
+const NOT_NAVIGATION = ["docs/CODEMAP.md", "llms.txt",
+  "tests/checks/links.test.js"];
+
+test("every document is cited from somewhere a reader will be", () => {
+  const docs = trackedFiles().filter((f) =>
+    f.startsWith("docs/") && f.endsWith(".md") &&
+    !f.startsWith("docs/sessions-archive/"));
+  const citers = trackedFiles().filter((f) =>
+    SEARCHABLE.some((ext) => f.endsWith(ext)) &&
+    !NOT_NAVIGATION.includes(f) &&
+    !IMMUTABLE.some((tree) => f.startsWith(tree)));
+
+  const orphans = [];
+  for (const doc of docs) {
+    // Cited by full path, or - as the plan index cites its siblings -
+    // by bare filename, bounded so a longer name cannot satisfy a
+    // shorter one.
+    const base = doc.slice(doc.lastIndexOf("/") + 1);
+    const bare = new RegExp("(?:^|[^A-Za-z0-9._/-])" +
+      base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![A-Za-z0-9])");
+    const cited = citers.some((f) =>
+      f !== doc && (read(f).includes(doc) || bare.test(read(f))));
+    if (!cited) orphans.push(doc);
+  }
+
+  assert.deepEqual(orphans, [],
+    "these documents are cited by nothing, so no session will find " +
+    "them: " + orphans.join(", ") + ". Cite each from where its reader " +
+    "already is - docs/NAVIGATION.md for a protocol, the plan index " +
+    "for a workstream - or delete it. Files are not covered by the " +
+    "nothing-is-ever-deleted rule (CLAUDE.md); rows are.");
+});

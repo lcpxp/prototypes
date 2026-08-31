@@ -30,6 +30,7 @@ holds structure, styling and rendering only.
 | Change a table, a column or a policy | `supabase/schema/<domain>.sql` and `supabase/policies.sql`, in the same commit, applied as a migration. Then `npm run snapshot`. |
 | Add roadmap work, or review the roadmap | Database only, no repo change. docs/ROADMAP-INTAKE.md then docs/ROADMAP-PLAYBOOK.md; docs/ROADMAP-REVIEW.md for the ritual. |
 | Triage a wave of applications | docs/APP-REVIEW.md. Database only. |
+| Fill in the business value on roadmap items | docs/VALUE-CAPTURE.md - the ranked queue and the wave ritual for `attributes.merchant_value` and `attributes.pxp_value`, which the drawer and both exports already render. Not started. Database only. |
 | Record work material or platform knowledge from chat | docs/WORKFLOW.md, docs/PLATFORM.md. Database only. |
 | Understand why the knowledge model is shaped this way | docs/KNOWLEDGE-MODEL.md. |
 | Know what is half-finished right now | docs/STATE.md. It is the resume point and never grows. |
