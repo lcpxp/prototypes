@@ -77,7 +77,13 @@ already diagnosed finding 1 and prescribed the fix, and the fix has been
 sitting undone while the field it was meant to unblock filled up with
 the exact default it predicted.
 
-This is the first decision, because everything downstream inherits it.
+Decided (D2 below): it goes live, as a **fallback and never a
+destination**. The correction that matters is to the expected volume -
+the first framing of this assumed a large share of the 94 Product and
+Technology rows would move to it. They should not. The classification
+order is business function first, every time, and `core_launchpad` only
+where no business function honestly owns the row. It is the residual
+bucket that stops `product_technology` being used as one.
 
 ### 4. Business benefit has four candidate homes, two of them empty and rendering
 
@@ -143,6 +149,62 @@ render as their own bars, and 15 of those have thin or absent details.
 The bug bucket workstream carries 7 open children and no department at
 all.
 
+## Decisions taken
+
+Recorded 2026-08-31, in answer to the four questions that blocked
+Session A. Each is now the rule, not an option, and each names what it
+settles so a later session does not reopen it.
+
+**D1. `department` means accountable for the outcome, tested by where
+the benefit lands.** Both halves, in that order: the owner is the
+function answerable if the work does not land, and where accountability
+is genuinely arguable the tiebreak is whose day changes when it ships.
+Not who engineers it.
+
+This makes the parked list of A3 precise rather than approximate. A row
+is parked for Session B exactly when accountability and beneficiary
+point at different functions, because that is the case the tiebreak
+cannot settle without the benefit written. Every other row is
+mechanical.
+
+**D2. `core_launchpad` goes live, as a fallback only.** The
+classification always tries the six business functions first; the
+seventh is used where none of them honestly owns the row - the work is
+the platform itself. Reaching for it early would recreate finding 1 with
+a new label, so the wave order is: propose a business function, and only
+where that proposal fails does the row become Core LaunchPad. The three
+things it needs (constraint, registry entry, colour pair) are A1.
+
+**D3. Business benefit is the primary, overarching field; the value
+fields become the granular tier beneath it.** `business_benefit` answers
+the departmental and PXP-wide question - what this buys the business as
+a commercial and operational entity. Beneath it sit the finer readings
+of who feels it: merchant, staff and end user. So the existing
+`merchant_value` and `pxp_value` are not retired and not promoted -
+they are re-framed as one tier down, and the overarching field they
+never had is the one being added.
+
+That hierarchy is the thing to hold. A stakeholder deck leads with
+business benefit; the drawer can carry the granular reading underneath
+for the person who clicks in. Two fields answering one question was the
+risk in finding 4; two fields answering questions at different altitudes
+is not, provided the altitudes are written down once.
+
+**D4. Department rank is stored, never rendered.** No rank number, no
+ordinal, nothing on the front end that tells a room it is sixth. It
+exists to order and group - which department leads a deck, which
+sequence the six sessions run in, how the roadmap sorts - and the most
+accessible home is a real table, queryable in SQL, mirroring
+`roadmap_categories` exactly as themes already do (key, label,
+sort_order, description). That also retires the present duplication,
+where the six live in a check constraint and again in a registry array
+with no single home for either the vocabulary or its order.
+
+The consequence to accept: pages that today read
+`App.registry.departments` synchronously would fetch departments the way
+they already fetch themes and areas. That is the consistent shape, and
+it is a real change to four call sites. Q19 asks whether to take it.
+
 ## What "done" looks like
 
 Six statements, each measurable, none of them prose:
@@ -191,22 +253,23 @@ quietly skipped.
 
 ## Session A - the work
 
-**A1. Fix the ownership vocabulary.** Resolve finding 3. If
-`core_launchpad` becomes live it needs, in one commit: the
+**A1. Fix the ownership vocabulary.** Per D2, `core_launchpad` goes
+live as a fallback. In one commit it needs: the
 `work_items_department_check` and `work_items_associated_departments_check`
-constraints widened by migration, a `registry.departments` entry, a
-`tokens.css` hue pair, and the drawer/backlog/exec renderers confirmed
-to resolve it (they all go through `App.departmentLabel`, so this is a
-one-line data change plus a colour). Then docs/ROADMAP-PLAYBOOK.md:101
-and :129-141 stop describing a thing that does not exist.
+constraints widened by migration, the vocabulary entry (in whichever
+home D4 settles), a `tokens.css` hue pair, and the drawer/backlog/exec
+renderers confirmed to resolve it - they all go through
+`App.departmentLabel`, so this is a data change plus a colour. Then
+docs/ROADMAP-PLAYBOOK.md:101 and :129-141 stop describing a thing that
+does not exist, and gain the sentence that it is a fallback, so the next
+session does not reach for it first.
 
-**A2. Write the ownership rule down, once.** One paragraph, in
-docs/ROADMAP-PLAYBOOK.md's Ownership section, that answers: does
-`department` mean accountable-for-the-outcome, benefits-most, or
-does-the-work. Everything in A3 is mechanical once this sentence exists,
-and arbitrary until it does. The one-home gate
-(tests/checks/roadmap-intake.test.js) means it is stated there and cited
-everywhere else.
+**A2. Write the ownership rule down, once.** D1 and D2 go into
+docs/ROADMAP-PLAYBOOK.md's Ownership section as the rule, with the
+tiebreak and the fallback both stated: accountable for the outcome,
+tested by where the benefit lands, business function before Core
+LaunchPad. The one-home gate (tests/checks/roadmap-intake.test.js) means
+it is stated there and cited everywhere else, including here.
 
 **A3. Re-attribute in waves, theme by theme.** 13 themes, each with a
 declared `owning_department`, is the natural batching: it puts the 60
@@ -222,14 +285,25 @@ tags before the owner is asked anything. Target: no open workstream with
 zero tags, and every workstream's children inheriting at least their
 parent's tag set unless deliberately narrower.
 
-**A5. Give benefit a home.** Resolve finding 4 by decision, then
-migrate: schema in supabase/schema/30_work.sql, RLS unchanged (the table
-already has policies), the 22 prose `Business benefit:` lines moved into
-it, `npm run snapshot` regenerated, drift gate green.
+**A5. Build the benefit hierarchy.** Per D3: a `business_benefit`
+column as the primary field, the granular tier beneath it, and the 22
+prose `Business benefit:` lines migrated into the new column so the
+convention has one home rather than two. Schema in
+supabase/schema/30_work.sql, RLS unchanged (the table already has
+policies), `npm run snapshot` regenerated, drift gate green.
 
-**A6. Give department rank a home.** Resolve finding 5 by decision.
-Whichever wins, it is read by the roadmap for ordering and by the
-departmental view for sequencing the six sessions.
+Two shapes are still open and Q16 and Q17 ask them: whether the granular
+tier is the existing two fields or three, and whether business benefit
+carries a checked `benefit_type` so the roadmap can be asked "show me
+everything with a revenue benefit". Neither blocks the column itself.
+
+**A6. Give departments a home, and a rank inside it.** Per D4: a
+`departments` table mirroring `roadmap_categories`, carrying key, label,
+sort_order and description, with `sort_order` as the rank. Read for
+ordering and for sequencing the six sessions; never rendered as a
+number. The migration is small; the call-site change is the real cost
+and Q19 asks whether to take it now or leave the registry array in place
+for this programme and converge later.
 
 **A7. Rework the drawer.** Three changes, all in detail.js,
 detail-export.js and roadmap-detail.css:
@@ -343,52 +417,50 @@ state than a confident sentence nobody checked.
 
 ## Questions
 
-Answer selectively. Every question below states what is already known,
-what is missing, and what changes depending on the answer, so none of
-them asks for a broad content fill. Tier 1 blocks Session A. Tier 2
-shapes it. Tier 3 is content that only the owner holds and can be
-answered at any point up to the wave that needs it.
+Answer selectively. Every question states what is already known, what
+is missing, and what changes depending on the answer, so none of them
+asks for a broad content fill. Tier 1 blocks Session A. Tier 2 shapes
+it. Tier 3 is content only the owner holds, answerable at any point up
+to the wave that needs it.
+
+Q1 to Q4 are answered and have become D1 to D4 above; the numbering is
+kept so the conversation and the record line up. Q16 to Q19 are what
+those answers opened.
 
 ### Tier 1 - blocks Session A
 
-**Q1. Does `department` mean accountable, beneficiary, or builder?**
-Known: 94 of 176 rows say `product_technology`, and 60 rows disagree
-with their theme's owner. Missing: the sentence that settles it.
-Changes: which of the 60 move, and whether the six decks are balanced.
+**Q16. Is the granular tier two fields or three?** D3 puts business
+benefit on top and the finer readings underneath, and named three
+audiences - user, merchant, staff. Today there are two fields, and they
+do not map cleanly onto those three: `merchant_value` is the merchant,
+but `pxp_value` collapses staff and PXP-the-business into one, and
+nothing holds the end user at all. Missing: whether "user" means the
+merchant's own customer, the person operating the portal, or the
+merchant's staff. Changes: whether A5 adds one column, two, or none.
 
-**Q2. Does `core_launchpad` go live as a seventh owner?**
-Known: the playbook specifies it, names the three things it needs, and
-none were built. Missing: a yes or no. Changes: if yes, a large share of
-the 94 Product and Technology rows become Core LaunchPad with Product
-and Technology as an association tag, and Product's deck becomes about
-platform engineering rather than everything. If no, the playbook loses
-those paragraphs, because a documented option that will never exist is
-drift.
+**Q17. Should business benefit carry a type?** A checked vocabulary
+alongside the prose is what makes the roadmap answerable rather than
+merely readable - it is the difference between "here is a paragraph" and
+"here is every workstream with a revenue benefit, ranked". A candidate
+list, from the shapes a benefit can actually take: cost removed,
+failure prevented, revenue enabled, revenue retained, decision enabled,
+obligation met, and defect cost for the rows whose benefit is that they
+are broken. Changes: whether the benefit is sortable, and whether the
+render-coverage gate has a vocabulary to hold.
 
-**Q3. Where does business benefit live?** Four candidates, and the two
-that already render are empty. Changes: everything Session B writes.
-Trade-offs as I see them:
-- *A new `business_benefit` column plus a checked `benefit_type`* -
-  queryable ("show me everything with a revenue benefit"), renders as
-  its own panel section, sorts, gates. Costs a migration and a snapshot
-  regeneration. My recommendation.
-- *The existing `merchant_value` / `pxp_value` pair* - zero migration,
-  already rendered, already exported, already has a written manual. But
-  they answer "value to whom", not "what kind of benefit", so they do
-  not sort by benefit type and are not what a departmental deck needs.
-- *Keep it in the `details` prose* - zero work, consistent with the 22
-  rows that have it, permanently unqueryable.
-- *Structured in `attributes` jsonb* - no migration, semi-queryable, and
-  the reason `assignee` was moved out of jsonb into a real column was
-  that the portal surfaced raw keys badly.
+**Q18. What is the rank?** Six departments in order, and for any placed
+deliberately low, the reason - matters less, less urgent, or blocked on
+something else. The reason is not decoration: D4 keeps the rank off the
+front end precisely because a bare ordinal reads as a slight, and the
+reason is what turns "lower" into something sayable in the room.
 
-**Q4. Where does department rank live, and what is the rank?** Known:
-nowhere holds it today. Missing: both the home and the order. Changes:
-how the six sessions are sequenced and how the roadmap sorts. Homes:
-a real `departments` table (queryable, one home for label, rank and
-description, and it would retire the duplication between the check
-constraint and the registry array); or a `rank` field on the existing
-registry entries (no migration, but a database sort cannot read it).
+**Q19. Take the call-site change now, or converge later?** D4's
+`departments` table is the right home, but four call sites read
+`App.registry.departments` synchronously today. Doing it inside this
+programme is the consistent shape and adds risk to a page that is about
+to be presented. Leaving it means the vocabulary lives in two places for
+the duration, with the table authoritative for rank and the registry for
+labels - a known, written-down, temporary duplication.
 
 ### Tier 2 - shapes Session A
 
@@ -444,6 +516,7 @@ separate paragraphs.
 
 ## Resume
 
-Read CLAUDE.md, docs/STATE.md, then this file. Session A is not started
-until Q1 to Q4 are answered; Session B is not started until Session A's
-schema and drawer changes are committed and green.
+Read CLAUDE.md, docs/STATE.md, then this file. D1 to D4 are settled.
+Session A is not started until Q16 to Q19 are answered; Session B is not
+started until Session A's schema and drawer changes are committed and
+green, and its parked-ownership list exists.
