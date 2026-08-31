@@ -205,6 +205,48 @@ The consequence to accept: pages that today read
 they already fetch themes and areas. That is the consistent shape, and
 it is a real change to four call sites. Q19 asks whether to take it.
 
+**D5. The benefit tier is three fields, optional, and it has a second
+audience.** Beneath `business_benefit` sit three granular readings -
+merchant, staff, end user - written where appropriate rather than on
+every row. `merchant_value` keeps its meaning; `pxp_value` is re-framed
+as the staff reading, because PXP-the-business moved up to
+`business_benefit`; the end-user reading is new.
+
+The part that changes the work rather than the schema: this content is
+not only read in a deck. It is the source material for **user stories
+and later marketing collateral**. That binds how every field is written
+- a role and a change of behaviour present in each granular line, and no
+internal shorthand, because collateral is read by people outside PXP and
+rewriting 176 rows later costs more than writing them plainly once. The
+standard and its test live in docs/plan/110-BENEFIT-CONTENT.md.
+
+**D6. Business benefit carries a checked type,** from seven values: cost
+removed, failure prevented, revenue enabled, revenue retained, decision
+enabled, obligation met, defect cost. This is what makes the roadmap
+answerable rather than merely readable - "every workstream with a
+revenue benefit, ranked" becomes a query. The seventh covers the rows
+whose benefit is that they are broken, so those need no special case.
+It is a vocabulary, so tests/checks/render-coverage.test.js holds it.
+
+**D7. The rank starts from delivery load and moves toward commercial
+logic, validated as we go.** Not a number settled in one sitting. The
+opening order is where the work actually sits - which is a fact - and
+each subsequent question is an opportunity to move it toward what
+matters, which is a judgement only the owner holds.
+
+Two consequences. `sort_order` is spaced in gaps of ten, so a
+re-ordering is one update rather than six. And the rank is explicitly
+provisional until Session A closes: any wave that surfaces a reason to
+move a department records it, and the closing pass states the final
+order and what moved it.
+
+**D8. The registry-to-table conversion is deferred.** The `departments`
+table is authoritative for rank and ordering; `App.registry.departments`
+keeps serving labels synchronously to the four call sites that read it.
+This is a duplication, it is temporary, and it is written down here so
+it is a decision rather than a drift. It converges when the presentation
+is behind us, not during it.
+
 ## What "done" looks like
 
 Six statements, each measurable, none of them prose:
@@ -336,41 +378,13 @@ one-home gate exists to stop.
 
 ## Session B - the work
 
-**B1. The 27 workstreams first.** These are what a stakeholder reads
-without the item list under them, and an item's benefit is usually a
-share of its workstream's. Order: `now` and `next` bands first, because
-those are the ones somebody asks about this quarter. Four have no
-summary at all and need more than the rest.
-
-**B2. The 49 thin items, grouped by workstream.** A title and a one-line
-summary is not enough to draft from, so these need the owner. Each wave
-is framed with its workstream's agreed benefit, so the question is
-"what is this one's share of that" rather than a cold start. The
-concentrations are known: 15 standalone items with no parent, then 6, 5
-and 5 under three workstreams.
-
-**B3. The items with details but no benefit.** The larger and faster
-group: drafts built from the existing `What:` and `Relates to:` content,
-presented in batches to accept, edit or reject.
-
-**B4. The bug and discovery rows.** 6 typed as bugs plus the discovery
-workstream's 7 children. These get a **cost of leaving it**, not a
-business case: what happens today, how often, who absorbs it.
-
-**B5. The parked ownership rows from A3.** Resolved here, where the
-benefit makes the owner obvious.
-
-**B6. The rows with no benefit.** Where neither party can say what a row
-buys, that is a finding. Ask whether it should be dropped; if yes, close
-with `status='dropped'` and a resolution, never delete. A shorter
-roadmap believed in beats a complete one that is not.
-
-**B7. Close out.** Re-measure every figure in the table above and show
-before and after. List every question asked and not answered - that list
-is as valuable as the answers. Run `select * from
-roadmap_embed_refresh();` last: every benefit written leaves that row's
-meaning vector describing text that no longer exists, and
-`embeddings.stale` is held at 0 by a gate.
+Moved to docs/plan/110-BENEFIT-CONTENT.md when this file reached the
+line trigger its own acknowledgement named. That file carries the
+content standard (what a benefit has to mean, the four fields and their
+altitudes, the stories-and-collateral requirement of D5) and the seven
+waves B1 to B7. The shared three - the measured position above, the
+ownership rule of D1, and the propagation rule below - stay here and are
+cited from there, so neither file states them twice.
 
 ## The propagation rule
 
@@ -423,51 +437,51 @@ asks for a broad content fill. Tier 1 blocks Session A. Tier 2 shapes
 it. Tier 3 is content only the owner holds, answerable at any point up
 to the wave that needs it.
 
-Q1 to Q4 are answered and have become D1 to D4 above; the numbering is
-kept so the conversation and the record line up. Q16 to Q19 are what
-those answers opened.
+Q1 to Q4 and Q16 to Q19 are answered and have become D1 to D8 above;
+the numbering is kept so the conversation and the record line up. Q20 to
+Q23 are what the second round opened.
 
 ### Tier 1 - blocks Session A
 
-**Q16. Is the granular tier two fields or three?** D3 puts business
-benefit on top and the finer readings underneath, and named three
-audiences - user, merchant, staff. Today there are two fields, and they
-do not map cleanly onto those three: `merchant_value` is the merchant,
-but `pxp_value` collapses staff and PXP-the-business into one, and
-nothing holds the end user at all. Missing: whether "user" means the
-merchant's own customer, the person operating the portal, or the
-merchant's staff. Changes: whether A5 adds one column, two, or none.
+**Q20. What is the "end user"?** D5 names three granular audiences, and
+two of them are unambiguous - the merchant, and the PXP person operating
+the platform. The third is not. It could be the merchant's own customer
+at the far end of a payment, or the person using the merchant-facing
+portal. Missing: which. Changes: the column name, and how every one of
+those lines is written - a benefit to a cardholder and a benefit to a
+portal user share no vocabulary at all.
 
-**Q17. Should business benefit carry a type?** A checked vocabulary
-alongside the prose is what makes the roadmap answerable rather than
-merely readable - it is the difference between "here is a paragraph" and
-"here is every workstream with a revenue benefit, ranked". A candidate
-list, from the shapes a benefit can actually take: cost removed,
-failure prevented, revenue enabled, revenue retained, decision enabled,
-obligation met, and defect cost for the rows whose benefit is that they
-are broken. Changes: whether the benefit is sortable, and whether the
-render-coverage gate has a vocabulary to hold.
+**Q21. Is `business_benefit` required on deliverables?** 27 of the 176
+open rows are deliverables - drawer-only detail beneath an item, never a
+bar, never read on their own. Most inherit their parent's benefit rather
+than having one. Missing: whether they are in scope. Changes: the
+coverage gate's denominator, and roughly 27 rows of Session B's queue.
+My reading is that they inherit and the gate should measure workstreams
+and items only, but that is a scoping call, not a technical one.
 
-**Q18. What is the rank?** Six departments in order, and for any placed
-deliberately low, the reason - matters less, less urgent, or blocked on
-something else. The reason is not decoration: D4 keeps the rank off the
-front end precisely because a bare ordinal reads as a slight, and the
-reason is what turns "lower" into something sayable in the room.
+**Q22. Which departments already need to move?** D7 opens at delivery
+load and moves toward commercial logic with validation. The one move the
+commercial reading clearly implies is Sales and Commercial rising from
+third; whether Product and Technology should fall correspondingly is the
+part I cannot infer, because it depends on whether Product is read as
+the engine or as the enabler. Any move named now saves a wave later.
 
-**Q19. Take the call-site change now, or converge later?** D4's
-`departments` table is the right home, but four call sites read
-`App.registry.departments` synchronously today. Doing it inside this
-programme is the consistent shape and adds risk to a page that is about
-to be presented. Leaving it means the vocabulary lives in two places for
-the duration, with the table authoritative for rank and the registry for
-labels - a known, written-down, temporary duplication.
+**Q23. What does each department want out of this roadmap?** Promoted
+from Tier 3, because after D5 it is the highest-leverage answer in the
+programme. Not their remit - what they are hoping to see when they walk
+in. Every benefit written under a department gets framed against it, and
+it is the difference between six decks that are filtered views of one
+roadmap and six decks that each answer a question somebody actually has.
+Six sentences. Answer one at a time, in any order, or name the two that
+matter most and leave the rest.
 
 ### Tier 2 - shapes Session A
 
-**Q5.** Should `impact` (low/medium/high, set on 5 of 176) become the
-sortable coarse companion to the benefit prose, or be retired? It
-overlaps benefit and is effectively unused; keeping both means two
-mechanisms for one job.
+**Q5.** `impact` (low/medium/high, set on 5 of 176) should now be
+retired: D6's `benefit_type` is the sortable companion to the benefit
+prose, and keeping a second, vaguer axis on the same question is two
+mechanisms for one job. Confirm, or say what `impact` was meant to carry
+that `benefit_type` does not.
 
 **Q6.** Should a workstream's associations be the union of its
 children's automatically, or set deliberately? Automatic is complete and
