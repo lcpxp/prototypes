@@ -197,6 +197,29 @@ This is what lets the programme move fast without lying. Drafting 124
 rows is quick; confirming them is the owner's time, spent only where it
 is the scarce input. The state field is what keeps those two apart.
 
+**D14. Partner type gets a field.** Finding 8's three partner shapes
+want different things, so `partner_staff_value` names which shape it
+speaks for, and partner type becomes filterable rather than inferable
+from prose. Today there is no way to answer "what are we building for
+PFAC partners", which is the same gap as the department one and was
+found the same way.
+
+**D15. The session is in three days, and the presentation surface
+already exists.** Both halves matter.
+
+The surface first, because it removes work rather than adding it:
+modules/roadmap/ already carries a department filter, a per-row picker
+for hiding individual rows (the custom view), hide-delivered,
+hide-fixes, a detailed toggle and a wide mode. That is the whole of what
+the session needs to drive. **Nothing on the presentation surface has to
+be built.** What is wrong is entirely data, and data is the thing three
+days can actually move.
+
+The timebox second. This plan as written is three to six weeks of work.
+Three days does not compress it; it selects from it. The selection is
+below, and the rule behind it is that anything which does not change
+what appears on screen when a department filter is applied waits.
+
 ## What "done" looks like
 
 Six statements, each measurable, none of them prose:
@@ -242,6 +265,76 @@ benefit** as a named list. Session B resolves each of those as it writes
 that row's benefit. Expected size of that parked list: 20 to 30 rows.
 That is a seam, not a fudge, and it is stated here so it cannot be
 quietly skipped.
+
+**D16. Content is seeded, then iterated, then confirmed.** The method
+for the rows that need the owner: the owner supplies a concise summary
+for a handful of central rows; that content is iterated out across the
+other rows it legitimately covers; the cycle repeats until everything is
+populated.
+
+This is faster than asking row by row and it is the only approach that
+fits three days. It also runs directly at accuracy rule 3, which forbids
+propagating by resemblance - so the two are reconciled explicitly rather
+than left to collide:
+
+- Owner-supplied content is recorded once as a `work_notes` row anchored
+  to the central item, and that note is the evidence.
+- A row receiving iterated content **cites that note**. If it cannot -
+  if the only thing connecting it to the seed is that the titles rhyme -
+  it does not receive it.
+- Iteration travels by parentage, theme, explicit link or the owner
+  saying so. Never by similarity, and never by the embedding index.
+- Every iterated row lands `drafted`. The seed row is `confirmed` where
+  the owner wrote it. The gap between those two counts is the honest
+  measure of how far one answer was stretched.
+
+## The three-day cut
+
+What lands before the session, in order, with the reason each earns its
+place. Everything not named here is deferred, and the deferred list is
+stated after it so that nothing is quietly dropped.
+
+**Day 1 - attribution, because it is what breaks the department view.**
+One migration adds `business_benefit`, `benefit_type`, `benefit_status`,
+`partner_type`, and the granular tier of D9 (`pxp_staff_value` renamed
+from the empty `pxp_value`, `partner_staff_value` new,
+`merchant_value` unchanged). Then the 79 conflicts of finding 1, in
+roughly eight theme waves, Products & Pricing and Acquiring first
+because they hold 27 of the 79 between them. Then the association sweep
+of A4, derived first and validated per department. Ends with the walk:
+all six filters applied in turn, looking for what is missing and what
+does not belong.
+
+**Day 2 - benefit, where it will actually be read.** The 27 workstreams,
+because those are the bars on screen and the drawers most likely to be
+opened. Then the items on the `now` and `next` bands beneath them. The
+25 no-evidence rows (finding 9) come first as a single named list rather
+than spread through the queue, worked by the seeded method D16 sets out.
+
+**Day 3 - the drawer, then close.** Benefit moves above the fact grid
+and the grid is regrouped, which is the one front-end change that
+changes what a stakeholder sees when you click in. Then propagation of
+everything supplied on days 1 and 2 across related rows, a re-measure
+against 105, `roadmap_embed_refresh()`, and docs/STATE.md.
+
+The drawer change is deliberately not last-minute work on the day
+before; if it goes wrong there has to be time to revert it.
+
+### Deferred, and named so it is a decision
+
+- The `departments` table and stored rank (D4, D11). Not needed: the
+  session filters one department at a time and the rank is never
+  rendered. Registry order serves until it is built.
+- The registry-to-table call-site conversion (D8). Already deferred; the
+  timebox settles it.
+- The coverage gates and knowledge-budget figures (A8). These stop the
+  work decaying, which matters after the session and not before it.
+- Deliverable-level benefit (D10). Inherits; nothing to do.
+- Reconciling docs/VALUE-CAPTURE.md against this programme (A9).
+- Confirming every drafted benefit. Three days will not do it, which is
+  exactly why `benefit_status` is in the day-1 migration rather than a
+  later refinement: it is the difference between "149 rows have a
+  benefit" and a claim nobody can size.
 
 ## Session A - the work
 
@@ -387,120 +480,48 @@ Session B's are equally bound by them.
 
 ## Questions
 
-Answer selectively. Every question states what is already known, what
-is missing, and what changes depending on the answer, so none of them
-asks for a broad content fill. Tier 1 blocks Session A. Tier 2 shapes
-it. Tier 3 is content only the owner holds, answerable at any point up
-to the wave that needs it.
+Sixteen decisions are settled (D1 to D16) and the timebox has closed
+most of what was open - a question whose answer only changes deferred
+work is not a question worth asking this week. What remains is what
+Session A needs to start, and what it will need on the way.
 
-Q1 to Q4, Q16 to Q23 are answered and have become D1 to D12; D13
-follows from the accuracy requirement rather than from a question. The
-numbering is kept so the conversation and the record line up. Q24 to Q30
-are what remains.
-
-### Tier 1 - blocks Session A
-
-**Q24. Can a partner benefit be written once, or does it depend on the
-partner type?** Finding 8: 52 of 176 open rows mention a partner, and
-they do not all mean the same one - 17 name EIT, 9 name PFAC, 3 name
-referral. Missing: whether a PFAC partner's staff and an EIT partner's
-staff want materially different things from the same work. Changes:
-whether `partner_staff_value` is one line per row or has to say which
-partner shape it speaks for.
-
-**Q25. Does partner type need a field?** Follows from Q24. Today it is
-only inferable from prose - no filter, no grouping, no way to answer
-"what are we building for PFAC partners". If the shapes diverge, that is
-a gap the same size as the department one, found the same way. If not,
-this closes and nothing is built.
+### Needed to start
 
 **Q26. What already sits under the wrong department, that you know of?**
-D12 makes the filtered view a source of truth, and the failure it cannot
-self-detect is a row that is present and should not be. A count cannot
-see that; only a person can. Anything you already know saves a wave.
+D12 makes the filtered view a source of truth, and the one failure it
+cannot self-detect is a row that is present and should not be - a count
+cannot see that, only a person can. Anything you already know saves a
+wave off day 1. None is a fine answer; the walk is designed to find them.
 
-**Q27. The twenty-five rows with no evidence at all** (finding 9) have
-no details, no note, no link and no source document. Anything drafted
-against them is invention. They can be worked three ways and it is your
-call which: you answer them in one concentrated pass, they are recorded
-as open questions and presented as such, or they are candidates for
-dropping on the grounds that a row nobody can say anything about may not
-be real work. My reading is that the list will be a mixture of all three
-and the useful thing is to see it - so the first wave of Session B could
-be those 25 as a single named list rather than spread through the
-queue.
+**Q30. The six department framings.** You asked me to draft and you
+correct. They are the yardstick the association sweep is measured
+against, so they are needed before the sweep, not after it - drafted in
+chat, not in this file.
 
-**Q28. Does the deck show drafted benefits, or only confirmed?** D13
-splits them. If the presentation is close, "confirmed only" may leave
-gaps on screen; "show both, marked" is honest but invites the question
-in the room. Changes what A7 builds and how hard the confirmation pass
-is pushed before the date.
+**Q31. The central rows for the seeded method (D16).** I will propose
+the handful I think are most central - the ones whose content will
+travel furthest across the other 25 and beyond - and you correct the
+selection before writing any of it. Choosing the wrong seeds wastes the
+scarcest input in the programme, which is your time on day 2.
 
-**Q29. When is the presentation?** Asked plainly because it sets every
-trade-off in this plan and nothing else does. It decides whether Session
-A takes the call-site change, how many confirmation passes fit, and
-whether the 25 get answered or recorded. I have been sequencing on
-correctness; a date lets me sequence on both.
+### Needed on the way, not now
 
-**Q30. Should I draft the six department framings now, or in Session
-A?** You asked me to draft and you correct. Per D12 they are the
-yardstick the association sweep is measured against, and a test written
-after the work it grades is worth less - so my preference is now, in
-chat rather than in this file. Unchanged from Q27 of the last round;
-restated because it is still open.
+- Which partner shapes actually diverge, once the first partner-heavy
+  theme wave is in front of you (D14 gives the field; the vocabulary
+  can be set when the rows are on screen).
+- The rank order, if the department walk moves it (D11 holds it at
+  delivery load until then).
+- Whether any of the 25 should be dropped rather than answered - a
+  judgement better made looking at the list than in advance.
 
-### Tier 2 - shapes Session A
+### Deferred with their work
 
-**Q5.** `impact` (low/medium/high, set on 5 of 176) should now be
-retired: D6's `benefit_type` is the sortable companion to the benefit
-prose, and keeping a second, vaguer axis on the same question is two
-mechanisms for one job. Confirm, or say what `impact` was meant to carry
-that `benefit_type` does not.
-
-**Q6.** Should a workstream's associations be the union of its
-children's automatically, or set deliberately? Automatic is complete and
-noisy; deliberate is clean and drifts.
-
-**Q7.** For the departmental decks, should a department see rows it is
-*associated* with as equal to rows it *owns*, or visibly secondary? The
-filter currently treats them identically.
-
-**Q8.** Are the 18 standalone items (no parent, own bar on the board)
-intended as standalone, or are they orphans that belong under a
-workstream? 15 of the 18 are also thin.
-
-**Q9.** Does the drawer rework need a distinct stakeholder mode - a
-cleaner render with the editorial fields hidden - or is one reordered
-drawer for both audiences enough?
-
-**Q10.** Does docs/VALUE-CAPTURE.md become the benefit manual, or is it
-superseded and removed?
-
-### Tier 3 - content only the owner holds
-
-**Q11.** For each of the six departments, one sentence: what does that
-department actually want out of this roadmap? Not their remit - what
-they are hoping to see. This is the frame every benefit under them gets
-written against, and it is the single highest-leverage answer in the
-whole programme. Six sentences, answered one at a time if preferred.
-
-**Q12.** Which departments are deliberately lower priority, and is that
-because their work matters less, is less urgent, or is blocked on
-something else? The reason changes how it is presented, and "lower
-priority" said without a reason reads as a slight in the room.
-
-**Q13.** Legal and Compliance owns 1 open row and is tagged on 5. Is
-that real - a genuinely small footprint - or is compliance work sitting
-under other departments' names?
-
-**Q14.** Which three or four workstreams will the stakeholders most want
-to click into? Those get the deepest content pass and the first drafts,
-rather than spreading effort evenly across 27.
-
-**Q15.** Is there a commercial frame - a target, a deal, a cost line, a
-board commitment - that several of these workstreams serve? If several
-benefits ladder up to one number, saying so once is worth more than 27
-separate paragraphs.
+Everything in the deferred list above carries its own open questions -
+the rank's storage, the gate ceilings, whether VALUE-CAPTURE.md is
+superseded, whether the drawer needs a separate stakeholder mode. They
+are recorded in the git history of this file rather than kept live here,
+because a question list that outlives its decision point is how a plan
+starts reading as a backlog.
 
 ## Resume
 

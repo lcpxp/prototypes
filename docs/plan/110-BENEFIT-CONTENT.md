@@ -1,7 +1,7 @@
 # 110 - Business benefit: the content standard and Session B
 
 Session B of the presentation-readiness programme. Its decisions (D1 to
-D13) and risks live in docs/plan/100-PRESENTATION-READINESS.md, the
+D16) and risks live in docs/plan/100-PRESENTATION-READINESS.md, the
 figures it works against in docs/plan/105-MEASURED-POSITION.md, and the
 accuracy discipline and propagation rule that bind every wave in
 docs/plan/102-WORKING-RULES.md. None of those is restated here; this
@@ -113,6 +113,12 @@ export is what carries it to whoever generates them - which is why A7
 keeps the exports in step with the drawer rather than behind it.
 
 ## Session B - the work
+
+Under D15's three-day cut the waves run B4 (the 25 no-evidence rows, as
+one named list) then B1, then B2 and B3 narrowed to the `now` and `next`
+bands. B5 folds into the day-1 walk, and B6 is asked of the 25 rather
+than of everything. The full order below is what runs when the timebox
+lifts.
 
 **B1. The 27 workstreams first.** These are what a stakeholder reads
 without the item list under them, and an item's benefit is usually a
