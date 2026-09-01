@@ -6,17 +6,13 @@ table: docs/plan/100-PRESENTATION-READINESS.md cites D-numbers from its
 steps, docs/plan/110-BENEFIT-CONTENT.md from its waves, and neither
 restates one.
 
-Split from 100 on 2026-09-01, which reverses a call made in that file's
-size acknowledgement two commits earlier. The reasoning then was that
-the decisions are the rationale behind Session A's steps and separating
-them would put a why and its what in different files. That was right for
-thirteen decisions carried inline; it is wrong for twenty-one, which
-stopped being a narrative and became a register - the thing you consult
-by number, exactly like the working rules in 102. The evidence changed
-the answer.
+Split from 100 on 2026-09-01, reversing a call made two commits earlier
+that the decisions belong beside the steps they justify. True at
+thirteen carried inline; false at twenty-one, which stopped being a
+narrative and became a register - consulted by number, like the working
+rules in 102.
 
 Public repo: process only.
-
 ## Decisions taken
 
 Recorded 2026-08-31, in answer to the four questions that blocked
@@ -190,6 +186,109 @@ moment it matters.
 This is what lets the programme move fast without lying. Drafting 124
 rows is quick; confirming them is the owner's time, spent only where it
 is the scarce input. The state field is what keeps those two apart.
+
+**D14. The route to market gets a field - `sales_route`, direct or
+partner.** Revised 2026-09-01. The first version of this decision gave
+partner *type* a field, on the reading that PFAC, EIT and referral
+partners want materially different things. The owner's account of the
+sales structure corrects it: Partner Sales is one managed group - ISOs,
+ISVs, PFACs and referrals - run by account managers, given a similar
+demo and similar access. The distinction that carries weight is not
+among partner types but between **Direct Sales**, where PXP staff
+onboard merchants into PXP, and **Partner Sales**, where a partner's
+staff do.
+
+So the field is the route, not the type. It answers "what are we
+building for partner-led onboarding as against our own staff", which is
+the question the roadmap cannot answer today and the one that decides
+which of the two staff audiences in D9 a benefit is written for. Partner
+type stays in prose; if a real divergence shows up in the theme waves it
+can be added beneath the route later, and finding 8's 52 rows are where
+that would surface.
+
+**D15. The session is in three days, and the presentation surface
+already exists.** Both halves matter.
+
+The surface first, because it removes work rather than adding it:
+modules/roadmap/ already carries a department filter, a per-row picker
+for hiding individual rows (the custom view), hide-delivered,
+hide-fixes, a detailed toggle and a wide mode. That is the whole of what
+the session needs to drive. **Nothing on the presentation surface has to
+be built.** What is wrong is entirely data, and data is the thing three
+days can actually move.
+
+The timebox second. This plan as written is three to six weeks of work.
+Three days does not compress it; it selects from it. The selection is
+below, and the rule behind it is that anything which does not change
+what appears on screen when a department filter is applied waits.
+
+**D17. The attribution rulings.** Settled 2026-09-01 against the six
+framings, and recorded as a table because they are findings applied, not
+principles. Each follows D1 - accountable for the outcome, tested by
+where the benefit lands.
+
+| Block | Owner | Associated | Why |
+| --- | --- | --- | --- |
+| Contract overhaul | Legal & Compliance | Product, Operations | The contract is Legal's artefact; the tooling is how they manage it |
+| Pricing lines, service fees, minimums, ceilings | Sales & Commercial | Product, Finance | Pricing exists to sell; what a rate looks like is a commercial call |
+| The pricing engine | Product & Technology | Sales, Finance | Driven by the KPI portal, which Product and Technology hosts and manages |
+| Insights & Reporting | Operations & Onboarding | Finance | The insight sets measure operational flow, and Operations acts on them |
+| Acquiring | Product & Technology | Risk & Underwriting | Acquirer enablement is platform and integration work |
+| Defects, wherever they sit | Product & Technology | the area's owner | A defect's owner is whoever repairs it, not whoever trips over it |
+
+**D18. Product and Technology owns two things, not one.** The framing
+correction that matters most, because it changes what the largest
+department is for. Product owns the platform; Technology owns product;
+and Technology owns *other* products that LaunchPad both sells and
+integrates with - core services built and managed there, Unity among
+them. So Product and Technology is not the residual bucket and not
+merely the enabler: it is the platform owner and the supplier of the
+products and services the platform depends on.
+
+This narrows what `core_launchpad` (D2) is for. If Technology already
+owns the platform and the core services, the fallback is needed less
+often than D2 assumed, and reaching for it should be rarer still.
+
+**D19. Operations wants the automation and the AI, and is not
+squeamish about either.** An earlier framing here warned against
+leading with AI. That was wrong: the COO and Operations are pushing it,
+and the alignment being sought is around AI plus tracking, reporting,
+dashboards and integrations. Their frame is the removal of every manual
+step, the monitoring of whatever stage, step or role is slowing an
+application, and the tracking of leads and applications end to end.
+
+**D20. Finance and Revenue is deliberately last.** Least important
+currently, by the owner's own call - which changes D11's opening order
+and is a sequencing statement, not a judgement of worth. Their real ask
+is narrower and more concrete than the insight sets they nominally
+owned: invoice detail, commissioning, lease against rental against
+purchase, and clear access to the commercial information carried on
+contracts. That is contract-adjacent, which puts Finance closer to
+Legal's set than to Operations'.
+
+**D21. The COO's requirements were captured; the source document was
+not. Corrected 2026-09-01.** This decision previously said the
+requirements "were never stored" and that Operations had "the thinnest
+provenance of the six". A verification pass against the source text
+shows that was wrong: the content was extracted thoroughly.
+
+Against roughly thirty-five points in the source, all but five are
+present, several near-verbatim, and several rows carry the attribution
+in their own text. The baseline metric list was extracted as ten
+deliverables under one workstream - which is why an item-level search
+found nothing and reported a gap that did not exist.
+
+The real finding is narrower and stands: **the source document was never
+stored**, so the content is present but uncitable, and a later session
+cannot check an extraction against what it came from. The owner has
+ruled that this source stays out of the repository and out of
+`work_documents`, so the gap is accepted deliberately rather than
+closed, and accuracy rule 1 is unenforceable for these rows specifically.
+
+Two failure modes, both worth keeping: a coverage gate counts the
+quality of what was stored and never the fact of what was not; and a
+search at the wrong altitude reports absence with exactly the confidence
+of a search at the right one.
 
 **D14. The route to market gets a field - `sales_route`, direct or
 partner.** Revised 2026-09-01. The first version of this decision gave
