@@ -1,35 +1,39 @@
 # Current state
 
-Updated: 2026-08-30 (refactor workstream closed, sense-check items done)
+Updated: 2026-09-01 (presentation-readiness programme planned; verification wave done)
 
 ## In progress
-Nothing. docs/plan/90-REFACTOR.md is the record: nineteen commits, CI and
-the Pages deploy green on every one, 575 tests, audit clean, snapshot in
-step at 56 migrations. No user-visible change - verified against a
-worktree of the pre-refactor tree across 28 pages, all pixel-identical,
-plus both console-tool dialogs driven end to end.
+docs/plan/100-PRESENTATION-READINESS.md and its four companions are the
+plan: 101 the decisions register (21 settled), 102 the accuracy and
+propagation rules both sessions obey, 105 the measured position and its
+nine findings, 110 the benefit content standard and Session B.
+
+A stakeholder session lands in three days, so the plan is timeboxed
+(D15): attribution day one, benefit day two, drawer day three, deferred
+list named rather than dropped. Nothing is applied to the database bar
+one decision note (push versus pull, inbound onboarding API); no schema
+change made.
 
 ## Next steps
-Owner-supplied content is the only queued work, and the backlog is much
-smaller than it was: items.no_summary is 6 of 292 (was 80 of 268), and
-notes.orphaned, ideas.no_summary and ideas.no_value_note are all 0.
-docs/HANDOVER-CONTEXT.md still covers what is left. Every ceiling that
-was beaten has been tightened to lock the gain in.
+1. The migration: business_benefit, benefit_type, benefit_status, the
+   three granular value fields (D9), sales_route (D14). Independent, and
+   unblocks all content work.
+2. Re-attribute the 79 department conflicts (105, finding 1) in roughly
+   eight theme waves, per the D17 rulings.
+3. The association sweep - the critical path (D12).
+4. Benefit content, workstreams first, seeded per D16.
 
 ## Verification the repo cannot do for itself
-- A signed-in pass over an app-review wave with coloured triage rows:
-  a gate proves each colour_token has its pair, only a browser proves
-  the rows are coloured.
-- Compressed load speed against the Pages URL. Uncompressed per-page
-  weight is now ratcheted in tests/page-weight-budget.json and is 21
-  requests lighter than before this workstream began.
+- A signed-in app-review wave with coloured triage rows; compressed load
+  speed against the Pages URL.
+- The six-department filter walk: what a department expected and cannot
+  see, and what it can see and would disown. Only a person sees the second.
 
 ## Open decisions
-- SECURITY: leaked-password protection is still disabled in Supabase
-  Auth, confirmed live. Owner action, dashboard only - it is the one
-  advisor finding this session could not fix from here.
-- Rename lcpxp/prototypes to lcpxp/lpio? Nothing in-code depends on the
-  name; GitHub redirects. Raised 2026-07, still open.
-- items.closed_without_resolution is 40 of 292 and rose past its old
-  ceiling. One row was recovered; the rest need the owner, and some are
-  recoverable from git or from notes.
+- SECURITY: leaked-password protection still disabled in Supabase Auth.
+  Owner action, dashboard only.
+- items.closed_without_resolution is 40 of 292, past its ceiling.
+- Rename lcpxp/prototypes to lcpxp/lpio? Raised 2026-07, still open.
+- Pull versus push on the inbound onboarding API: unresolved between
+  owner and COO, both positions now recorded on the row.
+- Five content gaps found by the verification wave, not yet written.

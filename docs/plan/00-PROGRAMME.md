@@ -21,8 +21,20 @@ them.
     60-PORTAL-REVIEW.md    portal review waves, as a portal feature
     70-PROTOTYPE-IDEAS.md  prototype ideas and plans area
     80-LOAD-SPEED.md       stop loading item detail text on first paint
+    90-REFACTOR.md         make it maintainable for the sessions after
 
-Every one of the eight is landed as of 2026-08-16. Each file keeps its
+The tenth is a programme rather than a file, because it runs across the
+database and the portal at once - getting the roadmap ready to show to
+six departments:
+
+    100-PRESENTATION-READINESS.md  the programme, the cut, Session A
+    101-DECISIONS.md               the decisions register, cited by number
+    102-WORKING-RULES.md           accuracy and propagation, both sessions
+    105-MEASURED-POSITION.md       the figures and findings, re-run at close
+    110-BENEFIT-CONTENT.md         the content standard and Session B
+
+Every one of the first eight is landed as of 2026-08-16, and 90 as of
+2026-08-30. Each file keeps its
 record of where the plan turned out to be wrong, which is the part a
 later wave needs; the outcomes are in docs/CHANGELOG.md and the numbers
 that hold them are in `npm run audit`.
