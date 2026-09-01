@@ -23,6 +23,9 @@
   var PRD_STATUS = V.PRD_STATUS;
   var PROJECT_STATUS = V.PROJECT_STATUS;
   var PHASE = V.PHASE;
+  var BENEFIT_TYPE = V.BENEFIT_TYPE;
+  var BENEFIT_STATUS = V.BENEFIT_STATUS;
+  var SALES_ROUTE = V.SALES_ROUTE;
   var PHASE_ORDER = V.PHASE_ORDER;
   var KNOWN_ATTRS = V.KNOWN_ATTRS;
   var day = V.day;
@@ -301,7 +304,11 @@
   // Resolution heading, not as a row.
   var FACTS_HIDDEN = ["id", "sort_order", "title", "summary", "details",
     "resolution", "resolved_at", "notes", "phases", "attributes",
-    "children", "deliverables"];
+    "children", "deliverables",
+    // Rendered by benefitHtml as their own section above the grid, so
+    // listing them here stops the shared builder printing them twice.
+    "business_benefit", "benefit_type", "benefit_status",
+    "pxp_staff_value", "partner_staff_value", "merchant_value"];
 
   // The drawer keeps its own row layout (a bordered two-column grid per
   // row), so it passes that skin to the shared builder rather than
@@ -333,6 +340,8 @@
       { key: "department", label: "Department", html: function () { return esc(App.departmentLabel(item.department)); } },
       { key: "associated_departments", label: "Business areas",
         html: function () { return businessAreaLabels(item).map(esc).join(", "); } },
+      { key: "sales_route", label: "Route to market",
+        html: function () { return esc(SALES_ROUTE[item.sales_route] || ""); } },
       { key: "assignee", label: "Assignee", also: ["support_assignee"],
         html: function () { return assigneeText(item, ctx); } },
       { key: "horizon", label: "Band", also: ["end_horizon"],
@@ -390,6 +399,32 @@
     });
   }
 
+  // Why the work exists, rendered above the fact grid because that is
+  // the order a stakeholder reads in: what it buys the business, then
+  // who feels it, then the thirty facts an editor needs. A drafted
+  // benefit carries a visible marker - one that reads identically to a
+  // confirmed one would defeat the whole point of storing the state.
+  function benefitHtml(item) {
+    if (!item.business_benefit) return "";
+    var type = BENEFIT_TYPE[item.benefit_type] || "";
+    var draft = BENEFIT_STATUS[item.benefit_status] || "";
+    var tags = (type ? '<span class="rmd-benefit-type">' + esc(type) + "</span>" : "") +
+      (draft ? '<span class="rmd-benefit-draft">' + esc(draft) + "</span>" : "");
+    var audiences = [
+      ["For PXP staff", item.pxp_staff_value],
+      ["For partner staff", item.partner_staff_value],
+      ["For the merchant", item.merchant_value],
+    ].filter(function (pair) { return pair[1]; })
+      .map(function (pair) {
+        return '<div class="rmd-benefit-row"><dt>' + esc(pair[0]) + "</dt><dd>" +
+          esc(pair[1]) + "</dd></div>";
+      }).join("");
+    return '<section class="rmd-benefit"><h3>Business benefit' +
+      (tags ? " " + tags : "") + "</h3><p>" + esc(item.business_benefit) + "</p>" +
+      (audiences ? '<dl class="rmd-benefit-audiences">' + audiences + "</dl>" : "") +
+      "</section>";
+  }
+
   // `state` is the lazy loader's: "ready", "waiting" or "failed".
   // Absent means ready, so every existing caller and benchmark keeps
   // working and only the drawer has to know the field arrives late.
@@ -418,13 +453,12 @@
         '<div class="rm-card-progress rmv-prog-' + prog.bucket +
         '" role="img" aria-label="Progress: ' + esc(prog.label) + '"><span></span></div></div>' +
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
+      benefitHtml(item) +
       detailsHtml(item, state) +
       facts +
       itemsSection +
       deliverablesSection +
       phasesHtml(item) +
-      note("Merchant value", a.merchant_value) +
-      note("PXP value", a.pxp_value) +
       note("Blockers and dependencies", a.blockers) +
       note("Resolution" + (resolvedOn ? " (" + resolvedOn + ")" : ""), item.resolution) +
       notesHtml(item, state) +

@@ -214,6 +214,55 @@
   white-space: pre-line;
   margin: 0 0 var(--s-4);
 }
+/* Business benefit sits above the fact grid, because a stakeholder
+   reads why before what. Given a tinted panel so it reads as the
+   answer to a question rather than as one more field. */
+.rmd-benefit {
+  margin: 0 0 var(--s-4);
+  padding: var(--s-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--alt-surface);
+}
+.rmd-benefit h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--faint);
+  margin: 0 0 var(--s-2);
+}
+.rmd-benefit p { margin: 0; color: var(--ink); font-size: var(--text-sm); }
+.rmd-benefit-type {
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--s-2);
+}
+/* An unconfirmed benefit must not read like a checked one. Warning
+   tint, not decoration: it is the difference between a business case
+   somebody verified and one nobody has. */
+.rmd-benefit-draft {
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--s-2);
+}
+.rmd-benefit-audiences { margin: var(--s-3) 0 0; }
+.rmd-benefit-row { padding: var(--s-2) 0 0; }
+.rmd-benefit-row dt {
+  font-size: var(--text-xs);
+  color: var(--faint);
+  margin: 0 0 var(--s-1);
+}
+.rmd-benefit-row dd { margin: 0; color: var(--ink); font-size: var(--text-sm); }
 .rmd-facts { margin: 0 0 var(--s-4); }
 .rmd-row {
   display: grid;

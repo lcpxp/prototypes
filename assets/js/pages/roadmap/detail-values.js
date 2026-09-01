@@ -33,6 +33,24 @@
     on_hold: "On hold", completed: "Completed",
   };
   var PHASE = { discovery: "Discovery", build: "Build", certification: "Certification", launch: "Launch" };
+  // The shape a business benefit takes. Hand-written labels rather than
+  // sentence-cased keys because these are read by stakeholders, not by
+  // editors: "Revenue enabled" and "Revenue retained" have to be told
+  // apart at a glance. defect_cost is the honest type for a row whose
+  // benefit is that it is broken - a cost of leaving it, not a case for
+  // doing it - so it reads as a cost, not as a benefit.
+  var BENEFIT_TYPE = {
+    cost_removed: "Cost removed", failure_prevented: "Failure prevented",
+    revenue_enabled: "Revenue enabled", revenue_retained: "Revenue retained",
+    decision_enabled: "Decision enabled", obligation_met: "Obligation met",
+    defect_cost: "Cost of leaving it",
+  };
+  // Drafted content must never read like checked content. Confirmed is
+  // deliberately unlabelled - the absence of a marker is the signal, so
+  // a confirmed benefit reads as plain prose and only the unchecked one
+  // carries a badge.
+  var BENEFIT_STATUS = { drafted: "Draft - not yet confirmed", confirmed: "" };
+  var SALES_ROUTE = { direct: "Direct sales", partner: "Partner sales" };
   var PHASE_ORDER = ["discovery", "build", "certification", "launch"];
   function day(x) { return x ? String(x).slice(0, 10) : ""; }
   function dateRange(a, b) {
@@ -103,6 +121,9 @@
     PROJECT_STATUS: PROJECT_STATUS,
     PHASE: PHASE,
     PHASE_ORDER: PHASE_ORDER,
+    BENEFIT_TYPE: BENEFIT_TYPE,
+    BENEFIT_STATUS: BENEFIT_STATUS,
+    SALES_ROUTE: SALES_ROUTE,
     KNOWN_ATTRS: KNOWN_ATTRS,
     day: day,
     dateRange: dateRange,

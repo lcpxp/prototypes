@@ -94,6 +94,9 @@ const COVERAGE = {
   "work_items.end_horizon": { file: "assets/js/pages/roadmap/views.js" },
   "work_items.presentation": { file: "assets/js/pages/roadmap/views.js" },
   "work_items.department": { file: "assets/js/core/registry.js" },
+  "work_items.benefit_type": { file: "assets/js/pages/roadmap/detail-values.js" },
+  "work_items.benefit_status": { file: "assets/js/pages/roadmap/detail-values.js" },
+  "work_items.sales_route": { file: "assets/js/pages/roadmap/detail-values.js" },
   // Owned by a stricter benchmark that checks the KINDS registry rather
   // than a mention anywhere in the file. One concept, one home.
   "product_capabilities.kind": { ownedBy: "tests/unit/platform/knowledge.test.js" },

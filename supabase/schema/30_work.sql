@@ -285,10 +285,48 @@ create table if not exists public.work_items (
   -- to null is the undo. See markRecency in assets/js/pages/roadmap/views.js
   -- and the latch operation in docs/ROADMAP-PLAYBOOK.md.
   previously_completed_at timestamptz,
+  -- WHY the roadmap exists, as opposed to what it contains. Columns
+  -- rather than the attributes bag because the roadmap has to be
+  -- answerable ("every workstream with a revenue benefit"), and
+  -- assignee was moved out of jsonb for exactly that reason.
+  --
+  -- business_benefit is the primary field: what this buys PXP as a
+  -- commercial and operational entity, and the line a stakeholder
+  -- reads first. The three *_value fields are the granular tier
+  -- beneath it - who actually feels it - and all three are optional.
+  -- An empty merchant_value is usually the CORRECT answer: the
+  -- merchant is the customer being onboarded, and the beneficiaries of
+  -- this work are the PXP and partner staff who onboard them.
+  business_benefit text,
+  -- The shape of the benefit, so it can be queried and not merely
+  -- read. defect_cost is the honest type for a row whose benefit is
+  -- that it is broken - a cost of leaving it, not a business case.
+  benefit_type text
+    check (benefit_type in ('cost_removed', 'failure_prevented',
+      'revenue_enabled', 'revenue_retained', 'decision_enabled',
+      'obligation_met', 'defect_cost')),
+  -- Drafted until the owner confirms it in as many words, the same
+  -- idiom as a proposed knowledge_links row. A benefit an assistant
+  -- wrote must never read identically to one that was checked - that
+  -- is the failure this column exists to prevent.
+  benefit_status text check (benefit_status in ('drafted', 'confirmed')),
+  pxp_staff_value text,
+  partner_staff_value text,
+  merchant_value text,
+  -- Direct sales (PXP staff onboarding merchants into PXP) against
+  -- partner sales (a partner's own staff doing it). Partner types -
+  -- ISO, ISV, PFAC, referral - are one managed group with similar
+  -- access, so the route is the distinction that carries weight, and
+  -- it decides which staff audience a benefit is written for.
+  sales_route text check (sales_route in ('direct', 'partner')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint work_items_parent_not_self check (parent_id is null or parent_id <> id),
-  constraint work_items_workstream_top_level check (level <> 'workstream' or parent_id is null)
+  constraint work_items_workstream_top_level check (level <> 'workstream' or parent_id is null),
+  -- A stored benefit always carries its checked state, or the point of
+  -- benefit_status is lost the first time somebody forgets to set it.
+  constraint work_items_benefit_status_present
+    check (business_benefit is null or benefit_status is not null)
 );
 
 create index if not exists work_items_area_idx
@@ -309,6 +347,12 @@ create index if not exists work_items_associated_departments_idx
   on public.work_items using gin (associated_departments);
 -- Filtering by owner is a common read path; partial, since most rows
 -- carry no assignee.
+create index if not exists work_items_benefit_type_idx
+  on public.work_items (benefit_type)
+  where benefit_type is not null;
+create index if not exists work_items_sales_route_idx
+  on public.work_items (sales_route)
+  where sales_route is not null;
 create index if not exists work_items_assignee_idx
   on public.work_items (assignee)
   where assignee is not null;
