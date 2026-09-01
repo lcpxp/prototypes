@@ -220,6 +220,50 @@ Three days does not compress it; it selects from it. The selection is
 below, and the rule behind it is that anything which does not change
 what appears on screen when a department filter is applied waits.
 
+**D17. The attribution rulings.** Settled 2026-09-01 against the six
+framings, and recorded as a table because they are findings applied, not
+principles. Each follows D1 - accountable for the outcome, tested by
+where the benefit lands.
+
+| Block | Owner | Associated | Why |
+| --- | --- | --- | --- |
+| Contract overhaul | Legal & Compliance | Product, Operations | The contract is Legal's artefact; the tooling is how they manage it |
+| Pricing lines, service fees, minimums, ceilings | Sales & Commercial | Product, Finance | Pricing exists to sell; what a rate looks like is a commercial call |
+| The pricing engine | Product & Technology | Sales, Finance | Driven by the KPI portal, which Product and Technology hosts and manages |
+| Insights & Reporting | Operations & Onboarding | Finance | The insight sets measure operational flow, and Operations acts on them |
+| Acquiring | Product & Technology | Risk & Underwriting | Acquirer enablement is platform and integration work |
+| Defects, wherever they sit | Product & Technology | the area's owner | A defect's owner is whoever repairs it, not whoever trips over it |
+
+**D18. Product and Technology owns two things, not one.** The framing
+correction that matters most, because it changes what the largest
+department is for. Product owns the platform; Technology owns product;
+and Technology owns *other* products that LaunchPad both sells and
+integrates with - core services built and managed there, Unity among
+them. So Product and Technology is not the residual bucket and not
+merely the enabler: it is the platform owner and the supplier of the
+products and services the platform depends on.
+
+This narrows what `core_launchpad` (D2) is for. If Technology already
+owns the platform and the core services, the fallback is needed less
+often than D2 assumed, and reaching for it should be rarer still.
+
+**D19. Operations wants the automation and the AI, and is not
+squeamish about either.** An earlier framing here warned against
+leading with AI. That was wrong: the COO and Operations are pushing it,
+and the alignment being sought is around AI plus tracking, reporting,
+dashboards and integrations. Their frame is the removal of every manual
+step, the monitoring of whatever stage, step or role is slowing an
+application, and the tracking of leads and applications end to end.
+
+**D20. Finance and Revenue is deliberately last.** Least important
+currently, by the owner's own call - which changes D11's opening order
+and is a sequencing statement, not a judgement of worth. Their real ask
+is narrower and more concrete than the insight sets they nominally
+owned: invoice detail, commissioning, lease against rental against
+purchase, and clear access to the commercial information carried on
+contracts. That is contract-adjacent, which puts Finance closer to
+Legal's set than to Operations'.
+
 ## What "done" looks like
 
 Six statements, each measurable, none of them prose:
