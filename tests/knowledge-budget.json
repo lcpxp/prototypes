@@ -12,7 +12,7 @@
     "items.closed_without_resolution": 40,
     "ideas.no_summary": 0,
     "ideas.no_value_note": 0,
-    "links.proposed": 11,
+    "links.proposed": 12,
     "embeddings.stale": 0
   },
   "notes": {
@@ -27,7 +27,7 @@
     "items.closed_without_resolution": "40 of 292, and this is the one figure that DECAYED - it was 39 of 268, so the count rose while the ceiling stood. 'Nothing is ever deleted' means a closed row carries WHY it closed. One was recoverable on 2026-08-30: 'Refactoring and CLAUDE.md tidy-up' had its reason in details rather than resolution, and it was moved. The rest need the owner; some are recoverable from git or from notes.",
     "ideas.no_summary": "At 0, down from 14 of 14. Every prototype idea now says what it is.",
     "ideas.no_value_note": "At 0, down from 14 of 14. Every idea says what it would PROVE, which is the field that decides whether to build it.",
-    "links.proposed": "11 of 158 live links still proposed, down from 110 of 119. Proposed is the honest state for an assistant's unconfirmed suggestion, so this is a queue rather than a defect - but a queue nobody watches grows.",
+    "links.proposed": "12 of 159 live links still proposed, up one on 2026-09-01 and down from 110 of 119 originally. The new one pairs perpetual merchant monitoring with the marketplace actions row - two ends of one capability, deliberately owned by different departments - and is proposed because an assistant wrote it, which is the honest state until the owner confirms it. Proposed is a queue rather than a defect, but a queue nobody watches grows.",
     "embeddings.stale": "At 0 and it must stay there. A vector computed from text that has since changed still answers searches, with the wrong meaning and no sign of it - the one failure here that actively misleads rather than merely missing. 33 were stale on 2026-08-30 and were cleared with select * from roadmap_embed_refresh(); it is idempotent, so running it when nothing is stale costs one query."
   }
 }

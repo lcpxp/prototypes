@@ -10,6 +10,11 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Roadmap: two work items added from the Product and Technology objective
+  review - Unity-triggered marketplace actions with merchant self-service,
+  under the Self-Service and Merchant-In Life API, and perpetual merchant
+  monitoring under Risk as a Service. T+1 settlement configuration parked.
+
 ### Fixed
 - The **Splunk button in the toolbar no longer opens Splunk's error
   page**. Going straight to the saved search gave Splunk nothing to
