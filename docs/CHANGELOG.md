@@ -14,6 +14,10 @@ is the git history; what is unfinished is docs/STATE.md.
   review - Unity-triggered marketplace actions with merchant self-service,
   under the Self-Service and Merchant-In Life API, and perpetual merchant
   monitoring under Risk as a Service. T+1 settlement configuration parked.
+- Roadmap: pricing lines and service fees, and PFAC enablement, now sit
+  under Sales and Commercial; KPI data under Product and Technology with
+  Operations associated. The pricing engine stays with Product and its
+  front-end row is renamed to say what it does.
 
 ### Fixed
 - The **Splunk button in the toolbar no longer opens Splunk's error

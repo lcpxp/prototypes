@@ -235,6 +235,14 @@ where the benefit lands.
 | Insights & Reporting | Operations & Onboarding | Finance | The insight sets measure operational flow, and Operations acts on them |
 | Acquiring | Product & Technology | Risk & Underwriting | Acquirer enablement is platform and integration work |
 | Defects, wherever they sit | Product & Technology | the area's owner | A defect's owner is whoever repairs it, not whoever trips over it |
+| PFAC enablement, in full | Sales & Commercial | - | Sales-owned end to end; the owner's "also core launchpad" waits on D2's constraint |
+| KPI data | Product & Technology | Operations | They host and manage the KPI portal |
+
+Applied 2026-09-01: pricing lines and every child to Sales, Product
+associated at the workstream only - the filter pulls children through
+from an associated parent, so eleven tags were unnecessary. KPI data
+re-owned, band deliberately untouched: the attribution was wrong, the
+priority was not re-judged. PFAC enablement and every child to Sales.
 
 **D18. Product and Technology owns two things, not one.** The framing
 correction that matters most, because it changes what the largest
@@ -338,6 +346,14 @@ where the benefit lands.
 | Insights & Reporting | Operations & Onboarding | Finance | The insight sets measure operational flow, and Operations acts on them |
 | Acquiring | Product & Technology | Risk & Underwriting | Acquirer enablement is platform and integration work |
 | Defects, wherever they sit | Product & Technology | the area's owner | A defect's owner is whoever repairs it, not whoever trips over it |
+| PFAC enablement, in full | Sales & Commercial | - | Sales-owned end to end; the owner's "also core launchpad" waits on D2's constraint |
+| KPI data | Product & Technology | Operations | They host and manage the KPI portal |
+
+Applied 2026-09-01: pricing lines and every child to Sales, Product
+associated at the workstream only - the filter pulls children through
+from an associated parent, so eleven tags were unnecessary. KPI data
+re-owned, band deliberately untouched: the attribution was wrong, the
+priority was not re-judged. PFAC enablement and every child to Sales.
 
 **D18. Product and Technology owns two things, not one.** The framing
 correction that matters most, because it changes what the largest
