@@ -40,23 +40,37 @@ needs a business case; a defect needs a price.
 
 ## The four fields and their altitudes
 
-Per D3 and D5. The altitude is the whole point: two fields answering one
-question is the duplication finding 4 warned about, four fields
+Per D3, D5 and D9. The altitude is the whole point: two fields answering
+one question is the duplication finding 4 warned about; four fields
 answering at four different altitudes is a hierarchy.
 
 - **`business_benefit`** - required, and the primary field. The
   departmental and PXP-wide reading: what this buys the business as a
   commercial and operational entity. This is what a stakeholder deck
   leads with and what the drawer shows first.
-- **`merchant_value`** - optional. What changes for the merchant.
-- **`staff_value`** - optional. What changes for the PXP person who
-  operates the platform.
-- **`end_user_value`** - optional. What changes for the person at the
-  far end - the merchant's own customer.
+- **`pxp_staff_value`** - optional. What changes for the PXP person
+  onboarding a direct merchant. Renamed from `pxp_value`, which is free
+  to rename because it holds no rows.
+- **`partner_staff_value`** - optional, and new. What changes for a
+  partner company's staff onboarding merchants into PXP. This audience
+  had no field at all and is one of the two the work is actually for.
+- **`merchant_value`** - optional, and expected to be empty far more
+  often than not. The merchant is the end customer being onboarded, and
+  usually benefits only through how the work changes what PXP or partner
+  staff do with their details. The intended merchant contributor role -
+  a merchant completing their own details - is the limited case where a
+  direct merchant benefit is real.
 
-Optional means *where appropriate*, not *where convenient*. A row with
-no honest merchant reading leaves that field empty; a row where the
-merchant is the whole point and the field is empty is an unfinished row.
+Optional means *where appropriate*, not *where convenient*. The
+distinction that matters, from D9: **an empty `merchant_value` is
+usually the correct answer**, and the coverage gate must never treat it
+as a defect. Gating it would manufacture up to 149 false gaps and push a
+session into writing merchant-framed text that misdescribes who the work
+is for. `pxp_staff_value` and `partner_staff_value` are the two where an
+empty field on a row squarely about onboarding is worth a second look.
+
+Deliverables (D10) inherit their parent's fields and write their own
+only where the reading genuinely differs.
 
 `benefit_type` (D6) is required alongside `business_benefit`, from the
 seven: cost removed, failure prevented, revenue enabled, revenue
@@ -70,12 +84,19 @@ source material for **user stories** and, later, **marketing
 collateral**. Two consequences, both binding on every wave:
 
 **Write each granular field so a role and a change of behaviour are both
-present.** A user story needs a role, a capability and a reason. The
+present.** A user story needs a role, a capability and a reason. D9
+supplies the roles - a PXP onboarding operator, a partner company's
+staff member, and in the limited case a merchant contributor - so the
 role comes from which field the text sits in, the capability from the
-item itself, and the reason is what the field must supply. So
-"faster onboarding" fails twice over - no role, no behaviour - where
-"an operator stops re-keying details that arrived in the application"
-gives a story writer everything but the verb.
+item itself, and the reason is what the field must supply. So "faster
+onboarding" fails twice over, no role and no behaviour, where "an
+operator stops re-keying details that arrived in the application" gives
+a story writer everything but the verb.
+
+The partner field is the one to watch. It is new, its audience is
+outside PXP, and it is the likeliest source of collateral - so a line
+there that only parses internally has failed at the job the field was
+added for.
 
 **Keep it free of internal shorthand.** Collateral is written for people
 outside PXP. A benefit that only parses if you already know the platform
