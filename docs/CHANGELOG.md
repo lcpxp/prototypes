@@ -14,6 +14,14 @@ is the git history; what is unfinished is docs/STATE.md.
   review - Unity-triggered marketplace actions with merchant self-service,
   under the Self-Service and Merchant-In Life API, and perpetual merchant
   monitoring under Risk as a Service. T+1 settlement configuration parked.
+- Roadmap: every workstream and every Now/Next item now carries a business
+  benefit, its type, and who feels it - drafted until confirmed, and marked
+  as such in the drawer. The drawer shows it above the fact grid.
+- Roadmap: department attribution reworked across the board. Contract work
+  sits with Legal and Compliance, insights with Operations, acquiring and
+  the pricing engine with Product and Technology. Every workstream now
+  carries at least one associated department, so a department filter
+  returns the work that relates to it and not only the work it owns.
 - Roadmap: pricing lines and service fees, and PFAC enablement, now sit
   under Sales and Commercial; KPI data under Product and Technology with
   Operations associated. The pricing engine stays with Product and its

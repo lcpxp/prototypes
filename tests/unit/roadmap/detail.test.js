@@ -374,3 +374,51 @@ test("drawerHtml splits a workstream's work items from its deliverables", () => 
   assert.doesNotMatch(itemUl, /Spec doc/, "the deliverable is not in the work-items list");
 });
 
+
+// --- Business benefit ----------------------------------------------
+//
+// Three things have to hold, and each one failing is a different kind
+// of damage: the benefit must render ABOVE the fact grid (a stakeholder
+// reads why before what), a DRAFTED benefit must be visibly marked (a
+// benefit an assistant wrote reading identically to one the owner
+// checked is the failure benefit_status exists to prevent), and the
+// benefit fields must not ALSO appear as fact rows.
+
+test("drawerHtml puts the business benefit above the fact grid", () => {
+  const App = load();
+  const data = sample();
+  data.items[0].business_benefit = "Removes a manual keying step per application.";
+  data.items[0].benefit_type = "cost_removed";
+  data.items[0].benefit_status = "confirmed";
+  const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
+  assert.match(html, /Removes a manual keying step per application\./);
+  assert.match(html, /rmd-benefit-type">Cost removed/, "the type renders as a label, not a raw key");
+  assert.ok(html.indexOf('class="rmd-benefit"') < html.indexOf('class="rmd-facts"'),
+    "the benefit section precedes the fact grid");
+  assert.doesNotMatch(html, /rmd-benefit-draft/, "a confirmed benefit carries no draft marker");
+});
+
+test("drawerHtml marks a drafted benefit and never prints benefit fields twice", () => {
+  const App = load();
+  const data = sample();
+  data.items[0].business_benefit = "Stops the contract being assembled by hand.";
+  data.items[0].benefit_status = "drafted";
+  data.items[0].pxp_staff_value = "An operator composes from sections.";
+  data.items[0].merchant_value = "";
+  const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
+  assert.match(html, /rmd-benefit-draft">Draft - not yet confirmed/,
+    "an unconfirmed benefit is visibly provisional");
+  assert.match(html, /For PXP staff<\/dt><dd>An operator composes from sections\./);
+  assert.doesNotMatch(html, /For the merchant/,
+    "an empty audience reading is omitted rather than rendered blank");
+  const benefitCount = (html.match(/Stops the contract being assembled by hand\./g) || []).length;
+  assert.equal(benefitCount, 1, "the benefit renders once, not also as a fact row");
+});
+
+test("drawerHtml renders the route to market as a labelled fact", () => {
+  const App = load();
+  const data = sample();
+  data.items[0].sales_route = "partner";
+  const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
+  assert.match(html, /Route to market<\/dt><dd>Partner sales/);
+});
