@@ -40,10 +40,38 @@ constant cannot sort, filter or present.
 
 The evidence that this is systematic rather than a handful of slips:
 `roadmap_categories.owning_department` and `work_items.department`
-disagree on **60 of the 149 open rows that carry a theme** (40%). The
-largest disagreements are all in one direction - a row filed under a
-theme owned by Operations, Finance, Sales or Risk, but departmentally
-tagged to Product and Technology: 21, 19, 9 and 7 rows respectively.
+disagree on **79 of the 165 open rows that carry a theme** - 48%, so the
+field agrees with the theme's owner slightly less often than it
+disagrees (80 agree, 6 carry no department at all). The largest
+disagreements all run one way: a row filed under a theme owned by
+Operations, Finance, Sales or Risk, but departmentally tagged to Product
+and Technology - 21, 19, 9 and 7 rows respectively.
+
+Corrected 2026-09-01. An earlier revision of this file said "60 of 149
+(40%)", which crossed two denominators: 149 is the count of workstreams
+and items, and 165 is the count of open rows carrying a theme. The
+recount is above and it makes the finding stronger, not weaker.
+
+The disagreement is also concentrated, which is what makes it workable
+theme by theme rather than row by row:
+
+| Theme | Open rows | Disagree |
+| --- | --- | --- |
+| Products & Pricing | 20 | 19 |
+| Acquiring | 8 | 8 |
+| Screening, Contracting & Fulfilment | 25 | 17 |
+| Insights & Reporting | 18 | 10 |
+| Partners & PFAC | 17 | 9 |
+| Automation & Approvals | 16 | 6 |
+| Integrations | 7 | 4 |
+| Admin & Operations | 13 | 3 |
+| Core LaunchPad | 13 | 2 |
+| Unity | 11 | 1 |
+| APIs, Sales & Commercial, Overhaul | 17 | 0 |
+
+Three themes are already clean. Two - Products & Pricing and Acquiring -
+are almost entirely mis-attributed, and between them account for 27 of
+the 79. That is where A3 starts.
 
 The consequence for the presentation is arithmetic. Filtered by owner
 alone, the six departmental decks would carry 94, 41, 16, 10, 5 and 1
@@ -176,3 +204,31 @@ say which.
 The merchant contributor case D9 describes is already on the roadmap as
 live work rather than an intention - which is what makes `merchant_value`
 worth keeping as a field even though it will usually be empty.
+
+### 9. Most rows can be drafted from; twenty-five cannot
+
+Measured because the accuracy discipline (D13) is only worth writing if
+it can actually be followed. Across the 149 open workstreams and items:
+
+| Evidence available | Rows |
+| --- | --- |
+| Details of real length (40+ chars) | 97 |
+| A knowledge link to something else | 60 |
+| An anchored work note | 52 |
+| A source document | 8 |
+| **Any of the above** | **124** |
+| **None of the above** | **25** |
+
+So 124 of 149 carry enough for a session to draft a credible benefit and
+cite what it drew on. That is the case for drafting rather than asking:
+asking the owner to compose 124 benefits from nothing would waste the
+one input only they can give.
+
+The 25 are the opposite case, and they are the most important list in
+this programme. A row with no details, no note, no link and no source
+document offers a drafter nothing but its own title. **Anything written
+against those 25 would be invention** - fluent, plausible, and
+indistinguishable from a checked benefit once it is in the field. They
+are owner-answered or they are recorded as questions. There is no third
+option, and the accuracy discipline exists mainly to keep that true
+under time pressure.

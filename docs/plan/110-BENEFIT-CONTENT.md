@@ -1,14 +1,14 @@
 # 110 - Business benefit: the content standard and Session B
 
-Session B of the presentation-readiness programme. Its measured
-position, its decisions (D1 to D8), its propagation rule and its risks
-live in docs/plan/100-PRESENTATION-READINESS.md and are not restated
-here; this file is the content standard and the waves that apply it.
+Session B of the presentation-readiness programme. Its decisions (D1 to
+D13) and risks live in docs/plan/100-PRESENTATION-READINESS.md, the
+figures it works against in docs/plan/105-MEASURED-POSITION.md, and the
+accuracy discipline and propagation rule that bind every wave in
+docs/plan/102-WORKING-RULES.md. None of those is restated here; this
+file is the content standard and the waves that apply it.
 
 Split from 100 at the line trigger its own acknowledgement named, once
-D5 to D8 landed. The shared three - position, ownership rule,
-propagation rule - stayed there deliberately, so neither file states
-them twice.
+D5 to D8 landed.
 
 Public repo: process only. No item titles, no benefit text, no
 departmental verdicts. Those live in Supabase.
@@ -150,6 +150,46 @@ roadmap_embed_refresh();` last: every benefit written leaves that row's
 meaning vector describing text that no longer exists, and
 `embeddings.stale` is held at 0 by a gate.
 
+## How content goes wrong here
+
+The accuracy discipline in 102 gives the six rules. These are the six
+specific ways this dataset will break them, written down because a
+failure mode you can name is one you can check for.
+
+**Restating the title.** "Merchants can be onboarded faster" against an
+item called "speed up onboarding". The check: cover the title and read
+the benefit. If it no longer says anything, it never did.
+
+**Writing a merchant benefit where there is none.** D9's correction, and
+the one this plan already made once. The merchant is usually not the
+beneficiary. An empty `merchant_value` is the right answer far more
+often than a filled one, and a session that fills all three granular
+fields on every row has misunderstood the model rather than been
+thorough.
+
+**Propagating by resemblance.** Finding 8 counted 52 rows mentioning a
+partner, and they do not all mean the same partner. A benefit written
+for one partner shape, fanned across rows that share the word, produces
+content that is wrong in a way nobody catches - it reads correctly and
+describes the wrong thing. Propagate by parentage, theme, explicit link
+or owner instruction. Never by similarity.
+
+**Inheriting onto a child that does something else.** A workstream's
+benefit frames its children; it does not describe them. Where a child's
+share of the parent benefit cannot be stated in a sentence, that is a
+signal the child may not belong under that parent - which is a finding
+worth more than the benefit would have been.
+
+**Naming a department the row does not carry.** If the benefit lands on
+Operations and the row is owned by Product, one of the two is wrong.
+Raise it; do not quietly write around it. Session A's parked list exists
+for exactly this collision and this is the pass most likely to find the
+ones it missed.
+
+**Confirming by silence.** A wave presented and not objected to is not a
+wave confirmed. Those rows stay `drafted`, and the count is reported at
+close rather than rounded away.
+
 ## The wave ritual
 
 Five to eight rows at a time. Ask, wait, write that batch, move on.
@@ -184,3 +224,44 @@ drawer changes are committed and green, and its parked-ownership list
 exists. Then work B1 to B7 in order; the queue query and the progress
 check are the same shape as the ones in docs/VALUE-CAPTURE.md, widened
 to the four fields.
+
+## The queue and the measure
+
+Two queries, the same shape as docs/VALUE-CAPTURE.md's, widened to the
+four fields and the drafted/confirmed state. The queue drives each wave;
+the measure is what the programme closes on.
+
+    -- The queue: open rows with no business benefit, most-read first
+    select wi.id, wi.level, wi.title, rc.label as theme,
+           wi.horizon, wi.priority, wi.department,
+           (wi.source_document_id is not null) as has_source,
+           length(coalesce(wi.details,'')) as details_len
+    from work_items wi
+    left join roadmap_categories rc on rc.id = wi.category_id
+    where wi.status not in ('done','dropped')
+      and wi.level <> 'deliverable'
+      and coalesce(wi.business_benefit,'') = ''
+    order by
+      case wi.level when 'workstream' then 0 else 1 end,
+      case wi.horizon when 'now' then 0 when 'next' then 1
+                      when 'later' then 2 else 3 end,
+      wi.priority;
+
+    -- The measure: coverage and how much of it is checked
+    select count(*) as open_rows,
+      count(*) filter (where coalesce(business_benefit,'') <> '') as with_benefit,
+      count(*) filter (where benefit_status = 'confirmed') as confirmed,
+      count(*) filter (where benefit_status = 'drafted') as drafted,
+      count(*) filter (where coalesce(pxp_staff_value,'') <> '') as pxp_staff,
+      count(*) filter (where coalesce(partner_staff_value,'') <> '') as partner_staff,
+      count(*) filter (where coalesce(merchant_value,'') <> '') as merchant
+    from work_items
+    where status not in ('done','dropped') and level <> 'deliverable';
+
+The second query is the close-out. Report both numbers, never just the
+first: "benefit coverage went from 22 to 149" says nothing useful if 130
+of those are unconfirmed drafts, and saying so is the difference between
+a report and a claim.
+
+Then `select * from roadmap_embed_refresh();`, because every benefit
+written leaves that row's vector describing text that no longer exists.

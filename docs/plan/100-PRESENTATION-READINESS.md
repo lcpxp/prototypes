@@ -178,6 +178,25 @@ The six framing sentences still get drafted (Q23), but their job is to
 drive and validate that sweep - they are the yardstick the filtered set
 is measured against, not a deliverable to present.
 
+**D13. Nothing written by an assistant is indistinguishable from
+something the owner checked.** The failure this programme most has to
+avoid is not an empty field; it is a fluent, plausible benefit that
+nobody verified, sitting under the owner's name in front of a board and
+reading exactly like the ones that were confirmed.
+
+So benefit content carries its own state, the same way a
+`knowledge_links` row is `proposed` until confirmed: `benefit_status` is
+`drafted` when a session wrote it and `confirmed` when the owner has
+said so in as many words. A coverage figure counts the unconfirmed, so
+drafted content is visible rather than silently permanent, and A7 makes
+the drawer show the difference - a provisional benefit that renders
+identically to a checked one defeats the whole mechanism at the exact
+moment it matters.
+
+This is what lets the programme move fast without lying. Drafting 124
+rows is quick; confirming them is the owner's time, spent only where it
+is the scarce input. The state field is what keeps those two apart.
+
 ## What "done" looks like
 
 Six statements, each measurable, none of them prose:
@@ -245,9 +264,12 @@ LaunchPad. The one-home gate (tests/checks/roadmap-intake.test.js) means
 it is stated there and cited everywhere else, including here.
 
 **A3. Re-attribute in waves, theme by theme.** 13 themes, each with a
-declared `owning_department`, is the natural batching: it puts the 60
+declared `owning_department`, is the natural batching: it puts the 79
 owner-versus-theme disagreements in front of the owner grouped by the
-disagreement rather than one row at a time. Each wave shows the current
+disagreement rather than one row at a time. Finding 1's concentration
+table sets the order - two themes hold 27 of the 79 and three are
+already clean, so this is roughly eight waves, not thirteen, and the
+first two are the ones worth doing carefully. Each wave shows the current
 owner, the theme's owner, the proposed owner and the reason, as
 clickable accept/change/park. Parked rows go on the Session B list.
 
@@ -304,6 +326,9 @@ detail-export.js and roadmap-detail.css:
   rewrite, and the guarantee that a new column still renders holds.
 - Render the new fields, and keep the JSON and CSV exports in step, so
   what a stakeholder sees and what an export carries do not diverge.
+- Render `benefit_status` visibly (D13). A drafted benefit that looks
+  identical to a confirmed one defeats the mechanism at the moment it
+  matters, so the drawer marks it and the deck view can exclude it.
 
 detail.js is already over its soft budget (tests/size-budget.json holds
 the numbers), so this work splits it at the seam between the fact-grid
@@ -329,32 +354,17 @@ line trigger its own acknowledgement named. That file carries the
 content standard (what a benefit has to mean, the four fields and their
 altitudes, the stories-and-collateral requirement of D5) and the seven
 waves B1 to B7. The shared three - the measured position above, the
-ownership rule of D1, and the propagation rule below - stay here and are
-cited from there, so neither file states them twice.
+ownership rule of D1, and the two working rules in
+docs/plan/102-WORKING-RULES.md - are stated once and cited from there,
+so no file states them twice.
 
-## The propagation rule
+## Working rules
 
-The owner's requirement that answers apply "throughout other related
-work items" needs to be mechanical or it will not happen. The rule:
-
-Every answer is recorded once at the highest level it is true, and
-inherited downward. A benefit agreed for a workstream frames every child
-before any child is asked about. An ownership rule agreed for one theme
-applies to all its rows before the next theme is opened. A department
-association agreed for a parent is proposed for every child.
-
-Where an answer contradicts something already stored - a benefit that
-implies a department the row does not carry, an ownership call that
-contradicts a theme's owner - that is a **reconciliation finding**, and
-it is raised, not silently resolved. Where an answer generalises beyond
-its row, it is written as a `work_notes` decision anchored to the
-workstream, and a `knowledge_links` row typed `relates_to`, `about` or
-`affects` where it connects two records. A link written by an assistant
-is `proposed` until confirmed in as many words.
-
-Where the owner does not know, the answer is a `work_notes` row with
-`kind='question'` anchored to the item. A recorded question is a better
-state than a confident sentence nobody checked.
+The accuracy discipline (what may be written at all) and the propagation
+rule (how an answer spreads once written) moved to
+docs/plan/102-WORKING-RULES.md, so that both sessions cite one home
+rather than one of them citing the other's file. Session A's waves and
+Session B's are equally bound by them.
 
 ## Risks
 
@@ -383,43 +393,61 @@ asks for a broad content fill. Tier 1 blocks Session A. Tier 2 shapes
 it. Tier 3 is content only the owner holds, answerable at any point up
 to the wave that needs it.
 
-Q1 to Q4, Q16 to Q19 and Q20 to Q23 are answered and have become D1 to
-D12 above; the numbering is kept so the conversation and the record line
-up. Q24 to Q27 are what the third round opened.
+Q1 to Q4, Q16 to Q23 are answered and have become D1 to D12; D13
+follows from the accuracy requirement rather than from a question. The
+numbering is kept so the conversation and the record line up. Q24 to Q30
+are what remains.
 
 ### Tier 1 - blocks Session A
 
 **Q24. Can a partner benefit be written once, or does it depend on the
-partner type?** Finding 8 measured it: 52 of 176 open rows mention a
-partner, and they do not all mean the same partner - 17 name the EIT
-model, 9 name PFAC, 3 name referral. Missing: whether a PFAC partner's
-staff and an EIT partner's staff want materially different things from
-the same piece of work. Changes: whether `partner_staff_value` is one
-line per row or has to name which partner shape it speaks for - and
-whether partner type needs somewhere to live at all, which today it does
-not have.
+partner type?** Finding 8: 52 of 176 open rows mention a partner, and
+they do not all mean the same one - 17 name EIT, 9 name PFAC, 3 name
+referral. Missing: whether a PFAC partner's staff and an EIT partner's
+staff want materially different things from the same work. Changes:
+whether `partner_staff_value` is one line per row or has to say which
+partner shape it speaks for.
 
-**Q25. Does partner type need a field?** Following directly from Q24. It
-is currently only inferable from prose, which means no filter, no
-grouping and no way to answer "what are we building for PFAC partners".
-If partner shapes genuinely diverge, that is a gap the same size as the
-department one, found in the same way. If they do not, this closes and
-nothing is built.
+**Q25. Does partner type need a field?** Follows from Q24. Today it is
+only inferable from prose - no filter, no grouping, no way to answer
+"what are we building for PFAC partners". If the shapes diverge, that is
+a gap the same size as the department one, found the same way. If not,
+this closes and nothing is built.
 
 **Q26. What already sits under the wrong department, that you know of?**
 D12 makes the filtered view a source of truth, and the failure it cannot
-self-detect is a row that is *present* and should not be - a coverage
-count cannot see it, only a person can. Anything you already know is
-mis-filed saves a wave of walking the set. Name none if none comes to
-mind; the walk in A4 is designed to find them anyway.
+self-detect is a row that is present and should not be. A count cannot
+see that; only a person can. Anything you already know saves a wave.
 
-**Q27. Should I draft the six framing sentences now, or in Session A?**
-You asked me to draft and you correct. Doing it now sharpens the plan
-and gives A4 its yardstick before the sweep starts; doing it in Session
-A keeps this plan a plan. My preference is now, in chat rather than in
-this file, because per D12 they are the test the association sweep is
-measured against, and a test written after the work it grades is worth
-less.
+**Q27. The twenty-five rows with no evidence at all** (finding 9) have
+no details, no note, no link and no source document. Anything drafted
+against them is invention. They can be worked three ways and it is your
+call which: you answer them in one concentrated pass, they are recorded
+as open questions and presented as such, or they are candidates for
+dropping on the grounds that a row nobody can say anything about may not
+be real work. My reading is that the list will be a mixture of all three
+and the useful thing is to see it - so the first wave of Session B could
+be those 25 as a single named list rather than spread through the
+queue.
+
+**Q28. Does the deck show drafted benefits, or only confirmed?** D13
+splits them. If the presentation is close, "confirmed only" may leave
+gaps on screen; "show both, marked" is honest but invites the question
+in the room. Changes what A7 builds and how hard the confirmation pass
+is pushed before the date.
+
+**Q29. When is the presentation?** Asked plainly because it sets every
+trade-off in this plan and nothing else does. It decides whether Session
+A takes the call-site change, how many confirmation passes fit, and
+whether the 25 get answered or recorded. I have been sequencing on
+correctness; a date lets me sequence on both.
+
+**Q30. Should I draft the six department framings now, or in Session
+A?** You asked me to draft and you correct. Per D12 they are the
+yardstick the association sweep is measured against, and a test written
+after the work it grades is worth less - so my preference is now, in
+chat rather than in this file. Unchanged from Q27 of the last round;
+restated because it is still open.
 
 ### Tier 2 - shapes Session A
 
