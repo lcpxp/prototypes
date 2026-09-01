@@ -98,7 +98,7 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `level` | workstream, item | item | container vs item |
 | `parent_id` | a workstream's id | null | nests under it |
 | `category_id` | a `roadmap_categories` id (theme) | null | theme lane |
-| `department` | six business functions (sales_commercial, operations_onboarding, product_technology, finance_revenue, legal_compliance, risk_underwriting) plus core_launchpad | null | single accountable owner; core_launchpad = the platform itself, not a business function (see Ownership) |
+| `department` | six business functions: sales_commercial, operations_onboarding, product_technology, finance_revenue, legal_compliance, risk_underwriting | null | the single accountable owner (see Ownership) |
 | `associated_departments` | text[] of the same department keys | `{}` | business area associations: extra departments that want visibility without owning; the department filter matches owner OR association |
 | `assignee` / `support_assignee` | text | null | named delivery owner and an optional second; drawer and timeline bar |
 | `horizon` | now, next, later, someday | someday | start band |
@@ -112,6 +112,11 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `summary` | text (Now-grade only) | null | card summary |
 | `effort` / `impact` | small/medium/large, low/medium/high | null | drawer |
 | `start_sprint` / `end_sprint` | `NN-NN` (e.g. 26-16) | null | drawer (docs/SPRINTS.md) |
+| `business_benefit` | text | null | WHY the row exists; drawer panel above the fact grid (docs/VALUE-CAPTURE.md) |
+| `benefit_type` | cost_removed, failure_prevented, revenue_enabled, revenue_retained, decision_enabled, obligation_met, defect_cost | null | the shape of the benefit, so it can be queried and not only read |
+| `benefit_status` | drafted, confirmed | null | required whenever `business_benefit` is set; drafted renders with a visible marker |
+| `pxp_staff_value` / `partner_staff_value` / `merchant_value` | text | null | who feels it. All optional, and an empty merchant reading is usually CORRECT |
+| `sales_route` | direct, partner | null | PXP staff onboarding, or a partner's staff doing it |
 | `resolution` | text | null | closing note (park/drop) |
 | `previously_completed_at` | timestamptz | null | delivered latch: pins a done item to Previously completed (see below) |
 
@@ -126,19 +131,27 @@ clearing it back to null is the undo.
 
 ## Ownership: one accountable owner, many associations
 
-One owner per item (`department`); every other interested function is an
-association tag (`associated_departments`). The filter matches owner OR tag, so
-tags give visibility without diluting accountability - never give two owners,
-add a tag. Owners are the six business functions plus `core_launchpad` ("Core
-LaunchPad"): use it when an item IS the core product (merchant onboarding into
-PXP) and no business function owns it (Acquirer-only, Merchant Profile, currency
-conversion). It is not `product_technology` - Core LaunchPad = which platform
-the work is, product_technology = who engineers it, carried as a default tag on
-Core LaunchPad items. Otherwise the driving function owns: operations_onboarding
-owns onboarding, screening, CRM and automation and stays a distinct owner (tag
-other functions, never merge into one big Operations). Making core_launchpad
-a live owner still needs a schema CHECK, a tokens.css colour and the
-department filter; until then it is the classification rule, in data only.
+**`department` means accountable for the outcome, tested by where the
+benefit lands.** Not who engineers it - Product and Technology builds
+everything, so "who does the work" makes the field a constant, and a
+constant cannot sort, filter or present. Where accountability is
+genuinely arguable, the tiebreak is whose day changes when it ships.
+
+One owner per item; every other interested function is an association tag
+(`associated_departments`). The filter matches owner OR tag, and pulls
+parents and children through, so a tag on a workstream gives that
+department the whole block - never give two owners, and never repeat a
+tag on every child that a parent already carries.
+
+Product and Technology owns two things, not one: the platform, and the
+other products LaunchPad both sells and integrates with (Unity, the KPI
+portal). Defects are theirs wherever they sit - a defect's owner is
+whoever repairs it, not whoever trips over it - with the area's owner
+tagged.
+
+A seventh owner, `core_launchpad`, is NOT live: it has no entry in the
+check constraint, the registry or tokens.css. Do not use it. If it is
+ever wanted, it needs all three in one change.
 
 ## Canonical operations (copy-paste, resolve ids by key/title)
 

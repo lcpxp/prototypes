@@ -165,7 +165,9 @@ reader to pick it by hand.
   delivery phases (with any TBC dates), the `attributes` (unrecognised
   keys still render as generic rows, so nothing is stored-but-invisible),
   business value notes, the closing resolution, and the item's
-  work_notes decisions (when the viewer has backlog access). A workstream
+  work_notes decisions (when the viewer has backlog access). The business
+  benefit renders as its own panel ABOVE the fact grid, carrying its type
+  and, where the benefit is unconfirmed, a visible draft marker. A workstream
   also lists its nested **work items** (each clickable through to its own
   drawer) and its **deliverables** in separate sections; a work item lists
   its deliverables. Plus an **Export JSON** action for that one item
@@ -221,8 +223,10 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   the board except dates: progress (0-100), prd_status and project_status
   (the KPI portal's own pickers, distinct from status), start_sprint /
   end_sprint codes (docs/SPRINTS.md), and an attributes jsonb bag
-  (pnl_vertical, team, region, customer, resources, cost, merchant_value,
-  pxp_value, blockers, prd_link, legacy_priority_tags). It also carries an
+  (pnl_vertical, team, region, customer, resources, cost, blockers,
+  prd_link, legacy_priority_tags). Business benefit and the three audience
+  readings are real columns, not attributes - see docs/VALUE-CAPTURE.md.
+  It also carries an
   optional department (the owning business function, which the Executive
   view groups by), a level (workstream = a presentable high-level container
   such as "Self Service API"; item = a standalone or nested piece) and an

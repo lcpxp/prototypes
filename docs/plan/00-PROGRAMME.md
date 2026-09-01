@@ -23,18 +23,31 @@ them.
     80-LOAD-SPEED.md       stop loading item detail text on first paint
     90-REFACTOR.md         make it maintainable for the sessions after
 
-The tenth is a programme rather than a file, because it runs across the
-database and the portal at once - getting the roadmap ready to show to
-six departments:
-
-    100-PRESENTATION-READINESS.md  the programme, the cut, Session A
-    101-DECISIONS.md               the decisions register, cited by number
-    102-WORKING-RULES.md           accuracy and propagation, both sessions
-    105-MEASURED-POSITION.md       the figures and findings, re-run at close
-    110-BENEFIT-CONTENT.md         the content standard and Session B
-
 Every one of the first eight is landed as of 2026-08-16, and 90 as of
-2026-08-30. Each file keeps its
+2026-08-30.
+
+The tenth had no file of its own for long. **Presentation readiness**
+(Sept 2026) got the roadmap ready to be shown to six departments, and it
+was almost entirely database work: the roadmap could say what every row
+was and not why any of it was worth doing, and `department` recorded who
+built a thing rather than who owned it, so Product carried 53% of the
+roadmap and two departments had nothing to present.
+
+What landed: business benefit as real columns with a checked type and a
+drafted/confirmed state; the three audience readings beneath it; a drawer
+that shows benefit above the fact grid and marks an unconfirmed one;
+re-attribution that took the split from 94/41/16/10/5/1 to
+66/50/34/13/9/6; an association sweep that left no workstream untagged and
+took the six departmental filters from 94/41/16/10/5/1 to
+100/100/44/42/21/19; and a drafted benefit on every workstream and every
+Now/Next item.
+
+Its planning files were deleted rather than kept. The durable parts went
+where they are used: docs/VALUE-CAPTURE.md is the benefit manual, the
+ownership rule is in docs/ROADMAP-PLAYBOOK.md, and
+`items.no_benefit`, `items.benefit_unconfirmed` and
+`items.no_association` are ratcheted figures in `npm run audit`. A plan
+that has been executed is a plan nobody should have to read. Each file keeps its
 record of where the plan turned out to be wrong, which is the part a
 later wave needs; the outcomes are in docs/CHANGELOG.md and the numbers
 that hold them are in `npm run audit`.

@@ -57,8 +57,8 @@ Everything one file can call in another. A surface in
 | `App.referenceTopics` | assets/js/pages/reference/topics.js:43 |
 | `App.registry` | assets/js/core/registry.js:21 |
 | `App.requireAuth` | assets/js/core/guard.js:31 |
-| `App.roadmapDetail` | assets/js/pages/roadmap/detail-export.js:218 (+5 more) |
-| `App.roadmapDetailValues` | assets/js/pages/roadmap/detail-values.js:100 |
+| `App.roadmapDetail` | assets/js/pages/roadmap/detail-export.js:223 (+5 more) |
+| `App.roadmapDetailValues` | assets/js/pages/roadmap/detail-values.js:118 |
 | `App.roadmapDrawer` | assets/js/pages/roadmap/drawer.js:19 |
 | `App.roadmapExport` | assets/js/pages/roadmap/export.js:99 |
 | `App.roadmapPrefs` | assets/js/pages/roadmap/prefs.js:52 |
@@ -142,9 +142,9 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | reference/reference.js | 309 | reference/reference.js - The reference viewer ("swagger") for modules/reference/. |
 | reference/render.js | 288 | reference/render.js - Pure HTML builders for the reference viewer. |
 | reference/topics.js | 48 | reference/topics.js - Pure HTML builders for api_topics rows: the narrative sections of a spec (overview, conventions, runbooks, accepted values, gap registers). |
-| roadmap/detail-export.js | 223 | roadmap/detail-export.js - The AI-optimised JSON and the flat CSV exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap / toCsvRoadmap). |
-| roadmap/detail-values.js | 124 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
-| roadmap/detail.js | 438 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
+| roadmap/detail-export.js | 228 | roadmap/detail-export.js - The AI-optimised JSON and the flat CSV exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap / toCsvRoadmap). |
+| roadmap/detail-values.js | 145 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
+| roadmap/detail.js | 472 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
 | roadmap/drawer.js | 97 | roadmap/drawer.js - The item detail drawer surface for the roadmap home: open/close, the ?item=<id> deep-link URL sync, and in-drawer navigation (a related-item link or a nested step row swaps the drawer to that item). |
 | roadmap/export.js | 101 | roadmap/export.js - The roadmap home's export dropdown wiring and the small download helpers it shares with the detail drawer (App.roadmapExport). |
 | roadmap/prefs.js | 106 | roadmap/prefs.js - The roadmap board's remembered view state (App.roadmapPrefs): which level and layout, and the eight view-only preferences that are NOT part of the shareable hash. |
@@ -182,7 +182,7 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
 | pxp-sim.css | 191 | pxp-sim.css - The simulation layer for the Daopay replica: the toast stack, the modal shell used by the email prompt and the stepped progress runs, and the spinner/tick each step cycles through. |
 | pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype (modules/prototypes/pci/demo.html). |
-| roadmap-detail.css | 354 | roadmap-detail.css - Coarse progress bars, the expanded Executive child lists, and the right-hand item detail drawer. |
+| roadmap-detail.css | 403 | roadmap-detail.css - Coarse progress bars, the expanded Executive child lists, and the right-hand item detail drawer. |
 | roadmap-themes.css | 30 | roadmap-themes.css - The theme accent map: one rule per roadmap_categories.key, each setting the accent and soft tint that a lane label, card border, dot or rail reads. |
 | roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme rollup, Team, Backlog) in Timeline and Cascade layouts, plus the level switcher. |
 | roadmap.css | 410 | roadmap.css - The roadmap board (modules/roadmap/). |
@@ -282,6 +282,8 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20260816115826_embed_batch_of_four.sql | 104 | Two corrections found while writing the schema file, applied so the repo and the database say the same thing. |
 | 20260830214715_pin_search_path_on_remaining_functions.sql | 77 | ---------------------------------------------------------------- pin_search_path_on_remaining_functions Sixteen of the eighteen functions in supabase/schema/ already set search_path = public, as do all three in policies.sql. |
 | 20260830215036_revoke_execute_on_embed_functions.sql | 24 | ------------------------------------------------------------------ |
+| 20260901160012_work_items_business_benefit_and_audiences.sql | 60 | Business benefit as a first-class, queryable field, with the granular audience tier beneath it and the route to market beside it. |
+| 20260901160444_work_items_board_carries_benefit_columns.sql | 27 | A view freezes its columns at creation, so the seven benefit and audience columns added by the previous migration do not appear in work_items_board on their own. |
 
 ### supabase/schema/
 
@@ -292,9 +294,9 @@ Schema, one file per domain, run in lexical order.
 | 00_core.sql | 79 | ---------------------------------------------------------------- 00_core.sql - Users, access grants and shared plumbing. |
 | 10_reference.sql | 145 | ---------------------------------------------------------------- 10_reference.sql - The API reference domain: specs, endpoints, tag catalogue and narrative topics. |
 | 20_portal.sql | 196 | ---------------------------------------------------------------- 20_portal.sql - Portal content domains: the integrations overview, the prototype gallery registry and the nav's outbound tool links. |
-| 30_work.sql | 449 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
+| 30_work.sql | 493 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
 | 31_roadmap_search.sql | 289 | Roadmap search: the contextualisation read surface. |
-| 32_roadmap_board.sql | 158 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
+| 32_roadmap_board.sql | 160 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
 | 33_links.sql | 345 | ---------------------------------------------------------------- 33_links.sql - The knowledge graph: typed, dated, owner-confirmed links between anything the system knows. |
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
 | 40_platform.sql | 78 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
@@ -311,10 +313,10 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 | File | Lines | Purpose |
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
-| knowledge-coverage.json | 83 |  |
+| knowledge-coverage.json | 98 |  |
 | policies.sql | 513 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1319 |  |
+| schema-snapshot.json | 1341 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -330,7 +332,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | one-home.test.js | 136 | tests/checks/one-home.test.js - One concept, one home. |
 | perf.test.js | 271 | tests/checks/perf.test.js - Performance gates. |
 | reference-drift.test.js | 167 | tests/checks/reference-drift.test.js - Keeps the API reference from drifting further from the code it documents. |
-| render-coverage.test.js | 351 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
+| render-coverage.test.js | 354 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the database. |
 | security.test.js | 205 | tests/checks/security.test.js - Security gates. |
@@ -369,7 +371,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | render-fallbacks.test.js | 163 | tests/unit/render-fallbacks.test.js - Two renderers that handled the values they were written for and quietly mishandled the rest. |
 | roadmap/child-order.test.js | 84 | tests/unit/roadmap/child-order.test.js - Benchmarks for how a workstream's nested work items stack and colour. |
 | roadmap/detail-export.test.js | 212 | tests/unit/roadmap/detail-export.test.js - Benchmarks for the AI-optimised JSON export and the CSV builders (toKpiItem, toKpiRoadmap, toCsvRoadmap, csvFromRows). |
-| roadmap/detail.test.js | 377 | tests/unit/roadmap/detail.test.js - Benchmarks for the item detail drawer (App.roadmapDetail.drawerHtml). |
+| roadmap/detail.test.js | 425 | tests/unit/roadmap/detail.test.js - Benchmarks for the item detail drawer (App.roadmapDetail.drawerHtml). |
 | roadmap/export.test.js | 119 | tests/unit/roadmap/export.test.js - The roadmap's export dropdown wiring (App.roadmapExport.wire). |
 | roadmap/views-custom.test.js | 258 | tests/unit/roadmap/views-custom.test.js - Benchmarks for the roadmap |
 | roadmap/views-exec.test.js | 49 | tests/unit/roadmap/views-exec.test.js - Benchmarks for the Executive (Categories) board, split from roadmap-views.test.js per its size-budget exit plan. |
@@ -398,12 +400,12 @@ Shared fixtures and the budgets the gates read.
 | fixtures/services/api-base.token.ts | 24 |  |
 | fixtures/services/bases.service.ts | 61 |  |
 | fixtures/services/shapes.service.ts | 112 |  |
-| knowledge-budget.json | 34 | Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them. |
+| knowledge-budget.json | 40 | Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them. |
 | lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
 | page-weight-budget.json | 103 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
-| size-budget.json | 95 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
+| size-budget.json | 101 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
 | surface-baseline.json | 817 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
@@ -417,7 +419,7 @@ Generators: the codemap, the schema snapshot, coverage, knowledge, the audit.
 | extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits its route inventory as JSON: one entry per [Http*] action attribute, composed onto its controller [Route], with the version resolved. |
 | gen-codemap.js | 208 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
 | gen-coverage.js | 387 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, the repo's committed account of how far the API reference matches the code it documents. |
-| gen-knowledge.js | 164 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, the repo's committed account of whether what the system was told is still anchored, sourced and reachable. |
+| gen-knowledge.js | 191 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, the repo's committed account of whether what the system was told is still anchored, sourced and reachable. |
 | gen-snapshot.js | 148 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
 | gen-surface.js | 84 | scripts/gen-surface.js - Regenerates tests/surface-baseline.json. |
 
@@ -427,7 +429,7 @@ Workstream records. Each keeps the account of where its plan was wrong, which is
 
 | File | Lines | Purpose |
 |---|---:|---|
-| 00-PROGRAMME.md | 275 | Alignment programme |
+| 00-PROGRAMME.md | 300 | Alignment programme |
 | 10-CODE-REVIEW.md | 272 | Reviewing the LaunchPad codebase How to work through the two supplied repositories so that what comes out is usable as fact rather than as impression. |
 | 20-API-REFERENCE.md | 412 | Aligning API reference 2.0 with the code The reference is the most consequential thing in the portal, because it is the surface people act on. |
 | 30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
@@ -456,7 +458,7 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 280 | Architecture How the portal fits together. |
-| CHANGELOG.md | 517 | Changelog All notable user-facing changes to LPio, newest first. |
+| CHANGELOG.md | 534 | Changelog All notable user-facing changes to LPio, newest first. |
 | COPILOT.md | 207 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
@@ -467,14 +469,14 @@ Architecture, security, design, and the operating protocols.
 | PORTAL-REVIEW.md | 208 | Portal review playbook How a portal review wave is opened, walked, answered, verified, triaged and closed. |
 | PROTOTYPE-IDEAS.md | 150 | Prototype ideas and plans How an idea for a prototype is captured, prioritised, planned and promoted. |
 | ROADMAP-INTAKE.md | 425 | Roadmap intake The contextualisation protocol: how a new request is placed against what already exists before anything is written. |
-| ROADMAP-PLAYBOOK.md | 272 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
+| ROADMAP-PLAYBOOK.md | 285 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
 | ROADMAP-REVIEW.md | 130 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
-| ROADMAP.md | 261 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
+| ROADMAP.md | 265 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINTS.md | 109 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 36 | Current state Updated: 2026-08-30 (refactor workstream closed, sense-check items done) # In progress Nothing. |
-| VALUE-CAPTURE.md | 71 | Value capture session |
+| STATE.md | 40 | Current state Updated: 2026-09-01 (presentation readiness landed; benefit awaiting confirmation) # In progress Nothing blocking. |
+| VALUE-CAPTURE.md | 174 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 132 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
 ### .claude/

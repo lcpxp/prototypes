@@ -64,7 +64,28 @@ select jsonb_build_object(
                    where level <> 'workstream' and coalesce(btrim(summary), '') = ''),
     'closed_without_resolution', (select count(*) from work_items
                                   where status in ('done', 'dropped')
-                                    and coalesce(btrim(resolution), '') = '')),
+                                    and coalesce(btrim(resolution), '') = ''),
+    -- Deliverables inherit their parent's benefit, so the denominator for
+    -- the benefit figures is the rows a reader actually opens.
+    'open_presentable', (select count(*) from work_items
+                         where status not in ('done', 'dropped')
+                           and level <> 'deliverable'),
+    'with_benefit', (select count(*) from work_items
+                     where status not in ('done', 'dropped')
+                       and level <> 'deliverable'
+                       and business_benefit is not null),
+    'no_benefit', (select count(*) from work_items
+                   where status not in ('done', 'dropped')
+                     and level <> 'deliverable'
+                     and business_benefit is null),
+    'benefit_unconfirmed', (select count(*) from work_items
+                            where status not in ('done', 'dropped')
+                              and level <> 'deliverable'
+                              and benefit_status = 'drafted'),
+    'no_association', (select count(*) from work_items
+                       where status not in ('done', 'dropped')
+                         and level <> 'deliverable'
+                         and cardinality(associated_departments) = 0)),
   'ideas', jsonb_build_object(
     'total', (select count(*) from future_prototypes),
     'no_summary', (select count(*) from future_prototypes
@@ -102,6 +123,12 @@ const RULES = [
     why: "A proposed link is an assistant's suggestion the owner has not confirmed. Not a defect - it is the honest state - but it is the queue, and a queue nobody watches is a queue that grows." },
   { key: "items.no_summary", of: "items.total",
     why: "A title alone is unreadable six months later, which is exactly when it gets read." },
+  { key: "items.no_benefit", of: "items.open_presentable",
+    why: "A roadmap that says what every row is and not why any of it is worth doing cannot be presented to anyone who is not already convinced. Counts open workstreams and items - deliverables inherit their parent's benefit and are excluded on purpose." },
+  { key: "items.benefit_unconfirmed", of: "items.with_benefit",
+    why: "A benefit an assistant drafted and nobody checked reads exactly like one that was verified. This is the count that stops coverage being mistaken for confidence: report it beside the coverage figure, never instead of it." },
+  { key: "items.no_association", of: "items.open_presentable",
+    why: "A department filter is only a source of truth if it returns the work that RELATES to a department, not just the work it owns. A row with no association is either genuinely single-department or invisible to everyone but its owner, and only a person can tell which." },
   { key: "items.closed_without_resolution", of: "items.total",
     why: "Nothing is ever deleted means a closed item carries why it closed. A done or dropped row with no resolution has lost the decision." },
   { key: "ideas.no_summary", of: "ideas.total",

@@ -13,7 +13,10 @@
     "ideas.no_summary": 0,
     "ideas.no_value_note": 0,
     "links.proposed": 12,
-    "embeddings.stale": 0
+    "embeddings.stale": 0,
+    "items.no_benefit": 85,
+    "items.benefit_unconfirmed": 66,
+    "items.no_association": 47
   },
   "notes": {
     "terms.no_definition": "At 0 and must stay there. A term with no definition is a word in a list.",
@@ -28,6 +31,9 @@
     "ideas.no_summary": "At 0, down from 14 of 14. Every prototype idea now says what it is.",
     "ideas.no_value_note": "At 0, down from 14 of 14. Every idea says what it would PROVE, which is the field that decides whether to build it.",
     "links.proposed": "12 of 159 live links still proposed, up one on 2026-09-01 and down from 110 of 119 originally. The new one pairs perpetual merchant monitoring with the marketplace actions row - two ends of one capability, deliberately owned by different departments - and is proposed because an assistant wrote it, which is the honest state until the owner confirms it. Proposed is a queue rather than a defect, but a queue nobody watches grows.",
-    "embeddings.stale": "At 0 and it must stay there. A vector computed from text that has since changed still answers searches, with the wrong meaning and no sign of it - the one failure here that actively misleads rather than merely missing. 33 were stale on 2026-08-30 and were cleared with select * from roadmap_embed_refresh(); it is idempotent, so running it when nothing is stale costs one query."
+    "embeddings.stale": "At 0 and it must stay there. A vector computed from text that has since changed still answers searches, with the wrong meaning and no sign of it - the one failure here that actively misleads rather than merely missing. 33 were stale on 2026-08-30 and were cleared with select * from roadmap_embed_refresh(); it is idempotent, so running it when nothing is stale costs one query.",
+    "items.no_benefit": "85 of 151 open workstreams and items. Every workstream and every Now/Next item has one; what is left is Later and Someday. Deliverables are excluded from the denominator on purpose - they inherit their parent's benefit and writing one per deliverable would be volume, not coverage.",
+    "items.benefit_unconfirmed": "66 of 66. Every benefit in the database was drafted by an assistant and none has been confirmed by the owner. This figure is the one that stops coverage being read as confidence, and it is the single most useful number to lower: a checked benefit and an unchecked one are indistinguishable in a room, which is exactly why benefit_status exists.",
+    "items.no_association": "47 of 151, down from 138 before the Sept 2026 sweep. No workstream is without one. The rest are genuinely single-department rows, so this will not reach zero and should not be forced there - a fabricated association is worse than an absent one."
   }
 }

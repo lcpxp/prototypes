@@ -89,9 +89,6 @@
     "assets/css/roadmap.css": {
       "seam": "Not yet. The print @media block is self-contained and would move cleanly, but it would cost the roadmap page a request. At 550, take it."
     },
-    "docs/plan/101-DECISIONS.md": {
-      "seam": "A register: it grows by one entry per decision and shrinks only when decisions are superseded, as D14 and D21 already have been. Do not split by session or theme - the whole value is that one number resolves in one place. Revisit at 550: past that, move superseded decisions to a closed section at the foot rather than fragmenting the live ones. Folds to a short outcome record once Session B closes."
-    },
     "assets/css/roadmap-detail.css": {
       "seam": "Not yet. It is the one stylesheet for the roadmap drawer and the executive board, loaded only by modules/roadmap/, so splitting it would add a request to the heaviest page in the site to save three lines. The seam when it passes 550 is the executive board rules (.rmd-exec*, the department-first rollup) leaving for roadmap-exec.css, since the board and the drawer share no selectors."
     },

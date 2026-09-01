@@ -48,6 +48,21 @@
       "of": 294,
       "pct": 2
     },
+    "items.no_benefit": {
+      "n": 85,
+      "of": 151,
+      "pct": 56.3
+    },
+    "items.benefit_unconfirmed": {
+      "n": 66,
+      "of": 66,
+      "pct": 100
+    },
+    "items.no_association": {
+      "n": 47,
+      "of": 151,
+      "pct": 31.1
+    },
     "items.closed_without_resolution": {
       "n": 40,
       "of": 294,
