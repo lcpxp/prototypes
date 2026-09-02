@@ -24,11 +24,14 @@ only.
 - work_items: roadmap and backlog work in one table, replacing the
   roll-forward Notion page. type is one of consideration, feature,
   functionality, bug, improvement, task (null for roadmap-origin
-  work). department is an optional coarse org-owner tag - the business
-  function accountable for the item (Sales & Commercial, Operations and
-  Onboarding, Product and Technology, Finance and Revenue, Legal &
-  Compliance, Risk & Underwriting) - orthogonal to area/theme, so any
-  view can group or filter by who owns the work; the keys live in the
+  work). department is a coarse org-owner tag - the business function
+  accountable for the OUTCOME, tested by where the benefit lands, and
+  never who engineers it (Sales & Commercial, Operations and Onboarding,
+  Product and Technology, Finance and Revenue, Legal & Compliance, Risk &
+  Underwriting). Orthogonal to area/theme, so any view can group or
+  filter by who owns the work. Every other interested function is an
+  associated_departments tag, and the filter matches owner OR tag; the
+  full rule lives in docs/ROADMAP-PLAYBOOK.md. The keys live in the
   work_items.department check constraint and their labels in
   App.registry.departments (assets/js/core/registry.js). horizon places
   it (someday = an unscheduled candidate; now/next/later = scheduled

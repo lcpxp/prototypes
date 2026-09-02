@@ -457,7 +457,7 @@ Architecture, security, design, and the operating protocols.
 | File | Lines | Purpose |
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
-| ARCHITECTURE.md | 280 | Architecture How the portal fits together. |
+| ARCHITECTURE.md | 285 | Architecture How the portal fits together. |
 | CHANGELOG.md | 534 | Changelog All notable user-facing changes to LPio, newest first. |
 | COPILOT.md | 207 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
@@ -477,7 +477,7 @@ Architecture, security, design, and the operating protocols.
 | SPRINTS.md | 109 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
 | STATE.md | 40 | Current state Updated: 2026-09-01 (presentation readiness landed; benefit awaiting confirmation) # In progress Nothing blocking. |
 | VALUE-CAPTURE.md | 174 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
-| WORKFLOW.md | 132 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
+| WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
 ### .claude/
 

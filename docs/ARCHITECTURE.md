@@ -140,7 +140,12 @@ Work management (see docs/WORKFLOW.md for the working protocol):
   to an area and optionally a category, milestone and source document,
   with status, horizon (now/next/later/someday), end_horizon, a
   presentation state (sequenced/current/ongoing/wind/bridge), priority,
-  effort, impact, tags and optional dates. Every view derives from these
+  effort, impact, tags and optional dates - plus the benefit columns that
+  say WHY a row exists (business_benefit with a checked benefit_type, a
+  drafted/confirmed benefit_status, and the three audience readings).
+  Those are real columns, not attributes, because the roadmap has to be
+  answerable by benefit and not only readable; docs/VALUE-CAPTURE.md is
+  the manual. Every view derives from these
   fields: Delivered is status 'done'; Parked is horizon 'someday' or
   status 'dropped'; Active is the rest, banded by horizon. The Executive
   view rolls Active work up by theme (always complete), Team shows it
