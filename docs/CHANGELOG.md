@@ -10,6 +10,13 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Sign-in: the login page is now a single minimal LPIO card - "Please sign
+  in" and the credential fields only. The brand headline, blurb, feature
+  points and marketing copy are gone, and every page title and the nav
+  wordmark read "LPIO" alone.
+- Naming: brand names have been removed from the public site copy, labels,
+  identifiers and file names. The EU-acquirer prototype and the shared
+  prototype styling were renamed accordingly.
 - Roadmap: two work items added from the Product and Technology objective
   review - Merchant Portal-triggered marketplace actions with merchant self-service,
   under the Self-Service and Merchant-In Life API, and perpetual merchant
