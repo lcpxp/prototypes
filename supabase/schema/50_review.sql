@@ -1,6 +1,6 @@
 -- ------------------------------------------------------------------
 -- 50_review.sql - Application review: waves of merchant application
--- triage against LaunchPad records (see docs/APP-REVIEW.md).
+-- triage against LP records (see docs/APP-REVIEW.md).
 --
 -- The portal renders these tables and never writes them. Every write -
 -- opening a wave, extracting from screenshots, classifying, confirming,
@@ -9,7 +9,7 @@
 -- is deliberately no insert/update/delete policy on any table here.
 --
 -- Three concepts stay in three columns and are never collapsed:
---   launchpad_status   external truth, mirrored from LaunchPad
+--   launchpad_status   external truth, mirrored from LP
 --   triage_category    our judgement about what to do
 --   confirmed_at/_by   a human's decision that a record needs nothing
 -- An AI-assigned "nothing to do here" is an inference; a human
@@ -23,11 +23,11 @@
 -- ---------------------------------------------------------------
 -- Lookup tables. Both carry BEHAVIOUR, not just labels, so the rules
 -- that depend on them are data an admin can change rather than code
--- that needs a deploy. LaunchPad will add statuses; that must never
+-- that needs a deploy. LP will add statuses; that must never
 -- require a release of this portal.
 -- ---------------------------------------------------------------
 
--- launchpad_statuses: mirrors LaunchPad's status vocabulary exactly.
+-- launchpad_statuses: mirrors LP's status vocabulary exactly.
 -- age_meaningful is the encoded form of a rule learned the hard way:
 -- age is a staleness signal only for statuses past the partner's
 -- control. "Application In Progress" may be a dormant draft that sits
@@ -122,10 +122,10 @@ create index if not exists review_waves_live_idx
   on public.review_waves (opened_at desc) where deleted_at is null;
 
 -- ---------------------------------------------------------------
--- review_applications: one row per LaunchPad application in a wave.
+-- review_applications: one row per LP application in a wave.
 --
 -- display_order preserves the source list order. The board is read in
--- LaunchPad order because that is the order the owner reads the real
+-- LP order because that is the order the owner reads the real
 -- list in; re-sorting by category would break the cross-reference.
 -- ---------------------------------------------------------------
 
@@ -134,7 +134,7 @@ create table if not exists public.review_applications (
   wave_id uuid not null references public.review_waves (id) on delete cascade,
   display_order integer not null default 0,
 
-  -- Record identity, mirrored from LaunchPad. Commercially sensitive:
+  -- Record identity, mirrored from LP. Commercially sensitive:
   -- these values live here and never in the repository.
   merchant_name text not null,
   partner_name text,

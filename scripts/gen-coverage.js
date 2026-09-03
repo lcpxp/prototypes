@@ -276,7 +276,7 @@ function build(specs, inventory, calls) {
   const callKeys = calls ? calls.keys : null;
   for (const spec of specs) {
     // Only a live launchpad spec has source to compare against. A draft
-    // spec describes design intent and Unity has no source supplied, so
+    // spec describes design intent and Merchant Portal has no source supplied, so
     // both report their size and abstain rather than showing a coverage
     // figure that would read as verified.
     const gradeable = spec.family === "launchpad" && spec.status === "live";
@@ -285,7 +285,7 @@ function build(specs, inventory, calls) {
       : { documented: spec.endpoints };
     // Two rows normalising to one path is invisible to the
     // reconciliation - a spec with no source to compare against is not
-    // reconciled at all - so it is counted here for every spec. Unity
+    // reconciled at all - so it is counted here for every spec. Merchant Portal
     // carries two: {id} and {numId} forms of the same resource.
     var distinct = spec.distinct_keys == null ? spec.endpoints : spec.distinct_keys;
     out.specs[spec.title] = Object.assign({

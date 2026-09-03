@@ -229,7 +229,7 @@
     if (age.days === null) return "<td></td>";
     var cls = age.isStale ? " is-stale" : age.isSignal ? "" : " is-quiet";
     var title = age.isSignal
-      ? "Days since this was raised in LaunchPad"
+      ? "Days since this was raised in LP"
       : "Days since this was raised. Not a staleness signal at this status - " +
         "nothing has been handed to us.";
     return '<td class="ar-age' + cls + '" title="' + App.escape(title) + '">' +
@@ -272,7 +272,7 @@
         "in the legend above to see rows.</p>";
     }
     return '<div class="table-wrap"><table>' +
-      "<thead><tr><th>#</th><th>Merchant</th><th>LaunchPad status</th>" +
+      "<thead><tr><th>#</th><th>Merchant</th><th>LP status</th>" +
       "<th>Triage</th><th>Age</th><th>State</th></tr></thead><tbody>" +
       shown.map(function (app, i) { return rowHtml(app, i, ctx); }).join("") +
       "</tbody></table></div>";

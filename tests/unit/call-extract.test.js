@@ -3,7 +3,7 @@
 // extractor (scripts/extract-calls.js), inventory C of
 // docs/plan/20-API-REFERENCE.md.
 //
-// The extractor reads a LaunchPad front-end checkout that is
+// The extractor reads a LP front-end checkout that is
 // deliberately NOT in this repo, so these run against synthetic
 // services in tests/fixtures/services/ instead.
 //

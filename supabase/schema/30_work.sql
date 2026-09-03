@@ -61,7 +61,7 @@ create table if not exists public.roadmap_categories (
   label text not null,
   description text,
   -- Whether this theme appears in the shareholder-facing projection.
-  -- Internal catch-alls (Core LaunchPad, fixes) set this false so they
+  -- Internal catch-alls (Core LP, fixes) set this false so they
   -- drop out of exec/shareholder views without deleting anything.
   shareholder_visible boolean not null default true,
   -- Owning department for COLOUR and grouping: drives the theme's base
@@ -167,7 +167,7 @@ create table if not exists public.work_items (
   milestone_id uuid references public.roadmap_milestones (id) on delete set null,
   source_document_id uuid references public.work_documents (id) on delete set null,
   -- Parent work item, for breaking a coarse item into ordered sub-steps
-  -- that are themselves work items (e.g. "Unity integration" -> Merchant
+  -- that are themselves work items (e.g. "Merchant Portal integration" -> Merchant
   -- Group, Merchant, Site, ...). Self-referential. One level of nesting
   -- by convention: the roadmap nests parent -> children only and never
   -- places a child as its own bar. A child carries its own
@@ -182,7 +182,7 @@ create table if not exists public.work_items (
   -- is the belt to this braces.
   parent_id uuid references public.work_items (id) on delete set null,
   -- Presentation level. A 'workstream' is a top-level, presentable
-  -- container (e.g. "Self Service API", "Unity integration"); an 'item'
+  -- container (e.g. "Self Service API", "Merchant Portal integration"); an 'item'
   -- is a work item - standalone, or nested under a workstream where it
   -- renders as an indented bar; a 'deliverable' is drawer-only detail
   -- under a workstream or an item and never renders as a bar. Children
@@ -227,7 +227,7 @@ create table if not exists public.work_items (
   -- shared. Distinct from `department`, which is the accountable
   -- business FUNCTION: assignee is the person. Free text rather than a
   -- foreign key because these names come from the KPI portal and are
-  -- not LPio accounts, so a team change must not need a migration.
+  -- not LPIO accounts, so a team change must not need a migration.
   -- Rendered on the timeline bar (roadmap-views-timeline.js) and the
   -- drawer's Ownership line (roadmap-detail.js), and carried in both the
   -- JSON and CSV exports.
@@ -253,7 +253,7 @@ create table if not exists public.work_items (
   impact text check (impact in ('low', 'medium', 'high')),
   starts_on date,
   ends_on date,
-  -- PXP delivery attributes (optional, light-touch; the board shows
+  -- Acquirer delivery attributes (optional, light-touch; the board shows
   -- only dates). progress is a coarse 0-100 completion rendered as a
   -- subtle bar. prd_status/project_status mirror the KPI portal's own
   -- status pickers and are DISTINCT from the internal `status`
@@ -290,13 +290,13 @@ create table if not exists public.work_items (
   -- answerable ("every workstream with a revenue benefit"), and
   -- assignee was moved out of jsonb for exactly that reason.
   --
-  -- business_benefit is the primary field: what this buys PXP as a
+  -- business_benefit is the primary field: what this buys Acquirer as a
   -- commercial and operational entity, and the line a stakeholder
   -- reads first. The three *_value fields are the granular tier
   -- beneath it - who actually feels it - and all three are optional.
   -- An empty merchant_value is usually the CORRECT answer: the
   -- merchant is the customer being onboarded, and the beneficiaries of
-  -- this work are the PXP and partner staff who onboard them.
+  -- this work are the Acquirer and partner staff who onboard them.
   business_benefit text,
   -- The shape of the benefit, so it can be queried and not merely
   -- read. defect_cost is the honest type for a row whose benefit is
@@ -313,7 +313,7 @@ create table if not exists public.work_items (
   pxp_staff_value text,
   partner_staff_value text,
   merchant_value text,
-  -- Direct sales (PXP staff onboarding merchants into PXP) against
+  -- Direct sales (Acquirer staff onboarding merchants into Acquirer) against
   -- partner sales (a partner's own staff doing it). Partner types -
   -- ISO, ISV, PFAC, referral - are one managed group with similar
   -- access, so the route is the distinction that carries weight, and

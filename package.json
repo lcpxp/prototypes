@@ -1,7 +1,7 @@
 {
   "name": "lpio-hub",
   "private": true,
-  "description": "LPio / LaunchPad IO - static shell of a login-gated project hub. Content lives in Supabase.",
+  "description": "LPIO - static shell of a login-gated project hub. Content lives in Supabase.",
   "scripts": {
     "test": "node --test \"tests/**/*.test.js\"",
     "test:checks": "node --test \"tests/checks/*.test.js\"",

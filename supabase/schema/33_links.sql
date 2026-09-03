@@ -20,8 +20,8 @@
 -- survivor named only in prose and relates_to_id null.
 --
 -- And there was no way at all to record that two rows are NOT the same,
--- so adjudicated non-matches - "Automate enrolling partners to Unity"
--- versus "...to LaunchPad", and a pair of same-shaped partner flows for
+-- so adjudicated non-matches - "Automate enrolling partners to Merchant Portal"
+-- versus "...to LP", and a pair of same-shaped partner flows for
 -- two different partners - were re-examined at every review, because
 -- nothing recorded the verdict. distinct_from is what turns
 -- the owner's domain judgement into data instead of prose he restates.

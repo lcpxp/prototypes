@@ -14,7 +14,7 @@ the system as its own:
 - Uppercase, letter-spaced monospace eyebrows labelling every section,
   echoing the method badges and paths of the API reference at the
   heart of the tool. Protected: never remove or genericise this.
-- A near-black top navigation bar (PXP Black, `--chrome-bg`) with a
+- A near-black top navigation bar (Acquirer Black, `--chrome-bg`) with a
   single lime underline marking the active page - chrome that reads
   as unmistakably its own without a logo. Lime otherwise appears in
   exactly two more places (the nav wordmark separator and the login
@@ -65,8 +65,8 @@ it. Display type sizes are fluid (clamp) in tokens.css; never add
 per-page font-size overrides to fake responsiveness.
 
 Palette: crisp cool greys (`--ink` through `--faint`) on an off-white
-paper, with PXP Blue (`--accent`, `#292cf5`) as the one commanding
-accent for actions, active states and key emphasis. PXP Black
+paper, with Acquirer Blue (`--accent`, `#292cf5`) as the one commanding
+accent for actions, active states and key emphasis. Acquirer Black
 (`--chrome-bg`) is a genuine design material, not just a dark-mode
 background: it is the fixed colour of the top navigation in both
 colour schemes. Lime (`--lime`) is a scalpel, deployed only where
@@ -80,7 +80,7 @@ tints (get teal, post blue, put amber, patch violet, delete red, query
 cyan) plus a small currentColor marker dot, because convention is
 information in an API reference. Status badges: live green, draft
 amber, deprecated red. The login brand panel is the one place a
-gradient is allowed: `--gradient-brand`, PXP's Black -> Blue -> Plum
+gradient is allowed: `--gradient-brand`, Acquirer's Black -> Blue -> Plum
 recipe, white text only, never as a text fill.
 
 Type: the system UI stack for prose, the system monospace stack for

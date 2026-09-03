@@ -5,7 +5,7 @@
 
 -- ---------------------------------------------------------------
 -- integrations: one row per third-party service connected to
--- Launchpad. Drives the integrations overview table and its detail
+-- LP. Drives the integrations overview table and its detail
 -- modals. detail is a flat JSONB object of extra label/value pairs
 -- (for example auth method, data exchanged, environments) rendered
 -- verbatim in the modal, so new facts need no code change.

@@ -73,7 +73,7 @@
   function renderWaveHead() {
     document.getElementById("ar-wave-name").textContent = state.wave.name;
     document.title = state.wave.name +
-      " - Application review - LPio / LaunchPad IO";
+      " - Application review - LPIO";
     document.getElementById("ar-wave-meta").innerHTML =
       '<p class="ar-wave-state">' + App.statusBadge(state.wave.state) +
       "<span>Opened " + App.escape(day(state.wave.opened_at)) +

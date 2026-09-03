@@ -84,7 +84,7 @@
     var openBy = App.portalReview.openByArea(findings);
     var parts = App.portalReview.parts(areas, state.walked, openBy);
 
-    document.title = wave.name + " - Portal review - LPio / LaunchPad IO";
+    document.title = wave.name + " - Portal review - LPIO";
     el("pr-wave-kind").textContent = App.portalReviewRender.labelOf(
       App.portalReviewRender.WAVE_KIND, wave.kind);
     el("pr-wave-name").textContent = wave.name;

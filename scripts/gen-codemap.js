@@ -174,10 +174,10 @@ md += "- The suite in tests/ is the definition of done.\n";
 
 fs.writeFileSync(path.join(ROOT, "docs/CODEMAP.md"), md);
 
-const llms = `# LPio - LaunchPad IO (static shell of a project hub)
+const llms = `# LPIO - LPIO (static shell of a project hub)
 
 > Public repository holding only the structure, styling and rendering
-> logic of LPio, a login-gated project hub (dashboard, roadmap, API
+> logic of LPIO, a login-gated project hub (dashboard, roadmap, API
 > reference viewer, review boards, prototype gallery). All substantive
 > content and credentials live in Supabase, never in this repo.
 

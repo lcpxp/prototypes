@@ -6,7 +6,7 @@ docs/STATE.md for the current state of work.
 
 ## What this repository is
 
-A public repository containing the shell of LPio, a LaunchPad IO project
+A public repository containing the shell of LPIO, a project
 hub for developer material, guidance, prototypes and independent
 workstreams. The site provides a login-gated dashboard, an API reference
 viewer ("swagger") and a prototype gallery. All substantive content
@@ -174,7 +174,7 @@ half-finished change.
   roadmap", run REVIEW (/roadmap wraps it). Database writes only; the
   repo does not change.
 - Application review (a wave of merchant application triage, or
-  screenshots of the LaunchPad list and mailbox threads): follow
+  screenshots of the LP list and mailbox threads): follow
   docs/APP-REVIEW.md - the wave lifecycle, the thirteen domain rules,
   how to classify and the copy-paste SQL. The /app-review command
   wraps it. Database writes only; the repo does not change, and the

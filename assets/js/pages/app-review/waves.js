@@ -87,7 +87,7 @@
   function wavesHtml(waves, apps, categories) {
     if (!waves.length) {
       return '<p class="notice">No review waves yet. A wave is opened from a ' +
-        "Claude Code session, which extracts the LaunchPad list and mail " +
+        "Claude Code session, which extracts the LP list and mail " +
         "evidence into the review_waves and review_applications tables.</p>";
     }
 

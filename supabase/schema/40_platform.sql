@@ -1,6 +1,6 @@
 -- ------------------------------------------------------------------
 -- 40_platform.sql - Platform product-knowledge domain. The durable,
--- queryable description of what Launchpad is and does today. Hangs
+-- queryable description of what LP is and does today. Hangs
 -- off the shared work_areas taxonomy (scope 'product') so capability
 -- areas, roadmap swimlanes and backlog groups agree. See
 -- docs/PLATFORM.md for the ingest and retrieval protocol.
@@ -13,7 +13,7 @@
 -- platform-level statements (value proposition) need no area.
 --
 -- kind classifies the row for rendering and filtering:
---   overview   the top-level "what Launchpad is"
+--   overview   the top-level "what LP is"
 --   value      a value-proposition statement
 --   capability an area or feature the platform provides
 --   glance     an at-a-glance headline

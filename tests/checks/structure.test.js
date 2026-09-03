@@ -19,7 +19,7 @@ const SHARED_SURFACES = ["escape", "db", "notice", "onAuthed", "store",
   "workItemsData", "copyText", "methodBadge", "statusBadge", "drawer",
   "lazyDetail", "blocks", "sprints", "registry", "root", "theme"];
 
-// The single agreed external stylesheet: Inter for the PXP replica.
+// The single agreed external stylesheet: Inter for the Acquirer replica.
 // Pinned exactly, so a future edit cannot widen it into "any Google font".
 const GOOGLE_FONTS_INTER =
   "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap";
@@ -103,7 +103,7 @@ test("every page loads the core stylesheets first, in order", () => {
       CORE.map((n) => `${prefix}assets/css/${n}.css`),
       `${page}: the first stylesheets must be tokens, base, layout, components, pages in order (see docs/DESIGN.md).`);
     // Page-specific sheets (e.g. login.css) may follow, but only from
-    // assets/css/ - with one agreed exception: the PXP replica pages
+    // assets/css/ - with one agreed exception: the Acquirer replica pages
     // load Inter from Google Fonts, because the real portal uses it and
     // an indicative system stack made the replica unfaithful. Owner
     // agreement recorded in docs/STATE.md. No other external

@@ -27,11 +27,11 @@ Five concepts, two of them just labels. The board shows only BARS -
 workstreams and work items; everything finer lives in the drawer.
 
 - **Theme** (`roadmap_categories`, 13 of them) - the top workstream lane the
-  C-suite reads (Unity, Acquiring, APIs, Insights ...). A classifier.
+  C-suite reads (Merchant Portal, Acquiring, APIs, Insights ...). A classifier.
 - **Department** (`work_items.department`) - the business function that owns
   the work. A classifier. Both are just tags on an item; neither is a container.
 - **Workstream** (`work_items` with `level='workstream'`) - a presentable
-  high-level container ("Self Service API", "Unity integration"). Renders as
+  high-level container ("Self Service API", "Merchant Portal integration"). Renders as
   its own bar (bold); needs no children to count as a big-ticket item.
   Always top-level (never nested). Can carry both work items and
   deliverables.
@@ -116,7 +116,7 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `benefit_type` | cost_removed, failure_prevented, revenue_enabled, revenue_retained, decision_enabled, obligation_met, defect_cost | null | the shape of the benefit, so it can be queried and not only read |
 | `benefit_status` | drafted, confirmed | null | required whenever `business_benefit` is set; drafted renders with a visible marker |
 | `pxp_staff_value` / `partner_staff_value` / `merchant_value` | text | null | who feels it. All optional, and an empty merchant reading is usually CORRECT |
-| `sales_route` | direct, partner | null | PXP staff onboarding, or a partner's staff doing it |
+| `sales_route` | direct, partner | null | Acquirer staff onboarding, or a partner's staff doing it |
 | `resolution` | text | null | closing note (park/drop) |
 | `previously_completed_at` | timestamptz | null | delivered latch: pins a done item to Previously completed (see below) |
 
@@ -144,7 +144,7 @@ department the whole block - never give two owners, and never repeat a
 tag on every child that a parent already carries.
 
 Product and Technology owns two things, not one: the platform, and the
-other products LaunchPad both sells and integrates with (Unity, the KPI
+other products LP both sells and integrates with (Merchant Portal, the KPI
 portal). Defects are theirs wherever they sit - a defect's owner is
 whoever repairs it, not whoever trips over it - with the area's owner
 tagged.
@@ -204,7 +204,7 @@ ever wanted, it needs all three in one change.
       where title='Returns handling';                                    -- park (keep the reason)
     update work_items set progress=50 where title='Self Service API';     -- nudge progress
     update work_items set associated_departments='{operations_onboarding}'
-      where title='Unity integration';                                   -- add a business area association
+      where title='Merchant Portal integration';                                   -- add a business area association
 
     -- Record the reasoning so a move is never informal drift
     insert into work_notes (kind, body, work_item_id)

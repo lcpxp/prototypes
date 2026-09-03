@@ -411,7 +411,7 @@
     var tags = (type ? '<span class="rmd-benefit-type">' + esc(type) + "</span>" : "") +
       (draft ? '<span class="rmd-benefit-draft">' + esc(draft) + "</span>" : "");
     var audiences = [
-      ["For PXP staff", item.pxp_staff_value],
+      ["For Acquirer staff", item.pxp_staff_value],
       ["For partner staff", item.partner_staff_value],
       ["For the merchant", item.merchant_value],
     ].filter(function (pair) { return pair[1]; })

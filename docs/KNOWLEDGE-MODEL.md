@@ -174,7 +174,7 @@ a person re-litigates it.
 
 There was previously no way to say it at all. A trigram sweep over titles at
 0.45 and above returns 42 pairs, 39 of them unlinked - including
-`Automate enrolling partners to Unity` against `...to LaunchPad` (0.66), and
+`Automate enrolling partners to Merchant Portal` against `...to LP` (0.66), and
 a pair of identically-shaped partner-flow rows for two different partners
 (0.54) - both genuinely different work. Those were re-examined at every
 review because nothing recorded that they had already been judged.

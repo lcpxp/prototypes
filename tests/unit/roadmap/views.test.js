@@ -130,20 +130,20 @@ test("timeline (team) spans active bars, hides parked/portal, nests sub-items un
 test("timeline (team) renders a workstream's nested work items as indented child bars, not its deliverables", () => {
   const V = loadView();
   const data = sampleData();
-  data.items[1].level = "workstream"; // i2 Unity integration becomes a workstream
+  data.items[1].level = "workstream"; // i2 Merchant Portal integration becomes a workstream
   const html = V.timeline(data, "team");
   // The nested work item (i2b Settlement, level='item') is its own bar,
   // marked as a child; the deliverable (i2a Merchant Group) is not.
   assert.match(html, /rmv-tl-row--child[\s\S]*?rmv-tl-bar[\s\S]*?Settlement/,
     "the nested work item renders as an indented child bar");
   assert.doesNotMatch(html, /Merchant Group/, "the workstream's deliverable stays off the board");
-  assert.match(html, /rmv-tl-bar--ws[\s\S]*?Unity integration/, "the workstream bar is marked");
+  assert.match(html, /rmv-tl-bar--ws[\s\S]*?Merchant Portal integration/, "the workstream bar is marked");
 });
 
 test("timeline (team) orders by start band, then span length, then priority", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team");
-  const order = ["Core onboarding", "Unity integration", "Portal overhaul", "Growth bet"];
+  const order = ["Core onboarding", "Merchant Portal integration", "Portal overhaul", "Growth bet"];
   const positions = order.map((t) => html.indexOf(t));
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b), "rows are in band+span order");
 });
@@ -154,8 +154,8 @@ test("timeline (team) orders by start band, then span length, then priority", ()
 test("team detailed adds a Category -> Area breakdown with department tags and deliverables", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team", { expanded: true });
-  assert.match(html, /rmv-td-area-name">Unity area</, "the work area is surfaced");
-  assert.match(html, /rmv-td-title">Unity integration/);
+  assert.match(html, /rmv-td-area-name">Merchant Portal area</, "the work area is surfaced");
+  assert.match(html, /rmv-td-title">Merchant Portal integration/);
   assert.match(html, /rmv-td-dept">Product and Technology/, "the owning department is tagged");
   // i2's children are deliverables (by position): the breakdown lists them
   // as its deliverables, one done.
@@ -169,7 +169,7 @@ test("timeline (backlog) mirrors the master list: every top-level item, all scop
   const V = loadView();
   const html = V.timeline(sampleData(), "backlog");
   assert.match(html, />Parked</, "Backlog carries the Parked column");
-  ["Core onboarding", "Unity integration", "Portal overhaul", "US market", "Whitelist blacklist",
+  ["Core onboarding", "Merchant Portal integration", "Portal overhaul", "US market", "Whitelist blacklist",
     "Growth bet", "Portal tooling"]
     .forEach((t) => assert.match(html, new RegExp(t), `${t} present in Backlog`));
   assert.match(html, /Portal tooling/, "portal-scope item now surfaces in the Backlog master list");
@@ -266,23 +266,23 @@ test("parked rows with tied priority cluster by theme lane", () => {
   const data = {
     categories: [
       { id: "c1", key: "core", label: "Core", sort_order: 10 },
-      { id: "c2", key: "unity", label: "Unity", sort_order: 20 },
+      { id: "c2", key: "unity", label: "Merchant Portal", sort_order: 20 },
     ],
     areas: [
       { id: "a1", key: "core-area", title: "Core", scope: "product", category_id: "c1", sort_order: 10 },
-      { id: "a2", key: "unity-area", title: "Unity", scope: "product", category_id: "c2", sort_order: 20 },
+      { id: "a2", key: "unity-area", title: "Merchant Portal", scope: "product", category_id: "c2", sort_order: 20 },
     ],
     items: [
-      { id: "p1", area_id: "a2", category_id: "c2", title: "Unity parked one", level: "item",
+      { id: "p1", area_id: "a2", category_id: "c2", title: "Merchant Portal parked one", level: "item",
         status: "idea", horizon: "someday", priority: 100, sort_order: 10 },
       { id: "p2", area_id: "a1", category_id: "c1", title: "Core parked bet", level: "item",
         status: "idea", horizon: "someday", priority: 100, sort_order: 20 },
-      { id: "p3", area_id: "a2", category_id: "c2", title: "Unity parked two", level: "item",
+      { id: "p3", area_id: "a2", category_id: "c2", title: "Merchant Portal parked two", level: "item",
         status: "idea", horizon: "someday", priority: 100, sort_order: 30 },
     ],
   };
   const html = V.timeline(data, "backlog");
-  const pos = ["Core parked bet", "Unity parked one", "Unity parked two"].map((t) => html.indexOf(t));
+  const pos = ["Core parked bet", "Merchant Portal parked one", "Merchant Portal parked two"].map((t) => html.indexOf(t));
   assert.deepEqual(pos, [...pos].sort((a, b) => a - b),
     "equal-priority parked rows group by theme lane instead of scattering");
 });
@@ -354,7 +354,7 @@ test("cascade (team) repeats a spanning item under each band it covers", () => {
   // continuation strip in Next (A4).
   assert.equal(count(html, /Portal overhaul/g), 2, "full card plus a continuation strip");
   assert.match(html, /rm-card--cont[^>]*>[\s\S]*?Portal overhaul/, "the span leaves a strip in Next");
-  assert.equal(count(html, /<h3>Unity integration/g), 1);
+  assert.equal(count(html, /<h3>Merchant Portal integration/g), 1);
   // The board is bars/cards only - deliverables never appear on it.
   assert.doesNotMatch(html, /Merchant Group/, "a deliverable is never a cascade card");
   assert.doesNotMatch(html, /rmv-step-title/, "no inline checklists on cascade cards");
@@ -368,7 +368,7 @@ test("cascade (team) renders a workstream's nested work items as inset child car
   // The nested work item (Settlement) is an inset child card with a
   // "Part of" eyebrow; the deliverable (Merchant Group) never appears.
   assert.match(html, /rm-card--child[\s\S]*?<h3>Settlement/, "the work item is an inset child card");
-  assert.match(html, /Part of Unity integration/, "the child card names its workstream");
+  assert.match(html, /Part of Merchant Portal integration/, "the child card names its workstream");
   assert.doesNotMatch(html, /Merchant Group/, "the deliverable stays off the board");
 });
 
@@ -388,7 +388,7 @@ test("showDelivered=false hides delivered work across timeline and cascade", () 
   assert.doesNotMatch(tl, /Core onboarding/, "delivered item hidden on the timeline");
   assert.match(tl, /rmv-tl--nodelivered/, "the delivered columns drop off");
   assert.doesNotMatch(tl, /completed<\/span>/, "no delivered column headers");
-  assert.match(tl, /Unity integration/, "live work still shows");
+  assert.match(tl, /Merchant Portal integration/, "live work still shows");
   const cas = V.cascade(data, "team", { showDelivered: false });
   assert.doesNotMatch(cas, /rmv-band-head--(previously|recently)/);
   assert.match(cas, /rmv-band-head--now/);

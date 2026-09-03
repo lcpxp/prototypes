@@ -62,7 +62,7 @@
           '<blockquote class="pxp-notepanel-quote">' + esc(noteSent) +
           "</blockquote></div>"
         : '<div class="pxp-notepanel" id="pxp-note" hidden>' +
-          '<p class="pxp-notepanel-head">This note goes to the PXP accounts ' +
+          '<p class="pxp-notepanel-head">This note goes to the Acquirer accounts ' +
           "team</p>" +
           '<label class="pxp-notepanel-label" for="pxp-note-text">Say what is ' +
           "needed before the application can proceed. It will not send " +
@@ -126,7 +126,7 @@
       btn("generateContract", "Generate contract") +
       btn("sendContract", "Send contract", "primary") +
       "</div>" + contractTable(app.contracts, "c",
-        "No contract yet. A PXP user generates it here.") + "</section>";
+        "No contract yet. A Acquirer user generates it here.") + "</section>";
   }
 
   // Approve lives here: sending the KYC contract is the approval, so
@@ -138,7 +138,7 @@
       btn("sendKyc", "Send contract", "primary") +
       btn("approveAndSendKyc", "Send KYC and approve merchant", "primary") +
       "</div>" + contractTable(app.kycContracts, "k",
-        "No KYC contract yet. A PXP user generates it here.") + "</section>";
+        "No KYC contract yet. A Acquirer user generates it here.") + "</section>";
   }
 
   function checks() {

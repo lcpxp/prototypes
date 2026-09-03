@@ -1,6 +1,6 @@
 # Alignment programme
 
-The spine of a single piece of work: review the supplied LaunchPad
+The spine of a single piece of work: review the supplied LP
 codebase properly, bring the API reference into line with it, write
 what is verified into the system as durable knowledge, stop burying
 that knowledge behind partial renderers, and add the two features
@@ -13,7 +13,7 @@ docs/ROADMAP-PLAYBOOK.md and docs/APP-REVIEW.md remain the one home
 for what they cover, and this plan cites them rather than repeating
 them.
 
-    10-CODE-REVIEW.md      how to review the LaunchPad codebase
+    10-CODE-REVIEW.md      how to review the LP codebase
     20-API-REFERENCE.md    bring reference 2.0 into line with the code
     30-KNOWLEDGE.md        write verified findings in, including style
     40-SURFACING.md        stop burying content anywhere in the portal
@@ -56,7 +56,7 @@ that hold them are in `npm run audit`.
 
 Three inputs, read directly, not summarised from memory.
 
-**Pxp.PartnerPortalApi** - the LaunchPad API. .NET onion architecture
+**Pxp.PartnerPortalApi** - the LP API. .NET onion architecture
 (Domain / Application / Infrastructure / Presentation / Host), 2,854
 files of which 2,600 are C#, four layered feature trees of 31 to 38
 folders each, URL-segment API versioning. **51 controller files carry
@@ -68,7 +68,7 @@ are no minimal-API endpoints, no controller with two route bases and
 no action with stacked verb attributes, so a composed extractor sees
 the whole surface.
 
-**Pxp.PartnerPortal** - the LaunchPad front end. Angular 20, 785
+**Pxp.PartnerPortal** - the LP front end. Angular 20, 785
 files, Azure MSAL / B2C auth, two tenants (`/pxp` for system admin,
 `/app/:tenantId` for partners), CUBE CSS with Every Layout, a single
 compiled stylesheet, and a written CSS ruleset at
@@ -106,10 +106,10 @@ estimated.
 
 | Surface | Now | Reality it should match |
 |---|---|---|
-| Reference: LaunchPad Partner Portal API 2.0 | 245 endpoints, no duplicates | 552 routes in code |
+| Reference: LP Partner Portal API 2.0 | 245 endpoints, no duplicates | 552 routes in code |
 | Endpoints in code with no reference row | **319**, of which 219 are real gaps | 0, or explicitly excluded |
 | Reference rows with no matching route | **12** | 0 |
-| Reference: Unity Acquiring API 2.0 | 151 endpoints | no source supplied - unverifiable |
+| Reference: Merchant Portal Acquiring API 2.0 | 151 endpoints | no source supplied - unverifiable |
 | Reference: Inbound Onboarding (planned) | 29 endpoints | design intent, not code |
 | Platform capabilities | 21 rows | 0 of kind `styling`, 0 `positioning`, 2 `technical` |
 | Knowledge links, live | 50 | the two renderers express 2 of 49 possible type pairs; 4 links render nowhere |
@@ -230,7 +230,7 @@ A reasonable order of first commits:
   which judgement is applied.
 - **The repo stays public and empty of substance.** No merchant names,
   no live endpoints, no credentials, no internal hosts. Every worked
-  example in these eight files uses generic values. The LaunchPad
+  example in these eight files uses generic values. The LP
   source is read from a scratch directory and never committed.
 - **Each commit is green and reviewable.** `npm test` passes, the
   drift gate is green, and a user-visible change adds its line under
@@ -256,7 +256,7 @@ above rather than as an open decision.
    owner's constraint hold: nothing is buried, and nothing superseded
    is dressed up as current. The classification is derived on every
    run, never typed, so it stays true when the portal changes.
-2. **Unity Acquiring API.** 151 endpoints with no source supplied.
+2. **Merchant Portal Acquiring API.** 151 endpoints with no source supplied.
    Recommendation: mark the whole spec `stated` until a source or a
    live Swagger arrives, so it cannot be mistaken for verified.
 3. **Commented-out routes.** `InputsController`, `InputValuesController`

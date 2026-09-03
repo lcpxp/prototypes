@@ -9,7 +9,7 @@ of small JavaScript modules. There is no build step and no server-side
 code. Supabase provides everything dynamic: authentication, the user
 register, API specs, endpoint detail and the prototype registry.
 
-LPio is the overarching project shell. It is designed so that different
+LPIO is the overarching project shell. It is designed so that different
 streams of work can live as discrete modules (for example, the API
 reference viewer, the prototype gallery, or the roadmap) while still
 being discoverable from one hub.
@@ -32,7 +32,7 @@ substance lives behind Supabase Row Level Security.
    index.html: modules/reference/ (the spec viewer),
    modules/integrations/ (the integration overview and detail
    modals), modules/prototypes/ (the gallery plus the prototype
-   pages themselves), modules/platform/ (what Launchpad is and does
+   pages themselves), modules/platform/ (what LP is and does
    today), modules/roadmap/ (the roadmap view), modules/backlog/
    (rolling work items and ingested source material) and
    modules/users/ (the user and access register).
@@ -119,7 +119,7 @@ template showing every field populated with generic values.
 Catalogues:
 
 - integrations: one row per third-party service connected to
-  Launchpad, driving the overview table and detail modals. The
+  LP, driving the overview table and detail modals. The
   detail JSONB column holds flat label/value pairs rendered
   verbatim, so recording a new fact is a database edit.
 - prototypes: registry rows (title, description, path, status, tags)
@@ -167,7 +167,7 @@ Platform knowledge (supabase/schema/40_platform.sql; see
 docs/PLATFORM.md for the working protocol):
 
 - product_capabilities: the durable, queryable description of what
-  Launchpad is and does today, distinct from work intake (things to
+  LP is and does today, distinct from work intake (things to
   do) and reference (the API surface). Hangs off work_areas (scope
   'product') so capability sections, roadmap swimlanes and backlog
   groups agree; source_document_id links back to the verbatim
@@ -189,7 +189,7 @@ Application review (50_review.sql, docs/APP-REVIEW.md):
 - review_waves: one wave per point-in-time review of the merchant
   application estate (draft, active, closed). carried_from_wave_id
   links a wave to the one whose watch list it inherited.
-- review_applications: one row per LaunchPad application in a wave.
+- review_applications: one row per LP application in a wave.
   Three separate columns hold three separate things and are never
   collapsed: launchpad_status (external truth), triage_category (our
   judgement), and confirmed_at/confirmed_by (a human's decision about

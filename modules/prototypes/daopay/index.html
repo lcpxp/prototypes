@@ -37,7 +37,7 @@
         their own merchant applications and make the acquiring decision
         themselves. They read everything and can add documents; they make
         exactly one decision. Everything that generates a document, calls an
-        integration or overrides a screening result stays with PXP.</p>
+        integration or overrides a screening result stays with Acquirer.</p>
       <p class="proto-meta">
         <span class="badge draft">In design</span>
         <span class="badge">Owner: Product (onboarding)</span>
@@ -48,7 +48,7 @@
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Why this exists</h2>
       <p>Daopay is the acquirer for EU merchants, and their compliance function
-        is separate from PXP underwriting. This role puts the decision where the
+        is separate from Acquirer underwriting. This role puts the decision where the
         accountability already sits. It does not move the review into the
         portal: once the merchant contract is fully signed, everything transfers
         to Daopay automatically - the data to their CRM, the files by SFTP - and
@@ -59,7 +59,7 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">How it works, end to end</h2>
-      <p>Steps 1 to 6 are PXP and the platform. Step 7 is where the Daopay
+      <p>Steps 1 to 6 are Acquirer and the platform. Step 7 is where the Daopay
         compliance team picks it up - and only step 10 happens in the portal.</p>
       <ol class="proto-steps">
         <li><strong>The application completes.</strong> All six application
@@ -77,7 +77,7 @@
           signature is the trigger; nobody presses anything. Merchant and
           application data goes into their CRM via the CRM integration; contract
           files and screening PDFs go by SFTP. The manual controls stay on the
-          page as a PXP fallback.</li>
+          page as a Acquirer fallback.</li>
         <li><strong>Daopay compliance is notified.</strong> By the time it
           lands, the data and files are already in their systems.</li>
         <li><strong>They review the merchant data.</strong> In their own CRM.</li>
@@ -85,7 +85,7 @@
           screening PDFs, in their own file storage.</li>
         <li><strong>They open the portal and record the decision.</strong> Their
           Applications list is filtered to their own acquirer. Recording the
-          outcome is the only step that happens in LaunchPad.</li>
+          outcome is the only step that happens in LP.</li>
         <li><strong>The merchant signs the KYC.</strong> One signature. That
           completes the onboarding.</li>
       </ol>
@@ -107,7 +107,7 @@
             <tr><td>Pending further information</td><td>In the Application status
               dropdown, choose Pending Further Information, add a note, then
               Update status</td><td>Status becomes Pending Further Information,
-              and the note goes to the PXP accounts team so they can go back to
+              and the note goes to the Acquirer accounts team so they can go back to
               the merchant.</td></tr>
             <tr><td>Approve</td><td>The Send KYC and approve merchant
               button</td><td>Status becomes Approved and the KYC contract goes
@@ -129,10 +129,10 @@
         an application and record a decision.</p>
       <div class="table-wrap">
         <table>
-          <caption class="visually-hidden">Controls available to a PXP user
+          <caption class="visually-hidden">Controls available to a Acquirer user
             compared with a Daopay user</caption>
           <thead>
-            <tr><th>Control</th><th>PXP user</th><th>Daopay user</th></tr>
+            <tr><th>Control</th><th>Acquirer user</th><th>Daopay user</th></tr>
           </thead>
           <tbody>
             <tr><td>Read every section of the application</td><td>Yes</td><td>Yes</td></tr>
@@ -190,7 +190,7 @@
             <tr><td>Transfer to Daopay complete - CRM data in, files on SFTP</td>
               <td>Daopay compliance team</td></tr>
             <tr><td>Status set to Pending Further Information, with a note</td>
-              <td>PXP accounts team</td></tr>
+              <td>Acquirer accounts team</td></tr>
             <tr><td>Send KYC and approve merchant</td>
               <td>The merchant, with the KYC contract to sign</td></tr>
           </tbody>
@@ -214,7 +214,7 @@
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Getting help</h2>
       <p>For a question about a specific application, or any difficulty with
-        LaunchPad itself, contact the PXP underwriting team or your PXP account
+        LP itself, contact the Acquirer underwriting team or your Acquirer account
         manager, who also handle portal access.</p>
     </section>
 
@@ -237,7 +237,7 @@
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Explore</h2>
       <p>A replica of the partner portal with the role applied. Open the same
-        application as a PXP user and as a Daopay user and compare the controls;
+        application as a Acquirer user and as a Daopay user and compare the controls;
         the reduced set is the whole point. All names, identifiers, websites and
         amounts in it are invented - no real merchant, partner or staff
         data.</p>

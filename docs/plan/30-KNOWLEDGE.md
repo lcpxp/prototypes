@@ -38,13 +38,13 @@ link graph is how the two stay joined.
 ## What the style load contains
 
 `product_capabilities.kind` has allowed `styling` since August 2026
-and **zero rows use it**. The LaunchPad front end has a written,
+and **zero rows use it**. The LP front end has a written,
 enforced design system; capturing it is the single highest-value
 knowledge load available, because it is what lets a prototype be built
 that looks like the real thing without guessing.
 
 First, the boundary, restated once because it is easy to blur: this is
-the **product's** styling. LPio's own visual rules stay in
+the **product's** styling. LPIO's own visual rules stay in
 docs/DESIGN.md and `assets/css/tokens.css`, which remain their one
 home. A styling capability row never describes this portal.
 
@@ -295,12 +295,12 @@ The test of a knowledge load is not that it stored cleanly, it is that
 the next session can answer a question from it without re-reading the
 source. Three questions to check against after each wave:
 
-- "What does LaunchPad do about screening today, and what is planned?"
+- "What does LP do about screening today, and what is planned?"
   should be one query against `product_capabilities` plus `work_items`
   for the same area.
 - "Build me a prototype of the merchant list that looks right" should
   be answerable from the styling rows alone, with no access to the
-  LaunchPad repository.
+  LP repository.
 - "Which endpoints does the contract stage use?" should be a link
   traversal, not a search.
 

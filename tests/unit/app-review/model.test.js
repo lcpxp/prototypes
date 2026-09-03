@@ -203,7 +203,7 @@ test("a terminal status carries no staleness signal", () => {
   }
 });
 
-test("a record with no LaunchPad creation date has no age at all", () => {
+test("a record with no LP creation date has no age at all", () => {
   const M = loadModel();
   assert.deepEqual(plain(M.ageOf(app({}), statuses(M), Date.now())),
     { days: null, isSignal: false, isStale: false });
@@ -221,10 +221,10 @@ test("a trigger may be a date or a named dependency", () => {
 
   for (const kind of ["release", "person", "event"]) {
     const t = M.triggerOf(app({
-      next_trigger_type: kind, next_trigger_label: "LaunchPad 5.2",
+      next_trigger_type: kind, next_trigger_label: "LP 5.2",
     }));
     assert.equal(t.kind, kind);
-    assert.equal(t.label, "LaunchPad 5.2");
+    assert.equal(t.label, "LP 5.2");
   }
   assert.equal(M.triggerOf(app({})), null);
 });
@@ -235,7 +235,7 @@ test("the carry-forward list leads with dates, then named dependencies", () => {
   const rows = [
     app({ id: "no-trigger", triage_category: "watch", display_order: 1 }),
     app({ id: "release", triage_category: "watch", display_order: 2,
-      next_trigger_type: "release", next_trigger_label: "LaunchPad 5.2" }),
+      next_trigger_type: "release", next_trigger_label: "LP 5.2" }),
     app({ id: "late", triage_category: "watch", display_order: 3,
       next_trigger_type: "date", next_trigger_date: "2026-09-01" }),
     app({ id: "soon", triage_category: "watch", display_order: 4,
@@ -272,7 +272,7 @@ test("do-now takes only Needs action, priority first then category weight", () =
     ["ranked", "act", "chase", "monitor"]);
 });
 
-test("equal rows keep LaunchPad list order", () => {
+test("equal rows keep LP list order", () => {
   const M = loadModel();
   const cats = categories(M);
   const rows = [

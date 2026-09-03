@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ------------------------------------------------------------------
-// scripts/extract-calls.js - Reads a LaunchPad front-end checkout and
+// scripts/extract-calls.js - Reads a LP front-end checkout and
 // emits the routes it actually calls: one entry per this.http.<verb>
 // call site, with the URL expression resolved to a route key.
 //
@@ -14,7 +14,7 @@
 // notices.
 //
 // Like extract-routes.js this reads a scratch checkout passed on the
-// command line and NEVER a committed copy. The LaunchPad source does
+// command line and NEVER a committed copy. The LP source does
 // not enter this public repo, and neither does this output beyond the
 // counts and digest in supabase/reference-coverage.json.
 //
@@ -33,7 +33,7 @@
 // runs the expressions, and reads the answer. The nine rules below are
 // what that costs; each has a benchmark in
 // tests/unit/call-extract.test.js, so this file can be trusted without
-// the LaunchPad source on hand.
+// the LP source on hand.
 // ------------------------------------------------------------------
 "use strict";
 const fs = require("node:fs");
@@ -145,7 +145,7 @@ function walk(dir, out) {
 }
 
 // Rule 8: an injection token is a route prefix with more than one
-// value. MERCHANT_API_BASE is `v1/merchants` in the PXP tenant and
+// value. MERCHANT_API_BASE is `v1/merchants` in the Acquirer tenant and
 // `v1/partner/merchant` in the partner tenant, so one call site
 // reaches two live routes - the mirror convention, in the source.
 // Emitting one of them reports half the merchant surface as uncalled.

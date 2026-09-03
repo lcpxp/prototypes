@@ -22,7 +22,7 @@ rather than trust them.
 
 ---
 
-You are helping me fill the gaps in LPio, a project hub whose substance
+You are helping me fill the gaps in LPIO, a project hub whose substance
 lives in Supabase (project `zlmkofbkobmhnslfnqsf`). You have the
 Supabase connector. Use it to read first and write only when I have
 confirmed something.
@@ -124,7 +124,7 @@ statement about their status.
 
 ### 5. Who consumes the surfaces the portal does not
 
-The API reference now covers all 552 LaunchPad routes, and 141 of them
+The API reference now covers all 552 LP routes, and 141 of them
 have no front-end caller. Three families are the interesting ones and
 the reference deliberately records the question rather than an answer:
 
@@ -139,16 +139,16 @@ Ask me each separately. If the answer is "I do not know", say so on the
 rows - that is a better state than the current silence, and it tells
 the next reader who to ask.
 
-### 6. Unity (151 endpoints, ungraded)
+### 6. Merchant Portal (151 endpoints, ungraded)
 
-The Unity Acquiring API spec has 151 endpoints and no source was ever
+The Merchant Portal Acquiring API spec has 151 endpoints and no source was ever
 supplied, so nothing in it can be graded above `stated`. Ask me:
 
 - Is there a source - a Swagger, a repository, a Postman collection?
 - If not, should the whole spec be badged `unverified` so a reader can
   see it is described rather than checked?
 - Two endpoints are documented twice, once with `{id}` and once with
-  `{numId}`. Does Unity accept both forms, or is one a stray?
+  `{numId}`. Does Merchant Portal accept both forms, or is one a stray?
 
 ### 7. The review areas (38 of 39 never walked)
 

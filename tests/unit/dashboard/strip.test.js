@@ -29,8 +29,8 @@ const strip = load();
 
 function ws(extra) {
   return Object.assign({
-    id: "w1", title: "Unity integration", horizon: "now", status: "in_progress",
-    progress: 45, assignee: "Xavier", theme: "unity", theme_label: "Unity",
+    id: "w1", title: "Merchant Portal integration", horizon: "now", status: "in_progress",
+    progress: 45, assignee: "Xavier", theme: "unity", theme_label: "Merchant Portal",
     open_children: 3,
   }, extra || {});
 }

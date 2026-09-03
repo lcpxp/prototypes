@@ -1,4 +1,4 @@
-# LPio
+# LPIO
 
 A login-gated project hub: dashboard, API reference material and
 prototypes, organised as modules around a central dashboard.

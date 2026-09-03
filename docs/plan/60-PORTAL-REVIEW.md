@@ -317,10 +317,10 @@ Everything above except the code-wave variant, which shares the schema
   board file rather than retyped, with the 01/02 merge note intact.
 - **47 of the board's 65 area/roadmap pairs resolved** to real work
   items and are now `review_area -> work_item` links. The other 18
-  named titles that no longer exist - "Unity integration", "Unity:
+  named titles that no longer exist - "Merchant Portal integration", "Merchant Portal:
   Merchant", "Admin tools", "Partner Type Enablement" and the rest of
-  the Unity family - because the roadmap has been restructured since
-  ("Unity Finalisation" is the workstream now). Mapping them would
+  the Merchant Portal family - because the roadmap has been restructured since
+  ("Merchant Portal Finalisation" is the workstream now). Mapping them would
   have been inference written as fact, so they are left for the first
   wave to resolve against the live roadmap. That gap is the finding.
 - **`review_waves` is shared, so its read policy widened** to either

@@ -156,9 +156,9 @@ accurate". That is not a matter of care; it is a matter of having
 something to be accurate *to*. After 30-KNOWLEDGE.md lands, a
 prototype has three sources it can be built from without guessing:
 
-- the **styling rows** - the LaunchPad design system as fifteen
+- the **styling rows** - the LP design system as fifteen
   recorded facts, enough to build a screen that looks right without
-  opening the LaunchPad repository;
+  opening the LP repository;
 - the **capabilities** - what the platform actually does, graded, so a
   prototype does not invent behaviour;
 - the **reference** - the endpoints, their parameters and their

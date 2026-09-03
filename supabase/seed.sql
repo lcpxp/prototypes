@@ -377,7 +377,7 @@ values
   40
 );
 
--- Optional PXP depth on one sample item, proving the detail drawer and
+-- Optional Acquirer depth on one sample item, proving the detail drawer and
 -- JSON export end to end. All light-touch and generic: progress is a
 -- coarse completion; attributes is the hidden record bag; start/end
 -- sprint are precise codes alongside the horizon band (docs/SPRINTS.md).
@@ -393,7 +393,7 @@ set progress = 45,
       'region', jsonb_build_array('Sample region'),
       'customer', 'Sample customer',
       'merchant_value', 'Illustrative merchant value for the worked example.',
-      'pxp_value', 'Illustrative PXP value for the worked example.'
+      'pxp_value', 'Illustrative Acquirer value for the worked example.'
     )
 where area_id = '22222222-2222-2222-2222-222222222222'
   and title = 'Sample spanning item';
@@ -489,7 +489,7 @@ values
   'draft',
   array['onboarding', 'mock']
 ),
-('PCI Compliance - IXOPAY integration (confirmed model)', 'One API enrolment call with our existing merchant payload; IXOPAY pre-fills the SAQ, invites the merchant by email, chases them, and runs the annual lifecycle forever; Launchpad adds the fee product on invitation-sent and monitors status via webhook + 15-30 day polling.', 'modules/prototypes/pci/index.html', 'draft', array['compliance', 'ixopay', 'in-build']),
+('PCI Compliance - IXOPAY integration (confirmed model)', 'One API enrolment call with our existing merchant payload; IXOPAY pre-fills the SAQ, invites the merchant by email, chases them, and runs the annual lifecycle forever; LP adds the fee product on invitation-sent and monitors status via webhook + 15-30 day polling.', 'modules/prototypes/pci/index.html', 'draft', array['compliance', 'ixopay', 'in-build']),
 ('Website Screening (IXOPAY)', 'Placeholder for a future entry. Website screening is a candidate to ride the same IXOPAY rails as PCI compliance.', 'modules/prototypes/website-screening/index.html', 'draft', array['ixopay', 'concept', 'screening']),
 ('GDPR Compliance (IXOPAY)', 'Placeholder for a future entry. GDPR compliance is a candidate to consolidate onto the same IXOPAY rails as PCI compliance.', 'modules/prototypes/gdpr/index.html', 'draft', array['ixopay', 'concept', 'gdpr']);
 

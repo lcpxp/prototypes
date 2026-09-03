@@ -188,7 +188,7 @@
 
   function fillPicker(specs) {
     // One optgroup per spec family, in registry order, so the picker
-    // reads as distinct reference sites (Launchpad, Unity, ...).
+    // reads as distinct reference sites (LP, Merchant Portal, ...).
     var families = App.registry.specFamilies || [];
     var byFamily = {};
     specs.forEach(function (spec) {

@@ -3,7 +3,7 @@
 // extractor (scripts/extract-routes.js), inventory A of
 // docs/plan/20-API-REFERENCE.md.
 //
-// The extractor reads a LaunchPad checkout that is deliberately NOT in
+// The extractor reads a LP checkout that is deliberately NOT in
 // this repo, so these run against synthetic controllers in
 // tests/fixtures/controllers/ instead. Each rule below was needed to
 // make the real comparison come out right, and each one, got wrong,

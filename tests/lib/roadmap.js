@@ -29,7 +29,7 @@ function loadView() {
   return sandbox.App.roadmapView;
 }
 
-// Themes: Core, Unity, Growth. Areas carry a title and map to themes; a2
+// Themes: Core, Merchant Portal, Growth. Areas carry a title and map to themes; a2
 // is portal scope: excluded from the product Exec/Team views but present
 // in the Backlog master list. Items exercise every band, carry
 // departments, and i2 owns two sub-steps.
@@ -37,20 +37,20 @@ function sampleData() {
   return {
     categories: [
       { id: "c1", key: "core", label: "Core", description: "Base", sort_order: 10 },
-      { id: "c2", key: "unity", label: "Unity", description: "Unity work", sort_order: 20 },
+      { id: "c2", key: "unity", label: "Merchant Portal", description: "Merchant Portal work", sort_order: 20 },
       { id: "c3", key: "growth", label: "Growth", description: "Growth bets", sort_order: 30 },
     ],
     areas: [
       { id: "a1", key: "core-area", title: "Core service", scope: "product", category_id: "c1", sort_order: 10 },
       { id: "a2", key: "portal", title: "Portal", scope: "portal", category_id: null, sort_order: 20 },
-      { id: "a3", key: "unity-area", title: "Unity area", scope: "product", category_id: "c2", sort_order: 30 },
+      { id: "a3", key: "unity-area", title: "Merchant Portal area", scope: "product", category_id: "c2", sort_order: 30 },
       { id: "a4", key: "growth-area", title: "Growth area", scope: "product", category_id: "c3", sort_order: 40 },
     ],
     items: [
       { id: "i1", area_id: "a1", category_id: "c1", title: "Core onboarding", summary: "Shipped",
         status: "done", horizon: "now", end_horizon: null, presentation: "sequenced",
         department: "product_technology", priority: 10, sort_order: 10, updated_at: "2026-07-14T09:00:00Z" },
-      { id: "i2", area_id: "a3", category_id: "c2", title: "Unity integration", summary: "Focus",
+      { id: "i2", area_id: "a3", category_id: "c2", title: "Merchant Portal integration", summary: "Focus",
         status: "in_progress", horizon: "now", end_horizon: null, presentation: "current",
         department: "product_technology", priority: 20, sort_order: 20, updated_at: "2026-07-15T09:00:00Z" },
       { id: "i3", area_id: "a1", category_id: "c1", title: "Portal overhaul", summary: "Spans",
@@ -68,7 +68,7 @@ function sampleData() {
       { id: "i7", area_id: "a4", category_id: "c3", title: "Growth bet", summary: "Later",
         status: "planned", horizon: "later", end_horizon: null, presentation: "sequenced",
         department: "sales_commercial", priority: 60, sort_order: 60, updated_at: "2026-07-03T09:00:00Z" },
-      // Children of i2 (Unity integration, a top-level work item): by
+      // Children of i2 (Merchant Portal integration, a top-level work item): by
       // position both are drawer-only deliverables, whatever their stored
       // level. i2a is explicitly a deliverable; i2b is stored level='item'
       // so that when a test promotes i2 to a workstream, i2b becomes a

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------
 // roadmap/roadmap.js - The roadmap home for modules/roadmap/. A read-only,
-// print-ready render of the LaunchPad work_items table in Supabase.
+// print-ready render of the LP work_items table in Supabase.
 // Two independent controls over one dataset:
 //   Level   Executive (theme rollup) / Team (active) / Backlog (all)
 //   Layout  Timeline (default, the continuous spanning roadmap) /

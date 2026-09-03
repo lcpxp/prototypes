@@ -17,8 +17,8 @@ names were free to be correct.
 
 | Field | Required | Answers |
 | --- | --- | --- |
-| `business_benefit` | the primary one | What this buys PXP as a commercial and operational entity |
-| `pxp_staff_value` | optional | What changes for the PXP person onboarding a merchant |
+| `business_benefit` | the primary one | What this buys Acquirer as a commercial and operational entity |
+| `pxp_staff_value` | optional | What changes for the Acquirer person onboarding a merchant |
 | `partner_staff_value` | optional | What changes for a partner company's staff |
 | `merchant_value` | optional | What changes for the merchant being onboarded |
 
@@ -28,8 +28,8 @@ Two more sit beside them: `benefit_type`, from a checked vocabulary, and
 written for.
 
 **The audience model, because getting it backwards is the easy mistake.**
-The people this work benefits are PXP staff onboarding direct merchants
-and partner companies' staff onboarding merchants into PXP. The merchant
+The people this work benefits are Acquirer staff onboarding direct merchants
+and partner companies' staff onboarding merchants into Acquirer. The merchant
 is the customer being onboarded and usually benefits only through what
 staff have to do with their details. **An empty `merchant_value` is
 normally the correct answer**, and a row with all three granular fields
@@ -79,7 +79,7 @@ every wave:
   behaviour. "Faster onboarding" fails twice - no role, no behaviour.
   "An operator stops re-keying details that arrived in the application"
   gives a story writer everything but the verb.
-- **No internal shorthand.** Collateral is read outside PXP. A line that
+- **No internal shorthand.** Collateral is read outside Acquirer. A line that
   only parses if you already know the platform cannot be lifted, and
   rewriting them later costs more than writing them plainly once.
 

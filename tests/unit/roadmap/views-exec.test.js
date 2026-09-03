@@ -21,9 +21,9 @@ test("exec is department-first: departments own categories with counts, no title
     "departments follow registry order");
   // Category counts under a department (Core has delivered i1 + active i3).
   assert.match(html, /rmv-exec-cat-name">Core<\/span><span class="rmv-exec-cat-count">2 items</);
-  assert.match(html, /rmv-exec-cat-name">Unity<\/span><span class="rmv-exec-cat-count">1 item</);
+  assert.match(html, /rmv-exec-cat-name">Merchant Portal<\/span><span class="rmv-exec-cat-count">1 item</);
   // Compact view names no items and shows no percentage.
-  assert.doesNotMatch(html, /Unity integration/, "compact exec names no items");
+  assert.doesNotMatch(html, /Merchant Portal integration/, "compact exec names no items");
   assert.doesNotMatch(html, /%/, "no percentage at the top level");
   assert.doesNotMatch(html, /US market/, "parked work never reaches the exec rollup");
 });
@@ -31,7 +31,7 @@ test("exec is department-first: departments own categories with counts, no title
 test("exec detailed lists items with a step summary, still no percentage", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "exec", { expanded: true });
-  assert.match(html, /rmv-exec-item-title">Unity integration/, "detailed exec names the items");
+  assert.match(html, /rmv-exec-item-title">Merchant Portal integration/, "detailed exec names the items");
   // i2 has two sub-steps, one done: a subtle count replaces the old NN% pill.
   assert.match(html, /1 of 2 steps/);
   assert.doesNotMatch(html, /rmv-prog-pill/, "the numeric progress pill is gone");
@@ -44,5 +44,5 @@ test("exec ignores layout: cascade renders the same department board", () => {
   assert.match(html, /rmv-exec-dept/);
   assert.match(html, /Product and Technology/);
   assert.doesNotMatch(html, /rmv-band-head/, "exec is not banded");
-  assert.doesNotMatch(html, /Unity integration/, "compact exec names no items");
+  assert.doesNotMatch(html, /Merchant Portal integration/, "compact exec names no items");
 });

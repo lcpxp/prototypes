@@ -44,7 +44,7 @@
     return '<a href="' + esc(href) + '">' + esc(a.merchant) + "</a>";
   }
 
-  // Deleting an application is a PXP action; a Daopay user gets an
+  // Deleting an application is a Acquirer action; a Daopay user gets an
   // empty cell rather than a disabled control.
   function actionsCell(a) {
     if (scoped) return "";

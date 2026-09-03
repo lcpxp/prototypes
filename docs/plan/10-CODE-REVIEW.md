@@ -1,4 +1,4 @@
-# Reviewing the LaunchPad codebase
+# Reviewing the LP codebase
 
 How to work through the two supplied repositories so that what comes
 out is usable as fact rather than as impression. This is a different
@@ -13,7 +13,7 @@ assumes it.
 
 In scope, because the source is on hand:
 
-- `Pxp.PartnerPortalApi` - the LaunchPad API. Onion architecture with
+- `Pxp.PartnerPortalApi` - the LP API. Onion architecture with
   four source layers plus `Host`, and three test projects: `Unit`,
   `Integration` (feature files plus step definitions) and `E2E`, whose
   folders - Actors, Abilities, Tasks, Questions, Drivers - are the
@@ -22,10 +22,10 @@ In scope, because the source is on hand:
 
 Out of scope, and must be labelled `stated` wherever it appears:
 
-- **Unity.** The reference carries a 151-endpoint Unity Acquiring API
-  spec with no source to check it against. The API repo has a `Unity`
-  feature folder, which tells us what LaunchPad *calls*, not what
-  Unity *offers*.
+- **Merchant Portal.** The reference carries a 151-endpoint Merchant Portal Acquiring API
+  spec with no source to check it against. The API repo has a `Merchant Portal`
+  feature folder, which tells us what LP *calls*, not what
+  Merchant Portal *offers*.
 - **The payment service, DaoPay's own systems, Adobe Sign, Experian
   Bank Wizard, Companies House, IdPal, WebShield.** Integration edges
   are visible from our side only.
@@ -71,7 +71,7 @@ a session does not re-learn them, and they seed the findings register.
 Do these once per snapshot, before any reading. They are cheap,
 repeatable, and they turn "review the codebase" into a bounded task.
 Scripts live in `scripts/` beside the other generators, and read from
-a scratch checkout of the LaunchPad source - never from a committed
+a scratch checkout of the LP source - never from a committed
 copy. `scripts/extract-routes.js` is the first of them.
 
 | Extraction | Source | Output | Used by |
@@ -82,7 +82,7 @@ copy. `scripts/extract-routes.js` is the first of them.
 | Enum vocabulary | SmartEnum types and `*.constant.ts` files | canonical value lists (statuses, risk levels, tag colours) | 20, 30 |
 | Guard and route map | Angular `Routes` arrays and `CanActivate` guards | tenant → route → guard → role | 30 |
 | Style ruleset | `src/styles/styling-rules.md`, `global.scss` layer manifest, `blocks/*` | the design system, as facts | 30 |
-| Integration edges | `HttpClient`/`SendGrid`/`SFTP`/`Adobe`/`Unity` service classes | outbound dependency list | 30 |
+| Integration edges | `HttpClient`/`SendGrid`/`SFTP`/`Adobe`/`Merchant Portal` service classes | outbound dependency list | 30 |
 
 Two rules on the scripts: they are read-only and they emit a report,
 never a database write. Every write goes through a session that has
@@ -102,7 +102,7 @@ the walkthrough review already used.
 | C4 | Commercial | ProductDefinition, ProductAssignment, ShoppingCarts, Orders, RateSheet, PriceSheets, Quote, ServiceDefinition, service fees |
 | C5 | Risk and decision | Screening, IndustryCodes, Acquirers, approval / reject / override, CompaniesHouse, WebShield, IdPal |
 | C6 | Contracts | Adobe Sign, contract generate / send / void, DaoPay KYC contract, terminal financing, webhooks |
-| C7 | Integrations and automation | Unity, DaoPay, CRM, Emails, Provisioning, PaymentServiceV5, EITManagement, SFTP |
+| C7 | Integrations and automation | Merchant Portal, DaoPay, CRM, Emails, Provisioning, PaymentServiceV5, EITManagement, SFTP |
 | C8 | Cross-cutting | Metrics, Auditing, Logger, Appearance, RegionDefinitions, Country, Azure, configuration and environments |
 
 A wave is not finished when the files have been read. It is finished
@@ -244,7 +244,7 @@ and has been added - the application event log, which a reader meeting
 `MerchantApplicationEventLogType` in the API had nowhere to look up.
 
 The journey model did not, and the mismatch is now finding CR3-02.
-`journey_stages` carries 13 stages from the Unity Integration PRD,
+`journey_stages` carries 13 stages from the Merchant Portal Integration PRD,
 owner-validated. `MerchantApplicationEventLogType` declares **17**
 events, and `TimelineUtility` maps 16 of them and computes the gap
 between each pair - which makes that order authoritative rather than

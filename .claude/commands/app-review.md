@@ -1,6 +1,6 @@
 ---
 description: Work an application review wave - extract screenshots into rows, classify, reconcile against the mail trail
-argument-hint: e.g. "start a new wave" or "here are the LaunchPad list and mailbox screenshots" or "confirm rows 3 and 7"
+argument-hint: e.g. "start a new wave" or "here are the LP list and mailbox screenshots" or "confirm rows 3 and 7"
 ---
 
 Apply the protocol in `docs/APP-REVIEW.md` to this request: `$ARGUMENTS`
@@ -10,7 +10,7 @@ portal at `modules/app-review/` only DISPLAYS them - every write happens here.
 Read the playbook first if it is not already in context, then work through the
 Supabase MCP.
 
-The job is reconciliation: LaunchPad status does not tell you what to do, and
+The job is reconciliation: LP status does not tell you what to do, and
 the real state lives in the mail trail. Cross-reference the two and surface
 where they disagree - that is the point of the wave, not a side effect.
 

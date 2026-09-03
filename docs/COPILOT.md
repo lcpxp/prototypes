@@ -67,7 +67,7 @@ before it reaches the end. Order them by value, say so in the request,
 and tell the assistant to stop at a topic boundary rather than truncate.
 Each topic carries three parts: **what we already hold**, **the gap** in
 one sentence, then concrete questions. A topic phrased as a subject
-heading gets a subject-heading answer; "Unity integration" returns the
+heading gets a subject-heading answer; "Merchant Portal integration" returns the
 sequence we already have, while "the 17 steps PRD V3 defines, which
 supersede the 14 we captured" returns the thing we lack.
 

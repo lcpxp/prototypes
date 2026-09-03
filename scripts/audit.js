@@ -162,7 +162,7 @@ function snapshotSummary() {
 }
 
 var t = testTotals();
-console.log("LPio audit");
+console.log("LPIO audit");
 head("Tests");
 row("pass / fail / total", t.pass + " / " + t.fail + " / " + t.tests);
 

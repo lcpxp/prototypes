@@ -3,7 +3,7 @@
 // drifting further from the code it documents.
 //
 // The suite has no database access and no credentials, by design, and
-// the LaunchPad source is not in this repo. So the comparison happens
+// the LP source is not in this repo. So the comparison happens
 // once, in a session with both (npm run coverage), into
 // supabase/reference-coverage.json - counts and a digest, never a
 // path - and this gate reads that artefact. Same pattern as

@@ -39,20 +39,20 @@ function load() {
 
 function sample() {
   return {
-    categories: [{ id: "c2", key: "unity", label: "Unity", description: "Unity work", sort_order: 20 }],
+    categories: [{ id: "c2", key: "unity", label: "Merchant Portal", description: "Merchant Portal work", sort_order: 20 }],
     areas: [
       { id: "a3", key: "unity-area", scope: "product", category_id: "c2", sort_order: 30 },
       { id: "a2", key: "portal", scope: "portal", category_id: null, sort_order: 20 },
     ],
     items: [
-      { id: "i2", area_id: "a3", category_id: "c2", title: "Unity integration", summary: "Focus",
+      { id: "i2", area_id: "a3", category_id: "c2", title: "Merchant Portal integration", summary: "Focus",
         status: "in_progress", horizon: "now", end_horizon: "next", presentation: "current",
         department: "product_technology",
         priority: 20, sort_order: 20, progress: 45, prd_status: "approved", project_status: "in_progress",
         starts_on: "2026-07-20", ends_on: "2026-09-01", start_sprint: "26-16", end_sprint: "26-18",
         updated_at: "2026-07-15T09:00:00Z",
         attributes: { pnl_vertical: "Payments", team: "Core", region: ["EU", "UK"], customer: "Strategic",
-          merchant_value: "Value", pxp_value: "PXP", blockers: "None", prd_link: "https://example.com/prd" },
+          merchant_value: "Value", pxp_value: "Acquirer", blockers: "None", prd_link: "https://example.com/prd" },
         phases: [
           { work_item_id: "i2", phase: "build", quarter: "Q3 2026", starts_on: "2026-07-20", ends_on: null, start_tbc: false, end_tbc: true, sort_order: 20 },
           { work_item_id: "i2", phase: "discovery", quarter: "Q2 2026", starts_on: "2026-04-06", ends_on: "2026-05-01", start_tbc: false, end_tbc: false, sort_order: 10 },
@@ -69,7 +69,7 @@ test("toKpiItem resolves theme, band and statuses into a lean object", () => {
   const App = load();
   const data = sample();
   const item = plain(App.roadmapDetail.toKpiItem(data.items[0], ctxOf(App, data)));
-  assert.equal(item.theme, "Unity");
+  assert.equal(item.theme, "Merchant Portal");
   assert.equal(item.department, "Product and Technology");
   assert.equal(item.band, "Now to Next");
   assert.equal(item.status, "In progress");
@@ -176,7 +176,7 @@ test("toCsvRoadmap emits a row per product item with resolved labels and attribu
   assert.match(lines[0], /attr_pnl_vertical/);
   // Only i2 is product scope (i6 is portal), so one data row.
   assert.equal(lines.length, 2);
-  assert.match(lines[1], /Unity integration/);
+  assert.match(lines[1], /Merchant Portal integration/);
   assert.match(lines[1], /Product and Technology/);
   assert.match(lines[1], /Now to Next/);
   assert.equal(csv.endsWith("\r\n"), true);
@@ -192,9 +192,9 @@ test("toCsvRoadmap includes sub-items as their own rows with parent context and 
   const lines = csv.trim().split("\r\n");
   assert.equal(lines.length, 3, "parent and child are both rows");
   const childLine = lines.find((l) => /Settlement/.test(l));
-  assert.match(childLine, /^i2c,i2,Unity integration,Settlement,/);
+  assert.match(childLine, /^i2c,i2,Merchant Portal integration,Settlement,/);
   // Parent reports the sub-step roll-up: 1 total, 0 done (child is planned).
-  const parentLine = lines.find((l) => /,Unity integration,/.test(l));
+  const parentLine = lines.find((l) => /,Merchant Portal integration,/.test(l));
   assert.match(parentLine, /,Halfway,1,0,/);
 });
 

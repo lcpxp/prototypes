@@ -21,7 +21,7 @@
   "notes": {
     "terms.no_definition": "At 0 and must stay there. A term with no definition is a word in a list.",
     "terms.no_source": "At 0 and must stay there. 35 terms, every one citing where it came from - owner-validated, a named document, a handover call, or PartnerPortal source. This is the figure that makes the glossary trustworthy rather than plausible.",
-    "stages.no_source": "At 0. All 13 cite the Unity Integration PRD and the date the owner validated them. Note that code-review wave 3 found the model and the code's 17 instrumented events disagree - see finding CR3-02 - which is a question about the model, not a missing source.",
+    "stages.no_source": "At 0. All 13 cite the Merchant Portal Integration PRD and the date the owner validated them. Note that code-review wave 3 found the model and the code's 17 instrumented events disagree - see finding CR3-02 - which is a question about the model, not a missing source.",
     "documents.no_digest": "At 0. docs/WORKFLOW.md requires raw material AND a digest; 18 of 18 have one. Rising means somebody pasted material and did not distil it, which is how a document becomes unsearchable.",
     "findings.promoted_without_item": "At 0, and the schema constrains it too. Counted anyway because a constraint that is never exercised is a constraint nobody notices has been dropped.",
     "capabilities.no_area": "5 of 46. A capability with no area does not appear in the platform page's sections, so it is stored and effectively invisible. Lower this by filing them; they are not content the owner needs to supply.",

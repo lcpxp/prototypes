@@ -1,6 +1,6 @@
 # Changelog
 
-All notable user-facing changes to LPio, newest first. The format
+All notable user-facing changes to LPIO, newest first. The format
 follows Keep a Changelog (https://keepachangelog.com/). The project is
 pre-1.0 and unversioned until the owner cuts a release: at that point the
 Unreleased section rolls into a dated version heading and is tagged.
@@ -11,7 +11,7 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 - Roadmap: two work items added from the Product and Technology objective
-  review - Unity-triggered marketplace actions with merchant self-service,
+  review - Merchant Portal-triggered marketplace actions with merchant self-service,
   under the Self-Service and Merchant-In Life API, and perpetual merchant
   monitoring under Risk as a Service. T+1 settlement configuration parked.
 - Roadmap: every workstream and every Now/Next item now carries a business
@@ -82,14 +82,14 @@ is the git history; what is unfinished is docs/STATE.md.
   populated; only the notes section fills a moment later, and it says
   it is loading rather than looking empty. Nothing flashes: a fast
   fetch shows no placeholder at all.
-- The **API reference** now covers the LaunchPad API completely: all
+- The **API reference** now covers the LP API completely: all
   552 routes, none missing, none invented. The 121 routes nothing in
   the portal calls are documented too, each marked as having no
   front-end consumer and each saying what is actually known about who
   uses it - which for the analytics and draft-cart surfaces is an open
   question rather than an assumption, and for the four webhook
   receivers is Adobe Sign, ID-Pal and WebShield.
-- The **API reference** now documents every route the LaunchPad portal
+- The **API reference** now documents every route the LP portal
   actually calls. Sixteen rows were added and three more scope
   collapses declared, taking the undocumented-but-live count from 69
   to zero and coverage against the code to 78.1%. What remains
@@ -104,7 +104,7 @@ is the git history; what is unfinished is docs/STATE.md.
 - The **API reference** now says when a documented route has no
   front-end consumer, rather than presenting every route as equally
   current. Four routes carry the badge today, each with a note saying
-  what was checked. The split is measured from the LaunchPad portal's
+  what was checked. The split is measured from the LP portal's
   own call sites on every run, so a route the portal starts calling
   loses the badge instead of keeping a label nobody revisited.
 - The **dashboard** is rebuilt around what is happening rather than
@@ -133,7 +133,7 @@ is the git history; what is unfinished is docs/STATE.md.
   differ from the thirteen journey stages. The two do not map one to
   one, and until now nothing said so.
 - The platform page's **How it is built** section now has ten rows
-  describing the LaunchPad architecture, read from the code: the API's
+  describing the LP architecture, read from the code: the API's
   four layers and where a shape gets converted, its Result type, its
   URL versioning, its 210 migrations and its three test projects; and
   the front end's Angular 20 with no state library, its eight route
@@ -175,7 +175,7 @@ is the git history; what is unfinished is docs/STATE.md.
   measured in its own units: an application wave counts applications
   to classify, a portal wave counts areas still to walk.
 - The platform page now has a **Look and feel** section: fifteen rows
-  describing how the LaunchPad front end is actually styled - the
+  describing how the LP front end is actually styled - the
   layer model, the eight layout compositions, spacing, buttons,
   dialogs, tables, typography, colour, icons, UI tone and the test
   locator contract. Every one is read from the code rather than from
@@ -232,7 +232,7 @@ is the git history; what is unfinished is docs/STATE.md.
   time and carry placeholder arguments the operator replaces.
 
 ### Changed
-- The **API reference** has been reconciled against the LaunchPad
+- The **API reference** has been reconciled against the LP
   source: twelve rows that documented paths the API does not serve are
   corrected, three that documented commented-out endpoints are retired
   into the gap register, and the four templated `service-fees` rows are
@@ -245,7 +245,7 @@ is the git history; what is unfinished is docs/STATE.md.
   to show nothing at all; only work-item-to-work-item and
   capability-to-capability were visible. Targets with their own page
   are links, the rest name what they are.
-- The LaunchPad API reference has been rebuilt from the Partner Portal
+- The LP API reference has been rebuilt from the Partner Portal
   source code (v2.0). It now documents 212 endpoints across 16 areas,
   the merchant-first onboarding model (create a merchant, then start an
   application against it), the three-tenant scoping scheme, and the
@@ -256,7 +256,7 @@ is the git history; what is unfinished is docs/STATE.md.
   flagged inline (endpoint badges plus an "Open questions & context
   gaps" section) for the next context-accumulation pass. The old
   placeholder "Merchant Onboarding API" sample is now a clearly
-  design-stage "LaunchPad Inbound Onboarding API".
+  design-stage "LP Inbound Onboarding API".
 
 ### Added
 - A **send icon** in the top navigation opens a panel with two copyable
@@ -300,11 +300,11 @@ is the git history; what is unfinished is docs/STATE.md.
   actually has, rather than one. JSON export carries the kind and reason
   per link; CSV keeps its single column, now reading "kind: title".
 - App Review: a new area holding waves of merchant application triage. A
-  wave reconciles the LaunchPad list against the mail trail, because
-  LaunchPad status alone does not say what needs doing - a record showing
+  wave reconciles the LP list against the mail trail, because
+  LP status alone does not say what needs doing - a record showing
   "Awaiting Contract Send" may already be mid-underwriting, and one
   showing "Cancelled" may have been approved days earlier. The board reads
-  in LaunchPad order, colours rows by what they need, and marks each with a
+  in LP order, colours rows by what they need, and marks each with a
   state glyph so the fastest read is scanning one edge. An assumed
   "nothing to do here" is kept visibly apart from a confirmed one and stays
   on the work list until a person confirms it. The wave list carries a
@@ -348,7 +348,7 @@ is the git history; what is unfinished is docs/STATE.md.
   the decision), the screening step no longer over-lists checks, and the
   embedded diagram is the current involvement flow with the three-outcome
   branch at step 10.
-- The Daopay replica's contract tables now start empty. A PXP user
+- The Daopay replica's contract tables now start empty. A Acquirer user
   generates each contract, which adds its row; the generated state is
   kept for the tab, so switching to the Daopay view finds the contracts
   there to send. Sending is blocked, with a prompt, if nothing has been
@@ -387,7 +387,7 @@ is the git history; what is unfinished is docs/STATE.md.
 - New Daopay user-role prototype under Prototypes: a guidance overview of
   how the Daopay compliance team will approve EU merchant applications, a
   sequence diagram of the flow, and a replica of the partner portal that
-  renders the same application as a PXP user and as a Daopay user so the
+  renders the same application as a Acquirer user and as a Daopay user so the
   reduced control set is visible side by side. All data in it is invented.
 - Nested work items now stack in stage order under their workstream (Now
   above Next above Later; within a stage, spans finishing sooner sit
@@ -484,7 +484,7 @@ is the git history; what is unfinished is docs/STATE.md.
 - A Hide fixes toggle on the roadmap: drops standalone maintenance items
   (bugs, tasks, small improvements) from the Work Items and Backlog levels
   so you can focus on strategic work, without touching the data.
-- Roadmap workstreams: a high-level item ("Self Service API", "Unity
+- Roadmap workstreams: a high-level item ("Self Service API", "Merchant Portal
   integration") reads as a presentable container that collapses its
   sub-items to a checklist when Detailed is off, so a workstream can be
   shown without its granular detail.
@@ -492,7 +492,7 @@ is the git history; what is unfinished is docs/STATE.md.
   hand-pick exactly which items a one-off PDF or CSV/JSON export carries,
   pruned in real time with no change to the underlying data.
 - A PCI compliance prototype in the prototype gallery: a standalone, faithful
-  replica of the PXP Partner Portal onboarding wizard (application, operating
+  replica of the Acquirer Partner Portal onboarding wizard (application, operating
   sites, products and pricing) with a PCI compliance interstitial on proceed -
   confirm compliant, or enrol the merchant with the data already collected -
   after which a highlighted PCI Compliance Fee row appears on the Products &

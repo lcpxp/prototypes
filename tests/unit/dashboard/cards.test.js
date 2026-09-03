@@ -34,18 +34,18 @@ const cards = load();
 
 const COVERAGE = {
   specs: {
-    "LaunchPad Partner Portal API": {
+    "LP Partner Portal API": {
       comparable: true, routes: 552, accounted_pct: 60.5, phantom: 0,
       absent: 196, undeclared_mirrors: 0, gap_badges: 0, unverified_badges: 2,
     },
-    "Unity Acquiring API": {
+    "Merchant Portal Acquiring API": {
       comparable: false, documented: 151, gap_badges: 1, unverified_badges: 0,
     },
   },
 };
 
 const SPEC = {
-  id: "s1", title: "LaunchPad Partner Portal API", version: "2.0",
+  id: "s1", title: "LP Partner Portal API", version: "2.0",
   status: "live", family: "launchpad", endpoints: 256, tags: 16, topics: 9,
 };
 
@@ -84,15 +84,15 @@ test("a clean spec has no gaps line at all", () => {
 
 test("a spec with no source still reports the gaps recorded against it", () => {
   // It cannot be graded, but its badges are still real work.
-  const line = cards.gapsLine({ title: "Unity Acquiring API" }, COVERAGE);
+  const line = cards.gapsLine({ title: "Merchant Portal Acquiring API" }, COVERAGE);
   assert.equal(line, "1 gap flagged");
 });
 
 test("a spec with no source abstains rather than showing a figure", () => {
-  // The whole point. A percentage next to Unity would read as
+  // The whole point. A percentage next to Merchant Portal would read as
   // verified against code nobody has.
   const line = cards.coverageLine(
-    { title: "Unity Acquiring API", family: "unity" }, COVERAGE);
+    { title: "Merchant Portal Acquiring API", family: "unity" }, COVERAGE);
   assert.equal(line, "Not verifiable against source");
   assert.doesNotMatch(line, /%/);
 });
@@ -112,8 +112,8 @@ test("a spec card carries its family, size, status and link", () => {
   const html = cards.specCard(SPEC, {
     coverage: COVERAGE, href: (s) => "modules/reference/index.html?spec=" + s.id,
   });
-  assert.match(html, /<span class="eyebrow">LaunchPad<\/span>/);
-  assert.match(html, /<h3>LaunchPad Partner Portal API<\/h3>/);
+  assert.match(html, /<span class="eyebrow">LP<\/span>/);
+  assert.match(html, /<h3>LP Partner Portal API<\/h3>/);
   assert.match(html, /256 endpoints &middot; 16 tags &middot; 9 topics/);
   assert.match(html, /href="modules\/reference\/index\.html\?spec=s1"/);
   assert.match(html, /2\.0/);

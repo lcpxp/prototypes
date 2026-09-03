@@ -246,7 +246,7 @@
 .ar-done p { margin: 0; color: var(--muted); }
 
 /* ---------------------------------------------------------------
-   The board. One row per application, in LaunchPad list order.
+   The board. One row per application, in LP list order.
 --------------------------------------------------------------- */
 
 .ar-row {
@@ -277,7 +277,7 @@
 .ar-row.is-settled:hover { background: var(--ar-settled-bg); }
 .ar-row.is-settled .ar-merchant { color: var(--ar-settled-ink); }
 
-/* Cancelled is the deletion mechanism in LaunchPad: the record was
+/* Cancelled is the deletion mechanism in LP: the record was
    killed, and the name reads as struck out. */
 .ar-row.is-cancelled .ar-merchant { text-decoration: line-through; }
 

@@ -8,12 +8,12 @@ supabase/schema/50_review.sql.
 ## What a wave is
 
 A point-in-time snapshot of the merchant application estate plus the
-triage decided against it. Applications live in LaunchPad against a
+triage decided against it. Applications live in LP against a
 partner, with an acquirer - currently DaoPay. The owner supplies the
-LaunchPad list and the mailbox threads as screenshots; this session
+LP list and the mailbox threads as screenshots; this session
 extracts them into rows.
 
-**LaunchPad status does not tell you what to do.** "Awaiting Contract
+**LP status does not tell you what to do.** "Awaiting Contract
 Send" may already have been emailed manually and be mid-underwriting.
 "Cancelled" may have been approved days earlier. "Application In
 Progress" for 48 days may be a perfectly healthy draft. The real state
@@ -32,8 +32,8 @@ perpetually-mutating board.
 
 ## Three concepts, three columns, never collapsed
 
-- **`launchpad_status`** - external truth, mirrored from LaunchPad.
-  Data-driven (`launchpad_statuses`), because LaunchPad will add
+- **`launchpad_status`** - external truth, mirrored from LP.
+  Data-driven (`launchpad_statuses`), because LP will add
   states.
 - **`triage_category`** - our judgement. Drives colour and the
   workload split.
@@ -72,7 +72,7 @@ Each of these came from getting it wrong first.
    confirm." Set it only when the owner says so in as many words, and
    always with their `confirmed_by`.
 2. **`Cancelled` is the deletion mechanism.** Records are never
-   removed from LaunchPad, only Cancelled or Rejected. So Cancelled
+   removed from LP, only Cancelled or Rejected. So Cancelled
    does *not* mean the partner withdrew - it means someone
    deliberately killed the record. A Cancelled record with an approval
    in its trail is a red flag, not a closed item.
@@ -145,7 +145,7 @@ Each of these came from getting it wrong first.
   truncated rather than completing it. Never infer merchant details
   not present in the source.
 - **Never set `confirmed`** (rule 1). It is a human act, always.
-- **Cross-reference the LaunchPad list against the mail evidence and
+- **Cross-reference the LP list against the mail evidence and
   surface contradictions explicitly.** That reconciliation is the
   point of the exercise. Type each evidence row's `signal` so the
   board can find the contradiction structurally rather than by reading
@@ -248,10 +248,10 @@ travel, and each keeps a link back to the row it came from:
       and a.confirmed_at is null
       and a.deleted_at is null;
 
-A new LaunchPad status needs a lookup row, not a release. Set
+A new LP status needs a lookup row, not a release. Set
 `age_meaningful` false only where the status sits inside the partner's
 control (rule 8):
 
     insert into launchpad_statuses
       (key, label, age_meaningful, requires_note, sort_order)
-    values ('<key>', '<Exact LaunchPad label>', true, false, 90);
+    values ('<key>', '<Exact LP label>', true, false, 90);

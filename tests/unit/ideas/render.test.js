@@ -93,7 +93,7 @@ test("a value no map has seen reads as itself", () => {
 
 test("an idea shows what it would prove, which is the field that matters", () => {
   const html = V.ideaHtml(idea({
-    summary: "Quote a price without touching LaunchPad",
+    summary: "Quote a price without touching LP",
     value_note: "Proves the pricing engine can answer before an application exists",
     effort: "medium", area_id: "a1", requested_by: "Sales",
   }), { areaTitle: { a1: "Product and Pricing" } });

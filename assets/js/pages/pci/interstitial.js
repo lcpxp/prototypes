@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------
 // pci/interstitial.js - The PCI compliance "checkout interstitial" for
-// the PXP replica. When the agent proceeds past Product Selection it
+// the Acquirer replica. When the agent proceeds past Product Selection it
 // briefly engages them on PCI: confirm compliant (light-touch, optional
 // status check + optional managed engagement), or enrol the merchant
 // with the data already collected. A Skip failsafe is always available.

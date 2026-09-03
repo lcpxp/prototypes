@@ -119,7 +119,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | daopay/data.js | 251 | daopay/data.js - Fixture data and the role switch for the Daopay EU onboarding replica (modules/prototypes/daopay/). |
 | daopay/list.js | 114 | daopay/list.js - The Applications list in the Daopay replica. |
 | daopay/sections.js | 238 | daopay/sections.js - The markup for each section of the application summary page, in the portal's own order. |
-| daopay/shell.js | 96 | daopay/shell.js - Shared chrome for the Daopay replica pages: the black portal header, the navigation sider, and the role switch that flips between the PXP and Daopay views of the same page. |
+| daopay/shell.js | 96 | daopay/shell.js - Shared chrome for the Daopay replica pages: the black portal header, the navigation sider, and the role switch that flips between the Acquirer and Daopay views of the same page. |
 | daopay/sim.js | 169 | daopay/sim.js - The simulation layer for the Daopay replica: the toast stack, the email prompt, and the stepped progress modal that stands in for e-signature and the automated handoff. |
 | dashboard/cards.js | 240 | dashboard/cards.js - The dashboard's four card sections: API reference, reviews, knowledge and tools (docs/plan/50-DASHBOARD.md). |
 | dashboard/dashboard.js | 261 | dashboard/dashboard.js - Fetches and orchestrates the landing page (docs/plan/50-DASHBOARD.md). |
@@ -128,9 +128,9 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | ideas/ideas.js | 71 | ideas/ideas.js - modules/prototypes/ideas.html. |
 | ideas/render.js | 177 | ideas/render.js - The prototype ideas board's builders (App.ideasView). |
 | integrations.js | 126 | integrations.js - Integration overview for modules/integrations/. |
-| pci/interstitial.js | 144 | pci/interstitial.js - The PCI compliance "checkout interstitial" for the PXP replica. |
+| pci/interstitial.js | 144 | pci/interstitial.js - The PCI compliance "checkout interstitial" for the Acquirer replica. |
 | pci/ixopay.js | 132 | pci/ixopay.js - In-page mock of the IXOPAY vendor client and its webhook/event bus for the PCI prototype. |
-| pci/portal.js | 302 | pci/portal.js - The PXP Partner Portal replica: the "Merchant Prescreen & Quote" wizard. |
+| pci/portal.js | 302 | pci/portal.js - The Acquirer Partner Portal replica: the "Merchant Prescreen & Quote" wizard. |
 | pci/reports.js | 54 | pci/reports.js - Compliance reporting view for the PCI prototype, rendered from the IXOPAY mock's getReport(): portfolio totals, compliance status breakdown, webhooks outstanding, and the chases / follow-ups IXOPAY has performed. |
 | platform/knowledge.js | 202 | platform/knowledge.js - The parts of the platform knowledge base the capability catalogue alone cannot show (App.platformKnowledge). |
 | platform/platform.js | 327 | platform/platform.js - The platform product-knowledge viewer for modules/platform/. |
@@ -178,10 +178,10 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | platform.css | 149 | platform.css - The platform knowledge page (modules/platform/). |
 | portal-review.css | 269 | portal-review.css - The portal review board (docs/PORTAL-REVIEW.md). |
 | prototype.css | 88 | prototype.css - Shared styles for a prototype's LPio-framed overview page: the meta row, sections, step sequence, backlog list and the diagram figure. |
-| pxp-daopay.css | 212 | pxp-daopay.css - The Daopay EU onboarding replica layered on the PXP |
-| pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the PXP replica: the wizard |
+| pxp-daopay.css | 212 | pxp-daopay.css - The Daopay EU onboarding replica layered on the Acquirer |
+| pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the Acquirer replica: the wizard |
 | pxp-sim.css | 191 | pxp-sim.css - The simulation layer for the Daopay replica: the toast stack, the modal shell used by the email prompt and the stepped progress runs, and the spinner/tick each step cycles through. |
-| pxp.css | 218 | pxp.css - PXP Partner Portal replica shell for the PCI prototype (modules/prototypes/pci/demo.html). |
+| pxp.css | 218 | pxp.css - Acquirer Partner Portal replica shell for the PCI prototype (modules/prototypes/pci/demo.html). |
 | roadmap-detail.css | 403 | roadmap-detail.css - Coarse progress bars, the expanded Executive child lists, and the right-hand item detail drawer. |
 | roadmap-themes.css | 30 | roadmap-themes.css - The theme accent map: one rule per roadmap_categories.key, each setting the accent and soft tint that a lane label, card border, dot or rail reads. |
 | roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme rollup, Team, Backlog) in Timeline and Cascade layouts, plus the level switcher. |
@@ -195,30 +195,30 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 
 | File | Lines | Purpose |
 |---|---:|---|
-| app-review/index.html | 69 | Application review - LPio / LaunchPad IO |
-| app-review/wave.html | 94 | Wave - Application review - LPio / LaunchPad IO |
-| backlog/index.html | 93 | Backlog - LPio / LaunchPad IO |
-| integrations/index.html | 58 | Integrations - LPio / LaunchPad IO |
-| platform/index.html | 58 | Platform - LPio / LaunchPad IO |
-| portal-review/index.html | 79 | Portal review - LPio / LaunchPad IO |
-| portal-review/triage.html | 52 | Triage - Portal review - LPio / LaunchPad IO |
-| portal-review/wave.html | 61 | Wave - Portal review - LPio / LaunchPad IO |
-| prototypes/daopay/application.html | 46 | Application summary - PXP replica - LPio |
-| prototypes/daopay/applications.html | 45 | Applications - PXP replica - LPio |
+| app-review/index.html | 69 | Application review - LPio / LP IO |
+| app-review/wave.html | 94 | Wave - Application review - LPio / LP IO |
+| backlog/index.html | 93 | Backlog - LPio / LP IO |
+| integrations/index.html | 58 | Integrations - LPio / LP IO |
+| platform/index.html | 58 | Platform - LPio / LP IO |
+| portal-review/index.html | 79 | Portal review - LPio / LP IO |
+| portal-review/triage.html | 52 | Triage - Portal review - LPio / LP IO |
+| portal-review/wave.html | 61 | Wave - Portal review - LPio / LP IO |
+| prototypes/daopay/application.html | 46 | Application summary - Acquirer replica - LPio |
+| prototypes/daopay/applications.html | 45 | Applications - Acquirer replica - LPio |
 | prototypes/daopay/daopay-flow.svg | 171 |  |
-| prototypes/daopay/index.html | 250 | Daopay user role - EU merchant onboarding - LPio / LaunchPad IO |
-| prototypes/gdpr/index.html | 44 | GDPR compliance prototype - LPio / LaunchPad IO |
-| prototypes/ideas.html | 54 | Prototype ideas - LPio / LaunchPad IO |
-| prototypes/index.html | 59 | Prototypes - LPio / LaunchPad IO |
-| prototypes/pci/dashboard.html | 62 | Dashboard - PXP replica - LPio |
-| prototypes/pci/demo.html | 82 | Merchant Prescreen and Quote - PXP replica - LPio |
-| prototypes/pci/index.html | 151 | PCI compliance prototype - LPio / LaunchPad IO |
+| prototypes/daopay/index.html | 250 | Daopay user role - EU merchant onboarding - LPio / LP IO |
+| prototypes/gdpr/index.html | 44 | GDPR compliance prototype - LPio / LP IO |
+| prototypes/ideas.html | 54 | Prototype ideas - LPio / LP IO |
+| prototypes/index.html | 59 | Prototypes - LPio / LP IO |
+| prototypes/pci/dashboard.html | 62 | Dashboard - Acquirer replica - LPio |
+| prototypes/pci/demo.html | 82 | Merchant Prescreen and Quote - Acquirer replica - LPio |
+| prototypes/pci/index.html | 151 | PCI compliance prototype - LPio / LP IO |
 | prototypes/pci/pci-workflow.svg | 62 |  |
-| prototypes/pci/reports.html | 72 | Compliance reporting - PXP replica - LPio |
-| prototypes/website-screening/index.html | 45 | Website screening prototype - LPio / LaunchPad IO |
-| reference/index.html | 71 | API reference - LPio / LaunchPad IO |
-| roadmap/index.html | 134 | Roadmap - LPio / LaunchPad IO |
-| users/index.html | 51 | Users - LPio / LaunchPad IO |
+| prototypes/pci/reports.html | 72 | Compliance reporting - Acquirer replica - LPio |
+| prototypes/website-screening/index.html | 45 | Website screening prototype - LPio / LP IO |
+| reference/index.html | 71 | API reference - LPio / LP IO |
+| roadmap/index.html | 134 | Roadmap - LPio / LP IO |
+| users/index.html | 51 | Users - LPio / LP IO |
 
 ### supabase/migrations/
 
@@ -228,7 +228,7 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 |---|---:|---|
 | 20260713000000_module_access_and_function_hardening.sql | 93 | ---------------------------------------------------------------- Applied to the live project on 2026-07-13 via the Supabase MCP migration runner. |
 | 20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. |
-| 20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected to Launchpad. |
+| 20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected to LP. |
 | 20260713120000_roadmap.sql | 135 | Roadmap skeleton. |
 | 20260713130000_work_areas_and_backlog.sql | 187 | Work areas, backlog and intake framework (see docs/WORKFLOW.md). |
 | 20260713140000_performance_rls_and_indexes.sql | 197 | ------------------------------------------------------------------ |
@@ -236,7 +236,7 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20260714000000_api_reference_detail.sql | 34 | Reference detail columns so comprehensive API material lives |
 | 20260714100000_api_reference_structure.sql | 119 | Generic reference structure so any comprehensive API guide fits the standard viewer without new code or schema per source: api_tags per-spec tag catalogue. |
 | 20260715000000_roadmap_board_categories_presentation.sql | 60 | ------------------------------------------------------------------ |
-| 20260715120000_platform_product_knowledge.sql | 86 | ---------------------------------------------------------------- 20260715120000_platform_product_knowledge.sql The Platform product-knowledge domain: the durable, queryable description of what Launchpad is and does today. |
+| 20260715120000_platform_product_knowledge.sql | 86 | ---------------------------------------------------------------- 20260715120000_platform_product_knowledge.sql The Platform product-knowledge domain: the durable, queryable description of what LP is and does today. |
 | 20260716000000_roadmap_audience_and_area_theme.sql | 35 | ---------------------------------------------------------------- 20260716000000_roadmap_audience_and_area_theme.sql Roadmap refinement: the two-level taxonomy and the audience axis. |
 | 20260716120000_roadmap_spans_and_backlog_horizons.sql | 25 | ------------------------------------------------------------------ |
 | 20260716140000_unify_work_items.sql | 195 | ------------------------------------------------------------------ |
@@ -301,7 +301,7 @@ Schema, one file per domain, run in lexical order.
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
 | 40_platform.sql | 78 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
-| 50_review.sql | 317 | ---------------------------------------------------------------- 50_review.sql - Application review: waves of merchant application triage against LaunchPad records (see docs/APP-REVIEW.md). |
+| 50_review.sql | 317 | ---------------------------------------------------------------- 50_review.sql - Application review: waves of merchant application triage against LP records (see docs/APP-REVIEW.md). |
 | 51_review_guards.sql | 104 | ---------------------------------------------------------------- 51_review_guards.sql - The application-review guards, split out of 50_review.sql when that file reached its size-budget exception. |
 | 52_portal_review.sql | 249 | ------------------------------------------------------------------ |
 | 90_dashboard.sql | 176 | ---------------------------------------------------------------- 90_dashboard.sql - Cross-domain functions. |
@@ -415,8 +415,8 @@ Generators: the codemap, the schema snapshot, coverage, knowledge, the audit.
 | File | Lines | Purpose |
 |---|---:|---|
 | audit.js | 222 | scripts/audit.js - One-screen repo health report. |
-| extract-calls.js | 336 | scripts/extract-calls.js - Reads a LaunchPad front-end checkout and emits the routes it actually calls: one entry per this.http.<verb> call site, with the URL expression resolved to a route key. |
-| extract-routes.js | 165 | scripts/extract-routes.js - Reads a LaunchPad API checkout and emits its route inventory as JSON: one entry per [Http*] action attribute, composed onto its controller [Route], with the version resolved. |
+| extract-calls.js | 336 | scripts/extract-calls.js - Reads a LP front-end checkout and emits the routes it actually calls: one entry per this.http.<verb> call site, with the URL expression resolved to a route key. |
+| extract-routes.js | 165 | scripts/extract-routes.js - Reads a LP API checkout and emits its route inventory as JSON: one entry per [Http*] action attribute, composed onto its controller [Route], with the version resolved. |
 | gen-codemap.js | 208 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
 | gen-coverage.js | 387 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, the repo's committed account of how far the API reference matches the code it documents. |
 | gen-knowledge.js | 191 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, the repo's committed account of whether what the system was told is still anchored, sourced and reachable. |
@@ -430,7 +430,7 @@ Workstream records. Each keeps the account of where its plan was wrong, which is
 | File | Lines | Purpose |
 |---|---:|---|
 | 00-PROGRAMME.md | 300 | Alignment programme |
-| 10-CODE-REVIEW.md | 272 | Reviewing the LaunchPad codebase How to work through the two supplied repositories so that what comes out is usable as fact rather than as impression. |
+| 10-CODE-REVIEW.md | 272 | Reviewing the LP codebase How to work through the two supplied repositories so that what comes out is usable as fact rather than as impression. |
 | 20-API-REFERENCE.md | 412 | Aligning API reference 2.0 with the code The reference is the most consequential thing in the portal, because it is the surface people act on. |
 | 30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
 | 40-SURFACING.md | 339 | Nothing buried, anywhere in the portal The system stores more than it shows. |
@@ -465,7 +465,7 @@ Architecture, security, design, and the operating protocols.
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
 | KNOWLEDGE-MODEL.md | 230 | The knowledge model Why the roadmap and platform knowledge are shaped the way they are. |
 | NAVIGATION.md | 65 | Navigation *I want to change X - what do I read?** docs/CODEMAP.md answers *where is it*. |
-| PLATFORM.md | 201 | Platform product-knowledge protocol How the durable, structured answer to "what is Launchpad, what does it do, what is in place today" gets built and kept current. |
+| PLATFORM.md | 201 | Platform product-knowledge protocol How the durable, structured answer to "what is LP, what does it do, what is in place today" gets built and kept current. |
 | PORTAL-REVIEW.md | 208 | Portal review playbook How a portal review wave is opened, walked, answered, verified, triaged and closed. |
 | PROTOTYPE-IDEAS.md | 150 | Prototype ideas and plans How an idea for a prototype is captured, prioritised, planned and promoted. |
 | ROADMAP-INTAKE.md | 425 | Roadmap intake The contextualisation protocol: how a new request is placed against what already exists before anything is written. |
@@ -511,9 +511,9 @@ Repository root.
 | .gitmessage | 12 | <type>: <imperative summary, max 60 chars> |
 | CLAUDE.md | 265 |  |
 | README.md | 29 | LPio A login-gated project hub: dashboard, API reference material and prototypes, organised as modules around a central dashboard. |
-| dashboard.html | 121 | Dashboard - LPio / LaunchPad IO |
-| index.html | 68 | Sign in - LPio / LaunchPad IO |
-| package.json | 17 | LPio / LaunchPad IO - static shell of a login-gated project hub. Content lives in Supabase. |
+| dashboard.html | 121 | Dashboard - LPio / LP IO |
+| index.html | 68 | Sign in - LPio / LP IO |
+| package.json | 17 | LPio / LP IO - static shell of a login-gated project hub. Content lives in Supabase. |
 
 ## Conventions for agents
 

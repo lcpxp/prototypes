@@ -68,7 +68,7 @@ schema change and cannot be silently dropped. The blocks worth writing:
 ## Built from: why this comes after the knowledge load
 
 A prototype is accurate when there is something to be accurate *to*.
-Three sources exist now and none of them require opening the LaunchPad
+Three sources exist now and none of them require opening the LP
 repository:
 
 - the **styling rows** (`product_capabilities`, kind `styling`) - the

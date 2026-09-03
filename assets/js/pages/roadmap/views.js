@@ -104,7 +104,7 @@
   }
 
   // The product board shows everything EXCEPT work explicitly filed as the
-  // LPio portal's own internal development (scope 'portal'). Unfiled work
+  // LPIO portal's own internal development (scope 'portal'). Unfiled work
   // (no area, or an area with no scope) defaults to visible, so anything
   // scheduled onto the roadmap surfaces without needing an area assigned -
   // nothing is silently hidden for want of filing.

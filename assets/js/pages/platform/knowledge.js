@@ -146,7 +146,7 @@
         "</dt><dd>" + esc(t.definition) + "</dd></div>";
     }).join("") + "</dl>";
     return section("glossary", "Glossary",
-      "The LaunchPad and Unity terminology this material assumes.", body);
+      "The LP and Merchant Portal terminology this material assumes.", body);
   }
 
   // --- Facts --------------------------------------------------------

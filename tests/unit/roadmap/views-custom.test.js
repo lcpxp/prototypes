@@ -61,7 +61,7 @@ test("byDepartment feeds the board so a filter narrows the render", () => {
   const data = sampleData();
   const html = V.timeline(V.byDepartment(data, "sales_commercial"), "backlog");
   assert.match(html, /Growth bet/, "sales work shows");
-  assert.doesNotMatch(html, /Unity integration/, "other departments drop out");
+  assert.doesNotMatch(html, /Merchant Portal integration/, "other departments drop out");
 });
 
 test("custom view rides a checkbox on each row; unpicked rows drop their check", () => {
@@ -150,14 +150,14 @@ test("stage headers are clickable toggles that strike through and hide the stage
   const data = sampleData();
   const shown = V.timeline(data, "team");
   assert.match(shown, /data-band="now"[^>]*aria-pressed="false"/, "Now is a live toggle by default");
-  assert.match(shown, /Unity integration/, "now work shows by default");
+  assert.match(shown, /Merchant Portal integration/, "now work shows by default");
 
   const hidden = V.timeline(data, "team", { hiddenBands: { now: true } });
   // The Now header stays (so it can be clicked back), struck through.
   assert.match(hidden, /rmv-band-toggle--off[^>]*data-band="now"[^>]*aria-pressed="true"/,
     "the Now header remains, struck through and marked pressed");
   assert.match(hidden, />Now</, "its label is still there to click again");
-  assert.doesNotMatch(hidden, /Unity integration/, "a now item drops when Now is hidden");
+  assert.doesNotMatch(hidden, /Merchant Portal integration/, "a now item drops when Now is hidden");
   assert.doesNotMatch(hidden, /Portal overhaul/, "a now-starting span leaves with its start band");
   assert.match(hidden, /Growth bet/, "Later work still shows");
   assert.match(hidden, /data-band="later"[^>]*aria-pressed="false"/, "Later stays a live toggle");
@@ -165,7 +165,7 @@ test("stage headers are clickable toggles that strike through and hide the stage
   const cas = V.cascade(data, "team", { hiddenBands: { now: true } });
   assert.match(cas, /rmv-band--off/, "the cascade Now band collapses to its struck header");
   assert.match(cas, /rmv-band-toggle--off[^>]*data-band="now"/, "the header is still clickable to restore");
-  assert.doesNotMatch(cas, /Unity integration/, "now cards drop from cascade");
+  assert.doesNotMatch(cas, /Merchant Portal integration/, "now cards drop from cascade");
   assert.match(cas, /Growth bet/, "Later work still shows in cascade");
 });
 
@@ -221,7 +221,7 @@ test("hiding a middle stage strikes only that header and keeps its neighbours li
   assert.match(html, /rmv-band-toggle--off[^>]*data-band="next"/, "Next is struck");
   assert.match(html, /data-band="now"[^>]*aria-pressed="false"/, "Now stays live");
   assert.match(html, /data-band="later"[^>]*aria-pressed="false"/, "Later stays live");
-  assert.match(html, /Unity integration/, "a Now item is unaffected");
+  assert.match(html, /Merchant Portal integration/, "a Now item is unaffected");
 });
 
 test("hiding a stage also drops a nested child that starts in it", () => {

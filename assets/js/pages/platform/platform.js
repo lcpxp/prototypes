@@ -27,7 +27,7 @@
   // rendered NOWHERE - stored, readable, and invisible. renderUnknown()
   // below is the backstop for the next kind someone adds.
   var KINDS = [
-    { key: "overview",    zone: "lead",    title: "What LaunchPad is" },
+    { key: "overview",    zone: "lead",    title: "What LP is" },
     { key: "value",       zone: "lead",    title: "Why it matters" },
     { key: "positioning", zone: "lead",    title: "Positioning" },
     { key: "capability",  zone: "areas",   title: "Capabilities" },

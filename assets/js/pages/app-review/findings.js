@@ -69,7 +69,7 @@
       if (row.is_truncated) signals.truncated = true;
     });
 
-    // Cancelled is the deletion mechanism in LaunchPad - records are
+    // Cancelled is the deletion mechanism in LP - records are
     // never really removed - so it means someone deliberately killed
     // this one, not that the partner withdrew.
     if (app.launchpad_status === "cancelled" && signals.approval) {

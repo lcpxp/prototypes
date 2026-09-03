@@ -55,7 +55,7 @@ function sample() {
         source_document_id: "d1" },
       { id: "c2", area_id: "a2", kind: "capability", title: "Rate cards",
         maturity: "partial", verified: true, blocks: [], sort_order: 20 },
-      { id: "c3", kind: "overview", title: "What LaunchPad is",
+      { id: "c3", kind: "overview", title: "What LP is",
         maturity: "live", verified: true, blocks: [], summary: "The hub",
         sort_order: 1, source_document_id: "d1" },
     ],
@@ -166,7 +166,7 @@ test("every store reaches the page, and an unplaced kind still renders", () => {
     maturity: "live", verified: true, blocks: [], sort_order: 99 });
   const html = App.platformView.pageHtml(data, { docById: {}, linksByCapability: {} });
   for (const [label, needle] of [
-    ["lead", "What LaunchPad is"], ["coverage", "pk-stats"],
+    ["lead", "What LP is"], ["coverage", "pk-stats"],
     ["lifecycle", "IVR screening"], ["capabilities", "Application intake"],
     ["glossary", "Average Transaction Value"], ["facts", "Screening runs before"],
     ["sources", "Capability overview"], ["unplaced kind", "Not laid out yet"],

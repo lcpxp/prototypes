@@ -81,7 +81,7 @@ Open decisions:
 - schema/30_work.sql is now ~327 lines (over the 300 soft budget, under the
   500 hard): split it by sub-domain when next touched, per the standing note.
 
-## 2026-07-17 - Portal feature additions + PXP-aligned roadmap depth
+## 2026-07-17 - Portal feature additions + Acquirer-aligned roadmap depth
 Branch: claude/portal-feature-additions-i9q9tw
 Completed:
 - Schema (migration 20260717000000_pxp_roadmap_fields.sql, applied live;
@@ -265,13 +265,13 @@ Open decisions:
 ## 2026-07-15 - Platform knowledge: default assumption is shipped, not unverified
 Branch: main
 Completed:
-- Owner decision: docs/PLATFORM.md documents what Launchpad does
+- Owner decision: docs/PLATFORM.md documents what LP does
   today, so the working assumption for a comprehensive current-
   capabilities overview is that everything it describes is shipped;
   later review realigns specific rows if reality has moved on, rather
   than every load starting unverified until inspected line by line.
 - Applied live (Supabase, zlmkofbkobmhnslfnqsf): all 13
-  product_capabilities rows from the 2026-07-15 Launchpad overview
+  product_capabilities rows from the 2026-07-15 LP overview
   load updated to maturity = 'live', verified = true (two rows,
   automation-integrations and fulfilment, moved up from 'partial').
   The automation-integrations row's "confirm which integrations are
@@ -324,7 +324,7 @@ Completed:
     application-builder/architecture). No key collisions with the 11
     pre-existing product-scope areas; work_areas now holds 19 product-
     scope rows total, confirmed by query before and after.
-  - Inserted the verbatim Launchpad overview as one work_documents row
+  - Inserted the verbatim LP overview as one work_documents row
     (kind 'platform', 13,007 characters, id da1abf4d...).
   - Inserted 13 product_capabilities rows (1 overview, 1 value, 8
     capability - one per area - and 3 glance), each linked to the
@@ -374,7 +374,7 @@ Open decisions:
 Branch: claude/platform-knowledge-domain-k76sab (task-designated)
 Completed:
 - New domain: supabase/schema/40_platform.sql adds product_capabilities
-  (the durable, queryable "what Launchpad does today" catalogue).
+  (the durable, queryable "what LP does today" catalogue).
   Hangs off the shared work_areas taxonomy (area_id, scope 'product')
   so capability sections, roadmap swimlanes and backlog groups agree;
   source_document_id links to its verbatim work_documents row; kind
@@ -442,7 +442,7 @@ Completed:
 In progress:
 - None. Part A (this session's repo scope) is complete and green.
 Next steps:
-1. Part B (the real Launchpad overview and eight capability-area
+1. Part B (the real LP overview and eight capability-area
    rows) is written for the owner to run directly in the Supabase SQL
    editor - it was not committed or executed by this session, per
    CLAUDE.md's real-content-never-in-git rule and the handoff's
@@ -477,17 +477,17 @@ Open decisions:
   source of truth per colour. Worth a look if the owner wants a
   visually distinct maturity palette later.
 
-## 2026-07-15 - PXP design elevation session
+## 2026-07-15 - Acquirer design elevation session
 Branch: claude/lpio-design-elevation-nmc8oz (task-designated)
 Completed:
 - Full visual re-skin per an explicit design-authority brief (not a
-  brand-compliance reskin): PXP Blue (`#292cf5`) as the one commanding
-  accent, PXP Black (`#09090c`) as a fixed chrome material (the top
+  brand-compliance reskin): Acquirer Blue (`#292cf5`) as the one commanding
+  accent, Acquirer Black (`#09090c`) as a fixed chrome material (the top
   nav is now near-black in both colour schemes, not just dark mode),
   and Lime (`#caff0a`) used surgically in exactly three spots - the
   nav active-page underline, the nav wordmark separator, and the
   login brand panel's wordmark separator - never as body text, a
-  fill, or paired with white. Signature choice: PXP-black nav chrome
+  fill, or paired with white. Signature choice: Acquirer-black nav chrome
   with the lime active marker (the alternative candidates, a
   live-status dot system and a reimagined method-badge system, were
   considered and rejected/partly folded in - see below).
@@ -495,7 +495,7 @@ Completed:
   by hand-computed WCAG contrast, not just eyeballed): renamed
   --accent-strong to --accent-hover and added --accent-pressed; new
   --alt-surface (table headers), --chrome-bg/-ink/-muted/-line
-  (scheme-invariant PXP Black chrome), --lime/--lime-ink (scheme-
+  (scheme-invariant Acquirer Black chrome), --lime/--lime-ink (scheme-
   invariant), --gradient-brand + --plum (login only), --cyan/-violet
   text-safe derivations, a --m-query method colour (was silently
   reusing --m-patch), a three-step elevation scale (--shadow-rest/
@@ -509,7 +509,7 @@ Completed:
   restrained engineered transitions (colour/border/background/shadow
   only, 150-200ms, reduced-motion respected); palette, shadow and
   gradient-carve-out prose rewritten to match; Character section
-  documents both signature devices (mono eyebrow, protected; PXP
+  documents both signature devices (mono eyebrow, protected; Acquirer
   black nav + lime marker, new).
 - components.css: cards/endpoints/modal moved onto the elevation +
   radius scale with a hover lift; buttons gained hover/pressed/focus
@@ -523,9 +523,9 @@ Completed:
   aria-current underline; assets/js/core/ui.js line 69 changed the
   nav-brand separator's inline style from var(--accent) to
   var(--lime) - a values-only edit (no logic change) required because
-  PXP Blue on near-black chrome measures ~2.6:1, well under the 3:1
+  Acquirer Blue on near-black chrome measures ~2.6:1, well under the 3:1
   UI floor, while lime measures 16.87:1.
-- login.css: desktop brand panel now uses --gradient-brand (PXP's
+- login.css: desktop brand panel now uses --gradient-brand (Acquirer's
   Black -> Blue -> Plum recipe) with --chrome-ink text (deliberately
   not --on-accent, which flips to dark navy in dark mode and would
   have gone invisible on the scheme-invariant gradient) and the lime
@@ -557,7 +557,7 @@ Completed:
   stacked sections and full-width cards sit correctly, dark-mode
   table headers and badges read at contrast. Found and fixed one
   real issue: the global accent focus ring measured ~2.6:1 on the
-  PXP Black nav (below the 3:1 UI floor), so nav focus-visible is now
+  Acquirer Black nav (below the 3:1 UI floor), so nav focus-visible is now
   scoped to white and the sign-out pressed state settles on the
   chrome line (commit "Fix keyboard focus contrast on the dark nav").
   roadmap.css renders coherently with the new tokens untouched.
@@ -576,7 +576,7 @@ Next steps:
    bulk-load edge function; seed.sql split (over the 300 soft
    budget).
 Open decisions:
-- Signature choice (PXP-black nav + lime marker) was made per the
+- Signature choice (Acquirer-black nav + lime marker) was made per the
   brief's explicit design-authority grant. Merged with owner
   authorisation; still worth a look against the live-status-dot or
   method-badge alternatives if the owner wants to revisit.
@@ -634,16 +634,16 @@ Open decisions:
 - Whether the single operational lane should later split into finer
   lanes; it currently mirrors the source app's category set.
 
-## 2026-07-15 - LaunchPad reference loaded; inbound-API direction filed (data only, no code)
+## 2026-07-15 - LP reference loaded; inbound-API direction filed (data only, no code)
 Branch: claude/unity-api-standard-f7gm11 (restarted from main; the
-prior Unity branch was already merged, so this is fresh follow-up
+prior Merchant Portal branch was already merged, so this is fresh follow-up
 work on the same branch name per CLAUDE.md's merged-branch rule)
 Completed:
-- The LaunchPad Partner Portal API Reference v1.1 (HAR-derived
+- The LP Partner Portal API Reference v1.1 (HAR-derived
   Swagger-style HTML) was folded into the existing reference standard
   with zero code changes - the viewer is fully data-driven, so a new
   reference is a data load, not a build. Everything lives in Supabase,
-  nothing in git. Kept strictly separate from the Unity reference:
+  nothing in git. Kept strictly separate from the Merchant Portal reference:
   distinct spec, distinct family, distinct picker group, no content
   overlap.
 - Loaded as api_specs row 9080b0a1 (family 'launchpad'): 15 api_tags
@@ -661,7 +661,7 @@ Completed:
   payload). All replaced with consistent fictional personas; the two
   highest-leak enumeration/screening samples were trimmed to synthetic
   representative shapes. Because some leaks surfaced after early
-  batches loaded, all LaunchPad endpoints were deleted and reloaded
+  batches loaded, all LP endpoints were deleted and reloaded
   clean. Final SQL regex sweep over the loaded rows: 0 real tokens.
 - Strategic context on inbound onboarding APIs (leads, static
   submissions, acquirer-specific hard-coded routes, merchant-
@@ -676,31 +676,31 @@ Completed:
 In progress:
 - None.
 Next steps:
-1. Review the LaunchPad reference in the signed-in viewer; confirm it
-   reads as a distinct reference site from Unity and spot-check a few
+1. Review the LP reference in the signed-in viewer; confirm it
+   reads as a distinct reference site from Merchant Portal and spot-check a few
    tags against the source.
-2. Work the LaunchPad inbound-API backlog (leads API, static
+2. Work the LP inbound-API backlog (leads API, static
    submission API, acquirer routes) when that stream is picked up;
    resolve the open question note on how much dynamic questioning a
    static route may bypass before building.
 3. Delete the dead bulk-load edge function from the Supabase dashboard
    (inert 410 stub, no secrets, but unused) - captured as a task
    backlog item.
-4. Carry forward the still-open items from the Unity checkpoint below
+4. Carry forward the still-open items from the Merchant Portal checkpoint below
    (leaked-password protection, anon-key rotation, seed.sql split).
 Open decisions:
-- Same verbatim-rule reading as the Unity source: the reference
+- Same verbatim-rule reading as the Merchant Portal source: the reference
   provenance doc holds provenance + sanitisation notes rather than the
   raw HTML shell, since the payload itself is fully loaded into the
   api_* tables. The inbound-API direction doc is stored verbatim.
 
-## 2026-07-14 - Unity reference loaded; viewer standard extended (tags, topics, lazy detail)
+## 2026-07-14 - Merchant Portal reference loaded; viewer standard extended (tags, topics, lazy detail)
 Branch: claude/unity-api-standard-f7gm11
 Completed:
-- The comprehensive Unity Acquiring API reference material (209 KB
+- The comprehensive Merchant Portal Acquiring API reference material (209 KB
   reverse-engineered HTML, v2.0 FINAL) arrived and was ingested per
   docs/WORKFLOW.md. Everything lives in Supabase, nothing in git:
-  api_specs row 13ed823c updated (title Unity Acquiring API, v2.0,
+  api_specs row 13ed823c updated (title Merchant Portal Acquiring API, v2.0,
   live, environments, full B2C auth detail); 24 api_tags (area
   descriptions in runbook order); 6 api_topics (overview,
   conventions, 14-step provisioning runbook, data model, 32-enum
@@ -748,7 +748,7 @@ Next steps:
 1. Merge claude/unity-api-standard-f7gm11 to main once reviewed (it
    carries this session plus the two prior reference commits), then
    confirm the Pages deploy is green.
-2. Review the reference viewer against the live Unity spec while
+2. Review the reference viewer against the live Merchant Portal spec while
    signed in; spot-check a few areas against the source HTML.
 3. Work the 7 gap backlog_items (capture outstanding writes in Dev).
 4. Enable leaked password protection; rotate the anon key (both
@@ -779,7 +779,7 @@ Completed:
   worked template with every field populated with generic
   example.com values - the pattern to follow when real material
   arrives. Real material lands as UPDATE/INSERT against the two
-  empty placeholder specs (Launchpad API, Unity Merchant Portal
+  empty placeholder specs (LP API, Merchant Portal
   API) already in the live database.
 - Viewer rebuilt: pure HTML builders extracted to
   assets/js/pages/reference-render.js (App.refRender, DOM-free and

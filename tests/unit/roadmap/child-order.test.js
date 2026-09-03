@@ -64,8 +64,8 @@ test("cascade orders in-band children by stage and span", () => {
 
 test("child bars inherit the workstream theme; a mismatch shows a dot", () => {
   const html = V.timeline(familyData(), "team");
-  // Delta step's own theme is Growth (c3) but its workstream is Unity
-  // (c2): the bar colours Unity and carries a faint Growth dot.
+  // Delta step's own theme is Growth (c3) but its workstream is Merchant Portal
+  // (c2): the bar colours Merchant Portal and carries a faint Growth dot.
   const delta = html.slice(html.indexOf("Delta step") - 400, html.indexOf("Delta step") + 100);
   assert.match(delta, /rm-cat-unity/, "child bar inherits parent theme");
   assert.doesNotMatch(delta, /rmv-tl-bar[^>]*rm-cat-growth/, "own theme not on the bar");

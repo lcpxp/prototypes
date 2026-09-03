@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------
-   tokens.css - Design tokens for the LPio hub.
+   tokens.css - Design tokens for the LPIO hub.
    Every colour, size and type decision used anywhere in the UI must
    come from this file. Do not hard-code values in other stylesheets
    or pages. See docs/DESIGN.md for the rules governing these tokens.
 
-   Palette is derived from the PXP brand (blue, black, lime, plum)
+   Palette is derived from the Acquirer brand (blue, black, lime, plum)
    reworked for a dense developer tool: see docs/DESIGN.md for the
    rationale and where each colour is allowed to appear.
 
@@ -26,7 +26,7 @@
 :root {
   color-scheme: light dark;
 
-  /* Colour: crisp cool greys on off-white paper, PXP Blue as the
+  /* Colour: crisp cool greys on off-white paper, Acquirer Blue as the
      one commanding accent. */
   --ink: #111827;            /* primary text */
   --muted: #374151;          /* secondary text, labels */
@@ -37,7 +37,7 @@
   --line: #e5e7eb;           /* borders, dividers */
   --line-strong: #d1d5d8;    /* emphasised borders, inputs */
 
-  --accent: #292cf5;         /* PXP Blue: primary action, active states */
+  --accent: #292cf5;         /* Acquirer Blue: primary action, active states */
   --accent-hover: #2426af;
   --accent-pressed: #25288a;
   --accent-soft: #eaeafe;    /* tinted backgrounds for accent */
@@ -50,7 +50,7 @@
   --ok: #1d6f42;
   --ok-soft: #e3f0e9;
 
-  /* PXP Black chrome and Lime accent. Both are fixed brand materials
+  /* Acquirer Black chrome and Lime accent. Both are fixed brand materials
      used identically in light and dark mode (the top nav is always
      near-black; lime is deployed only where something is live or
      active) - intentionally scheme-invariant, so these are declared
@@ -62,7 +62,7 @@
   --lime: #caff0a;
   --lime-ink: #09090c;       /* text on a lime fill: large/bold only */
 
-  /* Login brand panel gradient: PXP's Black -> Blue -> Plum recipe.
+  /* Login brand panel gradient: Acquirer's Black -> Blue -> Plum recipe.
      One hero surface only (docs/DESIGN.md). White text clears AA
      over every stop. */
   --gradient-brand: linear-gradient(160deg, #09090c 0%, #292cf5 55%, #540b90 100%);
@@ -212,7 +212,7 @@
   --login-max: 24rem;     /* login card width cap */
   --lede-max: 44rem;      /* measure cap for page ledes */
 
-  /* PXP Partner Portal replica (modules/prototypes/pci/ prototype).
+  /* Acquirer Partner Portal replica (modules/prototypes/pci/ prototype).
      Brand-fixed and LIGHT-LOCKED: the real portal has no dark mode, so
      these are declared once here and deliberately never overridden in
      the dark blocks below - the PCI replica must look identical whatever
@@ -245,7 +245,7 @@
   --pxp-aside: 224px;
 
   /* The portal sets font-family: Inter on *, body and html. Only the
-     replica uses this token; LPio's own chrome keeps --font-body.
+     replica uses this token; LPIO's own chrome keeps --font-body.
      The webfont itself is linked on replica pages only. */
   --pxp-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;

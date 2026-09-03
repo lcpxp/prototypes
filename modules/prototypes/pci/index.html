@@ -35,7 +35,7 @@
       <h1>PCI Compliance - IXOPAY integration (confirmed model)</h1>
       <p class="lede">One API enrolment call with our existing merchant payload;
         IXOPAY pre-fills the SAQ, invites the merchant by email, chases them, and
-        runs the annual lifecycle forever; Launchpad adds the fee product on
+        runs the annual lifecycle forever; LP adds the fee product on
         invitation-sent and monitors status via webhook + 15-30 day polling.</p>
       <p class="proto-meta">
         <span class="badge draft">In build</span>
@@ -45,13 +45,13 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Overview</h2>
-      <p>Launchpad captures merchant data exactly as today. At the compliance
+      <p>LP captures merchant data exactly as today. At the compliance
         prompt, a merchant claiming existing compliance is verified via IXOPAY's
         records; otherwise a single API call enrols them, sending the full data
         already collected. IXOPAY derives and pre-fills the SAQ, emails the
         merchant an invitation link, guides a deliberately easy, non-technical
         completion, chases anyone who stalls, and runs the annual revalidation
-        cycle forever. Launchpad's role is deliberately thin: on the
+        cycle forever. LP's role is deliberately thin: on the
         invitation-sent event it adds the fee product to the basket, then
         monitors status via a webhook backed by 15-30 day polling and pulls
         reporting on demand.</p>
@@ -80,7 +80,7 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Purpose</h2>
-      <p>Stress-free, automated compliance with near-zero Launchpad build;
+      <p>Stress-free, automated compliance with near-zero LP build;
         replaces the un-scoped VikingCloud integration gap.</p>
     </section>
 
@@ -100,7 +100,7 @@
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Features</h2>
       <ul>
-        <li>Faithful PXP Partner Portal wizard: application, operating sites, products and pricing.</li>
+        <li>Faithful Acquirer Partner Portal wizard: application, operating sites, products and pricing.</li>
         <li>PCI compliance interstitial on proceed - a light-touch hold-up with a skip failsafe.</li>
         <li>Confirm-compliant path (optional status check and managed engagement) or full enrolment.</li>
         <li>Full-payload enrolment with a data review, then an enrolment email - no re-capture.</li>
@@ -130,7 +130,7 @@
           data-title="Confirmed IXOPAY solution - enrolment, invitation, monitoring">
           <p class="notice">Loading diagram</p>
         </div>
-        <figcaption>Purple = Launchpad reacts (fee product, monitoring,
+        <figcaption>Purple = LP reacts (fee product, monitoring,
           reporting); teal = IXOPAY manages (pre-filled SAQ, invitation, chasing,
           perpetual lifecycle); dashed arrows = the two cross-system events.</figcaption>
       </figure>
@@ -138,7 +138,7 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Explore</h2>
-      <p>A standalone replica of the PXP Partner Portal onboarding flow with the PCI
+      <p>A standalone replica of the Acquirer Partner Portal onboarding flow with the PCI
         compliance feature added - the first portal prototype of its kind. Walk the
         sequence above, end to end, in the interactive replica.</p>
       <p><a class="button" href="demo.html">Explore prototype</a>

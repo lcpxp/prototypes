@@ -77,7 +77,7 @@
     var findings = results[2].data || [];
     var groups = App.portalReview.triageGroups(findings);
 
-    document.title = "Triage - " + wave.name + " - LPio / LaunchPad IO";
+    document.title = "Triage - " + wave.name + " - LPIO";
     el("pr-triage-name").textContent = "Triage: " + wave.name;
     el("pr-triage-counts").innerHTML = countsHtml(groups);
 

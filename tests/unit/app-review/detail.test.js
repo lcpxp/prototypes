@@ -60,14 +60,14 @@ function app(extra) {
 
 test("the drawer keeps the record rows it always had", () => {
   const html = drawer(app(), CTX);
-  assert.match(html, /<dt>LaunchPad status<\/dt><dd>Awaiting merchant<\/dd>/,
+  assert.match(html, /<dt>LP status<\/dt><dd>Awaiting merchant<\/dd>/,
     "the status key resolves to its label");
   assert.match(html, /<dt>Application id<\/dt><dd>LP-4821<\/dd>/);
   assert.match(html, /<dt>Partner<\/dt><dd>Acme Partners<\/dd>/);
   assert.match(html, /<dt>Acquirer<\/dt><dd>Bank A<\/dd>/);
   assert.match(html, /<dt>Risk level<\/dt><dd>medium<\/dd>/);
   assert.match(html, /<dt>Raised by<\/dt><dd>Operations<\/dd>/);
-  assert.match(html, /<dt>Created in LaunchPad<\/dt><dd>2026-07-01<\/dd>/);
+  assert.match(html, /<dt>Created in LP<\/dt><dd>2026-07-01<\/dd>/);
   assert.match(html, /<dt>Last updated by<\/dt><dd>K\. Patel<\/dd>/);
 });
 

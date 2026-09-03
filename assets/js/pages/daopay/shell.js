@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------
 // daopay/shell.js - Shared chrome for the Daopay replica pages: the
 // black portal header, the navigation sider, and the role switch that
-// flips between the PXP and Daopay views of the same page.
+// flips between the Acquirer and Daopay views of the same page.
 // Renders into [data-pxp-shell]; the page modules fill .pxp-content.
 //
 // The role switch sits in the header rather than in a banner over the
@@ -57,7 +57,7 @@
   function roleSwitch() {
     return '<span class="pxp-roleswitch" role="group" aria-label="View as">' +
       '<button type="button" class="pxp-roletab" data-role="pxp" aria-pressed="' +
-      (role.key === "pxp") + '">PXP</button>' +
+      (role.key === "pxp") + '">Acquirer</button>' +
       '<button type="button" class="pxp-roletab" data-role="daopay" aria-pressed="' +
       (role.key === "daopay") + '">Daopay</button></span>';
   }
@@ -79,7 +79,7 @@
     '<div class="pxp-body">' +
     '<aside class="pxp-sider"><div class="pxp-sider-title"><span>Navigation</span></div>' +
     '<ul class="pxp-menu">' + navItems() + "</ul>" +
-    '<div class="pxp-sider-footer">PXP &copy; 2026</div></aside>' +
+    '<div class="pxp-sider-footer">Acquirer &copy; 2026</div></aside>' +
     '<main class="pxp-content">' +
     '<div class="pxp-sheet" data-pxp-page data-page="' +
     esc(host.getAttribute("data-pxp-page-kind") || "") + '"></div></main></div>';

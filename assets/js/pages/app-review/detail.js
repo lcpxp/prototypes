@@ -134,7 +134,7 @@
     var status = statuses[app.launchpad_status];
     return App.detail.facts(app, {
       fields: [
-        { key: "launchpad_status", label: "LaunchPad status", html: function (value) {
+        { key: "launchpad_status", label: "LP status", html: function (value) {
           return App.escape(status ? status.label : value);
         } },
         { key: "launchpad_application_id", label: "Application id" },
@@ -142,7 +142,7 @@
         { key: "acquirer", label: "Acquirer" },
         { key: "risk_level", label: "Risk level" },
         { key: "raised_by", label: "Raised by" },
-        { key: "created_in_launchpad_at", label: "Created in LaunchPad", html: dateRow },
+        { key: "created_in_launchpad_at", label: "Created in LP", html: dateRow },
         { key: "launchpad_last_updated_at", label: "Last updated", html: dateRow },
         { key: "launchpad_last_updated_by", label: "Last updated by" },
         // Say what the age means, not just what it is. On a dormant

@@ -38,20 +38,20 @@ function load() {
 
 function sample() {
   return {
-    categories: [{ id: "c2", key: "unity", label: "Unity", description: "Unity work", sort_order: 20 }],
+    categories: [{ id: "c2", key: "unity", label: "Merchant Portal", description: "Merchant Portal work", sort_order: 20 }],
     areas: [
       { id: "a3", key: "unity-area", scope: "product", category_id: "c2", sort_order: 30 },
       { id: "a2", key: "portal", scope: "portal", category_id: null, sort_order: 20 },
     ],
     items: [
-      { id: "i2", area_id: "a3", category_id: "c2", title: "Unity integration", summary: "Focus",
+      { id: "i2", area_id: "a3", category_id: "c2", title: "Merchant Portal integration", summary: "Focus",
         status: "in_progress", horizon: "now", end_horizon: "next", presentation: "current",
         department: "product_technology",
         priority: 20, sort_order: 20, progress: 45, prd_status: "approved", project_status: "in_progress",
         starts_on: "2026-07-20", ends_on: "2026-09-01", start_sprint: "26-16", end_sprint: "26-18",
         updated_at: "2026-07-15T09:00:00Z",
         attributes: { pnl_vertical: "Payments", team: "Core", region: ["EU", "UK"], customer: "Strategic",
-          merchant_value: "Value", pxp_value: "PXP", blockers: "None", prd_link: "https://example.com/prd" },
+          merchant_value: "Value", pxp_value: "Acquirer", blockers: "None", prd_link: "https://example.com/prd" },
         phases: [
           { work_item_id: "i2", phase: "build", quarter: "Q3 2026", starts_on: "2026-07-20", ends_on: null, start_tbc: false, end_tbc: true, sort_order: 20 },
           { work_item_id: "i2", phase: "discovery", quarter: "Q2 2026", starts_on: "2026-04-06", ends_on: "2026-05-01", start_tbc: false, end_tbc: false, sort_order: 10 },
@@ -68,7 +68,7 @@ test("drawerHtml renders the facts, phases and an export button", () => {
   const App = load();
   const data = sample();
   const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
-  assert.match(html, /Unity integration/);
+  assert.match(html, /Merchant Portal integration/);
   assert.match(html, /Product and Technology/);
   assert.match(html, /Approved/);
   assert.match(html, /Discovery/);
@@ -94,7 +94,7 @@ test("drawerHtml surfaces the full stored context: details, classifiers, links, 
   const App = load();
   const data = sample();
   data.items.push({ id: "ws1", area_id: "a3", category_id: "c2", level: "workstream",
-    title: "Unity programme", status: "in_progress", horizon: "now", presentation: "current",
+    title: "Merchant Portal programme", status: "in_progress", horizon: "now", presentation: "current",
     priority: 10, sort_order: 5, attributes: {} });
   const item = data.items[0];
   item.parent_id = "ws1";
@@ -120,15 +120,15 @@ test("drawerHtml surfaces the full stored context: details, classifiers, links, 
       kind: "distinct_from", note: "Different platform; no shared code.",
       confidence: "confirmed" },
   ]);
-  ctx.linkTitles = { "work_item:ws1": "Unity programme" };
+  ctx.linkTitles = { "work_item:ws1": "Merchant Portal programme" };
   const html = App.roadmapDetail.drawerHtml(item, ctx);
   assert.match(html, /Long-form context/, "details text renders");
   assert.match(html, /<dt>Type<\/dt><dd>Feature/);
   assert.match(html, /<dt>Effort<\/dt><dd>Large/);
   assert.match(html, /<dt>Impact<\/dt><dd>High/);
   assert.match(html, /<dt>Priority<\/dt><dd>P2/);
-  assert.match(html, /<dt>Workstream<\/dt><dd>Unity programme/, "parent resolves to its title");
-  assert.match(html, /<dt>Part of<\/dt><dd><a class="rmd-link"[^>]*data-item-id="ws1">Unity programme<\/a>/,
+  assert.match(html, /<dt>Workstream<\/dt><dd>Merchant Portal programme/, "parent resolves to its title");
+  assert.match(html, /<dt>Part of<\/dt><dd><a class="rmd-link"[^>]*data-item-id="ws1">Merchant Portal programme<\/a>/,
     "a typed link renders under its own reading, clickable to the target");
   assert.match(html, /<dt>Distinct from<\/dt><dd><a[^>]*title="Different platform; no shared code\."/,
     "the adjudication note rides along, so the reason is never lost");
@@ -276,11 +276,11 @@ test("a set milestone renders, with its date where it has one", () => {
   item.milestone_id = "m1";
   const ctx = ctxOf(App, data);
   ctx.milestoneById = {
-    m1: { id: "m1", title: "Unity go-live", due_on: "2026-09-30" },
+    m1: { id: "m1", title: "Merchant Portal go-live", due_on: "2026-09-30" },
     m2: { id: "m2", title: "Undated checkpoint", due_on: null },
   };
   const html = App.roadmapDetail.drawerHtml(item, ctx);
-  assert.match(html, /<dt>Milestone<\/dt><dd>Unity go-live \(2026-09-30\)<\/dd>/);
+  assert.match(html, /<dt>Milestone<\/dt><dd>Merchant Portal go-live \(2026-09-30\)<\/dd>/);
 
   item.milestone_id = "m2";
   assert.match(App.roadmapDetail.drawerHtml(item, ctx),
@@ -293,7 +293,7 @@ test("an unset or unresolvable milestone adds no row", () => {
   const data = sample();
   const item = data.items[0];
   const ctx = ctxOf(App, data);
-  ctx.milestoneById = { m1: { id: "m1", title: "Unity go-live", due_on: "2026-09-30" } };
+  ctx.milestoneById = { m1: { id: "m1", title: "Merchant Portal go-live", due_on: "2026-09-30" } };
   assert.doesNotMatch(App.roadmapDetail.drawerHtml(item, ctx), /<dt>Milestone<\/dt>/,
     "no milestone_id, no row");
 
@@ -408,7 +408,7 @@ test("drawerHtml marks a drafted benefit and never prints benefit fields twice",
   const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
   assert.match(html, /rmd-benefit-draft">Draft - not yet confirmed/,
     "an unconfirmed benefit is visibly provisional");
-  assert.match(html, /For PXP staff<\/dt><dd>An operator composes from sections\./);
+  assert.match(html, /For Acquirer staff<\/dt><dd>An operator composes from sections\./);
   assert.doesNotMatch(html, /For the merchant/,
     "an empty audience reading is omitted rather than rendered blank");
   const benefitCount = (html.match(/Stops the contract being assembled by hand\./g) || []).length;

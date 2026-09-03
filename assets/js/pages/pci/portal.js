@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// pci/portal.js - The PXP Partner Portal replica: the "Merchant
+// pci/portal.js - The Acquirer Partner Portal replica: the "Merchant
 // Prescreen & Quote" wizard. Renders the 7-step stepper and content;
 // steps 1, 2 and 5 are built out, the rest are pass-through. On Continue
 // from Product Selection it hands off to the PCI interstitial

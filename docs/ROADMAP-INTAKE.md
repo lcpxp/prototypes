@@ -118,7 +118,7 @@ scored only against rows that existed before it. Best score per item:
     0.861  Currency Swap on summary page          -> duplicate
     0.794  Contract - Summary page: Sites/Totals  -> duplicate
     0.741  Quantity value on pricing lines ...    -> duplicate
-    0.528  Split Unity enrolment buttons ...      -> duplicate
+    0.528  Split Merchant Portal enrolment buttons ...      -> duplicate
     0.464  Screening check toggles should work    -> distinct (real neighbour)
     0.427  Every application value adjustable     -> duplicate
     0.365  Show IVR lead information ...          -> distinct
@@ -254,7 +254,7 @@ moves onto the existing row: the owner's words are the asset.
            (select id from work_items where title = 'Automation sweep: CRM submission, Daopay, screening and notifications'),
            'part_of', 'confirmed'
       from work_items c
-     where c.title in ('Daopay: notifications to Daopay', 'Daopay: notifications to PXP account managers and PXP underwriting');
+     where c.title in ('Daopay: notifications to Daopay', 'Daopay: notifications to Acquirer account managers and Acquirer underwriting');
 
 For anything other than `NEW`, write the reasoning down so the next session
 inherits the judgement rather than re-deriving it:
@@ -296,7 +296,7 @@ learns that two pieces of work touch.
 
 **`distinct_from` is the one that pays for the vocabulary.** It records that a
 pair was examined and judged different - "Automate enrolling partners to
-Unity" against "...to LaunchPad", or two same-shaped partner-flow rows
+Merchant Portal" against "...to LP", or two same-shaped partner-flow rows
 belonging to different partners - so the standing sweeps **suppress** that pair from future candidate
 lists instead of raising it every review. Use it the moment a candidate is
 rejected, with the reason in `note`. An adjudication that is not recorded is
@@ -310,8 +310,8 @@ one the owner has to make again.
 
     -- Record a rejected candidate so it is never re-raised
     insert into knowledge_links (from_type, from_id, to_type, to_id, kind, note, confidence)
-    select 'work_item', (select id from work_items where title = 'Automate enrolling partners to Unity'),
-           'work_item', (select id from work_items where title = 'Automate enrolling partners to LaunchPad'),
+    select 'work_item', (select id from work_items where title = 'Automate enrolling partners to Merchant Portal'),
+           'work_item', (select id from work_items where title = 'Automate enrolling partners to LP'),
            'distinct_from', 'Different target platforms; the enrolment flows do not share code.', 'confirmed';
 
     -- Close a link rather than deleting it: the graph keeps what was believed, and when
@@ -384,7 +384,7 @@ classification as part of the same pass rather than writing unclassified rows.
 
 ## The standing sweeps
 
-Contextualisation is not only an add-time step: the Unity enrolment pair were
+Contextualisation is not only an add-time step: the Merchant Portal enrolment pair were
 both already in the data when the duplicate was found. Wave 0 of the review
 ritual runs both of these and reports them.
 

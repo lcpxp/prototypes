@@ -33,7 +33,7 @@ content in Supabase rather than in this public repo.
 Work is grouped as **themes over areas**:
 
 - **Themes** (`roadmap_categories`) are the top-level workstreams the
-  C-suite reads. There are 13: Core LaunchPad, Unity, Overhaul,
+  C-suite reads. There are 13: Core LP, Merchant Portal, Overhaul,
   Integrations, Screening/Contracting/Fulfilment, Partners & PFAC,
   Acquiring, APIs, Insights & Reporting, Automation & Approvals,
   Sales & Commercial, Admin & Operations, Products & Pricing.
@@ -190,17 +190,17 @@ reader to pick it by hand.
 
 Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
 
-- work_areas: the shared taxonomy. scope 'product' is the LaunchPad
+- work_areas: the shared taxonomy. scope 'product' is the LP
   product roadmap; scope 'portal' is the hub's own development.
   category_id nests an area under a theme (the two-level taxonomy). The
   roadmap reads product only; the scope column still serves the backlog
   and platform modules.
-- roadmap_categories: the 13 themes (Core LaunchPad, Unity, Overhaul,
+- roadmap_categories: the 13 themes (Core LP, Merchant Portal, Overhaul,
   Integrations, Screening/Contracting/Fulfilment, Partners & PFAC,
   Acquiring, APIs, Insights & Reporting, Automation & Approvals,
   Sales & Commercial, Admin & Operations, Products & Pricing). key,
   label, description, sort_order, and shareholder_visible (false marks a
-  whole theme - Core LaunchPad, fixes - as internal-only for the
+  whole theme - Core LP, fixes - as internal-only for the
   shareholder-facing `roadmap_current` query below). Colour
   per key lives in tokens.css (.rm-cat-<key> plus --rm-<key> tokens); a new
   theme with no token renders in a neutral tint until one is added. Items
@@ -219,7 +219,7 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   - bridge: points to the next horizon.
   The state label shows on Now cards only; Next, Later, Parked and
   delivered items ignore presentation.
-  work_items also carries optional, light-touch PXP fields, none shown on
+  work_items also carries optional, light-touch Acquirer fields, none shown on
   the board except dates: progress (0-100), prd_status and project_status
   (the KPI portal's own pickers, distinct from status), start_sprint /
   end_sprint codes (docs/SPRINTS.md), and an attributes jsonb bag

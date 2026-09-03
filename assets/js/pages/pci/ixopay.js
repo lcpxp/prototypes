@@ -61,7 +61,7 @@
     // payload; IXOPAY derives and pre-fills the SAQ.
     createEnrolment: function (payload) {
       // INTEGRATION POINT (confirm with IXOPAY): request body is the full
-      // Launchpad payload (merchant, products, contact email); response TBC.
+      // LP payload (merchant, products, contact email); response TBC.
       var referenceId = makeRef();
       var name = (payload && payload.merchant && payload.merchant.businessName) || "Merchant";
       store[referenceId] = { status: "invited", expiryDate: isoInMonths(12), name: name };

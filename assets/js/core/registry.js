@@ -48,7 +48,7 @@
         key: "integrations",
         title: "Integrations",
         path: "modules/integrations/",
-        description: "Third-party services connected to Launchpad",
+        description: "Third-party services connected to LP",
         statTable: "integrations",
         statLabel: "Connected services",
       },
@@ -57,7 +57,7 @@
         title: "App Review",
         path: "modules/app-review/",
         heading: "Application review",
-        description: "Waves of merchant application triage against LaunchPad",
+        description: "Waves of merchant application triage against LP",
         statTable: null,
       },
       {
@@ -80,7 +80,7 @@
         key: "platform",
         title: "Platform",
         path: "modules/platform/",
-        description: "What Launchpad is and the capabilities in place today",
+        description: "What LP is and the capabilities in place today",
         statTable: "product_capabilities",
         statLabel: "Capabilities documented",
       },
@@ -187,16 +187,16 @@
     specFamilies: [
       {
         key: "launchpad",
-        label: "Launchpad API",
+        label: "LP API",
         description:
-          "Inbound application flows, plus Unity-initiated actions " +
+          "Inbound application flows, plus Merchant Portal-initiated actions " +
           "such as repurchase journeys for existing merchants.",
       },
       {
         key: "unity",
-        label: "Unity Merchant Portal API",
+        label: "Merchant Portal API",
         description:
-          "Endpoints used when integrating Launchpad with the Unity " +
+          "Endpoints used when integrating LP with the " +
           "merchant portal.",
       },
       {

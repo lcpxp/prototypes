@@ -37,7 +37,7 @@
       " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
   }
 
-  // ---------------- Generate (PXP) ----------------
+  // ---------------- Generate (Acquirer) ----------------
   // The tables begin empty. Generating adds the row and persists it, so
   // the Daopay user finds the contract there to send after the switch.
   function generateContract() {
@@ -74,7 +74,7 @@
   function sendContract() {
     if (!app.contracts.length) {
       demo.toast("No contract to send",
-        "A PXP user needs to generate the contract first.", "warn");
+        "A Acquirer user needs to generate the contract first.", "warn");
       return;
     }
     return demo.askEmail("Send contract for signature",
@@ -126,7 +126,7 @@
   function approveAndSendKyc() {
     if (!app.kycContracts.length) {
       demo.toast("No KYC contract",
-        "A PXP user needs to generate the KYC contract first.", "warn");
+        "A Acquirer user needs to generate the KYC contract first.", "warn");
       return;
     }
     return demo.askEmail("Send KYC and approve merchant",
@@ -175,7 +175,7 @@
       render();
       demo.toast("Status updated", "Set to Pending Further Information.");
       demo.runBackground([
-        { wait: 900, toast: ["Notification sent to PXP accounts", "Your note has been passed on to the merchant's account manager."] },
+        { wait: 900, toast: ["Notification sent to Acquirer accounts", "Your note has been passed on to the merchant's account manager."] },
       ]);
       return;
     }

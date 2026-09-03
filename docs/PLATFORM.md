@@ -1,6 +1,6 @@
 # Platform product-knowledge protocol
 
-How the durable, structured answer to "what is Launchpad, what does it
+How the durable, structured answer to "what is LP, what does it
 do, what is in place today" gets built and kept current. This is the
 sibling of docs/WORKFLOW.md: that protocol captures what we are doing
 (work intake, backlog); this one captures what the platform already
@@ -29,7 +29,7 @@ rendering or schema itself changes.
 Beyond these three, two further context stores hold platform knowledge
 that is not a capability catalogue entry, same scope and access (read
 behind the 'platform' grant, admin writes), in
-supabase/schema/45_context.sql: domain_terms (the LaunchPad/Unity
+supabase/schema/45_context.sql: domain_terms (the LP/Merchant Portal
 glossary) and journey_stages (the canonical lead-to-live onboarding
 lifecycle). integrations (connected services) and platform facts in
 work_notes (kind 'fact') complete the picture. Together these are the
@@ -43,7 +43,7 @@ last three, added 2026-08-09, cover knowledge that previously had
 nowhere to live and so either sat undistilled in work_documents or was
 forced into 'capability', where it reads as a feature claim.
 
-- overview - the top-level "what LaunchPad is". Usually one row.
+- overview - the top-level "what LP is". Usually one row.
 - value - a value-proposition statement: the benefit, stated once.
 - capability - an area or feature the platform provides. The bulk.
 - glance - an at-a-glance headline, for a summary strip.
@@ -52,7 +52,7 @@ forced into 'capability', where it reads as a feature claim.
   than "what does it do". Redact endpoints and credentials as always.
 - styling - design values, component patterns, spacing and tone of
   voice, at enough detail to spin a prototype that looks right.
-  LPio's own tokens live in assets/css/tokens.css; this kind is for
+  LPIO's own tokens live in assets/css/tokens.css; this kind is for
   the PRODUCT's styling, which is a different thing.
 - positioning - how the platform is sold and to whom. Distinct from
   'value': a value row is one proposition, a positioning row is the

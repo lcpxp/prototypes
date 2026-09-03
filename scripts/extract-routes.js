@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // ------------------------------------------------------------------
-// scripts/extract-routes.js - Reads a LaunchPad API checkout and emits
+// scripts/extract-routes.js - Reads a LP API checkout and emits
 // its route inventory as JSON: one entry per [Http*] action attribute,
 // composed onto its controller [Route], with the version resolved.
 //
 // This is inventory A of the three in docs/plan/20-API-REFERENCE.md.
 // It reads a scratch checkout passed on the command line and NEVER a
-// committed copy - the LaunchPad source does not enter this public
+// committed copy - the LP source does not enter this public
 // repo, and neither does its output beyond the counts and digest in
 // supabase/reference-coverage.json.
 //
@@ -18,7 +18,7 @@
 // wrong produces a diff that is confidently wrong, which is worse than
 // no diff at all. The benchmarks in tests/unit/route-extract.test.js
 // exercise every one against fixtures, so this file can be trusted
-// without the LaunchPad source on hand.
+// without the LP source on hand.
 // ------------------------------------------------------------------
 "use strict";
 const fs = require("node:fs");
@@ -27,7 +27,7 @@ const crypto = require("node:crypto");
 
 // Rule 5: anchored to line start with only horizontal whitespace
 // before it, so "//   [HttpGet]" is a comment and not an endpoint.
-// Two LaunchPad controllers and seven v2 actions exist only as
+// Two LP controllers and seven v2 actions exist only as
 // comments; an unanchored pattern documents them as live.
 const ROUTE_RE = /^[ \t]*\[Route\("([^"]+)"\)\]/m;
 const VERSION_RE = /^[ \t]*\[ApiVersion\("([^"]+)"\)\]/m;
@@ -55,7 +55,7 @@ function controllerName(file) {
 // text already carries the "v", so the placeholder is replaced by the
 // bare major number - substituting "v2" yields "api/vv2".
 // Rule 6: no [ApiVersion] means UNVERSIONED, not v1. Twenty-six
-// LaunchPad routes serve /api/... with no version segment, and
+// LP routes serve /api/... with no version segment, and
 // assuming v1 is the single largest source of wrong documented paths.
 function baseRoute(source, file) {
   const route = ROUTE_RE.exec(source);

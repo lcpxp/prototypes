@@ -7,7 +7,7 @@
 -- ------------------------------------------------------------------
 
 -- ---------------------------------------------------------------
--- domain_terms: one row per piece of LaunchPad/Unity terminology.
+-- domain_terms: one row per piece of LP/Merchant Portal terminology.
 -- term is the canonical label; expansion holds an acronym's words
 -- (nullable for non-acronyms); definition is the plain-language
 -- meaning. area_id optionally hangs the term off the shared

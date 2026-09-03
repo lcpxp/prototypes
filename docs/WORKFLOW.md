@@ -13,7 +13,7 @@ only.
 
 - work_areas: the single shared taxonomy of development areas.
   scope = 'product' for the feature areas worked with development
-  teams; scope = 'portal' for LPio's own development. Work items,
+  teams; scope = 'portal' for LPIO's own development. Work items,
   documents and notes all reference it.
 - work_documents: raw supplied material, kept verbatim in content,
   with a distilled summary written at ingestion. kind classifies it

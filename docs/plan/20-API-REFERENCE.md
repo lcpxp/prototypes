@@ -2,7 +2,7 @@
 
 The reference is the most consequential thing in the portal, because
 it is the surface people act on. This workstream makes it provably
-match the supplied LaunchPad source, and then keeps it matching.
+match the supplied LP source, and then keeps it matching.
 
 Schema: `supabase/schema/10_reference.sql`. Renderer:
 `assets/js/pages/reference*.js`. Every change here is a database
@@ -43,7 +43,7 @@ version substituted from `[ApiVersion]`. **552 entries** in the
 supplied snapshot: 376 v1, 150 v2, 26 unversioned.
 
 **Inventory B - the reference.** From `api_endpoints`: **245 rows**
-for the LaunchPad Partner Portal API.
+for the LP Partner Portal API.
 
 **Inventory C - the consumers.** From the Angular front end, one entry
 per `HttpClient` call. **405 call sites across 88 files.** C turns a
@@ -305,7 +305,7 @@ from a cited controller carries neither.
 ## The coverage artefact and the drift gate
 
 The gate has to work in a public repository with no database access at
-test time, and it must not leak LaunchPad route paths into git. Both
+test time, and it must not leak LP route paths into git. Both
 constraints are satisfied by reporting shape, not content.
 
 **`supabase/reference-coverage.json`** - generated, committed, and
@@ -328,7 +328,7 @@ No paths, no hosts, no payloads - counts and one digest. The digest
 changes when the API changes, which is the signal a session needs.
 
 **`scripts/gen-coverage.js`** - run with Supabase access and a scratch
-checkout of the LaunchPad source, the same shape as
+checkout of the LP source, the same shape as
 `scripts/gen-snapshot.js`. Add `npm run coverage`.
 
 **`tests/checks/reference-drift.test.js`** - runs with no network:
@@ -349,7 +349,7 @@ benchmarks, run against fixture controllers committed under
 this repo, exercising every normalisation rule above: composed routes,
 version substitution, unversioned controllers, commented-out actions,
 named placeholders, a `V0` folder. This is the gate that keeps the
-diff itself honest, and it needs no LaunchPad source to run.
+diff itself honest, and it needs no LP source to run.
 
 ## Per-wave procedure
 
@@ -383,14 +383,14 @@ id is what deep links point at.
 
 ## The other two specs
 
-**Unity Acquiring API (151 endpoints, 24 tags, 6 topics).** No source
+**Merchant Portal Acquiring API (151 endpoints, 24 tags, 6 topics).** No source
 supplied, so nothing in it can be graded above `stated`. Add a
 spec-level note saying so, badge the endpoints `unverified` until a
-Unity source or live Swagger arrives, and keep its gap register as the
+Merchant Portal source or live Swagger arrives, and keep its gap register as the
 list of what to ask for. It must not inherit the confidence the
-LaunchPad spec earns.
+LP spec earns.
 
-**LaunchPad Inbound Onboarding API (29 endpoints, draft 0.3.0).**
+**LP Inbound Onboarding API (29 endpoints, draft 0.3.0).**
 Design intent, not code - the spin-out surface, which the Partner
 Portal spec already points at from its "Spin-out roadmap" topic. Keep
 it draft, keep its 29 `planned` badges, and link it to its roadmap
