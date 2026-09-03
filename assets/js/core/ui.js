@@ -223,7 +223,7 @@
     var html = '<nav class="nav">';
     html +=
       '<a class="nav-brand" href="' + root + '/dashboard.html">' +
-      'LPio <span class="nav-brand-mark">/</span> LaunchPad IO</a>';
+      'LPIO</a>';
     html += '<div class="nav-links">';
     links.forEach(function (link) {
       html +=
