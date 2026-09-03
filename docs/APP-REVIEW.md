@@ -9,7 +9,7 @@ supabase/schema/50_review.sql.
 
 A point-in-time snapshot of the merchant application estate plus the
 triage decided against it. Applications live in LP against a
-partner, with an acquirer - currently DaoPay. The owner supplies the
+partner, with an acquirer - currently EU Acquirer. The owner supplies the
 LP list and the mailbox threads as screenshots; this session
 extracts them into rows.
 
@@ -82,7 +82,7 @@ Each of these came from getting it wrong first.
    is an `investigate`.
 4. **`Pending Further Information` must carry a real message**, never
    a placeholder. For manual submissions the convention is a note
-   reading `Pending Daopay Decision` until the acquirer responds; then
+   reading `Pending EU Acquirer Decision` until the acquirer responds; then
    it moves to Approved/Rejected, or stays put *with the actual
    requirement recorded*. The database refuses a blank note on any
    status flagged `requires_note`.
@@ -185,7 +185,7 @@ labels):
       wave_id, display_order, merchant_name, partner_name, acquirer,
       launchpad_status, is_draft, triage_category, action_text,
       rationale_text, evidence_confidence, created_in_launchpad_at)
-    select w.id, 1, '<merchant>', '<partner>', 'DaoPay',
+    select w.id, 1, '<merchant>', '<partner>', 'EU Acquirer',
       'awaiting_contract_send', false, 'act', '<what to do>',
       '<why>', 'inferred', '2026-06-12'
     from review_waves w where w.name = 'July 2026 wave';
@@ -196,7 +196,7 @@ Add evidence (`signal` is what makes contradictions detectable):
       application_id, occurred_on, source, actor, direction, summary,
       is_truncated, signal)
     values ('<application id>', '2026-05-14', 'mailbox',
-      'DaoPay compliance', 'inbound', '<what was said>', false,
+      'EU Acquirer compliance', 'inbound', '<what was said>', false,
       'approval');
 
 Reclassify - one statement; the revision row is written by trigger:

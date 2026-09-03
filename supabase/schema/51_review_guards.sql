@@ -19,7 +19,7 @@
 -- ---------------------------------------------------------------
 
 -- A status flagged requires_note must carry a real message. The
--- convention for manual submissions is a note reading "Pending Daopay
+-- convention for manual submissions is a note reading "Pending EU Acquirer
 -- Decision" until the acquirer responds; once they do it becomes
 -- Approved/Rejected, or stays put WITH the actual requirement
 -- recorded. A blank or whitespace note is refused either way.

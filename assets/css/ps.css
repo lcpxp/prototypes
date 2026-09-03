@@ -1,0 +1,217 @@
+/* ------------------------------------------------------------------
+   ps.css - Acquirer Partner Portal replica shell for the PCI prototype
+   (modules/prototypes/pci/demo.html). Reproduces the real portal's
+   chrome, layout, stepper, buttons, tags and inputs. Everything is
+   scoped under .ps-app and uses the light-locked --ps-* tokens from
+   tokens.css, so the replica looks identical whatever the theme is.
+   Component values are lifted verbatim from the portal's own CSS.
+------------------------------------------------------------------- */
+
+.ps-app {
+  min-block-size: 100vh;
+  background: var(--ps-bg-page);
+  color: var(--ps-text-body);
+  font-family: var(--ps-font);
+  font-size: 14px;
+  line-height: 1.5715;
+}
+
+.ps-app a { color: var(--ps-primary); text-decoration: none; }
+.ps-app a:hover { text-decoration: underline; }
+.ps-app h2, .ps-app h3 { color: var(--ps-text-label); margin: 0; }
+
+/* ---------------------------------------------------------------
+   Header (black chrome)
+--------------------------------------------------------------- */
+.ps-header {
+  background: var(--ps-header-bg);
+  block-size: 48px;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+}
+
+.ps-header-inner {
+  block-size: 48px;
+  padding-inline: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ps-header-left, .ps-header-right { display: flex; align-items: center; gap: 12px; }
+
+.ps-logo { display: inline-flex; align-items: center; gap: 6px; color: var(--ps-white); font-size: 16px; }
+.ps-logo svg { block-size: 22px; inline-size: auto; }
+.ps-logo-dot { fill: var(--ps-neon); }
+
+.ps-menu-trigger, .ps-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--ps-white); background: transparent; border: 0; cursor: pointer;
+}
+.ps-avatar {
+  inline-size: 30px; block-size: 30px; border-radius: 50%;
+  background: var(--ps-avatar-bg); color: var(--ps-header-bg);
+}
+
+.ps-quote-trigger {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  color: var(--ps-white);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.ps-quote-trigger:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.6); }
+.ps-quote-trigger--flag { position: relative; }
+.ps-quote-trigger--flag::after { content: ""; position: absolute; inset-block-start: -3px; inset-inline-end: -3px; inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--ps-neon); }
+.ps-user { color: var(--ps-white); font-size: 14px; }
+
+/* ---------------------------------------------------------------
+   Body: sider + content
+--------------------------------------------------------------- */
+.ps-body { display: flex; align-items: stretch; min-block-size: calc(100vh - 48px); }
+
+.ps-sider {
+  inline-size: var(--ps-aside);
+  flex: 0 0 var(--ps-aside);
+  background: var(--ps-white);
+  border-inline-end: 1px solid var(--ps-line);
+  display: flex;
+  flex-direction: column;
+}
+
+.ps-sider-title {
+  font-size: 14px; font-weight: 700; text-transform: uppercase;
+  padding: 7px 12px; margin: 6px; background: var(--ps-bg-light);
+  border-radius: 3px; color: var(--ps-text-label);
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.ps-menu { list-style: none; margin: 0; padding: 0 6px; flex: 1; }
+.ps-menu-item > a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px; border-radius: 6px; margin-block: 2px;
+  color: var(--ps-text-label); font-size: 14px;
+}
+.ps-menu-item > a:hover { background: var(--ps-bg-light); text-decoration: none; }
+.ps-menu-item--active > a { background: var(--ps-primary); color: var(--ps-white); }
+.ps-menu-item--active > a:hover { background: var(--ps-primary-hover); }
+.ps-menu-item svg { inline-size: 15px; block-size: 15px; flex-shrink: 0; }
+.ps-submenu-title {
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  color: var(--ps-text-label); font-size: 14px; cursor: pointer;
+}
+.ps-submenu-title svg { inline-size: 15px; block-size: 15px; }
+
+.ps-sider-footer {
+  padding: 12px 16px; color: var(--ps-hint-normal); font-size: 13px;
+  border-block-start: 1px solid var(--ps-line);
+}
+
+.ps-content { flex: 1; min-inline-size: 0; overflow-y: auto; padding: 24px; }
+
+/* ---------------------------------------------------------------
+   Prescreen page header + with-sidebar layout
+--------------------------------------------------------------- */
+.ps-prescreen { max-inline-size: var(--ps-content-max); }
+.ps-page-header { margin-block-end: 20px; }
+.ps-page-header h2 { font-size: 22px; font-weight: 700; }
+.ps-page-header p { color: var(--ps-hint-dark); margin-block: 6px 0; }
+
+.ps-with-sidebar { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start; }
+.ps-with-sidebar > * { min-inline-size: 0; }
+
+@media (min-width: 48rem) {
+  .ps-with-sidebar { grid-template-columns: 220px 1fr; }
+}
+
+.ps-panel {
+  background: var(--ps-white);
+  border: 1px solid var(--ps-line);
+  border-radius: 8px;
+  padding: 24px;
+}
+.ps-title-wrapper {
+  font-size: 18px; font-weight: 700; color: var(--ps-text-label);
+  line-height: 28px; margin-block-end: 20px;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+
+/* ---------------------------------------------------------------
+   Stepper (verbatim metrics)
+--------------------------------------------------------------- */
+.ps-step { position: relative; display: flex; flex-direction: column; }
+.ps-step-btn { width: 100%; display: flex; align-items: center; gap: 16px; padding: 8px; }
+.ps-step-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; background: var(--ps-line);
+}
+.ps-step-circle--active { background: var(--ps-primary); }
+.ps-step-circle--valid { background: var(--ps-success); }
+.ps-step-number { font-size: 14px; font-weight: 500; color: var(--ps-hint-normal); line-height: 1; }
+.ps-step-circle--active .ps-step-number,
+.ps-step-circle--valid .ps-step-number { color: var(--ps-white); }
+.ps-step-title { font-size: 14px; font-weight: 500; margin: 0; line-height: 1.25; color: var(--ps-hint-normal); }
+.ps-step-title--active { color: var(--ps-text-label); font-weight: 600; }
+.ps-step-title--done { color: var(--ps-text-label); }
+.ps-step-line { width: 2px; height: 24px; background: var(--ps-line); margin-left: 23px; }
+.ps-step-line--valid { background: var(--ps-success); }
+
+/* ---------------------------------------------------------------
+   Buttons, tags, indicators, layout utilities
+--------------------------------------------------------------- */
+.ps-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  font: inherit; font-size: 14px; font-weight: 500;
+  padding: 8px 16px; border-radius: 6px; cursor: pointer;
+  border: 1px solid transparent; transition: background-color 0.15s, border-color 0.15s;
+}
+.ps-btn--primary { background: var(--ps-primary); border-color: var(--ps-primary); color: var(--ps-white); }
+.ps-btn--primary:hover { background: var(--ps-primary-hover); border-color: var(--ps-primary-hover); }
+.ps-btn--primary:active { background: var(--ps-primary-active); }
+.ps-btn--ghost { background: var(--ps-white); border-color: var(--ps-line-input); color: var(--ps-text-body); }
+.ps-btn--ghost:hover { background: var(--ps-bg-light); }
+.ps-btn--quiet { background: transparent; border-color: transparent; color: var(--ps-primary); padding: 4px 8px; }
+.ps-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.ps-cluster { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ps-between { justify-content: space-between; }
+.ps-stack { display: flex; flex-direction: column; gap: 16px; }
+.ps-separator { block-size: 1px; background: var(--ps-line); margin-block: 24px; }
+.ps-actions { display: flex; gap: 12px; margin-block-start: 24px; }
+.ps-mb16 { margin-block-end: 16px; }
+.ps-mt16 { margin-block-start: 16px; }
+.ps-fill { inline-size: 100%; }
+
+.ps-tag {
+  display: inline-flex; align-items: center;
+  font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+}
+.ps-tag--teal { background: var(--ps-teal-soft); color: var(--ps-focus); }
+.ps-tag--gray { background: var(--ps-bg-light); color: var(--ps-hint-dark); }
+
+.ps-indicator { display: inline-block; inline-size: 10px; block-size: 10px; border-radius: 50%; }
+.ps-indicator--green { background: var(--ps-status-green); }
+.ps-indicator--amber { background: var(--ps-amber); }
+.ps-indicator--red { background: var(--ps-danger); }
+
+/* ---------------------------------------------------------------
+   Form fields + inputs (application info, site modal)
+--------------------------------------------------------------- */
+.ps-field { margin-block-end: 16px; }
+.ps-field > label { display: block; font-size: 13px; font-weight: 600; color: var(--ps-text-label); margin-block-end: 6px; }
+.ps-input, .ps-select {
+  inline-size: 100%; padding: 8px 12px; font: inherit; font-size: 14px;
+  color: var(--ps-text-body); background: var(--ps-white);
+  border: 1px solid var(--ps-line); border-radius: 6px;
+}
+.ps-input:focus, .ps-select:focus { outline: none; border-color: var(--ps-primary); }
+.ps-hint { font-size: 12px; color: var(--ps-hint-mid); margin-block-start: 6px; }
+.ps-subhead { font-size: 15px; font-weight: 700; color: var(--ps-text-label); margin-block: 20px 12px; }
+.ps-choice { display: inline-flex; align-items: center; gap: 6px; margin-inline-end: 16px; font-size: 14px; }

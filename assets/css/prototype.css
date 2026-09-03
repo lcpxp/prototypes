@@ -2,8 +2,8 @@
    prototype.css - Shared styles for a prototype's LPIO-framed overview
    page: the meta row, sections, step sequence, backlog list and the
    diagram figure. Used by modules/prototypes/pci/index.html and
-   modules/prototypes/daopay/index.html. Interactive replicas have
-   their own sheets (pxp.css, pxp-pci.css, pxp-daopay.css). Loaded
+   modules/prototypes/eu-acquirer/index.html. Interactive replicas have
+   their own sheets (ps.css, ps-pci.css, ps-euacquirer.css). Loaded
    after pages.css. Values come from tokens.css only.
 ------------------------------------------------------------------- */
 

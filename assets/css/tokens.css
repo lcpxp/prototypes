@@ -217,37 +217,37 @@
      these are declared once here and deliberately never overridden in
      the dark blocks below - the PCI replica must look identical whatever
      the theme toggle says. Values lifted verbatim from the portal. */
-  --pxp-primary: #292cf5;
-  --pxp-primary-hover: #2426af;
-  --pxp-primary-active: #25288a;
-  --pxp-header-bg: #09090c;
-  --pxp-neon: #c8ff01;
-  --pxp-text-label: #111827;
-  --pxp-text-body: #333333;
-  --pxp-hint-dark: #4b5563;
-  --pxp-hint-normal: #9ca3af;
-  --pxp-hint-mid: #92999e;
-  --pxp-line: #e5e7eb;
-  --pxp-line-input: #b6c8cb;
-  --pxp-focus: #41677c;
-  --pxp-bg-light: #f7f8f8;
-  --pxp-bg-page: #edeef0;
-  --pxp-success: #8acd33;
-  --pxp-danger: #ed2d3d;
-  --pxp-status-green: #34c759;
-  --pxp-amber: #ff8c00;
-  --pxp-teal: #2aceff;
-  --pxp-teal-soft: #e0fdff;
-  --pxp-avatar-bg: #c1d3ff;
-  --pxp-primary-soft: #ecf2ff;
-  --pxp-white: #ffffff;
-  --pxp-content-max: 974px;
-  --pxp-aside: 224px;
+  --ps-primary: #292cf5;
+  --ps-primary-hover: #2426af;
+  --ps-primary-active: #25288a;
+  --ps-header-bg: #09090c;
+  --ps-neon: #c8ff01;
+  --ps-text-label: #111827;
+  --ps-text-body: #333333;
+  --ps-hint-dark: #4b5563;
+  --ps-hint-normal: #9ca3af;
+  --ps-hint-mid: #92999e;
+  --ps-line: #e5e7eb;
+  --ps-line-input: #b6c8cb;
+  --ps-focus: #41677c;
+  --ps-bg-light: #f7f8f8;
+  --ps-bg-page: #edeef0;
+  --ps-success: #8acd33;
+  --ps-danger: #ed2d3d;
+  --ps-status-green: #34c759;
+  --ps-amber: #ff8c00;
+  --ps-teal: #2aceff;
+  --ps-teal-soft: #e0fdff;
+  --ps-avatar-bg: #c1d3ff;
+  --ps-primary-soft: #ecf2ff;
+  --ps-white: #ffffff;
+  --ps-content-max: 974px;
+  --ps-aside: 224px;
 
   /* The portal sets font-family: Inter on *, body and html. Only the
      replica uses this token; LPIO's own chrome keeps --font-body.
      The webfont itself is linked on replica pages only. */
-  --pxp-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  --ps-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
 
   /* Signal chips. The portal expresses every status as a base colour
@@ -255,36 +255,36 @@
      confirmed portal values above (success, danger, primary, amber,
      teal, hint-normal); the -bg and -text tints are derived from them
      to match the chips in the application screenshots. */
-  --pxp-signal-success: #8acd33;
-  --pxp-signal-success-bg: #f0f9e3;
-  --pxp-signal-success-text: #4a7016;
-  --pxp-signal-warning: #ff8c00;
-  --pxp-signal-warning-bg: #fff4e5;
-  --pxp-signal-warning-text: #8a4b00;
-  --pxp-signal-danger: #ed2d3d;
-  --pxp-signal-danger-bg: #fdeaec;
-  --pxp-signal-danger-text: #9b1420;
-  --pxp-signal-info: #292cf5;
-  --pxp-signal-info-bg: #ecf2ff;
-  --pxp-signal-info-text: #25288a;
-  --pxp-signal-accent: #2aceff;
-  --pxp-signal-accent-bg: #e0fdff;
-  --pxp-signal-accent-text: #41677c;
-  --pxp-signal-flagged: #f4a58a;
-  --pxp-signal-flagged-bg: #fdeee7;
-  --pxp-signal-flagged-text: #8f3c1c;
-  --pxp-signal-inactive: #9ca3af;
-  --pxp-signal-inactive-bg: #f3f4f6;
-  --pxp-signal-inactive-text: #4b5563;
-  --pxp-signal-commerce: #7c3aed;
-  --pxp-signal-commerce-bg: #f3ebff;
-  --pxp-signal-commerce-text: #4c1d95;
+  --ps-signal-success: #8acd33;
+  --ps-signal-success-bg: #f0f9e3;
+  --ps-signal-success-text: #4a7016;
+  --ps-signal-warning: #ff8c00;
+  --ps-signal-warning-bg: #fff4e5;
+  --ps-signal-warning-text: #8a4b00;
+  --ps-signal-danger: #ed2d3d;
+  --ps-signal-danger-bg: #fdeaec;
+  --ps-signal-danger-text: #9b1420;
+  --ps-signal-info: #292cf5;
+  --ps-signal-info-bg: #ecf2ff;
+  --ps-signal-info-text: #25288a;
+  --ps-signal-accent: #2aceff;
+  --ps-signal-accent-bg: #e0fdff;
+  --ps-signal-accent-text: #41677c;
+  --ps-signal-flagged: #f4a58a;
+  --ps-signal-flagged-bg: #fdeee7;
+  --ps-signal-flagged-text: #8f3c1c;
+  --ps-signal-inactive: #9ca3af;
+  --ps-signal-inactive-bg: #f3f4f6;
+  --ps-signal-inactive-text: #4b5563;
+  --ps-signal-commerce: #7c3aed;
+  --ps-signal-commerce-bg: #f3ebff;
+  --ps-signal-commerce-text: #4c1d95;
 
   /* Data tables and the portal's soft secondary button. */
-  --pxp-table-header-bg: #f3f4f6;
-  --pxp-table-stripe-bg: #f9fafb;
-  --pxp-button-secondary-bg: #e8f0ff;
-  --pxp-button-secondary-text: #0047ff;
+  --ps-table-header-bg: #f3f4f6;
+  --ps-table-stripe-bg: #f9fafb;
+  --ps-button-secondary-bg: #e8f0ff;
+  --ps-button-secondary-text: #0047ff;
 }
 
 /* Dark scheme: same relationships, inverted surfaces. Components

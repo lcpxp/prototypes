@@ -13,12 +13,12 @@ assumes it.
 
 In scope, because the source is on hand:
 
-- `Pxp.PartnerPortalApi` - the LP API. Onion architecture with
+- `Acquirer.PartnerPortalApi` - the LP API. Onion architecture with
   four source layers plus `Host`, and three test projects: `Unit`,
   `Integration` (feature files plus step definitions) and `E2E`, whose
   folders - Actors, Abilities, Tasks, Questions, Drivers - are the
   screenplay pattern.
-- `Pxp.PartnerPortal` - the Angular 20 front end.
+- `Acquirer.PartnerPortal` - the Angular 20 front end.
 
 Out of scope, and must be labelled `stated` wherever it appears:
 
@@ -26,11 +26,11 @@ Out of scope, and must be labelled `stated` wherever it appears:
   spec with no source to check it against. The API repo has a `Merchant Portal`
   feature folder, which tells us what LP *calls*, not what
   Merchant Portal *offers*.
-- **The payment service, DaoPay's own systems, Adobe Sign, Experian
+- **The payment service, EU Acquirer's own systems, Adobe Sign, Experian
   Bank Wizard, Companies House, IdPal, WebShield.** Integration edges
   are visible from our side only.
 - **Anything on a branch.** The review board records that much of the
-  DaoPay automation sat on branches and that "the repos and commits on
+  EU Acquirer automation sat on branches and that "the repos and commits on
   hand looked stale against what is deployed". Treat the supplied
   snapshot as one point in time and record its provenance as such.
 
@@ -101,8 +101,8 @@ the walkthrough review already used.
 | C3 | The application form | Inputs, InputValues, OnboardingFlow, MerchantDocuments, ExternalAsset, steps and questions |
 | C4 | Commercial | ProductDefinition, ProductAssignment, ShoppingCarts, Orders, RateSheet, PriceSheets, Quote, ServiceDefinition, service fees |
 | C5 | Risk and decision | Screening, IndustryCodes, Acquirers, approval / reject / override, CompaniesHouse, WebShield, IdPal |
-| C6 | Contracts | Adobe Sign, contract generate / send / void, DaoPay KYC contract, terminal financing, webhooks |
-| C7 | Integrations and automation | Merchant Portal, DaoPay, CRM, Emails, Provisioning, PaymentServiceV5, EITManagement, SFTP |
+| C6 | Contracts | Adobe Sign, contract generate / send / void, EU Acquirer KYC contract, terminal financing, webhooks |
+| C7 | Integrations and automation | Merchant Portal, EU Acquirer, CRM, Emails, Provisioning, PaymentServiceV5, EITManagement, SFTP |
 | C8 | Cross-cutting | Metrics, Auditing, Logger, Appearance, RegionDefinitions, Country, Azure, configuration and environments |
 
 A wave is not finished when the files have been read. It is finished

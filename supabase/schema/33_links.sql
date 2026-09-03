@@ -5,7 +5,7 @@
 -- Why this exists. work_items.relates_to_id was one nullable uuid doing
 -- four jobs. On 2026-08-09 its 35 rows broke down as 8 duplicate_of
 -- (retired rows whose resolution reads "Duplicate: merged into..."),
--- 6 part_of (the Daopay/automation-sweep components, deliberately NOT
+-- 6 part_of (the EU Acquirer/automation-sweep components, deliberately NOT
 -- parent_id because that rolls up onto the strategic gantt), 1
 -- supersedes, and ~20 genuine associations. Four meanings, one column,
 -- a ceiling of one relationship per row, and direction meaning

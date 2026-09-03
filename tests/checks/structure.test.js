@@ -225,7 +225,7 @@ test("every page directory is actually loaded by a page", () => {
   // The real risk of a directory is an orphaned one: files nothing
   // includes, which read as live code and are not. Registry membership
   // is the wrong test for it - dashboard/ serves the root page, and
-  // daopay/, pci/ and ideas/ serve prototypes under modules/prototypes/,
+  // eu-acquirer/, pci/ and ideas/ serve prototypes under modules/prototypes/,
   // none of which are registry modules.
   const pages = trackedFiles().filter((f) => f.endsWith(".html")).map(read).join("\n");
   const dirs = new Set();

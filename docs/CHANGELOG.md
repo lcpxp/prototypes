@@ -224,9 +224,9 @@ is the git history; what is unfinished is docs/STATE.md.
   scope now shows.
 
 ### Added
-- A **DaoPay admin** icon in the top-right nav opens a modal with two
+- A **EU Acquirer admin** icon in the top-right nav opens a modal with two
   copyable browser-console snippets: one that creates a portal user
-  holding the DaoPay reviewer role, and one that lists who currently
+  holding the EU Acquirer reviewer role, and one that lists who currently
   holds it. A stopgap until the portal grows a UI for that role; the
   snippets read the portal's host and scope from its own config at run
   time and carry placeholder arguments the operator replaces.
@@ -342,25 +342,25 @@ is the git history; what is unfinished is docs/STATE.md.
   internal development; everything else on the roadmap is visible.
 
 ### Changed
-- The Daopay prototype intro page now matches the guidance document: its
+- The EU Acquirer prototype intro page now matches the guidance document: its
   overview no longer implies the review happens in the portal (it happens
-  in Daopay's own CRM and file storage; the portal is only for recording
+  in EU Acquirer's own CRM and file storage; the portal is only for recording
   the decision), the screening step no longer over-lists checks, and the
   embedded diagram is the current involvement flow with the three-outcome
   branch at step 10.
-- The Daopay replica's contract tables now start empty. A Acquirer user
+- The EU Acquirer replica's contract tables now start empty. A Acquirer user
   generates each contract, which adds its row; the generated state is
-  kept for the tab, so switching to the Daopay view finds the contracts
+  kept for the tab, so switching to the EU Acquirer view finds the contracts
   there to send. Sending is blocked, with a prompt, if nothing has been
   generated. Opening the Applications list starts a fresh run.
-- The Daopay replica's role switch moved into the black header bar and the
+- The EU Acquirer replica's role switch moved into the black header bar and the
   blue prototype banner over the content is gone, so the page below the
-  chrome is the portal and nothing else. A Daopay user is now offered only
+  chrome is the portal and nothing else. A EU Acquirer user is now offered only
   the two statuses they can set, Rejected and Pending Further Information;
   the pending note sits in an amber panel that closes to show what was
   sent. Contracts show one row each and screening is limited to Mastercard
   MATCH and Webshield. Both send controls - the merchant contract and the
-  KYC approval - sit with the Daopay view so the whole run demonstrates
+  KYC approval - sit with the EU Acquirer view so the whole run demonstrates
   without a role switch, and the status between full signature and a
   decision reads Application Signed.
 - The roadmap page intro is trimmed to a few lines so the board sits higher
@@ -371,23 +371,23 @@ is the git history; what is unfinished is docs/STATE.md.
   the next stage.
 
 ### Added
-- The Daopay replica now simulates a run rather than describing one.
+- The EU Acquirer replica now simulates a run rather than describing one.
   Sending a contract asks for the merchant's email, then an Adobe Sign
   panel shows the envelope going out and the three signatures landing in
   order - merchant, then Oliver, then Michael - each with a spinner and a
   tick. Full signature kicks off the automated handoff, which reports the
-  CRM upload, the SFTP file transfer and the Daopay notification as they
+  CRM upload, the SFTP file transfer and the EU Acquirer notification as they
   happen. Success messages now stack down the top right and stay long
   enough to read, replacing the single black pill at the foot of the page.
-- The Daopay guidance now says where the review actually happens: on full
-  signature the merchant and application data transfers into Daopay's CRM
+- The EU Acquirer guidance now says where the review actually happens: on full
+  signature the merchant and application data transfers into EU Acquirer's CRM
   and the contract files and screening PDFs go across by SFTP, so the
   notification is a cue to check their own systems. They open the portal
   only to record the decision.
-- New Daopay user-role prototype under Prototypes: a guidance overview of
-  how the Daopay compliance team will approve EU merchant applications, a
+- New EU Acquirer user-role prototype under Prototypes: a guidance overview of
+  how the EU Acquirer compliance team will approve EU merchant applications, a
   sequence diagram of the flow, and a replica of the partner portal that
-  renders the same application as a Acquirer user and as a Daopay user so the
+  renders the same application as a Acquirer user and as a EU Acquirer user so the
   reduced control set is visible side by side. All data in it is invented.
 - Nested work items now stack in stage order under their workstream (Now
   above Next above Later; within a stage, spans finishing sooner sit

@@ -1,26 +1,26 @@
 // ------------------------------------------------------------------
-// daopay/app.js - The application summary page in the Daopay replica:
+// eu-acquirer/app.js - The application summary page in the EU Acquirer replica:
 // composition, state and behaviour. The section markup lives in
-// daopay-sections.js; the modals, toasts and stepped progress live in
-// daopay-sim.js. This module owns what the application currently is,
+// eu-acquirer-sections.js; the modals, toasts and stepped progress live in
+// eu-acquirer-sim.js. This module owns what the application currently is,
 // and drives the transitions between those states.
 //
 // Both roles run this same code path. Which controls exist is decided
-// by DaopayDemo.can() inside the section builders, never by a role
+// by EuAcquirerDemo.can() inside the section builders, never by a role
 // comparison here.
 // ------------------------------------------------------------------
 
 (function () {
   "use strict";
 
-  var mount = document.querySelector("[data-pxp-page][data-page='application']");
+  var mount = document.querySelector("[data-ps-page][data-page='application']");
   if (!mount) return;
 
-  var demo = window.DaopayDemo;
+  var demo = window.EuAcquirerDemo;
   var app = demo.application;
   var sections = demo.sections;
 
-  // Hydrated from sessionStorage by daopay-data.js, so a role switch -
+  // Hydrated from sessionStorage by eu-acquirer-data.js, so a role switch -
   // which reloads the page - resumes where it left off.
   var state = {
     decision: demo.savedState.decision,
@@ -39,7 +39,7 @@
 
   // ---------------- Generate (Acquirer) ----------------
   // The tables begin empty. Generating adds the row and persists it, so
-  // the Daopay user finds the contract there to send after the switch.
+  // the EU Acquirer user finds the contract there to send after the switch.
   function generateContract() {
     if (app.contracts.length) {
       demo.toast("Already generated", "The merchant contract is on the application.");
@@ -51,7 +51,7 @@
     });
     save();
     render();
-    demo.toast("Merchant contract generated", "Ready for Daopay to send for signature.");
+    demo.toast("Merchant contract generated", "Ready for EU Acquirer to send for signature.");
   }
 
   function generateKyc() {
@@ -65,11 +65,11 @@
     });
     save();
     render();
-    demo.toast("KYC contract generated", "Ready for Daopay to send on approval.");
+    demo.toast("KYC contract generated", "Ready for EU Acquirer to send on approval.");
   }
 
   // ---------------- The merchant contract ----------------
-  // Sent to the merchant, who signs first; the two Daopay countersigners
+  // Sent to the merchant, who signs first; the two EU Acquirer countersigners
   // follow on their own. The delays are what make the order legible.
   function sendContract() {
     if (!app.contracts.length) {
@@ -78,7 +78,7 @@
       return;
     }
     return demo.askEmail("Send contract for signature",
-      "The merchant signs first, then the Daopay CEO and CTO countersign.",
+      "The merchant signs first, then the EU Acquirer CEO and CTO countersign.",
       "Merchant email address").then(function (email) {
       if (!email) return;
       app.stage = "Awaiting Contract Signature";
@@ -91,9 +91,9 @@
           { label: "Email delivered to the merchant", note: email, wait: 1000 },
           { label: "Signed by the merchant", note: "Nordwind Digital GmbH", wait: 1600,
             toast: ["Signed by the merchant", "1 of 3 signatures received."] },
-          { label: "Countersigned by the Daopay CEO", note: "Oliver", wait: 1500,
+          { label: "Countersigned by the EU Acquirer CEO", note: "Oliver", wait: 1500,
             toast: ["Countersigned by Oliver", "2 of 3 signatures received."] },
-          { label: "Countersigned by the Daopay CTO", note: "Michael", wait: 1500,
+          { label: "Countersigned by the EU Acquirer CTO", note: "Michael", wait: 1500,
             toast: ["Countersigned by Michael", "3 of 3 - the contract is fully signed."] },
           { label: "Executed copy generated", note: "Merchant Agreement (signed).pdf", wait: 900 },
         ], "Continue").then(function () {
@@ -110,11 +110,11 @@
   // Nobody presses anything for this in the real flow, so it runs on
   // its own and reports itself through the toast stack.
   function handoff() {
-    demo.toast("Full signature received", "The automated handoff to Daopay has started.");
+    demo.toast("Full signature received", "The automated handoff to EU Acquirer has started.");
     return demo.runBackground([
       { wait: 1100, toast: ["Merchant record sent to CRM", "All merchant and application data, via the CRM integration."] },
       { wait: 1300, toast: ["Files transferred by SFTP", "Signed contract and 2 screening report PDFs."] },
-      { wait: 1200, toast: ["Daopay compliance notified", "The application is now waiting on a Daopay decision."] },
+      { wait: 1200, toast: ["EU Acquirer compliance notified", "The application is now waiting on a EU Acquirer decision."] },
     ]).then(function () {
       app.stage = "Application Signed";
       save();
@@ -139,8 +139,8 @@
       save();
       render();
       demo.toast("Merchant approved", "The KYC contract is on its way to " + email + ".");
-      return demo.runSteps("Adobe Sign - DaoPay KYC", "Nordwind Digital GmbH", [
-        { label: "Envelope created in Adobe Sign", note: "DaoPay KYC, 1 signature field", wait: 900 },
+      return demo.runSteps("Adobe Sign - EU Acquirer KYC", "Nordwind Digital GmbH", [
+        { label: "Envelope created in Adobe Sign", note: "EU Acquirer KYC, 1 signature field", wait: 900 },
         { label: "Email delivered to the merchant", note: email, wait: 1000 },
         { label: "Signed by the merchant", note: "No countersignature required", wait: 1700,
           toast: ["KYC signed by the merchant", "Onboarding is complete."] },
@@ -155,12 +155,12 @@
 
   // ---------------- Reject and pend ----------------
   function applyStatus() {
-    var select = document.getElementById("pxp-status");
-    var note = document.getElementById("pxp-note");
+    var select = document.getElementById("ps-status");
+    var note = document.getElementById("ps-note");
     var next = select.value;
 
     if (next === "Pending Further Information") {
-      var field = document.getElementById("pxp-note-text");
+      var field = document.getElementById("ps-note-text");
       var text = field ? field.value.trim() : "";
       if (note && !text) {
         demo.toast("Add a note first",
@@ -191,8 +191,8 @@
   // ---------------- Everything else ----------------
   var SIMPLE = {
     sendToCrm: ["Sent to CRM", "Manual re-send. In the live flow this fires on full signature."],
-    sendOnboardingRecord: ["Onboarding record sent", "Manual re-send to DaoPay."],
-    sendDocuments: ["Documents sent", "Manual re-send to DaoPay by SFTP."],
+    sendOnboardingRecord: ["Onboarding record sent", "Manual re-send to EU Acquirer."],
+    sendDocuments: ["Documents sent", "Manual re-send to EU Acquirer by SFTP."],
     viewContract: ["Opening the contract", "Merchant Agreement.pdf"],
     downloadContract: ["Download started", "Merchant Agreement.pdf"],
     viewReport: ["Opening the screening report", "Full result and evidence."],
@@ -204,14 +204,14 @@
   };
 
   function closeMenus() {
-    mount.querySelectorAll(".pxp-actionmenu").forEach(function (menu) {
+    mount.querySelectorAll(".ps-actionmenu").forEach(function (menu) {
       menu.classList.add("hidden");
     });
   }
 
   function wire() {
-    var select = document.getElementById("pxp-status");
-    var note = document.getElementById("pxp-note");
+    var select = document.getElementById("ps-status");
+    var note = document.getElementById("ps-note");
     if (select && note && !state.noteSent) {
       var sync = function () {
         note.hidden = select.value !== "Pending Further Information";
@@ -265,7 +265,7 @@
 
   function render() {
     mount.innerHTML = sections.statusBar() +
-      '<div class="pxp-panel">' + sections.all(state) + "</div>";
+      '<div class="ps-panel">' + sections.all(state) + "</div>";
     wire();
   }
 

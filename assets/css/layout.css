@@ -133,12 +133,12 @@
 
 .nav-tools:empty,
 .nav-send:empty,
-.nav-daopay-admin:empty {
+.nav-eu-acquirer-admin:empty {
   display: none;
 }
 
 .nav-send,
-.nav-daopay-admin {
+.nav-eu-acquirer-admin {
   display: inline-flex;
 }
 

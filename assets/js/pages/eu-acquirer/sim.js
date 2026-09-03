@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------
-// daopay/sim.js - The simulation layer for the Daopay replica: the
+// eu-acquirer/sim.js - The simulation layer for the EU Acquirer replica: the
 // toast stack, the email prompt, and the stepped progress modal that
 // stands in for e-signature and the automated handoff.
 //
@@ -8,14 +8,14 @@
 // here each of those is a step that spins, then ticks, so an observer
 // can follow what the platform is doing and when.
 //
-// Exposes on DaopayDemo: toast, askEmail, runSteps.
+// Exposes on EuAcquirerDemo: toast, askEmail, runSteps.
 // ------------------------------------------------------------------
 
 (function () {
   "use strict";
 
   var esc = App.escape;
-  var demo = window.DaopayDemo;
+  var demo = window.EuAcquirerDemo;
   if (!demo) return;
 
   var TICK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" ' +
@@ -32,10 +32,10 @@
   var DWELL = 5200;
 
   function stack() {
-    var el = document.querySelector(".pxp-toaststack");
+    var el = document.querySelector(".ps-toaststack");
     if (!el) {
       el = document.createElement("div");
-      el.className = "pxp-toaststack";
+      el.className = "ps-toaststack";
       el.setAttribute("aria-live", "polite");
       document.body.appendChild(el);
     }
@@ -44,34 +44,34 @@
 
   demo.toast = function (title, body, tone) {
     var node = document.createElement("div");
-    node.className = "pxp-toast pxp-toast--" + (tone || "success");
+    node.className = "ps-toast ps-toast--" + (tone || "success");
     node.innerHTML =
-      '<span class="pxp-toast-mark">' + (tone === "warn" ? BANG : TICK) + "</span>" +
-      '<span class="pxp-toast-text"><strong>' + esc(title) + "</strong>" +
+      '<span class="ps-toast-mark">' + (tone === "warn" ? BANG : TICK) + "</span>" +
+      '<span class="ps-toast-text"><strong>' + esc(title) + "</strong>" +
       (body ? "<span>" + esc(body) + "</span>" : "") + "</span>" +
-      '<button type="button" class="pxp-toast-close" aria-label="Dismiss">' +
+      '<button type="button" class="ps-toast-close" aria-label="Dismiss">' +
       "&times;</button>";
     stack().appendChild(node);
 
     var timer = window.setTimeout(remove, DWELL);
     function remove() {
       window.clearTimeout(timer);
-      node.classList.add("pxp-toast--out");
+      node.classList.add("ps-toast--out");
       window.setTimeout(function () { node.remove(); }, 200);
     }
-    node.querySelector(".pxp-toast-close").addEventListener("click", remove);
+    node.querySelector(".ps-toast-close").addEventListener("click", remove);
     return node;
   };
 
   // ---------------- Shared modal shell ----------------
   function openModal(title, subtitle, bodyHtml, footHtml) {
     var scrim = document.createElement("div");
-    scrim.className = "pxp-modal-scrim";
-    scrim.innerHTML = '<div class="pxp-modal" role="dialog" aria-modal="true">' +
-      '<div class="pxp-modal-head"><h2>' + esc(title) + "</h2>" +
+    scrim.className = "ps-modal-scrim";
+    scrim.innerHTML = '<div class="ps-modal" role="dialog" aria-modal="true">' +
+      '<div class="ps-modal-head"><h2>' + esc(title) + "</h2>" +
       (subtitle ? "<p>" + esc(subtitle) + "</p>" : "") + "</div>" +
-      '<div class="pxp-modal-body">' + bodyHtml + "</div>" +
-      '<div class="pxp-modal-foot">' + (footHtml || "") + "</div></div>";
+      '<div class="ps-modal-body">' + bodyHtml + "</div>" +
+      '<div class="ps-modal-foot">' + (footHtml || "") + "</div></div>";
     document.body.appendChild(scrim);
     return scrim;
   }
@@ -83,13 +83,13 @@
   demo.askEmail = function (title, subtitle, label) {
     return new Promise(function (resolve) {
       var scrim = openModal(title, subtitle,
-        '<div class="pxp-field"><label for="pxp-email">' + esc(label) +
-        '</label><input class="pxp-input" id="pxp-email" type="email" ' +
+        '<div class="ps-field"><label for="ps-email">' + esc(label) +
+        '</label><input class="ps-input" id="ps-email" type="email" ' +
         'value="dummy@email.com"></div>',
-        '<button type="button" class="pxp-btn pxp-btn--ghost" data-close>Cancel</button>' +
-        '<button type="button" class="pxp-btn pxp-btn--primary" data-send>Send</button>');
+        '<button type="button" class="ps-btn ps-btn--ghost" data-close>Cancel</button>' +
+        '<button type="button" class="ps-btn ps-btn--primary" data-send>Send</button>');
 
-      var input = scrim.querySelector("#pxp-email");
+      var input = scrim.querySelector("#ps-email");
       input.focus();
       input.select();
 
@@ -114,19 +114,19 @@
   demo.runSteps = function (title, subtitle, steps, closeLabel) {
     return new Promise(function (resolve) {
       var rows = steps.map(function (s, i) {
-        return '<li class="pxp-simstep" data-step="' + i + '">' +
-          '<span class="pxp-simstep-mark"><span class="pxp-spinner"></span>' +
-          '<span class="pxp-simstep-tick">' + TICK + "</span></span>" +
-          '<span class="pxp-simstep-text"><strong>' + esc(s.label) + "</strong>" +
+        return '<li class="ps-simstep" data-step="' + i + '">' +
+          '<span class="ps-simstep-mark"><span class="ps-spinner"></span>' +
+          '<span class="ps-simstep-tick">' + TICK + "</span></span>" +
+          '<span class="ps-simstep-text"><strong>' + esc(s.label) + "</strong>" +
           (s.note ? "<span>" + esc(s.note) + "</span>" : "") + "</span></li>";
       }).join("");
 
       var scrim = openModal(title, subtitle,
-        '<ol class="pxp-simlist">' + rows + "</ol>",
-        '<button type="button" class="pxp-btn pxp-btn--primary" data-done disabled>' +
+        '<ol class="ps-simlist">' + rows + "</ol>",
+        '<button type="button" class="ps-btn ps-btn--primary" data-done disabled>' +
         esc(closeLabel || "Done") + "</button>");
 
-      var list = scrim.querySelectorAll(".pxp-simstep");
+      var list = scrim.querySelectorAll(".ps-simstep");
       var doneBtn = scrim.querySelector("[data-done]");
 
       function advance(i) {
@@ -139,10 +139,10 @@
           });
           return;
         }
-        list[i].classList.add("pxp-simstep--running");
+        list[i].classList.add("ps-simstep--running");
         window.setTimeout(function () {
-          list[i].classList.remove("pxp-simstep--running");
-          list[i].classList.add("pxp-simstep--done");
+          list[i].classList.remove("ps-simstep--running");
+          list[i].classList.add("ps-simstep--done");
           if (steps[i].toast) demo.toast(steps[i].toast[0], steps[i].toast[1]);
           advance(i + 1);
         }, steps[i].wait || 900);

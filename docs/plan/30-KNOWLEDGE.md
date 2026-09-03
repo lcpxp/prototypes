@@ -138,7 +138,7 @@ more, and they are what a session needs to answer "how is this built".
 **Front end.** Angular 20 with the CLI and no state library - RxJS
 BehaviorSubjects at service level, signals in newer components. Azure
 MSAL against B2C. Two tenants with separate route trees, layouts and
-guards: `/pxp` behind a global-admin guard, `/app/:tenantId` behind a
+guards: `/acquirer` behind a global-admin guard, `/app/:tenantId` behind a
 tenant guard that global admins pass unconditionally - which is the
 mechanism behind "view as partner". A load-user guard runs first on
 both trees and bootstraps sales-team membership. Three roles drive
@@ -171,7 +171,7 @@ of them names a host, a key or an environment URL.
 | Migrations | 210 in `src/Infrastructure/Migrations` |
 | API tests | three projects: Unit, Integration (47 step/feature files), E2E (8 screenplay files) |
 | Angular | 20.3, no state library; **34 files use signals against 19 using BehaviorSubject** |
-| Guards | eight, not three - `pxp-admin`, `partner-admin`, `partner-tenant`, `v2-user`, `application`, `onboarding-flow`, `product`, `sales-team-query-param` |
+| Guards | eight, not three - `ps-admin`, `partner-admin`, `partner-tenant`, `v2-user`, `application`, `onboarding-flow`, `product`, `sales-team-query-param` |
 | Interceptors | exactly one, `api-response-error` |
 | Front-end specs | **zero** `.spec.ts` files |
 

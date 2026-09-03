@@ -50,8 +50,8 @@ Browser baseline, all 24 pages rendered against fixture data in Chromium:
 |---|---:|---:|---:|---:|
 | modules/roadmap/index.html | 35 | 11 | 317,177 | 87,578 |
 | modules/app-review/wave.html | 24 | 8 | 197,065 | 53,658 |
-| modules/prototypes/daopay/application.html | 23 | 9 | 199,507 | 52,754 |
-| modules/prototypes/daopay/applications.html | 22 | 9 | 182,038 | 48,717 |
+| modules/prototypes/eu-acquirer/application.html | 23 | 9 | 199,507 | 52,754 |
+| modules/prototypes/eu-acquirer/applications.html | 22 | 9 | 182,038 | 48,717 |
 | modules/platform/index.html | 21 | 7 | 174,858 | 48,653 |
 | modules/portal-review/wave.html | 21 | 7 | 171,321 | 47,231 |
 | modules/portal-review/index.html | 21 | 7 | 171,285 | 47,175 |
@@ -66,7 +66,7 @@ Browser baseline, all 24 pages rendered against fixture data in Chromium:
 | modules/prototypes/index.html | 18 | 7 | 143,966 | 39,929 |
 | modules/integrations/index.html | 17 | 6 | 140,403 | 39,253 |
 | modules/users/index.html | 17 | 6 | 143,170 | 40,177 |
-| modules/prototypes/daopay/index.html | 17 | 7 | 135,915 | 37,557 |
+| modules/prototypes/eu-acquirer/index.html | 17 | 7 | 135,915 | 37,557 |
 | modules/prototypes/pci/index.html | 17 | 7 | 135,915 | 37,557 |
 | modules/prototypes/pci/dashboard.html | 17 | 8 | 149,642 | 39,700 |
 | modules/prototypes/gdpr/index.html | 15 | 6 | 129,575 | 36,045 |
@@ -79,7 +79,7 @@ The roadmap page is the outlier on every axis and the only page over 250KB.
 
 Universal on all 23 protected pages (9): `supabase.js` `registry.js`
 `guard.js` `ui.js` `search.js` `tools.js` `send-tool.js`
-`daopay-admin-tool.js` `theme.js`.
+`eu-acquirer-admin-tool.js` `theme.js`.
 Per page (5): `detail.js` (10 pages), `blocks.js` (6), `links.js` (2:
 platform, roadmap), `drawer.js` (1: app-review/wave), `sprints.js` (1:
 roadmap).
@@ -178,14 +178,14 @@ byte-identical goldens, and an identical transcript.
 ## Open questions for the owner
 
 Both remove a nav icon from pages, so neither is taken here. `ui.js:213`
-renders the slot only `if (App.daopayAdminTool)`, so dropping the script
+renders the slot only `if (App.euAcquirerAdminTool)`, so dropping the script
 removes the icon from that page - confirmed in the browser, where
-`#daopay-admin-trigger` and `#send-tool-trigger` both appear in the nav on
+`#eu-acquirer-admin-trigger` and `#send-tool-trigger` both appear in the nav on
 the roadmap page.
 
-1. `daopay-admin-tool.js` (7,935 B) is a DaoPay-reviewer console tool
+1. `eu-acquirer-admin-tool.js` (7,935 B) is a EU Acquirer-reviewer console tool
    loaded on all 23 protected pages. Everywhere, or only inside the
-   DaoPay prototype?
+   EU Acquirer prototype?
 2. `send-tool.js` (8,257 B), "Acquirer send", same shape, same question.
 
 Together ~16KB uncompressed on every page load.
@@ -291,7 +291,7 @@ Filled in as it happens; the part a later wave needs.
   the application-review board, the second by adding dead .catch blocks
   to code that was already correct. A metric is not evidence.
 - The convention gate had to be narrowed twice. "Every page directory is
-  a registry key" is false - dashboard/ serves the root page and daopay/,
+  a registry key" is false - dashboard/ serves the root page and eu-acquirer/,
   pci/ and ideas/ serve prototypes. "A module's page loads its own
   directory" is false as stated too, because modules/prototypes/ draws
   its ideas strip from pages/ideas/. The rule that survives is narrower

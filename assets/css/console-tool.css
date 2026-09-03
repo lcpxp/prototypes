@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------
    console-tool.css - The modal shared by the nav's console-snippet
-   tools (send-tool.js and daopay-admin-tool.js): a wide dialog with a
+   tools (send-tool.js and eu-acquirer-admin-tool.js): a wide dialog with a
    header bar, a scrolling code block per snippet and a collapsed
    details section. Its own file rather than more of components.css,
    which is at its size budget; linked only by pages that load one of

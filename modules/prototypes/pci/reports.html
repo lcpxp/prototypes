@@ -15,8 +15,8 @@
   <link rel="stylesheet" href="../../../assets/css/components.css">
   <link rel="stylesheet" href="../../../assets/css/pages.css">
   <link rel="stylesheet" href="../../../assets/css/console-tool.css">
-  <link rel="stylesheet" href="../../../assets/css/pxp.css">
-  <link rel="stylesheet" href="../../../assets/css/pxp-pci.css">
+  <link rel="stylesheet" href="../../../assets/css/ps.css">
+  <link rel="stylesheet" href="../../../assets/css/ps-pci.css">
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
   <script defer src="../../../assets/js/core/supabase.js"></script>
   <script defer src="../../../assets/js/core/registry.js"></script>
@@ -28,42 +28,42 @@
   <script defer src="../../../assets/js/pages/pci/ixopay.js"></script>
   <script defer src="../../../assets/js/pages/pci/reports.js"></script>
 </head>
-<body class="pxp-app" data-root="../../.." data-module="prototypes">
-  <header class="pxp-header">
-    <div class="pxp-header-inner">
-      <div class="pxp-header-left">
-        <span class="pxp-logo">
-          <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="9" r="3" class="pxp-logo-dot"/></svg>
-          <strong>pxp</strong>
+<body class="ps-app" data-root="../../.." data-module="prototypes">
+  <header class="ps-header">
+    <div class="ps-header-inner">
+      <div class="ps-header-left">
+        <span class="ps-logo">
+          <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="9" r="3" class="ps-logo-dot"/></svg>
+          <strong>Acquirer</strong>
         </span>
       </div>
-      <div class="pxp-header-right">
-        <span class="pxp-user">Welcome, Luke</span>
-        <span class="pxp-avatar" aria-hidden="true">
+      <div class="ps-header-right">
+        <span class="ps-user">Welcome, Luke</span>
+        <span class="ps-avatar" aria-hidden="true">
           <svg viewBox="64 64 896 896" width="15" height="15" fill="currentColor"><path d="M858.5 763.6a374 374 0 00-80.6-119.5 375.63 375.63 0 00-119.5-80.6c-.4-.2-.8-.3-1.2-.5C719.5 518 760 444.7 760 362c0-137-111-248-248-248S264 225 264 362c0 82.7 40.5 156 102.8 201.1-.4.2-.8.3-1.2.5-44.8 18.9-85 46-119.5 80.6a375.63 375.63 0 00-80.6 119.5A371.7 371.7 0 00136 901.8a8 8 0 008 8.2h60c4.4 0 7.9-3.5 8-7.8 2-77.2 33-149.5 87.8-204.3 56.7-56.7 132-87.9 212.2-87.9s155.5 31.2 212.2 87.9C779 752.7 810 825 812 902.2c.1 4.4 3.6 7.8 8 7.8h60a8 8 0 008-8.2c-1-47.8-10.9-94.3-29.5-138.2zM512 534c-45.9 0-89.1-17.9-121.6-50.4S340 407.9 340 362c0-45.9 17.9-89.1 50.4-121.6S466.1 190 512 190s89.1 17.9 121.6 50.4S684 316.1 684 362c0 45.9-17.9 89.1-50.4 121.6S557.9 534 512 534z"/></svg>
         </span>
       </div>
     </div>
   </header>
 
-  <div class="pxp-body">
-    <aside class="pxp-sider">
-      <div class="pxp-sider-title"><span>Navigation</span></div>
-      <ul class="pxp-menu">
-        <li class="pxp-menu-item"><a href="dashboard.html"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M924.8 385.6a446.7 446.7 0 00-96-142.4 446.7 446.7 0 00-142.4-96C631.1 123.8 572.5 112 512 112s-119.1 11.8-174.4 35.2a446.7 446.7 0 00-142.4 96 446.7 446.7 0 00-96 142.4C75.8 440.9 64 499.5 64 560c0 132.7 58.3 257.7 159.9 343.1l1.7 1.4c5.8 4.8 13.1 7.5 20.6 7.5h531.7c7.5 0 14.8-2.7 20.6-7.5l1.7-1.4C901.7 817.7 960 692.7 960 560c0-60.5-11.9-119.1-35.2-174.4zM761.4 836H262.6A371.12 371.12 0 01140 560c0-99.4 38.7-192.8 109-263 70.3-70.3 163.7-109 263-109 99.4 0 192.8 38.7 263 109 70.3 70.3 109 163.7 109 263 0 105.6-44.5 205.5-122.6 276z"/></svg>Dashboard</a></li>
-        <li class="pxp-menu-item"><a href="demo.html"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M854.6 288.6L639.4 73.4c-6-6-14.1-9.4-22.6-9.4H192c-17.7 0-32 14.3-32 32v832c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V311.3c0-8.5-3.4-16.7-9.4-22.7zM790.2 326H602V137.8L790.2 326zm1.8 562H232V136h302v216a42 42 0 0042 42h216v494z"/></svg>Application</a></li>
-        <li class="pxp-menu-item pxp-menu-item--active"><a href="reports.html"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M888 792H200V168c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v688c0 4.4 3.6 8 8 8h752c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM305.8 637.7c3.1 3.1 8.1 3.1 11.3 0l138.3-137.6L583 628.5c3.1 3.1 8.2 3.1 11.3 0l275.5-275.6c3.1-3.1 3.1-8.2 0-11.3l-39.6-39.5a8.03 8.03 0 00-11.3 0l-230 230.1-127.6-127.5a8.03 8.03 0 00-11.3 0L266.4 583.2a8.03 8.03 0 000 11.3l39.4 43.2z"/></svg>Compliance Reports</a></li>
+  <div class="ps-body">
+    <aside class="ps-sider">
+      <div class="ps-sider-title"><span>Navigation</span></div>
+      <ul class="ps-menu">
+        <li class="ps-menu-item"><a href="dashboard.html"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M924.8 385.6a446.7 446.7 0 00-96-142.4 446.7 446.7 0 00-142.4-96C631.1 123.8 572.5 112 512 112s-119.1 11.8-174.4 35.2a446.7 446.7 0 00-142.4 96 446.7 446.7 0 00-96 142.4C75.8 440.9 64 499.5 64 560c0 132.7 58.3 257.7 159.9 343.1l1.7 1.4c5.8 4.8 13.1 7.5 20.6 7.5h531.7c7.5 0 14.8-2.7 20.6-7.5l1.7-1.4C901.7 817.7 960 692.7 960 560c0-60.5-11.9-119.1-35.2-174.4zM761.4 836H262.6A371.12 371.12 0 01140 560c0-99.4 38.7-192.8 109-263 70.3-70.3 163.7-109 263-109 99.4 0 192.8 38.7 263 109 70.3 70.3 109 163.7 109 263 0 105.6-44.5 205.5-122.6 276z"/></svg>Dashboard</a></li>
+        <li class="ps-menu-item"><a href="demo.html"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M854.6 288.6L639.4 73.4c-6-6-14.1-9.4-22.6-9.4H192c-17.7 0-32 14.3-32 32v832c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V311.3c0-8.5-3.4-16.7-9.4-22.7zM790.2 326H602V137.8L790.2 326zm1.8 562H232V136h302v216a42 42 0 0042 42h216v494z"/></svg>Application</a></li>
+        <li class="ps-menu-item ps-menu-item--active"><a href="reports.html"><svg viewBox="64 64 896 896" fill="currentColor" aria-hidden="true"><path d="M888 792H200V168c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v688c0 4.4 3.6 8 8 8h752c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM305.8 637.7c3.1 3.1 8.1 3.1 11.3 0l138.3-137.6L583 628.5c3.1 3.1 8.2 3.1 11.3 0l275.5-275.6c3.1-3.1 3.1-8.2 0-11.3l-39.6-39.5a8.03 8.03 0 00-11.3 0l-230 230.1-127.6-127.5a8.03 8.03 0 00-11.3 0L266.4 583.2a8.03 8.03 0 000 11.3l39.4 43.2z"/></svg>Compliance Reports</a></li>
       </ul>
-      <div class="pxp-sider-footer">Acquirer &copy; 2026</div>
+      <div class="ps-sider-footer">Acquirer &copy; 2026</div>
     </aside>
 
-    <main class="pxp-content">
-      <div class="pxp-prescreen">
-        <div class="pxp-page-header">
+    <main class="ps-content">
+      <div class="ps-prescreen">
+        <div class="ps-page-header">
           <h2>Compliance reporting</h2>
           <p>PCI compliance across the portfolio, from the IXOPAY reporting API: engagement, status, webhooks outstanding and the chases IXOPAY has performed. <a href="demo.html">Back to the application</a></p>
         </div>
-        <div id="pxp-reports"></div>
+        <div id="ps-reports"></div>
       </div>
     </main>
   </div>

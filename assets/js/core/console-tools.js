@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------
 // console-tools.js - The nav's console-snippet tools: Acquirer send
-// (App.sendTool) and DaoPay admin (App.daopayAdminTool).
+// (App.sendTool) and EU Acquirer admin (App.euAcquirerAdminTool).
 //
 // Both are stopgaps for actions the partner portal has no button for
 // yet. Each is a nav icon that opens a dialog holding a script to paste
@@ -157,7 +157,7 @@
     "  const H = { Authorization: `Bearer ${t}`, 'Content-Type': 'application/json' };",
     "  console.log('Application:', id);",
     "",
-    "  for (const p of ['push-to-sftp', 'daopay-onboarding-record/send']) {",
+    "  for (const p of ['push-to-sftp', 'eu-acquirer-onboarding-record/send']) {",
     "    const t0 = Date.now();",
     "    console.log('sending', p, '...');",
     "    try {",
@@ -224,8 +224,8 @@
     });
   };
 
-  // --- DaoPay admin -------------------------------------------------
-  // Creates a portal user holding the DaoPay reviewer role, and lists
+  // --- EU Acquirer admin -------------------------------------------------
+  // Creates a portal user holding the EU Acquirer reviewer role, and lists
   // who holds it. The portal has no UI for that role: its user-creation
   // forms are partner-scoped and offer two other roles only.
 
@@ -251,7 +251,7 @@
     "    const r = await fetch(`${api.uri}v1/admin/users`, {",
     "      method: 'POST',",
     "      headers: { Authorization: `Bearer ${t}`, 'Content-Type': 'application/json' },",
-    "      body: JSON.stringify({ firstName, lastName, email, roleName: 'DaoPayAdmin' })",
+    "      body: JSON.stringify({ firstName, lastName, email, roleName: 'EuAcquirerAdmin' })",
     "    });",
     "    console.log(r.status, (await r.text()).slice(0, 500));",
     "  } catch (e) {",
@@ -276,32 +276,32 @@
     "    return r.ok ? r.json() : (console.log(q, r.status, await r.text()), []);",
     "  };",
     "",
-    "  const byRole = await get('?roleName=DaoPayAdmin');",
+    "  const byRole = await get('?roleName=EuAcquirerAdmin');",
     "  const all = await get('?includeDeleted=true');",
     "",
-    "  console.log('DaoPay admins:', byRole.length, '| total users:', all.length);",
+    "  console.log('EU Acquirer admins:', byRole.length, '| total users:', all.length);",
     "  console.table(byRole.map(u => ({ ...u, partnerId: u.partnerId ?? '(none)' })));",
     "  console.log('role counts across all users:',",
     "    all.reduce((a, u) => (a[u.roleName] = (a[u.roleName] || 0) + 1, a), {}));",
     "})();"
   ].join("\n");
 
-  App.daopayAdminTool = {};
-  App.daopayAdminTool.attach = function () {
-    mount("nav-daopay-admin", "daopay-admin-trigger", "DaoPay admin", DAO_ICON, {
-      id: "daopay-admin-modal",
-      title: "DaoPay admin",
+  App.euAcquirerAdminTool = {};
+  App.euAcquirerAdminTool.attach = function () {
+    mount("nav-eu-acquirer-admin", "eu-acquirer-admin-trigger", "EU Acquirer admin", DAO_ICON, {
+      id: "eu-acquirer-admin-modal",
+      title: "EU Acquirer admin",
       lede: "Run these in the browser console on the partner portal while " +
-        "signed in as a global admin. There is no UI for the DaoPay reviewer " +
+        "signed in as a global admin. There is no UI for the EU Acquirer reviewer " +
         "role yet.",
       primary: {
-        eyebrow: "Add a DaoPay admin",
+        eyebrow: "Add a EU Acquirer admin",
         note: "Replace the three arguments on the last line before running. " +
           "This creates a real account and sends a registration email.",
         text: ADD_SNIPPET,
       },
       extra: {
-        summary: "List current DaoPay admins",
+        summary: "List current EU Acquirer admins",
         eyebrow: "Console snippet",
         text: LIST_SNIPPET,
       },

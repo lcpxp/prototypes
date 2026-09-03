@@ -52,7 +52,7 @@
     },
     {
       "file": "assets/js/core/console-tools.js",
-      "purpose": "App.sendTool and App.daopayAdminTool: the nav's two console-snippet tools. One file because they were built the same way twice."
+      "purpose": "App.sendTool and App.euAcquirerAdminTool: the nav's two console-snippet tools. One file because they were built the same way twice."
     }
   ],
   "optional": [

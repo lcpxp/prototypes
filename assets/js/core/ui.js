@@ -259,11 +259,11 @@
     // the tools slot - a page without the script shows no button.
     if (App.sendTool) html += '<span class="nav-send" id="nav-send"></span>';
 
-    // DaoPay admin tool: an empty slot filled by console-tools.js.
+    // EU Acquirer admin tool: an empty slot filled by console-tools.js.
     // Same contract as the slots above - a page without the script shows
     // no button.
-    if (App.daopayAdminTool) {
-      html += '<span class="nav-daopay-admin" id="nav-daopay-admin"></span>';
+    if (App.euAcquirerAdminTool) {
+      html += '<span class="nav-eu-acquirer-admin" id="nav-eu-acquirer-admin"></span>';
     }
 
     // Theme switch: a moon/sun icon button seated next to the profile
@@ -300,7 +300,7 @@
     if (App.search) App.search.attach();
     if (App.tools) App.tools.attach();
     if (App.sendTool) App.sendTool.attach();
-    if (App.daopayAdminTool) App.daopayAdminTool.attach();
+    if (App.euAcquirerAdminTool) App.euAcquirerAdminTool.attach();
 
     // Account dropdown: toggle on the profile icon, close on an outside
     // click or Escape. Clicks inside the menu (the theme switch) keep it

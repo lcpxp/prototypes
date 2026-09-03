@@ -7,7 +7,7 @@
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://zlmkofbkobmhnslfnqsf.supabase.co" crossorigin>
-  <title>Daopay user role - EU merchant onboarding - LPIO</title>
+  <title>EU Acquirer user role - EU merchant onboarding - LPIO</title>
   <script src="../../../assets/js/core/theme.js"></script>
   <link rel="stylesheet" href="../../../assets/css/tokens.css">
   <link rel="stylesheet" href="../../../assets/css/base.css">
@@ -32,8 +32,8 @@
   <main class="page">
     <div class="page-head">
       <span class="eyebrow">Prototype</span>
-      <h1>Daopay user role - EU merchant onboarding</h1>
-      <p class="lede">A scoped role that lets the Daopay compliance team see
+      <h1>EU Acquirer user role - EU merchant onboarding</h1>
+      <p class="lede">A scoped role that lets the EU Acquirer compliance team see
         their own merchant applications and make the acquiring decision
         themselves. They read everything and can add documents; they make
         exactly one decision. Everything that generates a document, calls an
@@ -41,17 +41,17 @@
       <p class="proto-meta">
         <span class="badge draft">In design</span>
         <span class="badge">Owner: Product (onboarding)</span>
-        <span class="badge">Acquirer: Daopay (EU)</span>
+        <span class="badge">Acquirer: EU Acquirer (EU)</span>
       </p>
     </div>
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Why this exists</h2>
-      <p>Daopay is the acquirer for EU merchants, and their compliance function
+      <p>EU Acquirer is the acquirer for EU merchants, and their compliance function
         is separate from Acquirer underwriting. This role puts the decision where the
         accountability already sits. It does not move the review into the
         portal: once the merchant contract is fully signed, everything transfers
-        to Daopay automatically - the data to their CRM, the files by SFTP - and
+        to EU Acquirer automatically - the data to their CRM, the files by SFTP - and
         they are notified. They review it in their own systems, on their normal
         underwriting process, and open the portal only to record what they have
         decided.</p>
@@ -59,26 +59,26 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">How it works, end to end</h2>
-      <p>Steps 1 to 6 are Acquirer and the platform. Step 7 is where the Daopay
+      <p>Steps 1 to 6 are Acquirer and the platform. Step 7 is where the EU Acquirer
         compliance team picks it up - and only step 10 happens in the portal.</p>
       <ol class="proto-steps">
         <li><strong>The application completes.</strong> All six application
           steps are done, from business information through to documents.</li>
         <li><strong>The agent generates both documents.</strong> The merchant
-          contract and the Daopay KYC contract, together, from the application
+          contract and the EU Acquirer KYC contract, together, from the application
           summary page.</li>
         <li><strong>The contract goes to the merchant.</strong> It is sent to
           the merchant first, for their signature.</li>
         <li><strong>Screening checks run.</strong> Each result is available as
           a PDF report.</li>
         <li><strong>The contract is signed in order.</strong> The merchant, then
-          the Daopay CEO, then the Daopay CTO.</li>
-        <li><strong>Everything transfers to Daopay automatically.</strong> Full
+          the EU Acquirer CEO, then the EU Acquirer CTO.</li>
+        <li><strong>Everything transfers to EU Acquirer automatically.</strong> Full
           signature is the trigger; nobody presses anything. Merchant and
           application data goes into their CRM via the CRM integration; contract
           files and screening PDFs go by SFTP. The manual controls stay on the
           page as a Acquirer fallback.</li>
-        <li><strong>Daopay compliance is notified.</strong> By the time it
+        <li><strong>EU Acquirer compliance is notified.</strong> By the time it
           lands, the data and files are already in their systems.</li>
         <li><strong>They review the merchant data.</strong> In their own CRM.</li>
         <li><strong>They review the documents.</strong> The contract files and
@@ -95,7 +95,7 @@
       <h2 class="eyebrow eyebrow-heading">The three decisions</h2>
       <div class="table-wrap">
         <table>
-          <caption class="visually-hidden">Daopay decisions, how each is made
+          <caption class="visually-hidden">EU Acquirer decisions, how each is made
             and what each triggers</caption>
           <thead>
             <tr><th>Decision</th><th>How it is made</th><th>What happens</th></tr>
@@ -120,19 +120,19 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">What the role can and cannot do</h2>
-      <p>A Daopay user sees the same page in the same order, with fewer controls
+      <p>A EU Acquirer user sees the same page in the same order, with fewer controls
         on it. Out-of-scope controls are not shown at all rather than greyed
         out, and the list is filtered to their own acquirer.</p>
-      <p>They are provisioned a scoped Daopay Admin role - limited to viewing
+      <p>They are provisioned a scoped EU Acquirer Admin role - limited to viewing
         applications and a small set of actions. Their Applications dashboard is
-        the portal's own list, filtered to Daopay: a table they open to review
+        the portal's own list, filtered to EU Acquirer: a table they open to review
         an application and record a decision.</p>
       <div class="table-wrap">
         <table>
           <caption class="visually-hidden">Controls available to a Acquirer user
-            compared with a Daopay user</caption>
+            compared with a EU Acquirer user</caption>
           <thead>
-            <tr><th>Control</th><th>Acquirer user</th><th>Daopay user</th></tr>
+            <tr><th>Control</th><th>Acquirer user</th><th>EU Acquirer user</th></tr>
           </thead>
           <tbody>
             <tr><td>Read every section of the application</td><td>Yes</td><td>Yes</td></tr>
@@ -144,8 +144,8 @@
             <tr><td>Generate contract</td><td>Yes</td><td>No</td></tr>
             <tr><td>Send contract</td><td>Yes</td><td>No</td></tr>
             <tr><td>Send to CRM</td><td>Yes</td><td>No</td></tr>
-            <tr><td>Send DaoPay onboarding record</td><td>Yes</td><td>No</td></tr>
-            <tr><td>Send DaoPay documents</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Send EU Acquirer onboarding record</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Send EU Acquirer documents</td><td>Yes</td><td>No</td></tr>
             <tr><td>Run check</td><td>Yes</td><td>No</td></tr>
             <tr><td>Override or remove screening</td><td>Yes</td><td>No</td></tr>
           </tbody>
@@ -170,7 +170,7 @@
           Information, Cancelled. The first four are not selectable from this
           point in the flow.</li>
       </ul>
-      <p>A Daopay decision changes the second. The first catches up on its
+      <p>A EU Acquirer decision changes the second. The first catches up on its
         own.</p>
     </section>
 
@@ -187,8 +187,8 @@
             <tr><th>Trigger</th><th>Who is notified</th></tr>
           </thead>
           <tbody>
-            <tr><td>Transfer to Daopay complete - CRM data in, files on SFTP</td>
-              <td>Daopay compliance team</td></tr>
+            <tr><td>Transfer to EU Acquirer complete - CRM data in, files on SFTP</td>
+              <td>EU Acquirer compliance team</td></tr>
             <tr><td>Status set to Pending Further Information, with a note</td>
               <td>Acquirer accounts team</td></tr>
             <tr><td>Send KYC and approve merchant</td>
@@ -204,9 +204,9 @@
         when reading the contracts tables.</p>
       <ul>
         <li><strong>The merchant contract takes three signatures, in
-          order:</strong> the merchant, then the Daopay CEO, then the CTO.
+          order:</strong> the merchant, then the EU Acquirer CEO, then the CTO.
           Nothing transfers until all three are in.</li>
-        <li><strong>The Daopay KYC contract takes one:</strong> the merchant's.
+        <li><strong>The EU Acquirer KYC contract takes one:</strong> the merchant's.
           Nobody countersigns.</li>
       </ul>
     </section>
@@ -220,13 +220,13 @@
 
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Diagram</h2>
-      <p>The full sequence, with the Daopay team's steps highlighted.</p>
+      <p>The full sequence, with the EU Acquirer team's steps highlighted.</p>
       <figure class="proto-figure">
-        <div id="proto-diagram" class="proto-diagram" data-src="daopay-flow.svg"
-          data-title="Daopay underwriting - where your involvement sits">
+        <div id="proto-diagram" class="proto-diagram" data-src="eu-acquirer-flow.svg"
+          data-title="EU Acquirer underwriting - where your involvement sits">
           <p class="notice">Loading diagram</p>
         </div>
-        <figcaption>The green steps are the Daopay team's; the greyed steps are
+        <figcaption>The green steps are the EU Acquirer team's; the greyed steps are
           handled before and after. A dashed outline means it happens
           automatically. Step 10 is where the decision is recorded - reject,
           pending further information, or approve. Numbers match the steps
@@ -237,7 +237,7 @@
     <section class="proto-section">
       <h2 class="eyebrow eyebrow-heading">Explore</h2>
       <p>A replica of the partner portal with the role applied. Open the same
-        application as a Acquirer user and as a Daopay user and compare the controls;
+        application as a Acquirer user and as a EU Acquirer user and compare the controls;
         the reduced set is the whole point. All names, identifiers, websites and
         amounts in it are invented - no real merchant, partner or staff
         data.</p>

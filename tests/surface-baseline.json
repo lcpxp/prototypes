@@ -37,9 +37,6 @@
     "csvFromRows": [
       "assets/js/core/ui.js"
     ],
-    "daopayAdminTool": [
-      "assets/js/core/console-tools.js"
-    ],
     "dashboardCards": [
       "assets/js/pages/dashboard/cards.js"
     ],
@@ -66,6 +63,9 @@
     ],
     "escape": [
       "assets/js/core/ui.js"
+    ],
+    "euAcquirerAdminTool": [
+      "assets/js/core/console-tools.js"
     ],
     "flashLabel": [
       "assets/js/core/ui.js"
@@ -450,7 +450,7 @@
         "assets/js/pages/portal-review/board.js"
       ]
     },
-    "modules/prototypes/daopay/application.html": {
+    "modules/prototypes/eu-acquirer/application.html": {
       "css": [
         "assets/css/tokens.css",
         "assets/css/base.css",
@@ -458,9 +458,9 @@
         "assets/css/components.css",
         "assets/css/pages.css",
         "assets/css/console-tool.css",
-        "assets/css/pxp.css",
-        "assets/css/pxp-daopay.css",
-        "assets/css/pxp-sim.css",
+        "assets/css/ps.css",
+        "assets/css/ps-euacquirer.css",
+        "assets/css/ps-sim.css",
         "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       ],
       "js": [
@@ -473,14 +473,14 @@
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
         "assets/js/core/console-tools.js",
-        "assets/js/pages/daopay/data.js",
-        "assets/js/pages/daopay/sim.js",
-        "assets/js/pages/daopay/shell.js",
-        "assets/js/pages/daopay/sections.js",
-        "assets/js/pages/daopay/app.js"
+        "assets/js/pages/eu-acquirer/data.js",
+        "assets/js/pages/eu-acquirer/sim.js",
+        "assets/js/pages/eu-acquirer/shell.js",
+        "assets/js/pages/eu-acquirer/sections.js",
+        "assets/js/pages/eu-acquirer/app.js"
       ]
     },
-    "modules/prototypes/daopay/applications.html": {
+    "modules/prototypes/eu-acquirer/applications.html": {
       "css": [
         "assets/css/tokens.css",
         "assets/css/base.css",
@@ -488,9 +488,9 @@
         "assets/css/components.css",
         "assets/css/pages.css",
         "assets/css/console-tool.css",
-        "assets/css/pxp.css",
-        "assets/css/pxp-daopay.css",
-        "assets/css/pxp-sim.css",
+        "assets/css/ps.css",
+        "assets/css/ps-euacquirer.css",
+        "assets/css/ps-sim.css",
         "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       ],
       "js": [
@@ -503,13 +503,13 @@
         "assets/js/core/search.js",
         "assets/js/core/tools.js",
         "assets/js/core/console-tools.js",
-        "assets/js/pages/daopay/data.js",
-        "assets/js/pages/daopay/sim.js",
-        "assets/js/pages/daopay/shell.js",
-        "assets/js/pages/daopay/list.js"
+        "assets/js/pages/eu-acquirer/data.js",
+        "assets/js/pages/eu-acquirer/sim.js",
+        "assets/js/pages/eu-acquirer/shell.js",
+        "assets/js/pages/eu-acquirer/list.js"
       ]
     },
-    "modules/prototypes/daopay/index.html": {
+    "modules/prototypes/eu-acquirer/index.html": {
       "css": [
         "assets/css/tokens.css",
         "assets/css/base.css",
@@ -611,8 +611,8 @@
         "assets/css/components.css",
         "assets/css/pages.css",
         "assets/css/console-tool.css",
-        "assets/css/pxp.css",
-        "assets/css/pxp-pci.css"
+        "assets/css/ps.css",
+        "assets/css/ps-pci.css"
       ],
       "js": [
         "assets/js/core/theme.js",
@@ -634,8 +634,8 @@
         "assets/css/components.css",
         "assets/css/pages.css",
         "assets/css/console-tool.css",
-        "assets/css/pxp.css",
-        "assets/css/pxp-pci.css"
+        "assets/css/ps.css",
+        "assets/css/ps-pci.css"
       ],
       "js": [
         "assets/js/core/theme.js",
@@ -683,8 +683,8 @@
         "assets/css/components.css",
         "assets/css/pages.css",
         "assets/css/console-tool.css",
-        "assets/css/pxp.css",
-        "assets/css/pxp-pci.css"
+        "assets/css/ps.css",
+        "assets/css/ps-pci.css"
       ],
       "js": [
         "assets/js/core/theme.js",

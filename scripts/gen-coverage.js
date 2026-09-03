@@ -204,7 +204,7 @@ function reconcile(routeKeys, docKeys, callKeys, scopeKeys) {
   // The first three count routes. The last counts rows, and the
   // difference is not pedantry: a collapsed row stands for the same
   // operation under several prefixes, and those can differ in whether
-  // anything calls them. `POST .../daopay-kyc-contract/generate` is
+  // anything calls them. `POST .../euacquirer-kyc-contract/generate` is
   // live unscoped and dead under both scope prefixes. Counted per
   // route it looks two-thirds stale; badged per row it would tell a
   // reader a route the portal calls today is abandoned. A row is

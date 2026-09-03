@@ -56,7 +56,7 @@ that hold them are in `npm run audit`.
 
 Three inputs, read directly, not summarised from memory.
 
-**Pxp.PartnerPortalApi** - the LP API. .NET onion architecture
+**Acquirer.PartnerPortalApi** - the LP API. .NET onion architecture
 (Domain / Application / Infrastructure / Presentation / Host), 2,854
 files of which 2,600 are C#, four layered feature trees of 31 to 38
 folders each, URL-segment API versioning. **51 controller files carry
@@ -68,8 +68,8 @@ are no minimal-API endpoints, no controller with two route bases and
 no action with stacked verb attributes, so a composed extractor sees
 the whole surface.
 
-**Pxp.PartnerPortal** - the LP front end. Angular 20, 785
-files, Azure MSAL / B2C auth, two tenants (`/pxp` for system admin,
+**Acquirer.PartnerPortal** - the LP front end. Angular 20, 785
+files, Azure MSAL / B2C auth, two tenants (`/acquirer` for system admin,
 `/app/:tenantId` for partners), CUBE CSS with Every Layout, a single
 compiled stylesheet, and a written CSS ruleset at
 `src/styles/styling-rules.md`. It issues HTTP from **401 call sites

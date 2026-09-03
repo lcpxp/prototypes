@@ -313,7 +313,7 @@ treated exactly like `schema-snapshot.json`. One object per spec:
 
     {
       "generated_at": "2026-08-13",
-      "source_snapshot": "Pxp.PartnerPortalApi @ <commit or date>",
+      "source_snapshot": "Acquirer.PartnerPortalApi @ <commit or date>",
       "specs": {
         "<spec title>": {
           "routes": 552, "documented": 245, "matched": 233,

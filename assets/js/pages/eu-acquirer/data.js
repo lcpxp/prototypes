@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------
-// daopay/data.js - Fixture data and the role switch for the Daopay EU
-// onboarding replica (modules/prototypes/daopay/). In-memory only; no
+// eu-acquirer/data.js - Fixture data and the role switch for the EU Acquirer EU
+// onboarding replica (modules/prototypes/eu-acquirer/). In-memory only; no
 // Supabase table backs any of this.
 //
 // EVERY name, identifier, website, bank and amount below is invented.
@@ -15,51 +15,51 @@
   // rather than branching on the role in a dozen places, so the
   // boundary is stated once and is the thing under demonstration.
   var CONTROLS = {
-    // Two send controls are Daopay-only. "sendContract" (the merchant
+    // Two send controls are EU Acquirer-only. "sendContract" (the merchant
     // contract) and "approveAndSendKyc" both live with the acquirer, so
     // the whole run - send, sign, hand off, decide - can be demonstrated
-    // from the Daopay view without switching roles. The generic "sendKyc"
+    // from the EU Acquirer view without switching roles. The generic "sendKyc"
     // is absent from both lists: the acquirer's named approve button
     // below replaces it, and Acquirer never gets a send in that section.
-    pxp: [
+    acquirer: [
       "updateStatus", "sendToCrm", "sendOnboardingRecord", "sendDocuments",
       "generateContract", "generateKyc",
       "viewContract", "downloadContract", "viewReport", "generatePdf",
       "overrideScreening", "removeScreening", "runCheck", "uploadDocument",
     ],
-    daopay: [
+    euacquirer: [
       "updateStatus", "sendContract", "viewContract", "downloadContract",
       "viewReport", "generatePdf", "uploadDocument", "approveAndSendKyc",
     ],
   };
 
   var ROLES = {
-    pxp: { key: "pxp", label: "Acquirer user", user: "Luke" },
-    daopay: { key: "daopay", label: "Daopay user", user: "Lindqvist" },
+    acquirer: { key: "acquirer", label: "Acquirer user", user: "Luke" },
+    euacquirer: { key: "euacquirer", label: "EU Acquirer user", user: "Lindqvist" },
   };
 
   function currentRole() {
     var q = new URLSearchParams(window.location.search).get("role");
-    return q === "daopay" ? ROLES.daopay : ROLES.pxp;
+    return q === "euacquirer" ? ROLES.euacquirer : ROLES.acquirer;
   }
 
   function can(action) {
     return CONTROLS[currentRole().key].indexOf(action) !== -1;
   }
 
-  // The applications list. ACQUIRER is the scoping key: a Daopay user
-  // sees only the rows where it reads DaoPay.
+  // The applications list. ACQUIRER is the scoping key: a EU Acquirer user
+  // sees only the rows where it reads EU Acquirer.
   var applications = [
-    { partner: "Meridian Payments", merchant: "Nordwind Digital GmbH", risk: "High", by: "A. Berger", at: "2026/07/14 10:22", acquirer: "DaoPay", status: "Awaiting Contract Send", id: "nordwind" },
+    { partner: "Meridian Payments", merchant: "Nordwind Digital GmbH", risk: "High", by: "A. Berger", at: "2026/07/14 10:22", acquirer: "EU Acquirer", status: "Awaiting Contract Send", id: "nordwind" },
     { partner: "Meridian Payments", merchant: "Talgarth Leisure Ltd", risk: "Low", by: "A. Berger", at: "2026/07/11 09:04", acquirer: "Acquirer", status: "Approved" },
-    { partner: "Northgate ISO", merchant: "Kestrel Freight BV", risk: "Pending", by: "R. Nowak", at: "2026/07/10 16:41", acquirer: "DaoPay", status: "Application In Progress" },
+    { partner: "Northgate ISO", merchant: "Kestrel Freight BV", risk: "Pending", by: "R. Nowak", at: "2026/07/10 16:41", acquirer: "EU Acquirer", status: "Application In Progress" },
     { partner: "Northgate ISO", merchant: "Brightloom Retail Ltd", risk: "Low", by: "R. Nowak", at: "2026/07/09 11:15", acquirer: "Acquirer", status: "Onboarding: Pending MID" },
-    { partner: "Halcyon Partners", merchant: "Steinbach Handel GmbH", risk: "High", by: "C. Duval", at: "2026/07/08 14:52", acquirer: "DaoPay", status: "Awaiting Contract Signature" },
+    { partner: "Halcyon Partners", merchant: "Steinbach Handel GmbH", risk: "High", by: "C. Duval", at: "2026/07/08 14:52", acquirer: "EU Acquirer", status: "Awaiting Contract Signature" },
     { partner: "Halcyon Partners", merchant: "Orchard Lane Bakery", risk: "Low", by: "C. Duval", at: "2026/07/07 08:30", acquirer: "Acquirer", status: "Approved" },
     { partner: "Meridian Payments", merchant: "Vantage Rail Services", risk: "N/A", by: "A. Berger", at: "2026/07/06 13:19", acquirer: "-", status: "Application In Progress" },
-    { partner: "Coastway ISO", merchant: "Fjordline Sport AS", risk: "Pending", by: "M. Ito", at: "2026/07/05 10:07", acquirer: "DaoPay", status: "Application In Progress" },
+    { partner: "Coastway ISO", merchant: "Fjordline Sport AS", risk: "Pending", by: "M. Ito", at: "2026/07/05 10:07", acquirer: "EU Acquirer", status: "Application In Progress" },
     { partner: "Coastway ISO", merchant: "Marlowe Interiors Ltd", risk: "Low", by: "M. Ito", at: "2026/07/03 15:33", acquirer: "Acquirer", status: "Approved" },
-    { partner: "Halcyon Partners", merchant: "Lindholm Media AB", risk: "High", by: "C. Duval", at: "2026/07/02 09:48", acquirer: "DaoPay", status: "Awaiting Contract Send" },
+    { partner: "Halcyon Partners", merchant: "Lindholm Media AB", risk: "High", by: "C. Duval", at: "2026/07/02 09:48", acquirer: "EU Acquirer", status: "Awaiting Contract Send" },
     { partner: "Northgate ISO", merchant: "Pike and Foster LLP", risk: "N/A", by: "R. Nowak", at: "2026/06/30 12:11", acquirer: "-", status: "Application In Progress" },
     { partner: "Coastway ISO", merchant: "Aurelia Wellness GmbH", risk: "Low", by: "M. Ito", at: "2026/06/28 17:26", acquirer: "Acquirer", status: "Approved" },
   ];
@@ -92,12 +92,12 @@
     ],
 
     // Both tables begin empty. The Acquirer user generates each contract,
-    // which pushes its generatable row below. The Daopay user then sends.
+    // which pushes its generatable row below. The EU Acquirer user then sends.
     contracts: [],
     kycContracts: [],
     generatable: {
       contract: { name: "Merchant Agreement - Nordwind Digital GmbH", type: "Unsigned", status: "Active" },
-      kyc: { name: "DaoPay KYC - Nordwind Digital GmbH", type: "Unsigned", status: "Active" },
+      kyc: { name: "EU Acquirer KYC - Nordwind Digital GmbH", type: "Unsigned", status: "Active" },
     },
 
     checks: [
@@ -161,11 +161,11 @@
       ["Base currency", "EUR"],
       ["Estimated annual volume", "2,400,000"],
       ["Average transaction value", "32"],
-      ["Acquirer", "DaoPay"],
+      ["Acquirer", "EU Acquirer"],
       ["Partner", "Meridian Payments"],
       ["Sales team", "EU Sales"],
       ["Application ID", "01JQ7F4M2K8XW5RBTVN3HD6PZC"],
-      ["Flow name", "Daopay Onboarding"],
+      ["Flow name", "EU Acquirer Onboarding"],
       ["Flow ID", "01JQ7F4M2K9YB2CDEHKMNPQRST"],
     ],
   };
@@ -184,11 +184,11 @@
 
   function tone(value) { return TONES[value] || "inactive"; }
 
-  // The Daopay role only ever sets two of the eight values, so it is
+  // The EU Acquirer role only ever sets two of the eight values, so it is
   // shown two - plus the application's current value, disabled, so the
   // select still reads as a status field rather than a two-item menu.
   function statusOptions(current) {
-    if (currentRole().key !== "daopay") return statuses;
+    if (currentRole().key !== "euacquirer") return statuses;
     var theirs = ["Rejected", "Pending Further Information"];
     var list = theirs.indexOf(current) === -1
       ? [{ value: current, disabled: true }] : [];
@@ -200,11 +200,11 @@
   // Switching role reloads the page, so the point-in-time state - which
   // contracts have been generated, whether they are signed, the stage
   // and any decision - is kept in sessionStorage. That lets the Acquirer user
-  // generate the contracts, switch to Daopay, and find them there to
+  // generate the contracts, switch to EU Acquirer, and find them there to
   // send. It lasts the tab and resets in a fresh one. Wrapped in
   // try/catch so the test sandbox (no sessionStorage) and private modes
   // fall back to a clean in-memory run.
-  var STATE_KEY = "daopay-demo-state";
+  var STATE_KEY = "eu-acquirer-demo-state";
   var savedState = { decision: application.status, noteSent: "" };
 
   try {
@@ -235,7 +235,7 @@
     try { window.sessionStorage.removeItem(STATE_KEY); } catch (e) { /* noop */ }
   }
 
-  window.DaopayDemo = {
+  window.EuAcquirerDemo = {
     applications: applications,
     application: application,
     statuses: statuses,

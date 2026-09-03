@@ -122,7 +122,7 @@ scored only against rows that existed before it. Best score per item:
     0.464  Screening check toggles should work    -> distinct (real neighbour)
     0.427  Every application value adjustable     -> duplicate
     0.365  Show IVR lead information ...          -> distinct
-    0.327  Automation sweep: CRM, Daopay ...      -> umbrella (caught at Stage 1)
+    0.327  Automation sweep: CRM, EU Acquirer ...      -> umbrella (caught at Stage 1)
     0.285  Capture acquirer name for site ...     -> distinct
     0.241  Processed Fees not Initiated           -> new
     0.237  Lower Pricing Minimums                 -> new
@@ -248,13 +248,13 @@ moves onto the existing row: the owner's words are the asset.
     -- UMBRELLA: a coordination row, not build work. Link the components.
     update work_items
        set details = 'Coordination row: carries no build work, do not schedule or estimate directly.'
-     where title = 'Automation sweep: CRM submission, Daopay, screening and notifications';
+     where title = 'Automation sweep: CRM submission, EU Acquirer, screening and notifications';
     insert into knowledge_links (from_type, from_id, to_type, to_id, kind, confidence)
     select 'work_item', c.id, 'work_item',
-           (select id from work_items where title = 'Automation sweep: CRM submission, Daopay, screening and notifications'),
+           (select id from work_items where title = 'Automation sweep: CRM submission, EU Acquirer, screening and notifications'),
            'part_of', 'confirmed'
       from work_items c
-     where c.title in ('Daopay: notifications to Daopay', 'Daopay: notifications to Acquirer account managers and Acquirer underwriting');
+     where c.title in ('EU Acquirer: notifications to EU Acquirer', 'EU Acquirer: notifications to Acquirer account managers and Acquirer underwriting');
 
 For anything other than `NEW`, write the reasoning down so the next session
 inherits the judgement rather than re-deriving it:

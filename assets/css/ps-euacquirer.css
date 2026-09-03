@@ -1,0 +1,211 @@
+/* ------------------------------------------------------------------
+   ps-euacquirer.css - The EU Acquirer EU onboarding replica layered on the Acquirer
+   shell: the demo role bar, the applications list, and the application
+   summary page (status bar, sections, signal chips, data grids,
+   document groups, the key/value onboarding record). Scoped under
+   .ps-app; --ps-* tokens only. Loaded after ps.css.
+------------------------------------------------------------------- */
+
+/* ---------- Role switch, in the header chrome ----------
+   The only control on screen that is not in the real portal. Styled to
+   sit in the black bar rather than announce itself over the content. */
+.ps-roleswitch {
+  display: inline-flex;
+  margin-inline-start: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 2px;
+  gap: 2px;
+}
+.ps-roletab {
+  font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+  padding: 3px 12px; border-radius: 999px; border: 0;
+  background: transparent; color: rgba(255, 255, 255, 0.75);
+}
+.ps-roletab:hover { color: var(--ps-white); }
+.ps-roletab[aria-pressed="true"] {
+  background: var(--ps-white);
+  color: var(--ps-header-bg);
+}
+
+/* ---------- Signal chips ---------- */
+.ps-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+  background: var(--ps-signal-inactive-bg); color: var(--ps-signal-inactive-text);
+  white-space: nowrap;
+}
+.ps-chip--success { background: var(--ps-signal-success-bg); color: var(--ps-signal-success-text); }
+.ps-chip--warning { background: var(--ps-signal-warning-bg); color: var(--ps-signal-warning-text); }
+.ps-chip--danger { background: var(--ps-signal-danger-bg); color: var(--ps-signal-danger-text); }
+.ps-chip--info { background: var(--ps-signal-info-bg); color: var(--ps-signal-info-text); }
+.ps-chip--accent { background: var(--ps-signal-accent-bg); color: var(--ps-signal-accent-text); }
+.ps-chip--flagged { background: var(--ps-signal-flagged-bg); color: var(--ps-signal-flagged-text); }
+.ps-chip--inactive { background: var(--ps-signal-inactive-bg); color: var(--ps-signal-inactive-text); }
+
+/* ---------- Page status bar above the card ---------- */
+.ps-statusbar {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-block-end: 16px;
+}
+.ps-statusbar h1 { font-size: 24px; font-weight: 700; color: var(--ps-text-label); margin: 0; }
+.ps-statusbar-partner { color: var(--ps-hint-dark); font-size: 13px; margin-block-start: 4px; }
+.ps-statusbar-right { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ps-hint-dark); }
+
+/* ---------- Card sections ---------- */
+.ps-sheet { max-inline-size: var(--ps-content-max); }
+.ps-sec { padding-block: 24px; border-block-start: 1px solid var(--ps-line); }
+.ps-sec:first-child { padding-block-start: 0; border-block-start: 0; }
+.ps-sec > h2 { font-size: 17px; font-weight: 700; margin-block-end: 4px; }
+.ps-sec-hint { color: var(--ps-hint-dark); font-size: 13px; margin-block: 0 16px; }
+.ps-sec-meta { color: var(--ps-hint-mid); font-size: 12px; margin-block-start: 12px; }
+.ps-sec-meta span { display: block; }
+
+/* ---------- Application steps ---------- */
+.ps-steplist { border: 1px solid var(--ps-line); border-radius: 8px; overflow: hidden; }
+.ps-steprow {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: var(--ps-white);
+}
+.ps-steprow + .ps-steprow { border-block-start: 1px solid var(--ps-line); }
+.ps-steprow-name { flex: 1; font-weight: 500; color: var(--ps-text-label); }
+.ps-tick { color: var(--ps-signal-success); flex-shrink: 0; }
+.ps-chevron { color: var(--ps-hint-normal); flex-shrink: 0; }
+
+/* ---------- Data grid (striped, portal style) ---------- */
+.ps-grid-wrap { border: 1px solid var(--ps-line); border-radius: 8px; overflow-x: auto; }
+.ps-grid { inline-size: 100%; border-collapse: collapse; font-size: 13px; }
+.ps-grid th {
+  text-align: start; font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--ps-hint-dark);
+  background: var(--ps-table-header-bg); padding: 10px 14px; white-space: nowrap;
+}
+.ps-grid td { padding: 12px 14px; color: var(--ps-text-body); vertical-align: middle; }
+.ps-grid tbody tr { background: var(--ps-white); }
+.ps-grid tbody tr:nth-child(even) { background: var(--ps-table-stripe-bg); }
+.ps-grid tbody tr + tr { border-block-start: 1px solid var(--ps-line); }
+.ps-grid-link { background: none; border: 0; padding: 0; font: inherit; color: var(--ps-primary); cursor: pointer; text-align: start; }
+.ps-grid-link:hover { text-decoration: underline; }
+.ps-grid-sub { display: block; color: var(--ps-hint-mid); font-size: 12px; }
+.ps-empty { padding: 24px 16px; text-align: center; color: var(--ps-hint-mid); font-size: 13px; }
+
+/* Partner cell: letter avatar plus name. */
+.ps-partner { display: flex; align-items: center; gap: 8px; }
+.ps-initial {
+  inline-size: 26px; block-size: 26px; border-radius: 50%; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--ps-avatar-bg); color: var(--ps-header-bg);
+  font-size: 12px; font-weight: 700;
+}
+
+/* ---------- Row actions menu ---------- */
+.ps-actionwrap { position: relative; display: inline-block; }
+.ps-actionmenu {
+  position: absolute; inset-inline-end: 0; inset-block-start: calc(100% + 4px);
+  min-inline-size: 180px; z-index: 10;
+  background: var(--ps-white); border: 1px solid var(--ps-line);
+  border-radius: 8px; box-shadow: 0 8px 24px rgba(9, 9, 12, 0.14);
+  padding: 4px; margin: 0; list-style: none;
+}
+.ps-actionmenu button {
+  inline-size: 100%; text-align: start; font: inherit; font-size: 13px;
+  background: none; border: 0; border-radius: 6px; padding: 8px 12px;
+  color: var(--ps-text-body); cursor: pointer;
+}
+.ps-actionmenu button:hover { background: var(--ps-bg-light); }
+
+/* ---------- Toolbars ---------- */
+.ps-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-block-end: 16px; }
+.ps-toolbar .ps-input, .ps-toolbar .ps-select { inline-size: auto; min-inline-size: 220px; }
+.ps-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-block-end: 16px; }
+.ps-controls label { font-size: 13px; font-weight: 600; color: var(--ps-text-label); }
+.ps-btn--secondary {
+  background: var(--ps-button-secondary-bg);
+  border-color: var(--ps-button-secondary-bg);
+  color: var(--ps-button-secondary-text);
+}
+.ps-btn--secondary:hover { background: var(--ps-primary-soft); border-color: var(--ps-primary-soft); }
+
+/* ---------- Pagination footer ---------- */
+.ps-pager {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; padding-block-start: 16px; font-size: 13px; color: var(--ps-hint-dark);
+}
+.ps-pager-pages { display: flex; align-items: center; gap: 4px; }
+.ps-pager-pages button {
+  font: inherit; font-size: 13px; min-inline-size: 30px; padding: 4px 8px;
+  background: var(--ps-white); border: 1px solid var(--ps-line);
+  border-radius: 6px; color: var(--ps-text-body); cursor: pointer;
+}
+.ps-pager-pages button[aria-current="page"] { border-color: var(--ps-primary); color: var(--ps-primary); }
+
+/* ---------- Bank verification ---------- */
+.ps-bank { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.ps-bank dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; font-size: 13px; }
+.ps-bank dt { color: var(--ps-hint-mid); }
+.ps-bank dd { margin: 0; color: var(--ps-text-body); }
+
+/* ---------- Documents ---------- */
+.ps-docgroup { margin-block-end: 20px; }
+.ps-docgroup > h3 { font-size: 14px; font-weight: 700; margin-block-end: 8px; }
+.ps-doclist { border: 1px solid var(--ps-line); border-radius: 8px; overflow: hidden; }
+.ps-docrow {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 12px 16px; background: var(--ps-white);
+}
+.ps-docrow + .ps-docrow { border-block-start: 1px solid var(--ps-line); }
+.ps-docname { font-size: 13px; color: var(--ps-text-body); }
+.ps-doccount { color: var(--ps-signal-success-text); font-size: 12px; margin-inline-start: 8px; }
+
+/* ---------- Onboarding record (click a row to copy) ---------- */
+.ps-record { border: 1px solid var(--ps-line); border-radius: 8px; overflow: hidden; }
+.ps-recordrow {
+  display: flex; align-items: baseline; gap: 16px; inline-size: 100%;
+  font: inherit; font-size: 13px; text-align: start; cursor: copy;
+  background: var(--ps-white); border: 0; padding: 10px 16px;
+}
+.ps-recordrow + .ps-recordrow { border-block-start: 1px solid var(--ps-line); }
+.ps-recordrow:hover { background: var(--ps-bg-light); }
+.ps-recordkey { inline-size: 220px; flex-shrink: 0; color: var(--ps-hint-mid); }
+.ps-recordval { color: var(--ps-text-body); overflow-wrap: anywhere; }
+
+/* ---------- Pending further information ----------
+   An amber panel, so a request for information reads as a hold on the
+   application rather than an ordinary form field. After sending, the
+   textarea is replaced by the note that went, in the same panel. */
+.ps-notepanel {
+  margin-block-start: 14px;
+  max-inline-size: 620px;
+  padding: 14px 16px;
+  border: 1px solid var(--ps-signal-warning);
+  border-radius: 8px;
+  background: var(--ps-signal-warning-bg);
+}
+.ps-notepanel-head {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ps-signal-warning-text);
+}
+.ps-notepanel-label {
+  display: block;
+  font-size: 13px;
+  color: var(--ps-signal-warning-text);
+  margin-block: 6px 8px;
+}
+.ps-notepanel textarea {
+  inline-size: 100%; min-block-size: 76px; padding: 8px 12px; font: inherit;
+  font-size: 14px; color: var(--ps-text-body); background: var(--ps-white);
+  border: 1px solid var(--ps-signal-warning); border-radius: 6px;
+  resize: vertical;
+}
+.ps-notepanel textarea:focus { outline: none; border-color: var(--ps-signal-warning-text); }
+/* The sent note sits in the same amber field as the rest of the panel -
+   one block of colour, not a white card inside an orange one. */
+.ps-notepanel-quote {
+  margin: 8px 0 0;
+  padding: 0 0 0 12px;
+  border-inline-start: 3px solid var(--ps-signal-warning);
+  font-size: 13px;
+  color: var(--ps-signal-warning-text);
+}

@@ -25,7 +25,6 @@ Everything one file can call in another. A surface in
 | `App.canAccess` | assets/js/core/guard.js:88 |
 | `App.copyText` | assets/js/core/ui.js:51 |
 | `App.csvFromRows` | assets/js/core/ui.js:95 |
-| `App.daopayAdminTool` | assets/js/core/console-tools.js:289<br>assets/js/core/console-tools.js:290 |
 | `App.dashboardCards` | assets/js/pages/dashboard/cards.js:25 (+9 more) |
 | `App.dashboardStrip` | assets/js/pages/dashboard/strip.js:53 (+4 more) |
 | `App.db` | assets/js/core/supabase.js:31 (+2 more) |
@@ -35,6 +34,7 @@ Everything one file can call in another. A surface in
 | `App.download` | assets/js/core/ui.js:75 (+3 more) |
 | `App.drawer` | assets/js/core/drawer.js:35 |
 | `App.escape` | assets/js/core/ui.js:17 |
+| `App.euAcquirerAdminTool` | assets/js/core/console-tools.js:289<br>assets/js/core/console-tools.js:290 |
 | `App.flashLabel` | assets/js/core/ui.js:44 (+2 more) |
 | `App.futurePrototypesTable` | assets/js/pages/gallery.js:18 |
 | `App.ideasView` | assets/js/pages/ideas/render.js:37 (+7 more) |
@@ -87,7 +87,7 @@ Shared runtime. Loaded on every protected page in the order set by assets/js/cor
 | auth.js | 54 | auth.js - Login page logic for index.html. |
 | blocks.js | 139 | blocks.js - The typed-block renderer, in one place. |
 | config.example.js | 18 | config.example.js - OPTIONAL local override. |
-| console-tools.js | 311 | console-tools.js - The nav's console-snippet tools: Acquirer send (App.sendTool) and DaoPay admin (App.daopayAdminTool). |
+| console-tools.js | 311 | console-tools.js - The nav's console-snippet tools: Acquirer send (App.sendTool) and EU Acquirer admin (App.euAcquirerAdminTool). |
 | detail.js | 142 | detail.js - The completeness contract for rendering a row. |
 | drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and enforces per-module access. |
@@ -115,15 +115,15 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | app-review/waves.js | 163 | app-review/waves.js - The wave list for modules/app-review/index.html, plus the standing watch list above it. |
 | backlog/backlog.js | 393 | backlog/backlog.js - The master work list for modules/backlog/. |
 | backlog/export.js | 87 | backlog/export.js - The backlog's CSV export: the column order, the flat record builder and the wiring. |
-| daopay/app.js | 275 | daopay/app.js - The application summary page in the Daopay replica: composition, state and behaviour. |
-| daopay/data.js | 251 | daopay/data.js - Fixture data and the role switch for the Daopay EU onboarding replica (modules/prototypes/daopay/). |
-| daopay/list.js | 114 | daopay/list.js - The Applications list in the Daopay replica. |
-| daopay/sections.js | 238 | daopay/sections.js - The markup for each section of the application summary page, in the portal's own order. |
-| daopay/shell.js | 96 | daopay/shell.js - Shared chrome for the Daopay replica pages: the black portal header, the navigation sider, and the role switch that flips between the Acquirer and Daopay views of the same page. |
-| daopay/sim.js | 169 | daopay/sim.js - The simulation layer for the Daopay replica: the toast stack, the email prompt, and the stepped progress modal that stands in for e-signature and the automated handoff. |
 | dashboard/cards.js | 240 | dashboard/cards.js - The dashboard's four card sections: API reference, reviews, knowledge and tools (docs/plan/50-DASHBOARD.md). |
 | dashboard/dashboard.js | 261 | dashboard/dashboard.js - Fetches and orchestrates the landing page (docs/plan/50-DASHBOARD.md). |
 | dashboard/strip.js | 131 | dashboard/strip.js - The now/next strip, the dashboard's headline (docs/plan/50-DASHBOARD.md). |
+| eu-acquirer/app.js | 275 | eu-acquirer/app.js - The application summary page in the EU Acquirer replica: composition, state and behaviour. |
+| eu-acquirer/data.js | 251 | eu-acquirer/data.js - Fixture data and the role switch for the EU Acquirer EU onboarding replica (modules/prototypes/eu-acquirer/). |
+| eu-acquirer/list.js | 114 | eu-acquirer/list.js - The Applications list in the EU Acquirer replica. |
+| eu-acquirer/sections.js | 238 | eu-acquirer/sections.js - The markup for each section of the application summary page, in the portal's own order. |
+| eu-acquirer/shell.js | 96 | eu-acquirer/shell.js - Shared chrome for the EU Acquirer replica pages: the black portal header, the navigation sider, and the role switch that flips between the Acquirer and EU Acquirer views of the same page. |
+| eu-acquirer/sim.js | 169 | eu-acquirer/sim.js - The simulation layer for the EU Acquirer replica: the toast stack, the email prompt, and the stepped progress modal that stands in for e-signature and the automated handoff. |
 | gallery.js | 115 | gallery.js - Prototype registry for modules/prototypes/. |
 | ideas/ideas.js | 71 | ideas/ideas.js - modules/prototypes/ideas.html. |
 | ideas/render.js | 177 | ideas/render.js - The prototype ideas board's builders (App.ideasView). |
@@ -169,25 +169,25 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | app-review.css | 378 | app-review.css - The application review board and wave list. |
 | base.css | 111 | base.css - Reset, typography and global element styles. |
 | components.css | 478 | components.css - Reusable interface components: cards, forms, buttons, notices, tables, badges and toggles. |
-| console-tool.css | 71 | console-tool.css - The modal shared by the nav's console-snippet tools (send-tool.js and daopay-admin-tool.js): a wide dialog with a header bar, a scrolling code block per snippet and a collapsed details section. |
+| console-tool.css | 71 | console-tool.css - The modal shared by the nav's console-snippet tools (send-tool.js and eu-acquirer-admin-tool.js): a wide dialog with a header bar, a scrolling code block per snippet and a collapsed details section. |
 | dashboard.css | 218 | dashboard.css - The rebuilt landing page (docs/plan/50-DASHBOARD.md). |
 | ideas.css | 92 | ideas.css - The prototype ideas board and the gallery strip that points at it (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | layout.css | 395 | layout.css - Navigation, page scaffold and grids. |
-| login.css | 163 | login.css - Sign-in page only. |
+| login.css | 70 | login.css - Sign-in page only. |
 | pages.css | 308 | pages.css - The reference viewer ("swagger") page. |
 | platform.css | 149 | platform.css - The platform knowledge page (modules/platform/). |
 | portal-review.css | 269 | portal-review.css - The portal review board (docs/PORTAL-REVIEW.md). |
-| prototype.css | 88 | prototype.css - Shared styles for a prototype's LPio-framed overview page: the meta row, sections, step sequence, backlog list and the diagram figure. |
-| pxp-daopay.css | 212 | pxp-daopay.css - The Daopay EU onboarding replica layered on the Acquirer |
-| pxp-pci.css | 124 | pxp-pci.css - The PCI feature layered on the Acquirer replica: the wizard |
-| pxp-sim.css | 191 | pxp-sim.css - The simulation layer for the Daopay replica: the toast stack, the modal shell used by the email prompt and the stepped progress runs, and the spinner/tick each step cycles through. |
-| pxp.css | 218 | pxp.css - Acquirer Partner Portal replica shell for the PCI prototype (modules/prototypes/pci/demo.html). |
+| prototype.css | 88 | prototype.css - Shared styles for a prototype's LPIO-framed overview page: the meta row, sections, step sequence, backlog list and the diagram figure. |
+| ps-euacquirer.css | 212 | ps-euacquirer.css - The EU Acquirer EU onboarding replica layered on the Acquirer |
+| ps-pci.css | 124 | ps-pci.css - The PCI feature layered on the Acquirer replica: the wizard |
+| ps-sim.css | 191 | ps-sim.css - The simulation layer for the EU Acquirer replica: the toast stack, the modal shell used by the email prompt and the stepped progress runs, and the spinner/tick each step cycles through. |
+| ps.css | 218 | ps.css - Acquirer Partner Portal replica shell for the PCI prototype (modules/prototypes/pci/demo.html). |
 | roadmap-detail.css | 403 | roadmap-detail.css - Coarse progress bars, the expanded Executive child lists, and the right-hand item detail drawer. |
 | roadmap-themes.css | 30 | roadmap-themes.css - The theme accent map: one rule per roadmap_categories.key, each setting the accent and soft tint that a lane label, card border, dot or rail reads. |
 | roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme rollup, Team, Backlog) in Timeline and Cascade layouts, plus the level switcher. |
 | roadmap.css | 410 | roadmap.css - The roadmap board (modules/roadmap/). |
 | skeleton.css | 57 | skeleton.css - The loading placeholder for a region whose content arrives after first paint. |
-| tokens.css | 444 | tokens.css - Design tokens for the LPio hub. |
+| tokens.css | 444 | tokens.css - Design tokens for the LPIO hub. |
 
 ### modules/
 
@@ -195,30 +195,30 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 
 | File | Lines | Purpose |
 |---|---:|---|
-| app-review/index.html | 69 | Application review - LPio / LP IO |
-| app-review/wave.html | 94 | Wave - Application review - LPio / LP IO |
-| backlog/index.html | 93 | Backlog - LPio / LP IO |
-| integrations/index.html | 58 | Integrations - LPio / LP IO |
-| platform/index.html | 58 | Platform - LPio / LP IO |
-| portal-review/index.html | 79 | Portal review - LPio / LP IO |
-| portal-review/triage.html | 52 | Triage - Portal review - LPio / LP IO |
-| portal-review/wave.html | 61 | Wave - Portal review - LPio / LP IO |
-| prototypes/daopay/application.html | 46 | Application summary - Acquirer replica - LPio |
-| prototypes/daopay/applications.html | 45 | Applications - Acquirer replica - LPio |
-| prototypes/daopay/daopay-flow.svg | 171 |  |
-| prototypes/daopay/index.html | 250 | Daopay user role - EU merchant onboarding - LPio / LP IO |
-| prototypes/gdpr/index.html | 44 | GDPR compliance prototype - LPio / LP IO |
-| prototypes/ideas.html | 54 | Prototype ideas - LPio / LP IO |
-| prototypes/index.html | 59 | Prototypes - LPio / LP IO |
-| prototypes/pci/dashboard.html | 62 | Dashboard - Acquirer replica - LPio |
-| prototypes/pci/demo.html | 82 | Merchant Prescreen and Quote - Acquirer replica - LPio |
-| prototypes/pci/index.html | 151 | PCI compliance prototype - LPio / LP IO |
+| app-review/index.html | 69 | Application review - LPIO |
+| app-review/wave.html | 94 | Wave - Application review - LPIO |
+| backlog/index.html | 93 | Backlog - LPIO |
+| integrations/index.html | 58 | Integrations - LPIO |
+| platform/index.html | 58 | Platform - LPIO |
+| portal-review/index.html | 79 | Portal review - LPIO |
+| portal-review/triage.html | 52 | Triage - Portal review - LPIO |
+| portal-review/wave.html | 61 | Wave - Portal review - LPIO |
+| prototypes/eu-acquirer/application.html | 46 | Application summary - Acquirer replica - LPIO |
+| prototypes/eu-acquirer/applications.html | 45 | Applications - Acquirer replica - LPIO |
+| prototypes/eu-acquirer/eu-acquirer-flow.svg | 171 |  |
+| prototypes/eu-acquirer/index.html | 250 | EU Acquirer user role - EU merchant onboarding - LPIO |
+| prototypes/gdpr/index.html | 44 | GDPR compliance prototype - LPIO |
+| prototypes/ideas.html | 54 | Prototype ideas - LPIO |
+| prototypes/index.html | 59 | Prototypes - LPIO |
+| prototypes/pci/dashboard.html | 62 | Dashboard - Acquirer replica - LPIO |
+| prototypes/pci/demo.html | 82 | Merchant Prescreen and Quote - Acquirer replica - LPIO |
+| prototypes/pci/index.html | 151 | PCI compliance prototype - LPIO |
 | prototypes/pci/pci-workflow.svg | 62 |  |
-| prototypes/pci/reports.html | 72 | Compliance reporting - Acquirer replica - LPio |
-| prototypes/website-screening/index.html | 45 | Website screening prototype - LPio / LP IO |
-| reference/index.html | 71 | API reference - LPio / LP IO |
-| roadmap/index.html | 134 | Roadmap - LPio / LP IO |
-| users/index.html | 51 | Users - LPio / LP IO |
+| prototypes/pci/reports.html | 72 | Compliance reporting - Acquirer replica - LPIO |
+| prototypes/website-screening/index.html | 45 | Website screening prototype - LPIO |
+| reference/index.html | 71 | API reference - LPIO |
+| roadmap/index.html | 134 | Roadmap - LPIO |
+| users/index.html | 51 | Users - LPIO |
 
 ### supabase/migrations/
 
@@ -228,7 +228,7 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 |---|---:|---|
 | 20260713000000_module_access_and_function_hardening.sql | 93 | ---------------------------------------------------------------- Applied to the live project on 2026-07-13 via the Supabase MCP migration runner. |
 | 20260713100000_api_spec_families.sql | 11 | Group api_specs rows into distinct reference sites. |
-| 20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected to LP. |
+| 20260713110000_integrations.sql | 43 | Integrations overview: one row per third-party service connected to Launchpad. |
 | 20260713120000_roadmap.sql | 135 | Roadmap skeleton. |
 | 20260713130000_work_areas_and_backlog.sql | 187 | Work areas, backlog and intake framework (see docs/WORKFLOW.md). |
 | 20260713140000_performance_rls_and_indexes.sql | 197 | ------------------------------------------------------------------ |
@@ -236,7 +236,7 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20260714000000_api_reference_detail.sql | 34 | Reference detail columns so comprehensive API material lives |
 | 20260714100000_api_reference_structure.sql | 119 | Generic reference structure so any comprehensive API guide fits the standard viewer without new code or schema per source: api_tags per-spec tag catalogue. |
 | 20260715000000_roadmap_board_categories_presentation.sql | 60 | ------------------------------------------------------------------ |
-| 20260715120000_platform_product_knowledge.sql | 86 | ---------------------------------------------------------------- 20260715120000_platform_product_knowledge.sql The Platform product-knowledge domain: the durable, queryable description of what LP is and does today. |
+| 20260715120000_platform_product_knowledge.sql | 86 | ---------------------------------------------------------------- 20260715120000_platform_product_knowledge.sql The Platform product-knowledge domain: the durable, queryable description of what Launchpad is and does today. |
 | 20260716000000_roadmap_audience_and_area_theme.sql | 35 | ---------------------------------------------------------------- 20260716000000_roadmap_audience_and_area_theme.sql Roadmap refinement: the two-level taxonomy and the audience axis. |
 | 20260716120000_roadmap_spans_and_backlog_horizons.sql | 25 | ------------------------------------------------------------------ |
 | 20260716140000_unify_work_items.sql | 195 | ------------------------------------------------------------------ |
@@ -355,10 +355,10 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | blocks.test.js | 119 | tests/unit/blocks.test.js - The typed-block renderer. |
 | call-extract.test.js | 156 | tests/unit/call-extract.test.js - Benchmarks for the call-site extractor (scripts/extract-calls.js), inventory C of docs/plan/20-API-REFERENCE.md. |
 | coverage-reconcile.test.js | 278 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage arithmetic in scripts/gen-coverage.js. |
-| daopay/role.test.js | 207 | tests/unit/daopay/role.test.js - Benchmarks for the Daopay scoped role (assets/js/pages/daopay/data.js and daopay-app.js). |
 | dashboard/cards.test.js | 270 | tests/unit/dashboard/cards.test.js - The dashboard's four card sections (docs/plan/50-DASHBOARD.md). |
 | dashboard/strip.test.js | 164 | tests/unit/dashboard/strip.test.js - The dashboard's headline strip (docs/plan/50-DASHBOARD.md). |
 | detail.test.js | 199 | tests/unit/detail.test.js - The completeness contract. |
+| eu-acquirer/role.test.js | 207 | tests/unit/eu-acquirer/role.test.js - Benchmarks for the EU Acquirer scoped role (assets/js/pages/eu-acquirer/data.js and eu-acquirer-app.js). |
 | gallery-future.test.js | 91 | tests/unit/gallery-future.test.js - Benchmarks for the prototype gallery's ideas strip (App.futurePrototypesTable in assets/js/pages/gallery.js, which now delegates to App.ideasView). |
 | ideas/render.test.js | 166 | tests/unit/ideas/render.test.js - The prototype ideas board (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | links.test.js | 203 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
@@ -458,7 +458,7 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 285 | Architecture How the portal fits together. |
-| CHANGELOG.md | 534 | Changelog All notable user-facing changes to LPio, newest first. |
+| CHANGELOG.md | 534 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 207 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
@@ -510,10 +510,10 @@ Repository root.
 | .gitignore | 24 | Local configuration containing Supabase keys. Never commit. |
 | .gitmessage | 12 | <type>: <imperative summary, max 60 chars> |
 | CLAUDE.md | 265 |  |
-| README.md | 29 | LPio A login-gated project hub: dashboard, API reference material and prototypes, organised as modules around a central dashboard. |
-| dashboard.html | 121 | Dashboard - LPio / LP IO |
-| index.html | 68 | Sign in - LPio / LP IO |
-| package.json | 17 | LPio / LP IO - static shell of a login-gated project hub. Content lives in Supabase. |
+| README.md | 29 | LPIO A login-gated project hub: dashboard, API reference material and prototypes, organised as modules around a central dashboard. |
+| dashboard.html | 121 | Dashboard - LPIO |
+| index.html | 50 | Sign in - LPIO |
+| package.json | 17 | LPIO - static shell of a login-gated project hub. Content lives in Supabase. |
 
 ## Conventions for agents
 

@@ -42,15 +42,15 @@
       "maxRequests": 24,
       "maxBytes": 198000
     },
-    "modules/prototypes/daopay/application.html": {
+    "modules/prototypes/eu-acquirer/application.html": {
       "maxRequests": 26,
       "maxBytes": 230000
     },
-    "modules/prototypes/daopay/applications.html": {
+    "modules/prototypes/eu-acquirer/applications.html": {
       "maxRequests": 25,
       "maxBytes": 210000
     },
-    "modules/prototypes/daopay/index.html": {
+    "modules/prototypes/eu-acquirer/index.html": {
       "maxRequests": 20,
       "maxBytes": 157000
     },

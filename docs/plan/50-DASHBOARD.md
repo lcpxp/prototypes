@@ -262,7 +262,7 @@ seven hidden rather than emptied when the grant is missing.
 - **The tools section is external tools only.** The plan said to add
   rows for the send tool and the search, but `portal_links` is
   documented as "one row per icon button the nav offers as a link out
-  to an external tool", and the send and DaoPay tools are in-portal
+  to an external tool", and the send and EU Acquirer tools are in-portal
   consoles, not links out. Putting them in that table would have made
   the table mean two things. The section header says "the external
   tools the nav carries" instead of overclaiming.
