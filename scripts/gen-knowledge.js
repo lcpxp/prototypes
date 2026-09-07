@@ -102,7 +102,40 @@ select jsonb_build_object(
                               where deleted_at is null and disposition = 'promoted'
                                 and promoted_work_item_id is null)),
   'embeddings', jsonb_build_object(
-    'stale', (select count(*) from work_items_unembedded))
+    'stale', (select count(*) from work_items_unembedded)),
+  -- Platform grounding. Every figure here is READ FROM
+  -- platform_context_gaps() rather than restated, because the page,
+  -- the retrieval call and this ratchet must not be able to disagree
+  -- about what a gap is - and three copies of a definition is how they
+  -- would. supabase/schema/41_platform_context.sql is the one home.
+  --
+  -- These exist because the protocol they enforce was already written
+  -- and was not happening. docs/ROADMAP-REVIEW.md has required a
+  -- two-way platform/roadmap sync on every review since August; on
+  -- 2026-09-07 the affects link kind - the edge that sync produces -
+  -- had zero rows, eight product areas carried 186 open work items and
+  -- no capability at all, and all 572 endpoints were unreachable from
+  -- any capability. A protocol nothing measures is a preference.
+  'areas', jsonb_build_object(
+    'product_total', (select count(*) from work_areas where scope = 'product'),
+    'no_capability', jsonb_array_length(
+      public.platform_context_gaps()->'areas_without_capability')),
+  'endpoints', jsonb_build_object(
+    'total', (select count(*) from api_endpoints),
+    'ungrounded', (public.platform_context_gaps()->>'endpoints_ungrounded')::int),
+  'grounding', jsonb_build_object(
+    'capabilities', (select count(*) from product_capabilities),
+    'derived', (select count(*) from product_capabilities where attestation = 'derived'),
+    'unattested', jsonb_array_length(public.platform_context_gaps()->'unattested'),
+    'stale', jsonb_array_length(public.platform_context_gaps()->'stale'),
+    'no_evidence', jsonb_array_length(
+      public.platform_context_gaps()->'derived_without_evidence'),
+    'delivered', (select count(*) from work_items i
+                   where i.status = 'done'
+                     and exists (select 1 from product_capabilities c
+                                  where c.area_id = i.area_id)),
+    'delivered_without_affects',
+      (public.platform_context_gaps()->>'delivered_without_affects')::int)
 ) as payload;`;
 
 // The rules, each stated once here with the reason it is a rule. The
@@ -139,6 +172,18 @@ const RULES = [
     why: "docs/WORKFLOW.md says raw material AND a digest go to work_documents; the digest is the summary column. A document with none is a paste nobody distilled - the material is there and the meaning is not." },
   { key: "findings.promoted_without_item", of: "findings.live",
     why: "A finding marked promoted with no work item is a claim with nothing behind it. The schema constrains this; the count proves the constraint holds." },
+  { key: "areas.no_capability", of: "areas.product_total",
+    why: "An area carrying work that nothing explains means work is being scheduled against something nobody wrote down. It was 8 of 21 on 2026-09-07, holding 186 open items and roughly 96,000 characters of item detail between them - the single largest hole in what this system knows about itself." },
+  { key: "grounding.unattested", of: "grounding.capabilities",
+    why: "A capability nobody has stood behind - not the owner, and not a session restating rows the owner already owns. It reads on the page exactly like one that was checked, which is the reason the attestation column replaced a boolean." },
+  { key: "grounding.no_evidence", of: "grounding.derived",
+    why: "A row marked derived that names no source is the precise thing derivation exists to prevent. Derived means 'restated from rows you own, here they are'; without the links it means 'an assistant wrote this'." },
+  { key: "grounding.stale", of: "grounding.capabilities",
+    why: "Work has been delivered in this area since the claim was last checked, so the page may now be describing a platform that has moved. This is the figure that makes the knowledge base notice its own decay instead of waiting for a reader to: shipping is what marks it, and nobody has to remember." },
+  { key: "grounding.delivered_without_affects", of: "grounding.delivered",
+    why: "A delivered item in an area that HAS capabilities, with no affects link saying which one it changed. 'How does this work now' is answerable by traversal only where the traversal exists, and on 2026-09-07 it existed nowhere - the kind had zero rows against 186 open and 86 delivered items." },
+  { key: "endpoints.ungrounded", of: "endpoints.total",
+    why: "An endpoint no capability claims. The reference is the largest body of structured knowledge in the system and was joined to none of the rest of it until the endpoint entity type was registered; 572 of 572 were unreachable from any capability." },
   { key: "embeddings.stale", of: "items.total",
     why: "An item whose vector was computed from text that has since changed still answers searches - with the wrong meaning, silently. work_items_unembedded is the one place that knows; this is what makes it visible without asking. Clear it with select * from roadmap_embed_refresh()." },
 ];
@@ -167,6 +212,7 @@ function build(payload) {
       links: payload.links.live, items: payload.items.total,
       ideas: payload.ideas.total, documents: payload.documents.total,
       findings: payload.findings.live,
+      endpoints: payload.endpoints.total,
     },
     figures: figures,
   };

@@ -28,6 +28,8 @@
   <script defer src="../../assets/js/core/detail.js"></script>
   <script defer src="../../assets/js/core/console-tools.js"></script>
   <script defer src="../../assets/js/pages/platform/knowledge.js"></script>
+  <script defer src="../../assets/js/pages/platform/cards.js"></script>
+  <script defer src="../../assets/js/pages/platform/views.js"></script>
   <script defer src="../../assets/js/pages/platform/platform.js"></script>
 </head>
 <body data-root="../.." data-module="platform">
@@ -36,21 +38,20 @@
   <main class="page">
     <div class="page-head">
       <span class="eyebrow">Platform</span>
-      <h1>What LP does today</h1>
-      <p class="lede">The durable, queryable description of the platform:
-        what it is and why it matters, the lead-to-live journey, what
-        each area does today, how it is built, the terminology it
-        assumes, the facts recorded along the way, and where all of it
-        came from. Coverage near the top names what is still missing, so
-        a gap is something to fill rather than something to discover.
-        Everything is drawn live from Supabase and grouped by the same
-        work areas as the roadmap and backlog; update the database and
-        this page updates for everyone.</p>
+      <h1>What LP is, and how it is built</h1>
+      <p class="lede" id="pk-lede">Loading</p>
+      <div id="pk-strip"></div>
     </div>
 
-    <section id="platform-content">
-      <p class="notice">Loading</p>
-    </section>
+    <div id="pk-switch"></div>
+    <div id="pk-toolbar"></div>
+
+    <div class="ref-layout">
+      <aside class="ref-sidebar" id="pk-sidebar" aria-label="Platform index"></aside>
+      <section id="platform-content">
+        <p class="notice">Loading</p>
+      </section>
+    </div>
   </main>
 
 </body>

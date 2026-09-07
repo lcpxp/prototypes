@@ -1,0 +1,13 @@
+-- ------------------------------------------------------------------
+-- Applied 2026-09-07. Adds platform_context(area_key) and
+-- platform_context_gaps(): the retrieval surface that makes grounding
+-- a roadmap decision against the platform one call instead of six.
+--
+-- The bodies live in supabase/schema/41_platform_context.sql, which is
+-- canonical and carries the rationale. This file is the applied record.
+-- Applied migrations are immutable: do not re-apply or edit this file.
+-- ------------------------------------------------------------------
+
+-- Body as applied: see supabase/schema/41_platform_context.sql.
+-- Reproduced verbatim there; both are create-or-replace, so re-running
+-- the schema file reproduces this migration exactly.

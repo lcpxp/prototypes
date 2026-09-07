@@ -51,6 +51,8 @@
     "knowledge_link_duplicate_dropped()",
     "knowledge_link_guard()",
     "own_role()",
+    "platform_context(p_area_key text)",
+    "platform_context_gaps()",
     "review_finding_revision_log()",
     "review_revision_log()",
     "review_status_note_guard()",
@@ -298,6 +300,18 @@
     {
       "name": "work_items_board_carries_benefit_columns",
       "version": "20260901160444"
+    },
+    {
+      "version": "20260907180228",
+      "name": "platform_knowledge_axes"
+    },
+    {
+      "version": "20260907180300",
+      "name": "platform_as_of_from_created"
+    },
+    {
+      "version": "20260907180336",
+      "name": "platform_context_functions"
     }
   ],
   "policies": [
@@ -901,8 +915,11 @@
     ],
     "product_capabilities": [
       "area_id",
+      "as_of",
+      "attestation",
       "blocks",
       "created_at",
+      "domain",
       "id",
       "key",
       "kind",

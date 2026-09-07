@@ -103,13 +103,20 @@
     return !hidden || !hidden[BANDS[colStart(i)].key];
   }
 
-  // The product board shows everything EXCEPT work explicitly filed as the
-  // LPIO portal's own internal development (scope 'portal'). Unfiled work
-  // (no area, or an area with no scope) defaults to visible, so anything
-  // scheduled onto the roadmap surfaces without needing an area assigned -
-  // nothing is silently hidden for want of filing.
+  // Scopes that are not the product board: 'portal' is LPIO's own
+  // internal development, 'build' is the filing axis for platform
+  // knowledge about how the product is built and carries no work items
+  // at all. Named as a set rather than as `!== "portal"`, which is what
+  // this was: a rule shaped as "everything but one" silently admits the
+  // next scope anyone adds, and 'build' was added on 2026-09-07.
+  //
+  // Unfiled work (no area, or an area with no scope) still defaults to
+  // visible, so anything scheduled onto the roadmap surfaces without
+  // needing an area assigned - nothing is silently hidden for want of
+  // filing.
+  var OFF_BOARD_SCOPES = { portal: true, build: true };
   function productItems(items, scopeByArea) {
-    return items.filter(function (i) { return scopeByArea[i.area_id] !== "portal"; });
+    return items.filter(function (i) { return !OFF_BOARD_SCOPES[scopeByArea[i.area_id]]; });
   }
 
   // A maintenance "fix": a standalone item (no workstream parent, not a

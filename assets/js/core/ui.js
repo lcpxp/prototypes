@@ -170,11 +170,31 @@
     },
   };
 
-  App.deepLinkScroll = function () {
-    var id = (window.location.hash || "").replace(/^#/, "");
+  // Scroll to the row a deep link names and mark it briefly, so a
+  // reader who followed a link can see WHICH row they landed on.
+  //
+  // `id` is optional and defaults to the hash. A page whose hash
+  // carries more than an id passes the id explicitly: the platform
+  // page routes as "#<view>/<anchor>", and before this took an
+  // argument that page had its own copy of these six lines - one
+  // behaviour, two homes, which is the thing this file exists to
+  // prevent.
+  App.deepLinkScroll = function (id) {
+    id = id || (window.location.hash || "").replace(/^#/, "");
     if (!id) return;
     var el = document.getElementById(id);
     if (!el) return;
+    // A row inside a closed disclosure is not reached by scrolling to
+    // it: the reader lands on a summary and none of what they followed
+    // the link for. Open what encloses it, and the target itself when
+    // it is the disclosure.
+    if (el.tagName === "DETAILS") el.open = true;
+    var enclosing = el.closest ? el.closest("details") : null;
+    while (enclosing) {
+      enclosing.open = true;
+      enclosing = enclosing.parentElement && enclosing.parentElement.closest
+        ? enclosing.parentElement.closest("details") : null;
+    }
     el.scrollIntoView({ block: "center" });
     el.classList.add("is-linked");
     window.setTimeout(function () { el.classList.remove("is-linked"); }, 2000);

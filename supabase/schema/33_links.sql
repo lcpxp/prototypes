@@ -60,7 +60,14 @@ insert into public.link_entity_types (key, table_name, label, sort_order) values
   ('term',       'domain_terms',         'Glossary term',   40),
   ('document',   'work_documents',       'Source document', 50),
   ('stage',      'journey_stages',       'Journey stage',   60),
-  ('area',       'work_areas',           'Filing area',     70)
+  ('area',       'work_areas',           'Filing area',     70),
+  -- Added 2026-09-07, and specified in docs/plan/30-KNOWLEDGE.md long
+  -- before that. Without them the reference - 572 endpoints across 3
+  -- specs, the richest body of structured knowledge in the system -
+  -- could not be an end of any link, so no capability could name the
+  -- endpoints that serve it.
+  ('endpoint',   'api_endpoints',        'API endpoint',    80),
+  ('spec',       'api_specs',            'API spec',        85)
 on conflict (key) do nothing;
 
 -- ---------------------------------------------------------------
@@ -123,11 +130,20 @@ create table if not exists public.knowledge_links (
   -- owner's reason for keeping two similar things apart, recorded once
   -- instead of restated at every review.
   note       text,
-  -- 'proposed' means written by a migration or an assistant and not yet
-  -- owner-confirmed. Nothing is ever asserted as confirmed on the
-  -- assistant's own authority.
+  -- Who says this link holds. The same three-state vocabulary as
+  -- product_capabilities.attestation, for the same reason: 'proposed'
+  -- alone had to cover both a guess and a derivation, so the queue of
+  -- links awaiting the owner could not be told from the links that
+  -- never needed them.
+  --   proposed   an assistant's suggestion, not yet owner-confirmed
+  --   derived    both ends are named in one row the owner already
+  --              owns, so the link restates a fact rather than
+  --              proposing one. Still not 'confirmed'.
+  --   confirmed  the owner said so
+  -- Nothing is ever asserted as confirmed on the assistant's own
+  -- authority.
   confidence text not null default 'proposed'
-    check (confidence in ('proposed', 'confirmed')),
+    check (confidence in ('proposed', 'derived', 'confirmed')),
   -- Bi-temporal. A link is CLOSED (valid_to set), never deleted, so the
   -- graph can answer what was believed and when - the same
   -- edge-invalidation model temporal knowledge graphs use for agent

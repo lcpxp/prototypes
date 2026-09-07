@@ -108,9 +108,13 @@ test("the known-kind list is declared, so a gate can check it", () => {
 test("both former copies now delegate here", () => {
   // The one-home rule: two implementations of one vocabulary is how
   // they drifted apart on what a `kv` block looks like.
-  const platform = read("assets/js/pages/platform/platform.js");
+  // The platform copy lives in cards.js and views.js since the page
+  // split on 2026-09-07; the rule follows the code, not the filename.
+  const cards = read("assets/js/pages/platform/cards.js");
+  const views = read("assets/js/pages/platform/views.js");
   const topics = read("assets/js/pages/reference/topics.js");
-  for (const [name, src] of [["platform.js", platform], ["reference-topics.js", topics]]) {
+  for (const [name, src] of [["platform-cards.js", cards],
+    ["platform-views.js", views], ["reference-topics.js", topics]]) {
     assert.match(src, /App\.blocks\.render\(/, `${name} must delegate to App.blocks`);
     assert.doesNotMatch(src, /case "values":/,
       `${name} must not keep a private copy of the block vocabulary`);

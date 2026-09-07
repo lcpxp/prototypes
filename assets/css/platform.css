@@ -8,6 +8,124 @@
 
 .pk-section { margin: var(--s-6) 0; }
 
+/* --- The three views ---------------------------------------------- */
+/* One page, three subjects. Until 2026-09-07 all of it was one column
+   and the 27 rows about how the product is BUILT sat under the rows
+   about what it DOES - two audiences, one scroll, and the bottom half
+   unreadable to either. */
+
+.pk-views {
+  border-block-end: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin-block-end: var(--s-4);
+}
+.pk-view-btn {
+  background: none;
+  border: 0;
+  border-block-end: 2px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--weight-medium);
+  margin-block-end: -1px;
+  padding: var(--s-2) var(--s-3);
+  transition: color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+.pk-view-btn:hover { color: var(--ink); }
+.pk-view-btn[aria-current="page"] {
+  border-block-end-color: var(--accent);
+  color: var(--ink);
+}
+
+/* One line, on every view: enough that a gap prompts a reader, never
+   so much that it becomes the page. The list itself is in Reference. */
+.pk-strip {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--s-2) 0 0;
+}
+.pk-strip-gaps { color: var(--warn); }
+.pk-strip-ok { color: var(--ok); }
+
+/* --- The lead band ------------------------------------------------- */
+/* What this subject IS, read before any of the detail. Never behind a
+   click: it is the first thing anyone arriving needs. */
+
+.pk-lead {
+  display: grid;
+  gap: var(--s-3);
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+  margin-block-end: var(--s-5);
+}
+.pk-lead-item {
+  background: var(--alt-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s-4);
+}
+.pk-lead-item h3 { margin: 0 0 var(--s-2); }
+.pk-lead-item p { margin: 0; color: var(--muted); }
+.pk-lead-more { margin-block-start: var(--s-3); }
+.pk-lead-more > summary {
+  color: var(--accent);
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.pk-area { margin-block-end: var(--s-6); }
+.pk-area[hidden] { display: none; }
+
+/* --- The capability card ------------------------------------------- */
+/* A <details>, closed. The summary row is what a reader chooses on;
+   everything else waits for the click. Same mechanics as the reference
+   viewer's .endpoint, which has indexed 572 rows since July. */
+
+.cap-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-rest);
+  margin-block-end: var(--s-3);
+  scroll-margin-block-start: calc(var(--nav-height) + var(--s-4));
+  transition: box-shadow var(--dur-base) var(--ease);
+}
+.cap-card[open] { box-shadow: var(--shadow-raised); }
+.cap-card[hidden] { display: none; }
+
+.cap-card > summary {
+  align-items: baseline;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-3);
+  list-style: none;
+  padding: var(--s-3) var(--s-4);
+  transition: background-color var(--dur-fast) var(--ease);
+}
+.cap-card > summary::-webkit-details-marker { display: none; }
+.cap-card > summary:hover { background: var(--alt-surface); }
+
+.cap-title { font-weight: var(--weight-semibold); }
+/* Pushed to the end so the titles down a column stay left-aligned and
+   scannable, which is the whole job of the closed state. */
+.cap-meta {
+  color: var(--faint);
+  font-size: var(--text-xs);
+  margin-inline-start: auto;
+}
+.cap-asof { font-variant-numeric: tabular-nums; }
+.cap-stale { color: var(--warn); font-variant-numeric: tabular-nums; }
+.cap-linkcount { color: var(--muted); }
+
+.cap-body {
+  border-block-start: 1px solid var(--line);
+  padding: var(--s-4);
+}
+
 /* --- Coverage ---------------------------------------------------- */
 
 .pk-stats {
@@ -120,7 +238,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* --- Capability card additions ------------------------------------ */
+/* --- Links and provenance on a card -------------------------------- */
 
 .cap-links {
   display: flex;

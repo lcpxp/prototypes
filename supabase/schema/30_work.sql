@@ -16,8 +16,24 @@
 -- ---------------------------------------------------------------
 -- work_areas: the single shared taxonomy of development areas.
 -- Work items, documents and notes all reference it, so swimlanes,
--- backlog grouping and intake filing can never disagree. scope
--- separates product feature areas from the portal's own development.
+-- backlog grouping and intake filing can never disagree.
+--
+-- scope says which taxonomy an area belongs to, and only 'product'
+-- areas reach the roadmap board:
+--   product  a feature area of the platform. Roadmap swimlane,
+--            backlog group and platform capability section at once.
+--   portal   LPIO's own internal development.
+--   build    how the product is built and styled - the filing axis for
+--            product_capabilities rows of domain 'build'. Added
+--            2026-09-07, when 25 of 46 capability rows were found
+--            filed under the product area 'Front end', among them
+--            backend material (Entity Framework, onion architecture)
+--            that is not front end at all. A junk drawer is what you
+--            get when knowledge has no taxonomy of its own.
+--
+-- A build area carries capabilities, never work items; the roadmap
+-- excludes every scope but 'product' explicitly
+-- (assets/js/pages/roadmap/views.js).
 -- ---------------------------------------------------------------
 
 create table if not exists public.work_areas (
@@ -25,7 +41,7 @@ create table if not exists public.work_areas (
   key text not null unique,
   title text not null,
   description text,
-  scope text not null default 'product' check (scope in ('product', 'portal')),
+  scope text not null default 'product' check (scope in ('product', 'portal', 'build')),
   -- The theme this area sits under, making the two-level taxonomy
   -- (theme -> area) explicit. Nullable: an unthemed area is valid and
   -- renders under a General group. A work item's own category_id, when

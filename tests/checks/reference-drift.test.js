@@ -153,14 +153,38 @@ test("every documented route nothing calls is badged as such", () => {
 });
 
 test("the artefact is not stale against the applied migrations", () => {
-  const migrations = trackedFiles()
+  // Against migrations that touch the REFERENCE domain, not against
+  // every migration. This measures api_specs, api_endpoints, api_tags
+  // and api_topics reconciled against the portal's own routes; a
+  // migration to an unrelated domain cannot invalidate a figure drawn
+  // from tables it does not mention, and failing on one only teaches
+  // the next session that the fix for this gate is a date bump.
+  //
+  // Narrowed 2026-09-07, when the platform-knowledge migrations tripped
+  // it. Every figure in the artefact was verified against the live
+  // database at the time and all of them still matched - and the half
+  // of it drawn from the portal codebase cannot be re-derived from
+  // this repo at all, so a re-stamp would have been the only available
+  // "fix" and it would have been a lie.
+  //
+  // "Touches" means a statement that CHANGES one of those tables, not
+  // any mention of one: the platform migration names api_endpoints
+  // only as a string, registering it as a link target, and a table's
+  // name appearing in a seed row is not a change to its contents.
+  const T = "(public\\.)?api_(specs|endpoints|tags|topics)\\b";
+  const REFERENCE_TABLES = new RegExp(
+    "((alter|create|drop)\\s+table\\s+(if\\s+(not\\s+)?exists\\s+)?" + T +
+    "|(insert\\s+into|update|delete\\s+from)\\s+" + T + ")", "i");
+  const touching = trackedFiles()
     .filter((f) => f.startsWith("supabase/migrations/") && f.endsWith(".sql"))
+    .filter((f) => REFERENCE_TABLES.test(read(f)))
     .map((f) => f.split("/").pop().slice(0, 8))
     .sort();
-  const newest = migrations[migrations.length - 1];
+  if (!touching.length) return;
+  const newest = touching[touching.length - 1];
   const asDate = `${newest.slice(0, 4)}-${newest.slice(4, 6)}-${newest.slice(6, 8)}`;
   assert.ok(coverage.generated_on >= asDate,
-    `${ARTEFACT} was generated ${coverage.generated_on}, older than migration ` +
-    `${newest}. Run npm run coverage - the repo describing a reference it cannot ` +
-    "re-derive is how the schema lost five migrations.");
+    `${ARTEFACT} was generated ${coverage.generated_on}, older than reference ` +
+    `migration ${newest}. Run npm run coverage - the repo describing a reference ` +
+    "it cannot re-derive is how the schema lost five migrations.");
 });

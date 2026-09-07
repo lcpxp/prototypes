@@ -100,6 +100,10 @@ const COVERAGE = {
   // Owned by a stricter benchmark that checks the KINDS registry rather
   // than a mention anywhere in the file. One concept, one home.
   "product_capabilities.kind": { ownedBy: "tests/unit/platform/knowledge.test.js" },
+  // domain picks the top-level view a row appears under, so a value
+  // with no view is a row on no page at all - the same failure kind
+  // had, checked the same stricter way.
+  "product_capabilities.domain": { ownedBy: "tests/unit/platform/views.test.js" },
   "api_specs.family": { file: "assets/js/core/registry.js" },
 
   // Rendered without a per-value branch. The reason is the claim.
@@ -118,6 +122,12 @@ const COVERAGE = {
   "integrations.status": { generic: "App.statusBadge renders any status" },
   "integrations.direction": { generic: "the integrations table prints the raw direction" },
   "product_capabilities.maturity": { generic: "App.statusBadge renders any maturity" },
+  "product_capabilities.attestation": {
+    generic: "every value is badged by App.platformCards.attestationBadge, which " +
+      "labels whatever the row carries rather than branching on three known ones - " +
+      "the boolean it replaced could only say verified or not, which is how an " +
+      "owner's judgement and an unexamined claim came to look identical",
+  },
   "work_areas.scope": { generic: "a filter, not a rendered label" },
   "profiles.role": { generic: "roleBadge renders whatever role the row carries - it was a binary else-branch until 2026-08-13 and printed 'member' for anything not admin" },
   "link_kinds.family": { generic: "groups links in a drawer; never shown as text" },
@@ -142,8 +152,10 @@ const COVERAGE = {
   // suggestion from the owner's decision. `confirmed` is the
   // unremarkable case and shows nothing.
   "knowledge_links.confidence": {
-    generic: "a proposed link is badged; confirmed shows nothing because it is " +
-      "the default reading, so both values are accounted for",
+    generic: "proposed and derived are each badged in the roadmap drawer and the " +
+      "platform card; confirmed shows nothing because it is the default reading, " +
+      "so all three values are accounted for. 'derived' arrived 2026-09-07 because " +
+      "'proposed' alone had to mean both a guess and a traceable restatement",
   },
 };
 
@@ -214,12 +226,16 @@ test("every link entity type is declared, labelled and titled", () => {
   }
 });
 
-// Types whose rows have a page of their own, so App.itemHref already
-// builds a whole address for them and an anchor would be wrong. Every
-// other type with a module addresses a row WITHIN a page and needs
-// one - routing them all through App.itemHref would send a term to
-// #capability-<id>.
-const ROUTED = ["work_item", "prototype"];
+// Types whose whole address App.itemHref already builds, so an anchor
+// would be wrong. Every other type with a module addresses a row
+// WITHIN a page and needs one - routing them all through App.itemHref
+// would send a term to #capability-<id>.
+//
+// endpoint and spec are here because a reference address is two parts:
+// the spec to load (?spec=<id>) and, for an endpoint, the row within
+// it (#ep-<id>). An anchor alone would name the row on a page that had
+// not loaded the spec holding it, which lands nowhere.
+const ROUTED = ["work_item", "prototype", "endpoint", "spec"];
 
 test("an anchored entity type has an anchor a link can address", () => {
   for (const line of linkEntitiesBlock().split("\n")) {
@@ -254,7 +270,7 @@ test("an anchored destination is actually reachable on its page", () => {
     const scripts = [...page.matchAll(/src="[^"]*assets\/js\/pages\/([\w/-]+\.js)"/g)]
       .map((m) => "assets/js/pages/" + m[1]);
     assert.ok(scripts.length, `${key}: module ${anchored[1]} loads no page module`);
-    assert.ok(scripts.some((f) => /App\.deepLinkScroll\(\)/.test(read(f))),
+    assert.ok(scripts.some((f) => /App\.deepLinkScroll\(/.test(read(f))),
       `${key} anchors on the ${anchored[1]} page, but none of its page ` +
       `modules (${scripts.join(", ")}) calls App.deepLinkScroll(). ` +
       "The link would land on the page and never reach the row.");
@@ -270,7 +286,9 @@ test("an anchored destination is actually reachable on its page", () => {
 const CONTRACT_ADOPTERS = [
   "assets/js/pages/integrations.js",
   "assets/js/pages/roadmap/detail.js",
-  "assets/js/pages/platform/platform.js",
+  // The platform card moved out of platform.js on 2026-09-07 when it
+  // became a <details>; the contract moved with it.
+  "assets/js/pages/platform/cards.js",
   "assets/js/pages/backlog/backlog.js",
   "assets/js/pages/app-review/detail.js",
 ];

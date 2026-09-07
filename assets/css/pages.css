@@ -17,66 +17,6 @@
   margin-block-end: var(--s-5);
 }
 
-.ref-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--s-5);
-  align-items: start;
-}
-
-/* Without this, a wide table or code sample inside an endpoint
-   raises the grid item's automatic minimum size and stretches the
-   track past the viewport; with it, the inner overflow-x: auto
-   wrappers do their job. */
-.ref-layout > * {
-  min-inline-size: 0;
-}
-
-.ref-sidebar {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-rest);
-  padding: var(--s-4);
-}
-
-.ref-sidebar .group {
-  margin-block-end: var(--s-4);
-}
-
-.ref-sidebar .group:last-child {
-  margin-block-end: 0;
-}
-
-.ref-sidebar ul {
-  list-style: none;
-  margin-block: var(--s-2) 0;
-  padding: 0;
-}
-
-.ref-sidebar li a {
-  display: flex;
-  align-items: baseline;
-  gap: var(--s-2);
-  padding: var(--s-1) var(--s-2);
-  border-radius: var(--radius-sm);
-  color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  overflow-wrap: anywhere;
-  transition: background-color var(--dur-fast) var(--ease);
-}
-
-.ref-sidebar li a:hover {
-  background: var(--alt-surface);
-  text-decoration: none;
-}
-
-/* Long paths wrap; the method badge must not. */
-.ref-sidebar li a .badge {
-  flex-shrink: 0;
-}
-
 .endpoint {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -143,18 +83,6 @@
 
 .endpoint-body h3:first-child {
   margin-block-start: 0;
-}
-
-.ref-toolbar {
-  display: flex;
-  gap: var(--s-2);
-  align-items: center;
-  margin-block: var(--s-4);
-}
-
-.ref-toolbar input[type="search"] {
-  flex: 1;
-  min-inline-size: 0;
 }
 
 .spec-overview {

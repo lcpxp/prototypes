@@ -1,10 +1,16 @@
 // ------------------------------------------------------------------
-// tests/unit/platform/render.test.js - Benchmarks for the platform
-// viewer's pure builders (App.platformView in assets/js/pages/
-// platform.js). The builders are data-in / string-out, so they load
-// in a Node vm alongside ui.js (which supplies App.escape and
-// App.statusBadge). A no-op App.onAuthed stub keeps the module's
-// boot call inert.
+// tests/unit/platform/render.test.js - Benchmarks for one capability
+// as a card (App.platformCards in assets/js/pages/platform/cards.js).
+//
+// The card stopped being an always-open <article> on 2026-09-07 and
+// became a <details> that opens on demand, so these pin the split
+// between the two halves: what a reader sees before they click, and
+// what waits until they do. Getting that boundary wrong is how the
+// page became a wall - everything was in the first half.
+//
+// Builders are data-in / string-out, so they load in a Node vm
+// alongside ui.js (App.escape, App.statusBadge), blocks.js and
+// detail.js.
 // ------------------------------------------------------------------
 "use strict";
 const test = require("node:test");
@@ -12,7 +18,7 @@ const assert = require("node:assert/strict");
 const vm = require("node:vm");
 const { read } = require("../../lib/repo.js");
 
-function loadView() {
+function loadCards() {
   const sandbox = {
     location: { pathname: "/modules/platform/index.html" },
     navigator: {},
@@ -23,144 +29,162 @@ function loadView() {
   vm.createContext(sandbox);
   vm.runInContext(read("assets/js/core/ui.js"), sandbox, { filename: "ui.js" });
   vm.runInContext(read("assets/js/core/blocks.js"), sandbox, { filename: "blocks.js" });
+  vm.runInContext(read("assets/js/core/registry.js"), sandbox, { filename: "registry.js" });
+  vm.runInContext(read("assets/js/core/links.js"), sandbox, { filename: "links.js" });
   vm.runInContext(read("assets/js/core/detail.js"), sandbox, { filename: "detail.js" });
-  sandbox.App.onAuthed = function () {};
-  vm.runInContext(read("assets/js/pages/platform/platform.js"), sandbox,
-    { filename: "platform.js" });
-  return sandbox.App.platformView;
+  vm.runInContext(read("assets/js/pages/platform/cards.js"), sandbox,
+    { filename: "platform-cards.js" });
+  return sandbox.App.platformCards;
 }
 
-function sampleData() {
-  return {
-    areas: [
-      { id: "a1", title: "Dynamic flows", description: "Risk-based routing.", sort_order: 10 },
-      { id: "a2", title: "Contracting", sort_order: 20 },
-    ],
-    capabilities: [
-      { id: "c1", area_id: null, kind: "overview", title: "What it is",
-        summary: "Overview summary", maturity: "live", verified: false,
-        blocks: [], sort_order: 10 },
-      { id: "c2", area_id: null, kind: "value", title: "Value proposition",
-        summary: "Value summary", maturity: "live", verified: true,
-        blocks: [], sort_order: 20 },
-      { id: "c3", area_id: "a1", kind: "capability", title: "Risk routing",
-        summary: "Routes by risk.", maturity: "partial", verified: false,
-        blocks: [{ kind: "p", text: "Detail." }], sort_order: 10 },
-      { id: "c4", area_id: "a1", kind: "capability", title: "Pre-screening",
-        summary: "IVR pre-screen.", maturity: "planned", verified: false,
-        blocks: [], sort_order: 20 },
-      { id: "c5", area_id: null, kind: "glance", title: "Fast approvals",
-        summary: "Headline.", maturity: "live", verified: true,
-        blocks: [], sort_order: 30 },
-    ],
+function cap(over) {
+  return Object.assign({
+    id: "c1", area_id: "a1", key: "cap-one", title: "Risk routing",
+    summary: "Routes by risk.", domain: "product", kind: "capability",
+    maturity: "partial", attestation: "owner", as_of: "2026-09-01",
+    blocks: [], tags: [], sort_order: 10,
+  }, over || {});
+}
+
+test("the closed card carries what a reader chooses on, and no more", () => {
+  const C = loadCards();
+  const html = C.capabilityCard(cap(), {});
+  const summary = html.slice(html.indexOf("<summary>"), html.indexOf("</summary>"));
+
+  assert.match(summary, /Risk routing/, "the title is the thing being chosen between");
+  assert.match(summary, /partial/, "how real it is decides whether to read on");
+  assert.match(summary, /checked 2026-09-01/, "and how old the claim is");
+  assert.doesNotMatch(summary, /Routes by risk/,
+    "the summary prose belongs to the open half - putting it in the closed " +
+    "half is how 46 cards became an unscannable column");
+});
+
+test("the card is closed by default", () => {
+  const C = loadCards();
+  const html = C.capabilityCard(cap(), {});
+  assert.match(html, /^<details class="cap-card"/,
+    "a <details> without `open` starts closed, which is the whole fix");
+  assert.doesNotMatch(html.slice(0, html.indexOf(">")), /\bopen\b/);
+});
+
+test("the open half carries the prose, the blocks and the row's own columns", () => {
+  const C = loadCards();
+  const html = C.capabilityCard(cap({
+    blocks: [{ kind: "p", text: "Detail para." }],
+    tags: ["risk", "routing"],
+  }), {});
+  assert.match(html, /Routes by risk\./);
+  assert.match(html, /Detail para\./);
+  assert.match(html, /risk, routing/, "tags render through the completeness contract");
+});
+
+test("attestation is badged for anything but the owner's own word", () => {
+  const C = loadCards();
+  assert.equal(C.attestationBadge(cap({ attestation: "owner" })), "",
+    "owner-accepted is what a reader assumes of a knowledge base, so it " +
+    "needs no badge - badging it would make the exception invisible");
+  assert.match(C.attestationBadge(cap({ attestation: "derived" })), /tone-info[^>]*>derived/,
+    "a session restating the owner's own delivered work is not the owner saying so");
+  assert.match(C.attestationBadge(cap({ attestation: "unattested" })), /tone-warn[^>]*>unattested/);
+});
+
+test("an attestation nobody wrote a label for still shows, named", () => {
+  const C = loadCards();
+  // The exact failure the column replaced: a boolean could only say
+  // verified or not, so a third state had nowhere to render at all.
+  const html = C.attestationBadge(cap({ attestation: "audited" }));
+  assert.match(html, /audited/,
+    "a value added to the constraint must be visible before anyone edits this file");
+});
+
+test("freshness says plainly when a claim has never been checked", () => {
+  const C = loadCards();
+  assert.match(C.freshness(cap({ as_of: null }), false), /never checked/);
+  assert.match(C.freshness(cap(), true), /work delivered since/,
+    "a claim behind delivered work is the one a reader must not trust silently");
+  assert.match(C.freshness(cap(), false), /checked 2026-09-01/);
+});
+
+test("a capability card carries its links and its provenance", () => {
+  const C = loadCards();
+  const ctx = {
+    docById: { d1: { id: "d1", title: "Platform overview" } },
+    linkIndex: {
+      "capability:c1": [
+        { kind: "relates_to", reads: "Related to", family: "association",
+          otherType: "capability", otherId: "c2", note: "", confidence: "confirmed" },
+      ],
+    },
+    linkTitles: { "capability:c2": "Contract execution" },
   };
-}
-
-test("blockHtml renders each kind and escapes content", () => {
-  const V = loadView();
-  assert.ok(V.blockHtml({ kind: "p", text: "<i>hi</i>" }).includes("&lt;i&gt;"));
-  assert.ok(V.blockHtml({ kind: "note", tone: "warn", text: "careful" })
-    .includes("notice tone-warn"));
-  assert.ok(V.blockHtml({ kind: "code", json: { a: 1 } }).includes("&quot;a&quot;: 1"));
-  const table = V.blockHtml({ kind: "table", columns: ["Col<"], rows: [["cell>"]] });
-  assert.ok(table.includes("Col&lt;"));
-  assert.ok(table.includes("cell&gt;"));
-  assert.ok(V.blockHtml({ kind: "kv", items: [{ label: "K", value: "V" }] })
-    .includes("<th>K</th><td>V</td>"));
-  const values = V.blockHtml({
-    kind: "values", name: "State", field: "state",
-    values: ["Active", "Inactive"], source: "form dropdown",
-  });
-  assert.ok(values.includes("value-set"));
-  assert.ok(values.includes("<code>Active</code>"));
-  assert.ok(values.includes("Source: form dropdown"));
+  const html = C.capabilityCard(cap({ source_document_id: "d1" }), ctx);
+  assert.match(html, /Related to/);
+  assert.match(html, /Contract execution/);
+  assert.match(html, /Source: Platform overview/);
 });
 
-test("capabilityCard renders the maturity chip, marks unverified rows, escapes content", () => {
-  const V = loadView();
-  const unverified = V.capabilityCard({
-    title: "<b>Risk routing</b>", summary: "Routes traffic.",
-    maturity: "partial", verified: false, blocks: [],
+test("a derived link is badged apart from a proposed one", () => {
+  const C = loadCards();
+  const link = (confidence) => ({
+    linkIndex: {
+      "capability:c1": [{ kind: "affects", reads: "Affected by", family: "knowledge",
+        otherType: "work_item", otherId: "w1", note: "", confidence }],
+    },
+    linkTitles: { "work_item:w1": "Add screening provider" },
+    root: "../..",
   });
-  assert.ok(unverified.includes('class="badge partial"'));
-  assert.ok(unverified.includes('class="badge tone-warn"'));
-  assert.ok(unverified.includes("unverified"));
-  assert.ok(!unverified.includes("<b>"));
-
-  const verified = V.capabilityCard({
-    title: "Live thing", maturity: "live", verified: true, blocks: [],
-  });
-  assert.ok(verified.includes('class="badge live"'));
-  assert.ok(!verified.includes("unverified"));
-  // No id attribute when the row carries no id.
-  assert.ok(!verified.includes("id=\"capability-"));
-
-  // A row with an id gets a stable deep-link anchor.
-  const anchored = V.capabilityCard({
-    id: "c9", title: "Anchored", maturity: "live", verified: true, blocks: [],
-  });
-  assert.ok(anchored.includes('id="capability-c9"'));
+  assert.match(C.capabilityLinks(cap(), link("proposed")), /tone-warn[^>]*>proposed/);
+  assert.match(C.capabilityLinks(cap(), link("derived")), /tone-info[^>]*>derived/,
+    "a link restating a row the owner owns is not a suggestion awaiting them");
+  assert.doesNotMatch(C.capabilityLinks(cap(), link("confirmed")), /badge/,
+    "confirmed is the default reading and needs no mark");
 });
 
-test("a capability card shows everything stored against the row", () => {
-  // The completeness contract on the platform card
-  // (docs/plan/40-SURFACING.md). `tags` was stored and shown nowhere;
-  // more to the point, a column added to product_capabilities tomorrow
-  // lands here rather than nowhere.
-  const V = loadView();
-  const html = V.capabilityCard({
-    id: "c1", title: "Risk routing", maturity: "live", verified: true, blocks: [],
-    tags: ["screening", "risk"], created_at: "2026-06-01T00:00:00Z",
-    updated_at: "2026-08-01T09:00:00Z", owner_team: "Risk",
-  });
-  assert.match(html, /<dt>Tags<\/dt><dd>screening, risk<\/dd>/);
-  assert.match(html, /<dt>Recorded<\/dt><dd>2026-06-01<\/dd>/);
-  assert.match(html, /<dt>Updated<\/dt><dd>2026-08-01<\/dd>/);
-  assert.match(html, /Also recorded against this capability/);
-  assert.match(html, /<dt>Owner team<\/dt><dd>Risk<\/dd>/,
-    "a column no part of this page was written for still appears");
+test("a capability link out to another entity type renders and links", () => {
+  const C = loadCards();
+  const ctx = {
+    linkIndex: {
+      "capability:c1": [{ kind: "affects", reads: "Affected by", family: "knowledge",
+        otherType: "work_item", otherId: "w1", note: "", confidence: "confirmed" }],
+    },
+    linkTitles: { "work_item:w1": "Add screening provider" },
+    root: "../..",
+  };
+  const html = C.capabilityLinks(cap(), ctx);
+  assert.match(html, /Add screening provider/);
+  assert.match(html, /modules\/roadmap\/index\.html\?item=w1/,
+    "a link to a work item must open that item, not the roadmap index");
+  assert.match(html, /Work item/, "and name the kind of thing it reached");
 });
 
-test("a capability card adds no fact list when there is nothing to add", () => {
-  const V = loadView();
-  const html = V.capabilityCard({
-    id: "c1", title: "Risk routing", maturity: "live", verified: true,
-    blocks: [], key: "risk-routing", sort_order: 10, area_id: "a1", summary: "S",
-  });
-  assert.doesNotMatch(html, /detail-facts/,
-    "the columns the card lays out by hand must not repeat as fact rows");
-  assert.doesNotMatch(html, /risk-routing|<dd>10<\/dd>|a1/,
-    "no key, sort order or raw id reaches the card");
+test("a link whose target cannot be read still names its type", () => {
+  const C = loadCards();
+  const ctx = {
+    linkIndex: {
+      "capability:c1": [{ kind: "part_of", reads: "Part of", family: "hierarchy",
+        otherType: "stage", otherId: "s9", note: "", confidence: "confirmed" }],
+    },
+    linkTitles: {},
+  };
+  assert.match(C.capabilityCard(cap(), ctx), /Journey stage \(not readable\)/,
+    "a relationship is a fact even when its far end is out of reach - " +
+    "silence was the old behaviour and it hid the graph");
 });
 
-test("groupByArea groups capability rows by area and sorts by sort_order", () => {
-  const V = loadView();
-  const data = sampleData();
-  const grouped = V.groupByArea(data.capabilities);
-  assert.equal(grouped.a1.length, 2);
-  assert.equal(grouped.a1[0].title, "Risk routing");
-  assert.equal(grouped.a1[1].title, "Pre-screening");
-  // Overview, value and glance rows are not capability rows.
-  assert.equal(Object.keys(grouped).indexOf("_none"), -1);
+test("a card adds no fact list when there is nothing to add", () => {
+  const C = loadCards();
+  const bare = { id: "c9", key: "k", title: "Bare", domain: "product",
+    kind: "capability", maturity: "planned", attestation: "unattested", blocks: [] };
+  assert.doesNotMatch(C.capabilityCard(bare, {}), /<dl/);
 });
 
-test("pageHtml renders the overview lead, area sections and a glance section", () => {
-  const V = loadView();
-  const html = V.pageHtml(sampleData());
-  assert.match(html, /What it is/);
-  assert.match(html, /Value proposition/);
-  assert.match(html, /Dynamic flows/);
-  assert.match(html, /Risk-based routing\./);
-  assert.match(html, /Risk routing/);
-  assert.match(html, /Pre-screening/);
-  assert.match(html, /At a glance/);
-  assert.match(html, /Fast approvals/);
-  // An area with no capability rows is skipped entirely.
-  assert.doesNotMatch(html, /Contracting/);
-});
-
-test("pageHtml shows a table-naming empty state when there is no content yet", () => {
-  const V = loadView();
-  const html = V.pageHtml({ areas: [], capabilities: [] });
-  assert.match(html, /product_capabilities/);
+test("everything rendered is escaped", () => {
+  const C = loadCards();
+  const html = C.capabilityCard(cap({
+    title: "<script>bad()</script>",
+    summary: "<img src=x>",
+  }), {});
+  assert.doesNotMatch(html, /<script>bad/);
+  assert.doesNotMatch(html, /<img src=x>/);
+  assert.match(html, /&lt;script&gt;/);
 });

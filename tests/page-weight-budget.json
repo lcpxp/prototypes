@@ -27,8 +27,8 @@
       "maxBytes": 162000
     },
     "modules/platform/index.html": {
-      "maxRequests": 24,
-      "maxBytes": 202000
+      "maxRequests": 26,
+      "maxBytes": 212000
     },
     "modules/portal-review/index.html": {
       "maxRequests": 24,
@@ -98,5 +98,6 @@
       "maxRequests": 20,
       "maxBytes": 165000
     }
-  }
+  },
+  "note-platform": "modules/platform/index.html was raised from 202000/24 to 212000/26 on 2026-09-07. The page went from one flat column to three navigable views with a sidebar index, a filter toolbar and collapsed cards, and its single module split into four (shell, views, cards, knowledge) because one file carrying all of it would have passed the 600-line hard cap in tests/size-budget.json. The bytes bought the fix for the page's actual problem - 46 capabilities rendered fully open in one scroll - so the trade is deliberate. Two of the requests are the new modules; the sidebar shell moved to components.css rather than adding a fifth."
 }

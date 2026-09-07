@@ -14,9 +14,15 @@
     "ideas.no_value_note": 0,
     "links.proposed": 12,
     "embeddings.stale": 0,
-    "items.no_benefit": 85,
-    "items.benefit_unconfirmed": 66,
-    "items.no_association": 47
+    "items.no_benefit": 79,
+    "items.benefit_unconfirmed": 68,
+    "items.no_association": 53,
+    "areas.no_capability": 8,
+    "grounding.unattested": 4,
+    "grounding.no_evidence": 0,
+    "grounding.stale": 38,
+    "grounding.delivered_without_affects": 35,
+    "endpoints.ungrounded": 572
   },
   "notes": {
     "terms.no_definition": "At 0 and must stay there. A term with no definition is a word in a list.",
@@ -32,8 +38,14 @@
     "ideas.no_value_note": "At 0, down from 14 of 14. Every idea says what it would PROVE, which is the field that decides whether to build it.",
     "links.proposed": "12 of 159 live links still proposed, up one on 2026-09-01 and down from 110 of 119 originally. The new one pairs perpetual merchant monitoring with the marketplace actions row - two ends of one capability, deliberately owned by different departments - and is proposed because an assistant wrote it, which is the honest state until the owner confirms it. Proposed is a queue rather than a defect, but a queue nobody watches grows.",
     "embeddings.stale": "At 0 and it must stay there. A vector computed from text that has since changed still answers searches, with the wrong meaning and no sign of it - the one failure here that actively misleads rather than merely missing. 33 were stale on 2026-08-30 and were cleared with select * from roadmap_embed_refresh(); it is idempotent, so running it when nothing is stale costs one query.",
-    "items.no_benefit": "85 of 151 open workstreams and items. Every workstream and every Now/Next item has one; what is left is Later and Someday. Deliverables are excluded from the denominator on purpose - they inherit their parent's benefit and writing one per deliverable would be volume, not coverage.",
-    "items.benefit_unconfirmed": "66 of 66. Every benefit in the database was drafted by an assistant and none has been confirmed by the owner. This figure is the one that stops coverage being read as confidence, and it is the single most useful number to lower: a checked benefit and an unchecked one are indistinguishable in a room, which is exactly why benefit_status exists.",
-    "items.no_association": "47 of 151, down from 138 before the Sept 2026 sweep. No workstream is without one. The rest are genuinely single-department rows, so this will not reach zero and should not be forced there - a fabricated association is worse than an absent one."
+    "items.no_benefit": "79 of 159 open workstreams and items, down from 85. Every workstream and every Now/Next item has one; what is left is Later and Someday. Deliverables are excluded from the denominator on purpose - they inherit their parent's benefit and writing one per deliverable would be volume, not coverage.",
+    "items.benefit_unconfirmed": "68 of 80, RAISED from 66 of 66 on 2026-09-07. The count rose because two more benefits were drafted since the ceiling was set, not because any were unconfirmed - the denominator rose with it, so the proportion fell from 100% to 85%. Still the single most useful number to lower: a checked benefit and an unchecked one are indistinguishable in a room, which is exactly why benefit_status exists.",
+    "items.no_association": "53 of 159, RAISED from 47 on 2026-09-07 as new rows arrived without one. Down from 138 before the Sept 2026 sweep. No workstream is without one; the rest are genuinely single-department rows, so this will not reach zero and should not be forced there - a fabricated association is worse than an absent one.",
+    "areas.no_capability": "8 of 21 product areas carry work items and no capability at all: Screening and Workflow Automation (23 items, ~36k characters of item detail), LaunchPad Core Service (49), Partner Enablement and Commissioning (21), Insights and Analytics (20), Portal Frontend Changes (20), Finance and Fulfilment Automation (11), Operations tooling & alerting (11), Existing Business Support (8). Roughly 96,000 characters of description of what the platform does, held only as roadmap prose. This is the figure the grounding wave drives to zero.",
+    "grounding.unattested": "4 of 46. Nobody has stood behind these either way. Lower it by attesting them - the owner accepting a row, or a session deriving it from rows the owner owns and linking the evidence.",
+    "grounding.no_evidence": "At 0 and must stay there, and it is the promise the whole derived state rests on. A row marked derived that names no source is an assistant's assertion wearing the word derived. There are no derived rows yet, so this starts honest; the grounding wave is what tests it.",
+    "grounding.stale": "38 of 46 have not been checked since work was delivered in their area. High on purpose: as_of was seeded from created_at, so nothing claims a re-check nobody performed. This is the self-maintaining figure - shipping work marks the rows it may have invalidated, with nobody having to remember.",
+    "grounding.delivered_without_affects": "35 of 35 delivered items in areas that HAVE capabilities carry no affects link. The kind exists for exactly this and had zero rows on 2026-09-07, though docs/ROADMAP-REVIEW.md has required the two-way sync that produces it since August. A protocol nothing measures is a preference.",
+    "endpoints.ungrounded": "572 of 572. No endpoint was reachable from any capability because link_entity_types had no 'endpoint' key until 2026-09-07 - a fix docs/plan/30-KNOWLEDGE.md specified and nobody applied. Will not reach zero and should not be forced there: a capability should claim the endpoints that serve it, not every endpoint that exists."
   }
 }

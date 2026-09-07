@@ -109,11 +109,14 @@
     "pciIxopay": [
       "assets/js/pages/pci/ixopay.js"
     ],
+    "platformCards": [
+      "assets/js/pages/platform/cards.js"
+    ],
     "platformKnowledge": [
       "assets/js/pages/platform/knowledge.js"
     ],
-    "platformView": [
-      "assets/js/pages/platform/platform.js"
+    "platformViews": [
+      "assets/js/pages/platform/views.js"
     ],
     "portalReview": [
       "assets/js/pages/portal-review/model.js"
@@ -366,6 +369,8 @@
         "assets/js/core/detail.js",
         "assets/js/core/console-tools.js",
         "assets/js/pages/platform/knowledge.js",
+        "assets/js/pages/platform/cards.js",
+        "assets/js/pages/platform/views.js",
         "assets/js/pages/platform/platform.js"
       ]
     },

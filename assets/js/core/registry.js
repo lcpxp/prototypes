@@ -180,6 +180,18 @@
       // row on the ideas board.
       prototype:  { table: "prototypes",           titleColumn: "title", label: "Prototype",       module: "prototypes" },
       prototype_idea: { table: "future_prototypes", titleColumn: "name", label: "Prototype idea",  module: "prototypes", anchor: "idea", page: "ideas.html" },
+      // The reference joined the graph on 2026-09-07. Until then 572
+      // endpoints across 3 specs - the largest body of structured
+      // knowledge in the system - could not be an end of any link, so
+      // no capability could say what serves it and no journey stage
+      // could say which calls it is made of.
+      //
+      // An endpoint's address needs its spec as well as its own id
+      // (reference/index.html?spec=...#ep-...), which a link row does
+      // not carry - hence hrefColumns: App.links fetches them beside
+      // the title and hands them to App.itemHref.
+      endpoint:   { table: "api_endpoints",        titleColumn: "path",  label: "API endpoint",    module: "reference", hrefColumns: ["spec_id"] },
+      spec:       { table: "api_specs",            titleColumn: "title", label: "API spec",        module: "reference", selfSpec: true },
     },
     // Spec families group api_specs rows into distinct reference
     // "sites" inside the reference module. Order here is display
@@ -250,6 +262,12 @@
           ? (App.root || ".") + "/" + String(row.path).replace(/^\/+/, "")
           : base;
       case "reference":
+        // A spec addresses itself; an endpoint needs its spec AND its
+        // own id, and without the spec the viewer has nothing to load
+        // the endpoint into.
+        if (row && row.selfSpec && id) {
+          return base + "index.html?spec=" + encodeURIComponent(id);
+        }
         return row && row.spec_id
           ? base + "index.html?spec=" + encodeURIComponent(row.spec_id) +
             (id ? "#ep-" + id : "")
@@ -283,7 +301,11 @@
   // page yet, which callers render as a label rather than a dead link -
   // silence would hide the relationship, and a link to nowhere would
   // lie about it.
-  App.linkHref = function (type, id, root) {
+  // `meta` carries whatever hrefColumns App.links fetched for this row
+  // (an endpoint's spec_id, say). Optional: without it an entity that
+  // needs extra columns falls back to its module index rather than
+  // building a link that would land nowhere.
+  App.linkHref = function (type, id, root, meta) {
     var entity = (App.registry.linkEntities || {})[type];
     if (!entity || !entity.module || !id) return "";
     var mod = App.registry.modules.find(function (m) {
@@ -302,7 +324,7 @@
     var href = entity.anchor
       ? App.moduleHref(mod) + (entity.page || "index.html") +
         "#" + entity.anchor + "-" + id
-      : App.itemHref(mod, { id: id });
+      : App.itemHref(mod, Object.assign({ id: id, selfSpec: entity.selfSpec }, meta || {}));
     App.root = previous;
     return href;
   };

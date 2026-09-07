@@ -81,6 +81,13 @@
   // with none is not queried at all - the roadmap knows every work
   // item's title already, so without this it re-fetched forty rows it
   // was holding to look up names it had.
+  // Whatever an entity needs to build a deep link beyond its id, keyed
+  // "<type>:<id>". An endpoint lives inside a spec and its address
+  // needs both, and a knowledge_links row carries only the id - so the
+  // columns come back with the titles rather than costing a query of
+  // their own. Filled by loadTitles; read by resolve.
+  App.links.meta = {};
+
   App.links.loadTitles = function (index, known) {
     var byType = App.links.targets(index);
     if (known) {
@@ -95,8 +102,9 @@
     });
     return Promise.all(types.map(function (type) {
       var entity = App.registry.linkEntities[type];
+      var columns = ["id", entity.titleColumn].concat(entity.hrefColumns || []);
       return App.db.from(entity.table)
-        .select("id, " + entity.titleColumn)
+        .select(columns.join(", "))
         .in("id", byType[type])
         .then(function (result) {
           return { type: type, entity: entity, result: result };
@@ -106,6 +114,11 @@
       loaded.forEach(function (item) {
         if (item.result.error || !item.result.data) return;
         item.result.data.forEach(function (row) {
+          (item.entity.hrefColumns || []).forEach(function (col) {
+            var bag = App.links.meta[item.type + ":" + row.id] =
+              App.links.meta[item.type + ":" + row.id] || {};
+            bag[col] = row[col];
+          });
           var value = row[item.entity.titleColumn];
           if (value == null) return;
           value = String(value);
@@ -137,7 +150,9 @@
       typeLabel: entity.label || link.otherType,
       title: title || (entity.label ? entity.label + " (not readable)" : ""),
       resolved: Boolean(title),
-      href: App.linkHref ? App.linkHref(link.otherType, link.otherId, root) : "",
+      href: App.linkHref
+        ? App.linkHref(link.otherType, link.otherId, root, App.links.meta[key])
+        : "",
     };
   };
 })();

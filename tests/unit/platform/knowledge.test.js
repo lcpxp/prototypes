@@ -36,8 +36,10 @@ function load() {
   sandbox.App.onAuthed = function () {};
   vm.runInContext(read("assets/js/pages/platform/knowledge.js"), sandbox,
     { filename: "platform-knowledge.js" });
-  vm.runInContext(read("assets/js/pages/platform/platform.js"), sandbox,
-    { filename: "platform.js" });
+  vm.runInContext(read("assets/js/pages/platform/cards.js"), sandbox,
+    { filename: "platform-cards.js" });
+  vm.runInContext(read("assets/js/pages/platform/views.js"), sandbox,
+    { filename: "platform-views.js" });
   return sandbox.App;
 }
 
@@ -49,15 +51,17 @@ function sample() {
       { id: "a3", title: "Reporting", sort_order: 30 },
     ],
     capabilities: [
-      { id: "c1", area_id: "a1", kind: "capability", title: "Application intake",
-        summary: "Captures a lead", maturity: "live", verified: true,
+      { id: "c1", area_id: "a1", domain: "product", kind: "capability", title: "Application intake",
+        summary: "Captures a lead", maturity: "live", attestation: "owner",
+        as_of: "2026-09-01",
         blocks: [{ kind: "p", text: "Detail" }], sort_order: 10,
         source_document_id: "d1" },
-      { id: "c2", area_id: "a2", kind: "capability", title: "Rate cards",
-        maturity: "partial", verified: true, blocks: [], sort_order: 20 },
-      { id: "c3", kind: "overview", title: "What LP is",
-        maturity: "live", verified: true, blocks: [], summary: "The hub",
-        sort_order: 1, source_document_id: "d1" },
+      { id: "c2", area_id: "a2", domain: "product", kind: "capability", title: "Rate cards",
+        maturity: "partial", attestation: "owner", as_of: "2026-09-01",
+        blocks: [], sort_order: 20 },
+      { id: "c3", domain: "product", kind: "overview", title: "What LP is",
+        maturity: "live", attestation: "owner", as_of: "2026-09-01", blocks: [],
+        summary: "The hub", sort_order: 1, source_document_id: "d1" },
     ],
     stages: [
       { id: "s2", stage_no: 2, key: "related-entities", title: "Related entities",
@@ -90,6 +94,29 @@ test("gaps names every hole an owner could fill", () => {
     "no summary and no blocks means the row exists but says nothing");
   assert.deepEqual(g.unverifiedTerms.map((t) => t.term), ["Decisioned"]);
   assert.deepEqual(g.unsourcedCapabilities.map((c) => c.title), ["Rate cards"]);
+  assert.deepEqual(g.unattestedCapabilities.map((c) => c.title), [],
+    "every row in the fixture is owner-accepted");
+  assert.deepEqual(g.staleCapabilities.map((c) => c.title), [],
+    "nothing has been delivered in these areas since the claims were checked");
+});
+
+test("a claim goes stale on its own when work lands in its area", () => {
+  const App = load();
+  const data = sample();
+  // The self-maintaining part: nobody edits the capability, nobody
+  // remembers to re-check it. Delivering work is what marks it.
+  data.deliveredByArea = { a1: "2026-09-05" };
+  const stale = App.platformKnowledge.gaps(data).staleCapabilities.map((c) => c.title);
+  assert.deepEqual(stale, ["Application intake"],
+    "the row in the area that shipped, and only that row");
+});
+
+test("a claim that was never checked is stale whatever has shipped", () => {
+  const App = load();
+  const cap = { id: "x", area_id: "a1", as_of: null };
+  assert.equal(App.platformKnowledge.isStale(cap, {}), true,
+    "never checked is not the same as checked and still current, and a " +
+    "boolean that conflated them is what this column replaced");
 });
 
 test("coverageHtml states the counts and lists the gaps", () => {
@@ -108,6 +135,7 @@ test("coverageHtml says so plainly when there is nothing missing", () => {
   clean.areas = [clean.areas[0]];
   clean.capabilities = [clean.capabilities[0]];
   clean.terms = [clean.terms[0]];
+  clean.deliveredByArea = {};
   const html = App.platformKnowledge.coverageHtml(clean);
   assert.match(html, /No gaps/);
   assert.doesNotMatch(html, /pk-gaps/);
@@ -154,95 +182,5 @@ test("empty stores render nothing rather than an empty heading", () => {
   const bare = { areas: [], capabilities: [] };
   for (const fn of ["lifecycleHtml", "glossaryHtml", "factsHtml", "sourcesHtml"]) {
     assert.equal(K[fn](bare), "", `${fn} must return "" when its store is empty`);
-  }
-});
-
-test("every store reaches the page, and an unplaced kind still renders", () => {
-  const App = load();
-  const data = sample();
-  // A kind the database allows but this page has no layout for. Before
-  // the kind registry, three such kinds rendered nowhere at all.
-  data.capabilities.push({ id: "c9", kind: "future_kind", title: "Not laid out yet",
-    maturity: "live", verified: true, blocks: [], sort_order: 99 });
-  const html = App.platformView.pageHtml(data, { docById: {}, linksByCapability: {} });
-  for (const [label, needle] of [
-    ["lead", "What LP is"], ["coverage", "pk-stats"],
-    ["lifecycle", "IVR screening"], ["capabilities", "Application intake"],
-    ["glossary", "Average Transaction Value"], ["facts", "Screening runs before"],
-    ["sources", "Capability overview"], ["unplaced kind", "Not laid out yet"],
-  ]) {
-    assert.ok(html.includes(needle), `${label} must reach the page (missing: ${needle})`);
-  }
-});
-
-test("a capability card carries its links and its provenance", () => {
-  const App = load();
-  const data = sample();
-  const ctx = {
-    docById: { d1: { id: "d1", title: "Capability overview" } },
-    linkIndex: App.links.index([
-      { from_type: "work_item", from_id: "w1", to_type: "capability", to_id: "c1",
-        kind: "affects", note: "", confidence: "confirmed" },
-    ]),
-    linkTitles: { "work_item:w1": "Rate cards" },
-  };
-  const html = App.platformView.capabilityCard(data.capabilities[0], ctx);
-  assert.match(html, /cap-link-kind">Affected by<\/span>/,
-    "a capability must show what the roadmap is doing to it");
-  assert.match(html, /Rate cards/);
-  assert.match(html, /cap-source">Source: Capability overview/);
-});
-
-test("a capability link out to another entity type renders and links", () => {
-  // The bug this replaced: platform.js resolved capability-to-capability
-  // only, so a capability's link to the roadmap item that changes it -
-  // the single most useful thing on the card - showed nothing at all.
-  const App = load();
-  const data = sample();
-  const ctx = {
-    linkIndex: App.links.index([
-      { from_type: "capability", from_id: "c1", to_type: "term", to_id: "t1",
-        kind: "about", note: "why they differ", confidence: "proposed" },
-      { from_type: "capability", from_id: "c1", to_type: "work_item", to_id: "w1",
-        kind: "relates_to", note: "", confidence: "confirmed" },
-    ]),
-    linkTitles: { "term:t1": "Rolling reserve", "work_item:w1": "Rate cards" },
-    root: "../..",
-  };
-  const html = App.platformView.capabilityCard(data.capabilities[0], ctx);
-  assert.match(html, /Rolling reserve/, "a term target must render");
-  assert.match(html, /cap-link-type">Glossary term/,
-    "a non-capability target says what kind of thing it is");
-  assert.match(html, /href="[^"]*modules\/roadmap\/index\.html\?item=w1"/,
-    "a target with a page is a real link");
-});
-
-test("a link whose target cannot be read still names its type", () => {
-  const App = load();
-  const data = sample();
-  const ctx = {
-    linkIndex: App.links.index([
-      { from_type: "capability", from_id: "c1", to_type: "stage", to_id: "s9",
-        kind: "part_of", note: "", confidence: "confirmed" },
-    ]),
-    linkTitles: {},
-  };
-  const html = App.platformView.capabilityCard(data.capabilities[0], ctx);
-  assert.match(html, /Journey stage \(not readable\)/,
-    "a relationship is a fact even when its far end is out of reach - " +
-    "silence was the old behaviour and it hid the graph");
-});
-
-test("all seven stored kinds have a place on the page", () => {
-  // The constraint in supabase/schema/40_platform.sql is the authority.
-  const schema = read("supabase/schema/40_platform.sql");
-  const allowed = (schema.match(/check \(kind in \(([^)]+)\)\)/) || [])[1] || "";
-  const kinds = [...allowed.matchAll(/'(\w+)'/g)].map((m) => m[1]);
-  const page = read("assets/js/pages/platform/platform.js");
-  const registry = (page.match(/var KINDS = \[([\s\S]*?)\];/) || [])[1] || "";
-  for (const kind of kinds) {
-    assert.match(registry, new RegExp(`key: "${kind}"`),
-      `product_capabilities allows kind '${kind}' but platform.js places it nowhere. ` +
-      "Add it to KINDS, or it renders only under the unplaced-kind backstop.");
   }
 });

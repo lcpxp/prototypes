@@ -40,6 +40,11 @@
     var areas = (data.areas || []);
     var withCaps = {};
     caps.forEach(function (c) { if (c.area_id) withCaps[c.area_id] = true; });
+    // Delivered work per area, so a claim can be told it has fallen
+    // behind. This is the figure that makes the page notice its own
+    // decay rather than waiting for a reader to: ship something in an
+    // area and every claim about that area goes stale on its own.
+    var deliveredIn = data.deliveredByArea || {};
     return {
       areasWithoutCapability: areas.filter(function (a) { return !withCaps[a.id]; }),
       hollowCapabilities: caps.filter(function (c) {
@@ -50,7 +55,23 @@
         return !c.area_id && c.kind === "capability";
       }),
       unsourcedCapabilities: caps.filter(function (c) { return !c.source_document_id; }),
+      // Nobody has stood behind these either way - not the owner, and
+      // not a session restating rows the owner owns.
+      unattestedCapabilities: caps.filter(function (c) {
+        return c.attestation === "unattested";
+      }),
+      staleCapabilities: caps.filter(function (c) { return isStale(c, deliveredIn); }),
     };
+  }
+
+  // A claim is stale when it has never been checked, or when work has
+  // been delivered in its area since it last was. Exported so the card
+  // can badge the same rows the coverage panel counts - one rule, two
+  // readers.
+  function isStale(cap, deliveredByArea) {
+    if (!cap.as_of) return true;
+    var newest = (deliveredByArea || {})[cap.area_id];
+    return Boolean(newest && String(newest).slice(0, 10) > String(cap.as_of).slice(0, 10));
   }
 
   function stat(n, label) {
@@ -60,8 +81,15 @@
 
   function coverageHtml(data) {
     var g = gaps(data);
+    var caps = data.capabilities || [];
+    var owned = caps.filter(function (c) { return c.attestation === "owner"; }).length;
     var counts = '<div class="pk-stats">' +
-      stat((data.capabilities || []).length, "capabilities") +
+      stat(caps.length, "capabilities") +
+      // Coverage and confidence are different questions, and a single
+      // total answers only the first. Reported beside it, never
+      // instead of it - the same rule the roadmap applies to a drafted
+      // business benefit.
+      stat(owned, "owner-attested") +
       stat((data.areas || []).length, "product areas") +
       stat((data.stages || []).length, "lifecycle stages") +
       stat((data.terms || []).length, "glossary terms") +
@@ -95,6 +123,18 @@
       open.push([g.unsourcedCapabilities.length +
         " capabilities cite no source document",
         g.unsourcedCapabilities.map(function (c) { return c.title; }).join(", ")]);
+    }
+    if (g.unattestedCapabilities.length) {
+      open.push([g.unattestedCapabilities.length +
+        " capabilities are unattested - neither owner-accepted nor derived " +
+        "from rows the owner owns",
+        g.unattestedCapabilities.map(function (c) { return c.title; }).join(", ")]);
+    }
+    if (g.staleCapabilities.length) {
+      open.push([g.staleCapabilities.length +
+        " capabilities have not been checked since work was delivered in " +
+        "their area",
+        g.staleCapabilities.map(function (c) { return c.title; }).join(", ")]);
     }
 
     var body = counts;
@@ -165,9 +205,16 @@
     var body = Object.keys(grouped).sort().map(function (area) {
       return '<div class="pk-fact-group"><h3>' + esc(area) + "</h3><ul>" +
         grouped[area].map(function (f) {
-          return "<li>" + esc(f.body) +
+          // Anchored by row id. A fact nothing can address is a fact
+          // nothing can cite: 51 of them rendered as anonymous bullets
+          // with no destination until 2026-09-07, so no capability
+          // could point at the evidence behind it.
+          return '<li id="note-' + esc(f.id) + '">' + esc(f.body) +
             (f.status && f.status !== "active"
               ? ' <span class="badge tone-warn">' + esc(f.status) + "</span>" : "") +
+            (f.created_at
+              ? ' <span class="pk-date">' + esc(String(f.created_at).slice(0, 10)) +
+                "</span>" : "") +
             "</li>";
         }).join("") + "</ul></div>";
     }).join("");
@@ -192,6 +239,7 @@
 
   App.platformKnowledge = {
     gaps: gaps,
+    isStale: isStale,
     coverageHtml: coverageHtml,
     lifecycleHtml: lifecycleHtml,
     glossaryHtml: glossaryHtml,
