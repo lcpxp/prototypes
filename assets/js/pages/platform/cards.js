@@ -77,10 +77,29 @@
   // on its own card - that is the whole point of the link graph, and
   // reading it off the page is how "how does this feature work now"
   // stops being a question only the database can answer.
+  // Beyond this many links of one entity type, the rest collapse into a
+  // count. A capability served by 61 endpoints is a useful fact; 61
+  // chips is the wall this page was rebuilt to remove.
+  var LINK_CHIP_LIMIT = 6;
+
   function capabilityLinks(cap, ctx) {
     var index = (ctx && ctx.linkIndex) || {};
-    var links = index["capability:" + cap.id] || [];
-    if (!links.length) return "";
+    var all = index["capability:" + cap.id] || [];
+    if (!all.length) return "";
+    // Grouped by what the link reaches, so the far ends of one kind read
+    // together and a long tail can be summarised as itself rather than
+    // as an arbitrary slice of everything.
+    var byType = {};
+    all.forEach(function (l) { (byType[l.otherType] = byType[l.otherType] || []).push(l); });
+    var overflow = [];
+    var links = [];
+    Object.keys(byType).sort().forEach(function (type) {
+      var group = byType[type];
+      links = links.concat(group.slice(0, LINK_CHIP_LIMIT));
+      if (group.length > LINK_CHIP_LIMIT) {
+        overflow.push({ type: type, n: group.length - LINK_CHIP_LIMIT });
+      }
+    });
     var titles = (ctx && ctx.linkTitles) || {};
     var parts = links.map(function (l) {
       var t = App.links.resolve(l, titles, ctx && ctx.root);
@@ -100,6 +119,12 @@
       return '<span class="cap-link"><span class="cap-link-kind">' +
         esc(t.reads) + "</span> " + body + mark + "</span>";
     }).filter(Boolean);
+    overflow.forEach(function (o) {
+      var entity = (App.registry.linkEntities || {})[o.type] || {};
+      var label = entity.label || o.type;
+      parts.push('<span class="cap-link cap-link-more">' + esc(String(o.n)) +
+        " more " + esc(label.toLowerCase()) + (o.n === 1 ? "" : "s") + "</span>");
+    });
     return parts.length ? '<p class="cap-links">' + parts.join("") + "</p>" : "";
   }
 

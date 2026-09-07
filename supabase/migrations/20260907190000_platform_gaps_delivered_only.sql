@@ -1,0 +1,18 @@
+-- ------------------------------------------------------------------
+-- Applied 2026-09-07. Narrows platform_context_gaps().areas_without_capability
+-- to areas where work has been DELIVERED and nothing describes it,
+-- rather than any area carrying work at all.
+--
+-- Written after the grounding pass reached two areas - Operations
+-- tooling & alerting and Insights and Analytics - with open items and
+-- nothing shipped, and correctly wrote no capability for either. Under
+-- the old rule both counted as gaps, which would push the next session
+-- to close them by writing capability rows out of INTENT. Recording
+-- what is planned as though it exists is the one failure this store
+-- must not have, and the roadmap already holds what is planned.
+--
+-- Body reproduced in full in supabase/schema/41_platform_context.sql,
+-- which is canonical. Applied migrations are immutable.
+-- ------------------------------------------------------------------
+
+-- See supabase/schema/41_platform_context.sql for the applied body.

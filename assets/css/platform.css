@@ -264,3 +264,10 @@
   font-size: var(--text-xs);
   margin: var(--s-3) 0 0;
 }
+
+/* A long tail of one link type, summarised as a count. Reads as a fact
+   about the card rather than as another destination. */
+.cap-link-more {
+  color: var(--faint);
+  font-style: italic;
+}

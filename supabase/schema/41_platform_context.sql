@@ -182,14 +182,21 @@ stable
 set search_path = public
 as $$
 select jsonb_build_object(
-  -- Areas carrying work that nothing explains. The strongest signal
-  -- there is: work is being scheduled against something nobody wrote
-  -- down (docs/COPILOT.md, "Measure the gap").
+  -- Areas where work has SHIPPED and nothing describes what it did.
+  -- The strongest signal there is (docs/COPILOT.md, "Measure the gap").
+  --
+  -- Delivered work, not open work. An area with twenty open items and
+  -- nothing delivered has no capability to describe, and counting it as
+  -- a gap would push the next session to write capability rows out of
+  -- intent - recording what is planned as though it exists, which is
+  -- the one failure this whole store must not have. The roadmap already
+  -- holds what is planned. Narrowed 2026-09-07, when the grounding pass
+  -- reached two such areas and correctly wrote nothing for either.
   'areas_without_capability', coalesce((
     select jsonb_agg(jsonb_build_object(
              'key', a.key, 'title', a.title,
              'open_items', o.open_items, 'delivered_items', o.done_items)
-           order by o.open_items desc)
+           order by o.done_items desc)
       from public.work_areas a
       join lateral (
         select count(*) filter (where i.status not in ('done', 'dropped')) as open_items,
@@ -197,7 +204,7 @@ select jsonb_build_object(
           from public.work_items i where i.area_id = a.id) o on true
      where a.scope = 'product'
        and not exists (select 1 from public.product_capabilities c where c.area_id = a.id)
-       and (o.open_items > 0 or o.done_items > 0)), '[]'::jsonb),
+       and o.done_items > 0), '[]'::jsonb),
   -- A row nobody has stood behind: not the owner, and not a derivation
   -- from rows the owner owns.
   'unattested', coalesce((
