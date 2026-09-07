@@ -24,9 +24,11 @@ Read `roadmap_current` and open `work_notes` (`status='active'`). Show,
 briefly: the Now items, the Next items, what changed since the last review
 (max `updated_at`), and the counts.
 
-Load the platform context for the areas in play - `product_capabilities`,
-`domain_terms`, `journey_stages`, `integrations` and facts - per
-docs/PLATFORM.md.
+Load the platform context for the areas in play with
+`select platform_context('<area-key>')` - one call per area, returning
+capabilities, terms, stages, facts, the endpoints that serve them and the
+delivered and planned work together. `select platform_context_gaps()` gives
+the same view of what is missing. Per docs/PLATFORM.md.
 
 Add two standing lines from the search surface (both queries in
 docs/ROADMAP-INTAKE.md, "The standing sweeps"): any **hollow rows** in those
@@ -71,6 +73,17 @@ docs/PLATFORM.md.
 - **Roadmap -> context.** When work moves - promoted, delivered, dropped,
   rescoped - ask what it changes about the platform: a capability now live or
   partial, a new integration, a term or stage that shifted.
+- **Roadmap -> context, mechanically.** Every item that reached `done` since
+  the last review gets an `affects` link to the capability it changed, and
+  that capability's `as_of` moves to today. This half was prose-only until
+  2026-09-07 and was simply not happening: the `affects` kind had zero rows
+  against 86 delivered items, on a protocol that had required this since
+  August. `select platform_context_gaps()` now names the items still
+  missing one, and `grounding.delivered_without_affects` fails the build if
+  the figure rises. A protocol nothing measures is a preference.
+  Where a delivered item changed something no capability describes, write
+  the capability from it under the derivation rules in docs/PLATFORM.md -
+  `attestation` is `derived`, never `owner`, unless you are the owner.
 - **The golden rule: every assertion is owner-validated**, both directions,
   as a clickable choice rather than a wall of text. Nothing lands on the AI's
   own authority. Record what was confirmed: a `work_notes` decision, plus

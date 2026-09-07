@@ -10,6 +10,28 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Platform: the page is now three navigable views - what it does, how it is
+  built, and reference - instead of one column. Capability cards are closed
+  by default and carry title, maturity, who attests them and when they were
+  last checked; the detail opens on a click. There is a sidebar index of
+  areas, a filter by text, maturity and attestation, and expand and collapse
+  all. The 27 rows describing how the Partner Portal is built have their own
+  view rather than sitting at the bottom of a page about what the product
+  does.
+- Platform: 18 new capabilities across seven areas that previously had none,
+  each derived from delivered work, each naming every source item behind it,
+  and each marked "derived" rather than owner-attested so a claim the owner
+  has checked stays distinguishable from one worked out for them.
+- Platform: capabilities now say which API endpoints serve them, and which
+  delivered work changed them. 439 endpoint links and 18 "affects" links
+  where there were none, so "how does this work now" is answerable by
+  following links rather than by asking.
+- Platform: a card shows when its claim was last checked, and says so
+  plainly when work has been delivered in its area since. The page notices
+  its own staleness rather than waiting for a reader to.
+- Roadmap: quick capture now checks what the platform already does before
+  searching for duplicate work, so a request for something already built is
+  recognised as such instead of becoming a new row.
 - Sign-in: the login page is now a single minimal LPIO card - "Please sign
   in" and the credential fields only. The brand headline, blurb, feature
   points and marketing copy are gone, and every page title and the nav

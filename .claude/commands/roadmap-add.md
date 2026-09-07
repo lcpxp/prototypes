@@ -13,28 +13,42 @@ it is the only place those thresholds are stated. Read
 `docs/ROADMAP-PLAYBOOK.md` for the field reference and the quick-capture
 recipe. Then:
 
-1. Look up what already exists. ALWAYS, whether the request is phrased as an
+1. Ground it first: `select platform_context('<area-key>')`, or
+   `platform_context(null)` if the area is not obvious. It returns what the
+   platform ALREADY DOES there beside what is already planned, in one call.
+   `roadmap_find` searches work items only, so a capability recorded as
+   live is invisible to every step below this one - which is how a request
+   for something that already exists becomes a roadmap row. It also gives
+   you the area's own vocabulary to search with, rather than the request's.
+   Stage 0 in `docs/ROADMAP-INTAKE.md`.
+2. Look up what already exists. ALWAYS, whether the request is phrased as an
    add or an update. Search with `roadmap_find`, not `roadmap_current`: the
    board view has no summary, details or links, so it can only match
    titles, and duplicate work is usually titled differently. Run it on the
    headline and on the full request, take the better score per candidate, and
    include `done` and `dropped` rows.
-2. Band the best candidate before deciding whether to ask, using the table in
+3. Band the best candidate before deciding whether to ask, using the table in
    `docs/ROADMAP-INTAKE.md`, "Stage 3 - Band". Do not work from remembered
    thresholds - read them. A low-band match must never generate a question. A
    hollow candidate in the medium band is a strong `ENRICH` signal.
-3. Lead with ONE recommended outcome and its reasoning, then the alternatives
+4. Lead with ONE recommended outcome and its reasoning, then the alternatives
    (`NEW`, `ENRICH`, `MERGE`, `PROMOTE`, `REVIVE`, `ASSOCIATE`, `SPLIT`,
    `UMBRELLA`, `UNRELATED`) - never a bare list. Where the request is better
    described than the row it matches, the description moves onto that row.
-4. Infer `category_id`, `parent_id`, `department`, `level` and `horizon` from
+5. Infer `category_id`, `parent_id`, `department`, `level` and `horizon` from
    the wording; default `horizon='someday'` unless a scheduling word is
    present. Ask at most ONE clickable `AskUserQuestion` beyond what the band
    already calls for.
-5. Apply via the Supabase MCP, then report ONE line: what changed, where it
+6. Apply via the Supabase MCP, then report ONE line: what changed, where it
    now sits (theme / workstream / band), and how to reverse it. For any
    outcome other than `NEW`, also write a `work_notes` row of `kind='decision'`
    recording why - so the next session inherits the judgement.
+
+If the outcome sets an item to `done`, close the loop the other way in the
+same pass: write an `affects` link from the item to the capability it
+changed, at `confidence='derived'`, and move that capability's `as_of` to
+today. Without it the platform silently falls behind what has shipped, and
+`grounding.delivered_without_affects` is the figure that notices.
 
 Resolve theme and workstream ids by key/title in the SQL (see the playbook's
 operations), so no UUIDs are needed. Keep real merchant, partner and staff

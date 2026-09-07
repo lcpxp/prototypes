@@ -189,9 +189,13 @@ Confirmed material lands by kind, following the existing protocols:
 | Substance for an existing roadmap row | `work_items.summary` / `details`, via the ENRICH path in docs/ROADMAP-INTAKE.md |
 | A new piece of work | `work_items`, contextualised first - never inserted straight |
 
-Set `verified = true` only on rows the owner confirmed in the gate; a
-fact accepted despite a weak quote is stored `verified = false` with the
-doubt in a work_note. Roadmap rows are never created directly from a
+Set `attestation = 'owner'` only on rows the owner confirmed in the gate.
+A round is lower-trust material than an owner-supplied overview, so
+anything applied without their confirmation is `'derived'` where it
+restates a source and carries an `about` link to it, and `'unattested'`
+otherwise - never `'owner'`. A fact accepted despite a weak quote is
+stored with the doubt in a work_note. docs/PLATFORM.md is the one home
+for that vocabulary. Roadmap rows are never created directly from a
 round - every candidate goes through contextualisation first, exactly as
 a pasted document would, since a round is a high-volume intake path and
 that is where duplicates come from.

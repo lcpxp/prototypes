@@ -34,7 +34,28 @@ glossary) and journey_stages (the canonical lead-to-live onboarding
 lifecycle). integrations (connected services) and platform facts in
 work_notes (kind 'fact') complete the picture. Together these are the
 context the roadmap synchronises against both ways every review - see
-the "Contextual synchronisation" section of docs/ROADMAP-PLAYBOOK.md.
+Wave 4, "Context sync", in docs/ROADMAP-REVIEW.md.
+
+## Three axes, not one
+
+A capability row answers three separate questions, and `kind` used to
+answer two of them at once. Until 2026-09-07 it said both what shape of
+statement a row was AND what the row was about, so 27 rows describing
+how the Partner Portal is built rendered at the bottom of a page about
+what the product does for merchants. Keep them apart:
+
+- **domain** - what the row is ABOUT. It picks the top-level view on
+  modules/platform/. `product` is what LP does, for the people who buy
+  and run it; `build` is how the Partner Portal is built and styled,
+  for the people who change it. A `build` row files against a
+  build-scope work_area, never a product one.
+- **kind** - what SHAPE of statement it is, within a domain. Below.
+- **maturity** - how real it is. See "Maturity and attestation".
+
+A value added to `domain` needs a view in
+assets/js/pages/platform/views.js or every row carrying it renders
+nowhere; tests/unit/platform/views.test.js fails the build if one does
+not have one.
 
 ## Choosing a kind
 
@@ -153,18 +174,30 @@ backstop section rather than vanishing.
 
 ## Retrieval protocol
 
-To brief a session on current platform capability:
+To brief a session on current platform capability, one call:
 
-1. Query product_capabilities for the area in question - summaries
-   first, blocks only when the detail is actually needed.
-2. Cross-reference work_items for the same area_id to see
-   today-vs-planned in one view: product_capabilities is what exists,
-   work_items (active and parked) are what's next.
-3. Fetch the linked work_documents row (via source_document_id) only
-   when the distilled summary is not enough - the content column is
-   the deep archive, not the first read.
+    select platform_context('<area-key>');
 
-## Maturity and verified
+It returns, for that area: the capabilities with their blocks, maturity,
+attestation and as_of; the lifecycle stages and glossary terms they
+touch; the facts, decisions and risks recorded against the area; the API
+endpoints that serve them; the delivered and the planned work items; and
+the provenance of every claim. `select platform_context(null)` orients
+instead - the platform-level statements plus the index of every area and
+its coverage. `select platform_context_gaps()` returns what is missing.
+
+This used to be six queries written out by hand in every session that
+bothered, and most did not: on 2026-09-07 eight product areas carried
+186 open work items and no capability at all, and docs/ROADMAP-INTAKE.md
+- the protocol that runs on every quick capture, the highest-volume
+write path there is - had never read product_capabilities once. A
+protocol that costs six queries is a protocol nobody runs.
+
+The deep archive is still a second query on purpose: fetch the linked
+work_documents row (via source_document_id) only when the distilled
+summary is not enough.
+
+## Maturity and attestation
 
 maturity is the axis the roadmap gets contextualised against:
 
@@ -173,19 +206,66 @@ maturity is the axis the roadmap gets contextualised against:
 - planned - not yet built; on the roadmap.
 - exploratory - an idea, not yet committed.
 
-This catalogue exists to document what the platform does today, so
-the default reading of a comprehensive current-capabilities overview
-is that everything it describes is shipped: rows load as maturity
-'live' and verified = true. verified marks that the owner has
-knowingly accepted the row at that maturity (recorded as a decision
-by the owner), not a demand for painstaking per-row
-inspection before anything can render. The practical guard is
-narrower: mark a row down (lower maturity, verified = false) only
-when there is a concrete reason to doubt it - the source itself
-flags something as planned or exploratory, or the owner knows it has
-slipped since. This is a living catalogue: realign a row in either
-direction as reality changes, rather than treating any load as a
-one-time, unrevisited attestation.
+This catalogue exists to document what the platform does today, so the
+default reading of a comprehensive current-capabilities overview is that
+everything it describes is shipped: rows load as maturity 'live'. Mark a
+row down only when there is a concrete reason to doubt it - the source
+flags something as planned, or the owner knows it has slipped. This is a
+living catalogue: realign a row in either direction as reality changes.
+
+**attestation says WHO stands behind the row**, and it replaced the
+`verified` boolean on 2026-09-07 because a boolean could only say yes or
+no - so an owner's judgement and a claim nobody had examined were the
+same value.
+
+- **owner** - the owner knowingly accepted this row at this maturity,
+  recorded as a decision. **An assistant may never set this**, on any
+  reasoning, including a request to. It is the one word in this store
+  that means a person checked.
+- **derived** - a session distilled it from rows the owner already owns,
+  restating them and nothing more, with an `about` link to every source.
+  Not owner-checked, and not a guess either.
+- **unattested** - neither. The honest default for a bare insert.
+
+`verified` survives as a generated column reading `attestation = 'owner'`
+so older code keeps working. Do not write to it; it has no setter.
+
+**as_of** is when the claim was last checked against reality, which
+`updated_at` cannot say - it cannot tell a typo fix from a re-check. The
+staleness figure compares it against delivered work in the same area, so
+shipping something marks the rows it may have invalidated without anyone
+having to remember.
+
+## Deriving a capability from delivered work
+
+A session may write a capability without the owner present, and the six
+rules below are what make that safe. They are enforced by
+tests/checks/knowledge-drift.test.js, not merely recommended.
+
+1. **Evidence must be owner-owned and delivered.** Only `work_items`
+   with status 'done', `work_notes` of kind 'fact' or 'decision',
+   `work_documents` of kind 'platform', and `api_endpoints` may be
+   evidence. **An open item is never evidence that a capability
+   exists** - at most it sharpens an existing row's planned blocks.
+2. **Quote-bound.** Every assertion restates specific source text. A
+   claim needing a leap is not written; it becomes a `work_notes`
+   question against the area.
+3. **Contradictions are recorded, not resolved.** Two sources
+   disagreeing produce a `risk` note naming both and their dates, never
+   an assertion picking a winner. Watch for the closed row whose own
+   text says nothing was delivered - four were found in the first pass,
+   including two containers closed because they emptied.
+4. **Maturity follows the evidence.** All sources delivered -> live;
+   mixed -> partial; only planned sources -> no row at all.
+5. **Every row is traceable.** attestation 'derived', as_of from the
+   newest source, source_document_id pointing at a derivation record
+   that names the method AND what was deliberately excluded, plus one
+   `about` link per source. "Where did this claim come from" is one
+   query, always.
+6. **Run the block check** below before finishing.
+
+A decision NOT to write is also a decision: record it as a derivation
+document, so the next session does not have to re-reach it.
 
 ## Boundaries
 

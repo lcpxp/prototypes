@@ -312,6 +312,10 @@
     {
       "version": "20260907180336",
       "name": "platform_context_functions"
+    },
+    {
+      "version": "20260907184036",
+      "name": "platform_gaps_delivered_only"
     }
   ],
   "policies": [

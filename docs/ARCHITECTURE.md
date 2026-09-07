@@ -168,16 +168,31 @@ docs/PLATFORM.md for the working protocol):
 
 - product_capabilities: the durable, queryable description of what
   LP is and does today, distinct from work intake (things to
-  do) and reference (the API surface). Hangs off work_areas (scope
-  'product') so capability sections, roadmap swimlanes and backlog
-  groups agree; source_document_id links back to the verbatim
-  work_documents row. kind classifies each row (overview, value,
-  capability, glance); maturity (live, partial, planned,
+  do) and reference (the API surface). Hangs off work_areas so
+  capability sections, roadmap swimlanes and backlog groups agree;
+  source_document_id links back to the verbatim work_documents row.
+
+  Four axes, kept apart since 2026-09-07 because kind was answering
+  two of them at once: domain (product, build) says what a row is
+  ABOUT and picks the page's top-level view; kind (overview, value,
+  capability, glance, technical, styling, positioning) says what
+  SHAPE of statement it is; maturity (live, partial, planned,
   exploratory) is the today-vs-planned axis the roadmap is read
-  against; verified stays false until the owner confirms a row
-  against the real build state. blocks reuses the api_topics typed
-  block vocabulary, so new facts about a capability are a data edit,
-  never a code change.
+  against; attestation (owner, derived, unattested) says WHO stands
+  behind the row. attestation replaced a verified boolean, which
+  could not tell an owner's judgement from a claim nobody had
+  examined - an assistant may set 'derived', never 'owner'. as_of
+  says when the claim was last checked, which updated_at cannot.
+
+  blocks reuses the api_topics typed block vocabulary, so new facts
+  about a capability are a data edit, never a code change.
+- platform_context(area_key) and platform_context_gaps()
+  (supabase/schema/41_platform_context.sql): the same knowledge for a
+  session rather than a reader. One call returns an area's
+  capabilities, terms, stages, facts, the API endpoints that serve
+  them, and the delivered and planned work together. Not security
+  definer, so each section is filtered by the caller's own module
+  grants. docs/ROADMAP-INTAKE.md Stage 0 is what calls it.
 
 Every roadmap and backlog rendering (list, timeline, swimlanes,
 waterfall, exported snapshots) reads these same rows, so

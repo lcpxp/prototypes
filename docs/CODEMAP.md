@@ -28,8 +28,8 @@ Everything one file can call in another. A surface in
 | `App.dashboardCards` | assets/js/pages/dashboard/cards.js:25 (+9 more) |
 | `App.dashboardStrip` | assets/js/pages/dashboard/strip.js:53 (+4 more) |
 | `App.db` | assets/js/core/supabase.js:31 (+2 more) |
-| `App.deepLinkScroll` | assets/js/core/ui.js:173 |
-| `App.departmentLabel` | assets/js/core/registry.js:312 |
+| `App.deepLinkScroll` | assets/js/core/ui.js:182 |
+| `App.departmentLabel` | assets/js/core/registry.js:334 |
 | `App.detail` | assets/js/core/detail.js:37 (+5 more) |
 | `App.download` | assets/js/core/ui.js:75 (+3 more) |
 | `App.drawer` | assets/js/core/drawer.js:35 |
@@ -38,19 +38,20 @@ Everything one file can call in another. A surface in
 | `App.flashLabel` | assets/js/core/ui.js:44 (+2 more) |
 | `App.futurePrototypesTable` | assets/js/pages/gallery.js:18 |
 | `App.ideasView` | assets/js/pages/ideas/render.js:37 (+7 more) |
-| `App.itemHref` | assets/js/core/registry.js:243 |
+| `App.itemHref` | assets/js/core/registry.js:255 |
 | `App.lazyDetail` | assets/js/pages/shared/lazy-detail.js:46 |
-| `App.linkHref` | assets/js/core/registry.js:286 |
-| `App.links` | assets/js/core/links.js:28 (+4 more) |
+| `App.linkHref` | assets/js/core/registry.js:308 |
+| `App.links` | assets/js/core/links.js:28 (+5 more) |
 | `App.methodBadge` | assets/js/core/ui.js:27 |
-| `App.moduleHref` | assets/js/core/registry.js:233 |
+| `App.moduleHref` | assets/js/core/registry.js:245 |
 | `App.notice` | assets/js/core/ui.js:65 |
 | `App.onAuthed` | assets/js/core/guard.js:116 (+3 more) |
-| `App.onThemeChange` | assets/js/core/ui.js:345 |
+| `App.onThemeChange` | assets/js/core/ui.js:365 |
 | `App.pciInterstitial` | assets/js/pages/pci/interstitial.js:21 |
 | `App.pciIxopay` | assets/js/pages/pci/ixopay.js:130 |
-| `App.platformKnowledge` | assets/js/pages/platform/knowledge.js:193 |
-| `App.platformView` | assets/js/pages/platform/platform.js:232 |
+| `App.platformCards` | assets/js/pages/platform/cards.js:201 |
+| `App.platformKnowledge` | assets/js/pages/platform/knowledge.js:240 |
+| `App.platformViews` | assets/js/pages/platform/views.js:314 |
 | `App.portalReview` | assets/js/pages/portal-review/model.js:43 (+12 more) |
 | `App.portalReviewRender` | assets/js/pages/portal-review/render.js:72 (+5 more) |
 | `App.referenceRender` | assets/js/pages/reference/render.js:273 |
@@ -63,7 +64,7 @@ Everything one file can call in another. A surface in
 | `App.roadmapExport` | assets/js/pages/roadmap/export.js:99 |
 | `App.roadmapPrefs` | assets/js/pages/roadmap/prefs.js:52 |
 | `App.roadmapView` | assets/js/pages/roadmap/views-breakdown.js:58 (+4 more) |
-| `App.roadmapViewsShared` | assets/js/pages/roadmap/views.js:385 |
+| `App.roadmapViewsShared` | assets/js/pages/roadmap/views.js:392 |
 | `App.root` | assets/js/core/guard.js:29 (+7 more) |
 | `App.search` | assets/js/core/search.js:347 |
 | `App.sendTool` | assets/js/core/console-tools.js:209<br>assets/js/core/console-tools.js:210 |
@@ -92,14 +93,14 @@ Shared runtime. Loaded on every protected page in the order set by assets/js/cor
 | drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and enforces per-module access. |
 | includes.json | 111 | The core script include order, in one place. Every protected page loads these in this sequence; tests/checks/structure.test.js enforces it, and CLAUDE.md and docs/ARCHITECTURE.md cite this file rather than restating it. It was stated in three places before, and all three were stale: none of them mentioned links.js, detail.js, blocks.js, drawer.js, sprints.js or send-tool.js, and the gate checked five of the fourteen. |
-| links.js | 144 | links.js - The typed knowledge graph, resolved for rendering. |
-| registry.js | 319 | registry.js - Single source of truth for the hub's modules, the Supabase tables they read, and role names. |
+| links.js | 159 | links.js - The typed knowledge graph, resolved for rendering. |
+| registry.js | 341 | registry.js - Single source of truth for the hub's modules, the Supabase tables they read, and role names. |
 | search.js | 356 | search.js - Global header search (App.search). |
 | sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). |
 | supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | theme.js | 84 | theme.js - Light/dark theme control. |
 | tools.js | 217 | tools.js - The nav's outbound links to external tools, rendered as icon buttons beside the theme switch. |
-| ui.js | 370 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy, downloads and the guarded localStorage helper (App.store). |
+| ui.js | 390 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy, downloads and the guarded localStorage helper (App.store). |
 
 ### assets/js/pages/
 
@@ -132,8 +133,10 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | pci/ixopay.js | 132 | pci/ixopay.js - In-page mock of the IXOPAY vendor client and its webhook/event bus for the PCI prototype. |
 | pci/portal.js | 302 | pci/portal.js - The Acquirer Partner Portal replica: the "Merchant Prescreen & Quote" wizard. |
 | pci/reports.js | 54 | pci/reports.js - Compliance reporting view for the PCI prototype, rendered from the IXOPAY mock's getReport(): portfolio totals, compliance status breakdown, webhooks outstanding, and the chases / follow-ups IXOPAY has performed. |
-| platform/knowledge.js | 202 | platform/knowledge.js - The parts of the platform knowledge base the capability catalogue alone cannot show (App.platformKnowledge). |
-| platform/platform.js | 327 | platform/platform.js - The platform product-knowledge viewer for modules/platform/. |
+| platform/cards.js | 212 | platform/cards.js - One capability, as a card (App.platformCards). |
+| platform/knowledge.js | 250 | platform/knowledge.js - The parts of the platform knowledge base the capability catalogue alone cannot show (App.platformKnowledge). |
+| platform/platform.js | 312 | platform/platform.js - The shell of the platform knowledge page: what it fetches, which view is showing, and the filter and disclosure wiring over it. |
+| platform/views.js | 330 | platform/views.js - The three top-level views of the platform page (App.platformViews), the sidebar index and the filter toolbar. |
 | portal-review/board.js | 142 | portal-review/board.js - modules/portal-review/wave.html. |
 | portal-review/model.js | 208 | portal-review/model.js - Every derivation the portal review board needs, as pure functions (App.portalReview). |
 | portal-review/render.js | 249 | portal-review/render.js - The portal review board's HTML builders (App.portalReviewRender). |
@@ -153,7 +156,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | roadmap/views-cascade.js | 206 | roadmap/views-cascade.js - The Cascade layout for the roadmap home: the same work as stacked stage bands (Now/Next/Later, plus Parked for Backlog). |
 | roadmap/views-exec.js | 102 | roadmap/views-exec.js - The Executive (Categories) board for the roadmap home: a department-first rollup of active work - each department, the categories it owns and their item counts, expanding to item rows when Detailed is on. |
 | roadmap/views-timeline.js | 213 | roadmap/views-timeline.js - The Timeline layout for the roadmap home: the continuous Delivered\|Now\|Next\|Later\|Parked axis where a bar SPANS the columns it runs across. |
-| roadmap/views.js | 413 | roadmap/views.js - Pure HTML builders for the roadmap home (modules/roadmap/). |
+| roadmap/views.js | 420 | roadmap/views.js - Pure HTML builders for the roadmap home (modules/roadmap/). |
 | shared/lazy-detail.js | 111 | shared/lazy-detail.js - Fetching a row's heavy fields when the detail surface opens, instead of carrying them for every row on page load. |
 | shared/proto-svg.js | 125 | shared/proto-svg.js - Inline SVG diagram viewer for a prototype overview page. |
 | shared/work-items-data.js | 172 | shared/work-items-data.js - The reads over work_items and work_notes that the list pages deliberately no longer carry. |
@@ -168,14 +171,14 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | app-review-detail.css | 112 | app-review-detail.css - The application review detail drawer: the slide-over surface and the blocks inside it (findings, mail trail, confirmation state, record metadata). |
 | app-review.css | 378 | app-review.css - The application review board and wave list. |
 | base.css | 111 | base.css - Reset, typography and global element styles. |
-| components.css | 478 | components.css - Reusable interface components: cards, forms, buttons, notices, tables, badges and toggles. |
+| components.css | 562 | components.css - Reusable interface components: cards, forms, buttons, notices, tables, badges and toggles. |
 | console-tool.css | 71 | console-tool.css - The modal shared by the nav's console-snippet tools (send-tool.js and eu-acquirer-admin-tool.js): a wide dialog with a header bar, a scrolling code block per snippet and a collapsed details section. |
 | dashboard.css | 218 | dashboard.css - The rebuilt landing page (docs/plan/50-DASHBOARD.md). |
 | ideas.css | 92 | ideas.css - The prototype ideas board and the gallery strip that points at it (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | layout.css | 395 | layout.css - Navigation, page scaffold and grids. |
 | login.css | 70 | login.css - Sign-in page only. |
-| pages.css | 308 | pages.css - The reference viewer ("swagger") page. |
-| platform.css | 149 | platform.css - The platform knowledge page (modules/platform/). |
+| pages.css | 236 | pages.css - The reference viewer ("swagger") page. |
+| platform.css | 274 | platform.css - The platform knowledge page (modules/platform/). |
 | portal-review.css | 269 | portal-review.css - The portal review board (docs/PORTAL-REVIEW.md). |
 | prototype.css | 88 | prototype.css - Shared styles for a prototype's LPIO-framed overview page: the meta row, sections, step sequence, backlog list and the diagram figure. |
 | ps-euacquirer.css | 212 | ps-euacquirer.css - The EU Acquirer EU onboarding replica layered on the Acquirer |
@@ -199,7 +202,7 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 | app-review/wave.html | 94 | Wave - Application review - LPIO |
 | backlog/index.html | 93 | Backlog - LPIO |
 | integrations/index.html | 58 | Integrations - LPIO |
-| platform/index.html | 58 | Platform - LPIO |
+| platform/index.html | 59 | Platform - LPIO |
 | portal-review/index.html | 79 | Portal review - LPIO |
 | portal-review/triage.html | 52 | Triage - Portal review - LPIO |
 | portal-review/wave.html | 61 | Wave - Portal review - LPIO |
@@ -284,6 +287,10 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20260830215036_revoke_execute_on_embed_functions.sql | 24 | ------------------------------------------------------------------ |
 | 20260901160012_work_items_business_benefit_and_audiences.sql | 60 | Business benefit as a first-class, queryable field, with the granular audience tier beneath it and the route to market beside it. |
 | 20260901160444_work_items_board_carries_benefit_columns.sql | 27 | A view freezes its columns at creation, so the seven benefit and audience columns added by the previous migration do not appear in work_items_board on their own. |
+| 20260907180228_platform_knowledge_axes.sql | 93 | ---------------------------------------------------------------- Applied 2026-09-07. |
+| 20260907180300_platform_as_of_from_created.sql | 24 | ---------------------------------------------------------------- Applied 2026-09-07. |
+| 20260907180336_platform_context_functions.sql | 14 | ---------------------------------------------------------------- Applied 2026-09-07. |
+| 20260907184036_platform_gaps_delivered_only.sql | 19 | ---------------------------------------------------------------- Applied 2026-09-07. |
 
 ### supabase/schema/
 
@@ -294,12 +301,13 @@ Schema, one file per domain, run in lexical order.
 | 00_core.sql | 79 | ---------------------------------------------------------------- 00_core.sql - Users, access grants and shared plumbing. |
 | 10_reference.sql | 145 | ---------------------------------------------------------------- 10_reference.sql - The API reference domain: specs, endpoints, tag catalogue and narrative topics. |
 | 20_portal.sql | 196 | ---------------------------------------------------------------- 20_portal.sql - Portal content domains: the integrations overview, the prototype gallery registry and the nav's outbound tool links. |
-| 30_work.sql | 493 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
+| 30_work.sql | 509 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
 | 31_roadmap_search.sql | 289 | Roadmap search: the contextualisation read surface. |
 | 32_roadmap_board.sql | 160 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
-| 33_links.sql | 345 | ---------------------------------------------------------------- 33_links.sql - The knowledge graph: typed, dated, owner-confirmed links between anything the system knows. |
+| 33_links.sql | 361 | ---------------------------------------------------------------- 33_links.sql - The knowledge graph: typed, dated, owner-confirmed links between anything the system knows. |
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
-| 40_platform.sql | 78 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
+| 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
+| 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
 | 50_review.sql | 317 | ---------------------------------------------------------------- 50_review.sql - Application review: waves of merchant application triage against LP records (see docs/APP-REVIEW.md). |
 | 51_review_guards.sql | 104 | ---------------------------------------------------------------- 51_review_guards.sql - The application-review guards, split out of 50_review.sql when that file reached its size-budget exception. |
@@ -313,10 +321,10 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 | File | Lines | Purpose |
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
-| knowledge-coverage.json | 98 |  |
+| knowledge-coverage.json | 129 |  |
 | policies.sql | 513 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1341 |  |
+| schema-snapshot.json | 1362 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -331,8 +339,8 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | links.test.js | 160 | tests/checks/links.test.js - Internal references resolve. |
 | one-home.test.js | 136 | tests/checks/one-home.test.js - One concept, one home. |
 | perf.test.js | 271 | tests/checks/perf.test.js - Performance gates. |
-| reference-drift.test.js | 167 | tests/checks/reference-drift.test.js - Keeps the API reference from drifting further from the code it documents. |
-| render-coverage.test.js | 354 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
+| reference-drift.test.js | 191 | tests/checks/reference-drift.test.js - Keeps the API reference from drifting further from the code it documents. |
+| render-coverage.test.js | 372 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the database. |
 | security.test.js | 205 | tests/checks/security.test.js - Security gates. |
@@ -352,7 +360,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | app-review/model.test.js | 318 | tests/unit/app-review/model.test.js - Benchmarks for the application review derivations (App.appReview in appreview-model.js), loaded in a Node vm. |
 | backlog/detail.test.js | 131 | tests/unit/backlog/detail.test.js - The backlog's two modals, both on the completeness contract (docs/plan/40-SURFACING.md). |
 | backlog/export.test.js | 155 | tests/unit/backlog/export.test.js - The backlog CSV export (App.backlogExport), split out of backlog.js with the builder. |
-| blocks.test.js | 119 | tests/unit/blocks.test.js - The typed-block renderer. |
+| blocks.test.js | 123 | tests/unit/blocks.test.js - The typed-block renderer. |
 | call-extract.test.js | 156 | tests/unit/call-extract.test.js - Benchmarks for the call-site extractor (scripts/extract-calls.js), inventory C of docs/plan/20-API-REFERENCE.md. |
 | coverage-reconcile.test.js | 278 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage arithmetic in scripts/gen-coverage.js. |
 | dashboard/cards.test.js | 270 | tests/unit/dashboard/cards.test.js - The dashboard's four card sections (docs/plan/50-DASHBOARD.md). |
@@ -363,8 +371,9 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | ideas/render.test.js | 166 | tests/unit/ideas/render.test.js - The prototype ideas board (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | links.test.js | 203 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
 | pci/ixopay.test.js | 81 | tests/unit/pci/ixopay.test.js - Benchmarks for the PCI prototype's mock IXOPAY client (assets/js/pages/pci/ixopay.js). |
-| platform/knowledge.test.js | 249 | tests/unit/platform/knowledge.test.js - The stores the capability catalogue could not show. |
-| platform/render.test.js | 167 | tests/unit/platform/render.test.js - Benchmarks for the platform viewer's pure builders (App.platformView in assets/js/pages/ platform.js). |
+| platform/knowledge.test.js | 187 | tests/unit/platform/knowledge.test.js - The stores the capability catalogue could not show. |
+| platform/render.test.js | 191 | tests/unit/platform/render.test.js - Benchmarks for one capability as a card (App.platformCards in assets/js/pages/platform/cards.js). |
+| platform/views.test.js | 216 | tests/unit/platform/views.test.js - The three top-level views (App.platformViews in assets/js/pages/platform/views.js). |
 | portal-review/model.test.js | 286 | tests/unit/portal-review/model.test.js - The portal review board's model and its renderer (docs/plan/60-PORTAL-REVIEW.md). |
 | reference/render.test.js | 212 | tests/unit/reference/render.test.js - Benchmarks for the reference viewer's HTML builders (assets/js/pages/reference/render.js). |
 | registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, the single source of truth for navigation, dashboard cards and access-control keys. |
@@ -400,13 +409,13 @@ Shared fixtures and the budgets the gates read.
 | fixtures/services/api-base.token.ts | 24 |  |
 | fixtures/services/bases.service.ts | 61 |  |
 | fixtures/services/shapes.service.ts | 112 |  |
-| knowledge-budget.json | 40 | Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them. |
+| knowledge-budget.json | 52 | Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them. |
 | lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
-| page-weight-budget.json | 103 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
+| page-weight-budget.json | 104 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
 | size-budget.json | 101 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
-| surface-baseline.json | 817 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
+| surface-baseline.json | 822 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
 
@@ -419,7 +428,7 @@ Generators: the codemap, the schema snapshot, coverage, knowledge, the audit.
 | extract-routes.js | 165 | scripts/extract-routes.js - Reads a LP API checkout and emits its route inventory as JSON: one entry per [Http*] action attribute, composed onto its controller [Route], with the version resolved. |
 | gen-codemap.js | 208 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
 | gen-coverage.js | 387 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, the repo's committed account of how far the API reference matches the code it documents. |
-| gen-knowledge.js | 191 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, the repo's committed account of whether what the system was told is still anchored, sourced and reachable. |
+| gen-knowledge.js | 237 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, the repo's committed account of whether what the system was told is still anchored, sourced and reachable. |
 | gen-snapshot.js | 148 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
 | gen-surface.js | 84 | scripts/gen-surface.js - Regenerates tests/surface-baseline.json. |
 
@@ -457,25 +466,25 @@ Architecture, security, design, and the operating protocols.
 | File | Lines | Purpose |
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
-| ARCHITECTURE.md | 285 | Architecture How the portal fits together. |
-| CHANGELOG.md | 534 | Changelog All notable user-facing changes to LPIO, newest first. |
-| COPILOT.md | 207 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
+| ARCHITECTURE.md | 300 | Architecture How the portal fits together. |
+| CHANGELOG.md | 563 | Changelog All notable user-facing changes to LPIO, newest first. |
+| COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
 | KNOWLEDGE-MODEL.md | 230 | The knowledge model Why the roadmap and platform knowledge are shaped the way they are. |
 | NAVIGATION.md | 65 | Navigation *I want to change X - what do I read?** docs/CODEMAP.md answers *where is it*. |
-| PLATFORM.md | 201 | Platform product-knowledge protocol How the durable, structured answer to "what is LP, what does it do, what is in place today" gets built and kept current. |
+| PLATFORM.md | 281 | Platform product-knowledge protocol How the durable, structured answer to "what is LP, what does it do, what is in place today" gets built and kept current. |
 | PORTAL-REVIEW.md | 208 | Portal review playbook How a portal review wave is opened, walked, answered, verified, triaged and closed. |
 | PROTOTYPE-IDEAS.md | 150 | Prototype ideas and plans How an idea for a prototype is captured, prioritised, planned and promoted. |
-| ROADMAP-INTAKE.md | 425 | Roadmap intake The contextualisation protocol: how a new request is placed against what already exists before anything is written. |
+| ROADMAP-INTAKE.md | 458 | Roadmap intake The contextualisation protocol: how a new request is placed against what already exists before anything is written. |
 | ROADMAP-PLAYBOOK.md | 285 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
-| ROADMAP-REVIEW.md | 130 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
+| ROADMAP-REVIEW.md | 143 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
 | ROADMAP.md | 265 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINTS.md | 109 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 40 | Current state Updated: 2026-09-01 (presentation readiness landed; benefit awaiting confirmation) # In progress Nothing blocking. |
+| STATE.md | 40 | Current state Updated: 2026-09-07 (platform restructured and grounded; on branch claude/platform-page-restructure-brexcz, not yet merged) # In progress Nothing blocking. |
 | VALUE-CAPTURE.md | 174 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
@@ -488,7 +497,7 @@ Slash commands and the permission settings a session runs under.
 | commands/app-review.md | 45 | Work an application review wave - extract screenshots into rows, classify, reconcile against the mail trail |
 | commands/portal-review.md | 49 | Work a portal review wave - walk the area map, record findings as they are made, fold in answers, triage into roadmap work |
 | commands/prototype-idea.md | 43 | Capture a prototype idea in one line, or run the review pass that prioritises and plans them |
-| commands/roadmap-add.md | 42 | Quick-capture or update roadmap work from a one-line request, applied straight to Supabase |
+| commands/roadmap-add.md | 56 | Quick-capture or update roadmap work from a one-line request, applied straight to Supabase |
 | commands/roadmap.md | 39 | Run the roadmap review ritual - a quick, clickable pass over Now/Next, promotions, new work and decisions |
 | settings.json | 50 | Committed, shared permissions for a session in this repo: an allow list covering the routine commands (npm/node, read-only and write git, the search tools, a local http server, file reads and edits) and a deny list that blocks the hard rules mechanically - reading config.js or .env, force-pushing, git add -f, rm -rf. .claude/settings.local.json is per-developer and gitignored. |
 

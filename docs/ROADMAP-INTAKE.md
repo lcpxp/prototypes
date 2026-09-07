@@ -30,6 +30,39 @@ right answer was to carry the description onto the existing row. Nothing
 could notice, so a second row was created and the good wording landed in the
 wrong place.
 
+## Stage 0 - Ground against the platform
+
+One call, before any searching:
+
+    select platform_context('<area-key>');
+
+It returns what the platform already DOES in that area alongside what is
+already planned there - capabilities with their maturity, the terms and
+lifecycle stages in play, recorded facts and decisions, the endpoints
+that serve it, and the open and delivered work. Vocabulary and field
+meanings: docs/PLATFORM.md. Unsure of the area, or the request does not
+name one: `select platform_context(null)` lists every area with its
+coverage.
+
+Two things this changes, both of which went wrong without it:
+
+- **A request for something that already exists** stops becoming a
+  roadmap row. `roadmap_find` searches work items only, so a capability
+  recorded as `maturity = 'live'` was invisible to every stage below it.
+- **The words you search with get better.** The area's glossary terms and
+  capability titles are what this system calls things; searching in the
+  request's own words instead is how a duplicate slips past a lexical
+  match.
+
+If the request describes something already recorded live or partial, say
+so and offer the `ENRICH` path against the capability's own linked work
+rather than a new row.
+
+Then, on the way out, in Stage 5: an item that lands `done` gets an
+`affects` link to the capability it changed, and that capability's
+`as_of` moved on. That is the other half of the same loop, and the
+figure that watches it is `grounding.delivered_without_affects`.
+
 ## Stage 1 - Understand
 
 Read the request and name what it names: a **surface** (summary page,
