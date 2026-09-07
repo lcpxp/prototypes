@@ -159,7 +159,7 @@
         ["sources", "Where this came from", (data.documents || []).length],
         ["coverage", "Coverage", null],
       ];
-      return '<div class="group"><p class="eyebrow">On this page</p><ul>' +
+      return '<div class="group pk-index"><p class="eyebrow">On this page</p><ul>' +
         stores.map(function (s) {
           return '<li><a href="#' + esc(s[0]) + '">' + esc(s[1]) +
             (s[2] === null ? "" : ' <span class="badge">' + esc(String(s[2])) + "</span>") +
@@ -186,7 +186,7 @@
         esc(String(counts._none)) + "</span></a></li>");
     }
     if (!items.length) return "";
-    return '<div class="group"><p class="eyebrow">Areas</p><ul>' +
+    return '<div class="group pk-index"><p class="eyebrow">Areas</p><ul>' +
       items.join("") + "</ul></div>";
   }
 

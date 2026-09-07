@@ -550,6 +550,13 @@ dialog.modal::backdrop {
 
 .ref-toolbar {
   display: flex;
+  /* Wraps, because it does not fit. Five controls in one row - a search
+     field, two selects and two buttons - pushed the last button past a
+     390px viewport and gave the whole document a horizontal scroll,
+     which layout.css exists to prevent. The reference page's own
+     three-control toolbar had the same overflow and is fixed by this
+     too. Found by driving the page at 390px, not by reading it. */
+  flex-wrap: wrap;
   gap: var(--s-2);
   align-items: center;
   margin-block: var(--s-4);
@@ -558,4 +565,22 @@ dialog.modal::backdrop {
 .ref-toolbar input[type="search"] {
   flex: 1;
   min-inline-size: 0;
+}
+
+/* Mobile-first: one column by default, the sidebar arrives at 48rem.
+   This block belongs beside the rules it modifies - it was left behind
+   in pages.css when the base rules moved here on 2026-09-07, which put
+   one rule in two files and would have failed silently for any page
+   that loaded components.css without pages.css. */
+@media (min-width: 48rem) {
+  .ref-layout {
+    grid-template-columns: var(--sidebar-width) 1fr;
+  }
+
+  .ref-sidebar {
+    position: sticky;
+    inset-block-start: calc(var(--nav-height) + var(--s-4));
+    max-block-size: calc(100vh - var(--nav-height) - var(--s-6));
+    overflow-y: auto;
+  }
 }

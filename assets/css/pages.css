@@ -165,18 +165,9 @@
   inset-inline-end: var(--s-2);
 }
 
+/* The sidebar shell's own breakpoint moved to components.css with the
+   rules it modifies. This one is the endpoint row, which stays here. */
 @media (min-width: 48rem) {
-  .ref-layout {
-    grid-template-columns: var(--sidebar-width) 1fr;
-  }
-
-  .ref-sidebar {
-    position: sticky;
-    inset-block-start: calc(var(--nav-height) + var(--s-4));
-    max-block-size: calc(100vh - var(--nav-height) - var(--s-6));
-    overflow-y: auto;
-  }
-
   .endpoint .summary-text {
     display: block;
   }

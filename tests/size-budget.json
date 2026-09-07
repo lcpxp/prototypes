@@ -54,7 +54,7 @@
       "seam": "Never split. This is the security boundary and 'which tables can be written, and by whom' must stay a single-pass question. It grows with every new table, so it is the one file here likely to reach the cap - when it does, raise the cap and say why, do not fragment the answer."
     },
     "assets/css/components.css": {
-      "seam": "Not worth splitting: it loads on all 24 pages, so shedding badge and table styles into components-data.css would add a request to every one of them to save 78 lines. Revisit only if it passes 550."
+      "seam": "Re-judged 2026-09-07 at 586 lines, the revisit its previous note set at 550. Still not worth splitting, and the seam is now a real one rather than a hypothetical: the indexed content shell (.ref-layout, .ref-sidebar, .ref-toolbar and their 48rem breakpoint) is used by exactly two pages, the reference viewer and the platform page, so it could move to its own sheet. That trade is 1.5KB off 22 pages against one extra request on 2 - and this repo has already decided that direction once, removing 21 requests by merging two nav tools. It stays. Next trigger is the 600-line hard cap, where the shell is what leaves."
     },
     "tests/unit/roadmap/views.test.js": {
       "seam": "Not worth splitting: the placement-ordering cases share one fixture with the rest, so a split duplicates the fixture. No runtime cost either way, so the only gain would be cosmetic. Revisit if the fixture itself is extracted."

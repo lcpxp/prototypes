@@ -75,6 +75,15 @@
   font-size: var(--text-sm);
 }
 
+/* The shared sidebar sets a monospace face, which is right for an API
+   path and wrong for a sentence: "Portal Frontend Changes and
+   Improvements" set in mono wraps badly and reads as code. The
+   composition is shared; the type is this page's own. */
+.ref-sidebar .pk-index a {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+
 .pk-area { margin-block-end: var(--s-6); }
 .pk-area[hidden] { display: none; }
 
