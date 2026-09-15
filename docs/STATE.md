@@ -1,7 +1,6 @@
 # Current state
 
-Updated: 2026-09-15 (Now column repopulated, Sprint Roadmap built; on
-branch claude/compassionate-planck-xl5uwl, not yet merged)
+Updated: 2026-09-15 (Now column repopulated, Sprint Roadmap live on main)
 
 ## In progress
 Nothing blocking. Five priority workstreams sit in Now (23 rows, every
@@ -12,14 +11,15 @@ streams in flight running 2-3-2. The plan is UNANCHORED on purpose:
 ## Next steps
 1. **Anchor the plan** when the start date and resource are known: set
    `sprint_plan.anchor_sprint`, then `select sprint_plan_project();`.
-   Everything resolves at once.
-2. **Confirm the five drafted benefits and the 16 metrics.** Only the
-   owner can - confirmed and owner_stated both mean he said so.
-   `items.benefit_unconfirmed` is 79 of 92. Method: docs/VALUE-CAPTURE.md.
-3. **Confirm the seven proposed links** this session recorded (see the
-   knowledge-budget note on `links.proposed`).
-4. The Experian commercial model is still unknown - six open
+   Every column, code and date resolves from those two statements.
+2. **Confirm what only the owner can.** Five drafted benefits, sixteen
+   metrics and seven proposed links were written this session. An
+   assistant may never set `confirmed` or `owner_stated`, so these fall
+   in a review pass, not a build one. Method: docs/VALUE-CAPTURE.md.
+3. The Experian commercial model is still unknown - six open
    integration_notes - and gates the screening cost case, not its build.
+4. The COO pull-versus-push decision is now its own Now row, allocated
+   to the slot before the lead endpoints are built.
 
 ## Verification the repo cannot do for itself
 - The two sprint views signed in: the axis reading Sprint +0 to +10, an
@@ -31,7 +31,5 @@ streams in flight running 2-3-2. The plan is UNANCHORED on purpose:
 ## Open decisions
 - SECURITY: leaked-password protection still disabled in Supabase Auth.
 - Rename lcpxp/prototypes to lcpxp/lpio? Raised 2026-07, still open.
-- Pull versus push on the inbound onboarding API: now its own Now row,
-  awaiting the COO session.
-- Roadmap page weight is 39 of 40 requests. The next view replaces a
-  sheet or raises the ceiling deliberately.
+- work_item_phases stays dormant: empty, but the drawer reads it, and it
+  is a finer axis than sprint allocation rather than a rival to it.
