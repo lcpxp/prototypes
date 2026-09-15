@@ -29,7 +29,7 @@ Everything one file can call in another. A surface in
 | `App.dashboardStrip` | assets/js/pages/dashboard/strip.js:53 (+4 more) |
 | `App.db` | assets/js/core/supabase.js:31 (+2 more) |
 | `App.deepLinkScroll` | assets/js/core/ui.js:182 |
-| `App.departmentLabel` | assets/js/core/registry.js:334 |
+| `App.departmentLabel` | assets/js/core/registry.js:347 |
 | `App.detail` | assets/js/core/detail.js:37 (+5 more) |
 | `App.download` | assets/js/core/ui.js:75 (+3 more) |
 | `App.drawer` | assets/js/core/drawer.js:35 |
@@ -38,12 +38,12 @@ Everything one file can call in another. A surface in
 | `App.flashLabel` | assets/js/core/ui.js:44 (+2 more) |
 | `App.futurePrototypesTable` | assets/js/pages/gallery.js:18 |
 | `App.ideasView` | assets/js/pages/ideas/render.js:37 (+7 more) |
-| `App.itemHref` | assets/js/core/registry.js:255 |
+| `App.itemHref` | assets/js/core/registry.js:268 |
 | `App.lazyDetail` | assets/js/pages/shared/lazy-detail.js:46 |
-| `App.linkHref` | assets/js/core/registry.js:308 |
+| `App.linkHref` | assets/js/core/registry.js:321 |
 | `App.links` | assets/js/core/links.js:28 (+5 more) |
 | `App.methodBadge` | assets/js/core/ui.js:27 |
-| `App.moduleHref` | assets/js/core/registry.js:245 |
+| `App.moduleHref` | assets/js/core/registry.js:258 |
 | `App.notice` | assets/js/core/ui.js:65 |
 | `App.onAuthed` | assets/js/core/guard.js:116 (+3 more) |
 | `App.onThemeChange` | assets/js/core/ui.js:365 |
@@ -59,11 +59,11 @@ Everything one file can call in another. A surface in
 | `App.registry` | assets/js/core/registry.js:21 |
 | `App.requireAuth` | assets/js/core/guard.js:31 |
 | `App.roadmapDetail` | assets/js/pages/roadmap/detail-export.js:223 (+5 more) |
-| `App.roadmapDetailValues` | assets/js/pages/roadmap/detail-values.js:118 |
+| `App.roadmapDetailValues` | assets/js/pages/roadmap/detail-values.js:172 |
 | `App.roadmapDrawer` | assets/js/pages/roadmap/drawer.js:19 |
 | `App.roadmapExport` | assets/js/pages/roadmap/export.js:99 |
 | `App.roadmapPrefs` | assets/js/pages/roadmap/prefs.js:52 |
-| `App.roadmapView` | assets/js/pages/roadmap/views-breakdown.js:58 (+4 more) |
+| `App.roadmapView` | assets/js/pages/roadmap/views-breakdown.js:58 (+6 more) |
 | `App.roadmapViewsShared` | assets/js/pages/roadmap/views.js:392 |
 | `App.root` | assets/js/core/guard.js:29 (+7 more) |
 | `App.search` | assets/js/core/search.js:347 |
@@ -94,7 +94,7 @@ Shared runtime. Loaded on every protected page in the order set by assets/js/cor
 | guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and enforces per-module access. |
 | includes.json | 111 | The core script include order, in one place. Every protected page loads these in this sequence; tests/checks/structure.test.js enforces it, and CLAUDE.md and docs/ARCHITECTURE.md cite this file rather than restating it. It was stated in three places before, and all three were stale: none of them mentioned links.js, detail.js, blocks.js, drawer.js, sprints.js or send-tool.js, and the gate checked five of the fourteen. |
 | links.js | 159 | links.js - The typed knowledge graph, resolved for rendering. |
-| registry.js | 341 | registry.js - Single source of truth for the hub's modules, the Supabase tables they read, and role names. |
+| registry.js | 354 | registry.js - Single source of truth for the hub's modules, the Supabase tables they read, and role names. |
 | search.js | 356 | search.js - Global header search (App.search). |
 | sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). |
 | supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
@@ -146,15 +146,16 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | reference/render.js | 288 | reference/render.js - Pure HTML builders for the reference viewer. |
 | reference/topics.js | 48 | reference/topics.js - Pure HTML builders for api_topics rows: the narrative sections of a spec (overview, conventions, runbooks, accepted values, gap registers). |
 | roadmap/detail-export.js | 228 | roadmap/detail-export.js - The AI-optimised JSON and the flat CSV exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap / toCsvRoadmap). |
-| roadmap/detail-values.js | 145 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
-| roadmap/detail.js | 472 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
+| roadmap/detail-values.js | 206 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
+| roadmap/detail.js | 502 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
 | roadmap/drawer.js | 97 | roadmap/drawer.js - The item detail drawer surface for the roadmap home: open/close, the ?item=<id> deep-link URL sync, and in-drawer navigation (a related-item link or a nested step row swaps the drawer to that item). |
 | roadmap/export.js | 101 | roadmap/export.js - The roadmap home's export dropdown wiring and the small download helpers it shares with the detail drawer (App.roadmapExport). |
 | roadmap/prefs.js | 106 | roadmap/prefs.js - The roadmap board's remembered view state (App.roadmapPrefs): which level and layout, and the eight view-only preferences that are NOT part of the shareable hash. |
-| roadmap/roadmap.js | 449 | roadmap/roadmap.js - The roadmap home for modules/roadmap/. |
+| roadmap/roadmap.js | 519 | roadmap/roadmap.js - The roadmap home for modules/roadmap/. |
 | roadmap/views-breakdown.js | 60 | roadmap/views-breakdown.js - The Detailed breakdown for the roadmap home: the Category -> Area -> item drill-down shown under the Work Items and Backlog levels when Detailed is on. |
 | roadmap/views-cascade.js | 206 | roadmap/views-cascade.js - The Cascade layout for the roadmap home: the same work as stacked stage bands (Now/Next/Later, plus Parked for Backlog). |
 | roadmap/views-exec.js | 102 | roadmap/views-exec.js - The Executive (Categories) board for the roadmap home: a department-first rollup of active work - each department, the categories it owns and their item counts, expanding to item rows when Detailed is on. |
+| roadmap/views-sprint.js | 287 | roadmap/views-sprint.js - The Sprint Roadmap: the same Now work the product board bands by horizon, placed instead against sprints. |
 | roadmap/views-timeline.js | 213 | roadmap/views-timeline.js - The Timeline layout for the roadmap home: the continuous Delivered\|Now\|Next\|Later\|Parked axis where a bar SPANS the columns it runs across. |
 | roadmap/views.js | 420 | roadmap/views.js - Pure HTML builders for the roadmap home (modules/roadmap/). |
 | shared/lazy-detail.js | 111 | shared/lazy-detail.js - Fetching a row's heavy fields when the detail surface opens, instead of carrying them for every row on page load. |
@@ -171,14 +172,14 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | app-review-detail.css | 112 | app-review-detail.css - The application review detail drawer: the slide-over surface and the blocks inside it (findings, mail trail, confirmation state, record metadata). |
 | app-review.css | 378 | app-review.css - The application review board and wave list. |
 | base.css | 111 | base.css - Reset, typography and global element styles. |
-| components.css | 562 | components.css - Reusable interface components: cards, forms, buttons, notices, tables, badges and toggles. |
+| components.css | 587 | components.css - Reusable interface components: cards, forms, buttons, notices, tables, badges and toggles. |
 | console-tool.css | 71 | console-tool.css - The modal shared by the nav's console-snippet tools (send-tool.js and eu-acquirer-admin-tool.js): a wide dialog with a header bar, a scrolling code block per snippet and a collapsed details section. |
 | dashboard.css | 218 | dashboard.css - The rebuilt landing page (docs/plan/50-DASHBOARD.md). |
 | ideas.css | 92 | ideas.css - The prototype ideas board and the gallery strip that points at it (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | layout.css | 395 | layout.css - Navigation, page scaffold and grids. |
 | login.css | 70 | login.css - Sign-in page only. |
-| pages.css | 236 | pages.css - The reference viewer ("swagger") page. |
-| platform.css | 274 | platform.css - The platform knowledge page (modules/platform/). |
+| pages.css | 227 | pages.css - The reference viewer ("swagger") page. |
+| platform.css | 283 | platform.css - The platform knowledge page (modules/platform/). |
 | portal-review.css | 269 | portal-review.css - The portal review board (docs/PORTAL-REVIEW.md). |
 | prototype.css | 88 | prototype.css - Shared styles for a prototype's LPIO-framed overview page: the meta row, sections, step sequence, backlog list and the diagram figure. |
 | ps-euacquirer.css | 212 | ps-euacquirer.css - The EU Acquirer EU onboarding replica layered on the Acquirer |
@@ -186,6 +187,7 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | ps-sim.css | 191 | ps-sim.css - The simulation layer for the EU Acquirer replica: the toast stack, the modal shell used by the email prompt and the stepped progress runs, and the spinner/tick each step cycles through. |
 | ps.css | 218 | ps.css - Acquirer Partner Portal replica shell for the PCI prototype (modules/prototypes/pci/demo.html). |
 | roadmap-detail.css | 403 | roadmap-detail.css - Coarse progress bars, the expanded Executive child lists, and the right-hand item detail drawer. |
+| roadmap-sprint.css | 157 | roadmap-sprint.css - The Sprint Roadmap's own rules, and only those. |
 | roadmap-themes.css | 30 | roadmap-themes.css - The theme accent map: one rule per roadmap_categories.key, each setting the accent and soft tint that a lane label, card border, dot or rail reads. |
 | roadmap-views.css | 439 | roadmap-views.css - The roadmap home's level views (Executive theme rollup, Team, Backlog) in Timeline and Cascade layouts, plus the level switcher. |
 | roadmap.css | 410 | roadmap.css - The roadmap board (modules/roadmap/). |
@@ -220,7 +222,7 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 | prototypes/pci/reports.html | 72 | Compliance reporting - Acquirer replica - LPIO |
 | prototypes/website-screening/index.html | 45 | Website screening prototype - LPIO |
 | reference/index.html | 71 | API reference - LPIO |
-| roadmap/index.html | 134 | Roadmap - LPIO |
+| roadmap/index.html | 136 | Roadmap - LPIO |
 | users/index.html | 51 | Users - LPIO |
 
 ### supabase/migrations/
@@ -291,6 +293,16 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20260907180300_platform_as_of_from_created.sql | 24 | ---------------------------------------------------------------- Applied 2026-09-07. |
 | 20260907180336_platform_context_functions.sql | 14 | ---------------------------------------------------------------- Applied 2026-09-07. |
 | 20260907184036_platform_gaps_delivered_only.sql | 19 | ---------------------------------------------------------------- Applied 2026-09-07. |
+| 20260907193920_integration_estate_capabilities_and_notes.sql | 66 | ---------------------------------------------------------------- Applied 2026-09-07. |
+| 20260907194119_fix_integration_estate_view_fanout.sql | 44 | ---------------------------------------------------------------- Applied 2026-09-07. |
+| 20260907194138_integration_views_security_invoker.sql | 20 | ---------------------------------------------------------------- Applied 2026-09-07. |
+| 20260915164810_sprints_calendar.sql | 35 | ---------------------------------------------------------------- Applied 2026-09-15. |
+| 20260915164839_sprint_plan_and_allocation.sql | 122 | ---------------------------------------------------------------- Applied 2026-09-15. |
+| 20260915164849_work_item_metrics.sql | 42 | ---------------------------------------------------------------- Applied 2026-09-15. |
+| 20260915164908_sprint_tables_policies.sql | 37 | ---------------------------------------------------------------- Applied 2026-09-15. |
+| 20260915164926_sprint_functions_revoke_execute.sql | 16 | ---------------------------------------------------------------- Applied 2026-09-15. |
+| 20260915165028_sprint_plan_views.sql | 112 | ---------------------------------------------------------------- Applied 2026-09-15. |
+| 20260915165055_sprint_plan_readable_by_roadmap_members.sql | 22 | ---------------------------------------------------------------- Applied 2026-09-15. |
 
 ### supabase/schema/
 
@@ -300,12 +312,14 @@ Schema, one file per domain, run in lexical order.
 |---|---:|---|
 | 00_core.sql | 79 | ---------------------------------------------------------------- 00_core.sql - Users, access grants and shared plumbing. |
 | 10_reference.sql | 145 | ---------------------------------------------------------------- 10_reference.sql - The API reference domain: specs, endpoints, tag catalogue and narrative topics. |
-| 20_portal.sql | 196 | ---------------------------------------------------------------- 20_portal.sql - Portal content domains: the integrations overview, the prototype gallery registry and the nav's outbound tool links. |
+| 20_portal.sql | 325 | ---------------------------------------------------------------- 20_portal.sql - Portal content domains: the integrations overview, the prototype gallery registry and the nav's outbound tool links. |
 | 30_work.sql | 509 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
 | 31_roadmap_search.sql | 289 | Roadmap search: the contextualisation read surface. |
 | 32_roadmap_board.sql | 160 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
 | 33_links.sql | 361 | ---------------------------------------------------------------- 33_links.sql - The knowledge graph: typed, dated, owner-confirmed links between anything the system knows. |
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
+| 35_sprints.sql | 366 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
+| 36_value.sql | 115 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
@@ -322,9 +336,9 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
 | knowledge-coverage.json | 129 |  |
-| policies.sql | 513 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
+| policies.sql | 549 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1362 |  |
+| schema-snapshot.json | 1674 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -340,7 +354,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | one-home.test.js | 136 | tests/checks/one-home.test.js - One concept, one home. |
 | perf.test.js | 271 | tests/checks/perf.test.js - Performance gates. |
 | reference-drift.test.js | 191 | tests/checks/reference-drift.test.js - Keeps the API reference from drifting further from the code it documents. |
-| render-coverage.test.js | 372 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
+| render-coverage.test.js | 406 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the database. |
 | security.test.js | 205 | tests/checks/security.test.js - Security gates. |
@@ -384,11 +398,13 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | roadmap/export.test.js | 119 | tests/unit/roadmap/export.test.js - The roadmap's export dropdown wiring (App.roadmapExport.wire). |
 | roadmap/views-custom.test.js | 258 | tests/unit/roadmap/views-custom.test.js - Benchmarks for the roadmap |
 | roadmap/views-exec.test.js | 49 | tests/unit/roadmap/views-exec.test.js - Benchmarks for the Executive (Categories) board, split from roadmap-views.test.js per its size-budget exit plan. |
+| roadmap/views-sprint.test.js | 180 | tests/unit/roadmap/views-sprint.test.js - Benchmarks for the Sprint Roadmap builders (App.roadmapView.sprintStreams / sprintItems). |
 | roadmap/views.test.js | 475 | tests/unit/roadmap/views.test.js - Benchmarks for the roadmap home's pure builders (App.roadmapView in roadmap-views.js + the exec board in roadmap-views-exec.js + the cascade half in roadmap-views-cascade.js). |
 | route-extract.test.js | 108 | tests/unit/route-extract.test.js - Benchmarks for the route extractor (scripts/extract-routes.js), inventory A of docs/plan/20-API-REFERENCE.md. |
 | search.test.js | 259 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
 | shared/lazy-detail.test.js | 184 | tests/unit/shared/lazy-detail.test.js - The lazy detail loader (docs/plan/80-LOAD-SPEED.md). |
 | shared/work-items-data.test.js | 219 | tests/unit/shared/work-items-data.test.js - The reads that replace what the list pages stopped carrying (docs/plan/80-LOAD-SPEED.md). |
+| sprints-table.test.js | 113 | tests/unit/sprints-table.test.js - The drift gate between the sprint ENGINE and the sprint TABLE. |
 | sprints.test.js | 81 | tests/unit/sprints.test.js - Benchmarks for the sprint engine (App.sprints in assets/js/core/sprints.js). |
 | tools-warm.test.js | 184 | tests/unit/tools-warm.test.js - Benchmarks for the Splunk warm-up in assets/js/core/tools.js: the front door opened before the search so the deep link lands on results rather than the tool's error page. |
 | tools.test.js | 224 | tests/unit/tools.test.js - Benchmarks for assets/js/core/tools.js. |
@@ -411,11 +427,11 @@ Shared fixtures and the budgets the gates read.
 | fixtures/services/shapes.service.ts | 112 |  |
 | knowledge-budget.json | 52 | Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them. |
 | lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
-| lib/roadmap.js | 87 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
+| lib/roadmap.js | 91 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
 | page-weight-budget.json | 104 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
-| size-budget.json | 101 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
-| surface-baseline.json | 822 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
+| size-budget.json | 104 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
+| surface-baseline.json | 825 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
 
@@ -466,8 +482,8 @@ Architecture, security, design, and the operating protocols.
 | File | Lines | Purpose |
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
-| ARCHITECTURE.md | 300 | Architecture How the portal fits together. |
-| CHANGELOG.md | 563 | Changelog All notable user-facing changes to LPIO, newest first. |
+| ARCHITECTURE.md | 339 | Architecture How the portal fits together. |
+| CHANGELOG.md | 584 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
@@ -478,14 +494,15 @@ Architecture, security, design, and the operating protocols.
 | PORTAL-REVIEW.md | 208 | Portal review playbook How a portal review wave is opened, walked, answered, verified, triaged and closed. |
 | PROTOTYPE-IDEAS.md | 150 | Prototype ideas and plans How an idea for a prototype is captured, prioritised, planned and promoted. |
 | ROADMAP-INTAKE.md | 458 | Roadmap intake The contextualisation protocol: how a new request is placed against what already exists before anything is written. |
-| ROADMAP-PLAYBOOK.md | 285 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
-| ROADMAP-REVIEW.md | 143 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
-| ROADMAP.md | 265 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
+| ROADMAP-PLAYBOOK.md | 301 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
+| ROADMAP-REVIEW.md | 163 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
+| ROADMAP.md | 270 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINTS.md | 109 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 40 | Current state Updated: 2026-09-07 (platform restructured and grounded; on branch claude/platform-page-restructure-brexcz, not yet merged) # In progress Nothing blocking. |
-| VALUE-CAPTURE.md | 174 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
+| SPRINT-DELIVERY.md | 264 | Sprint delivery What happens to a work item once it reaches the Now column: how it becomes a DevOps package a developer can pick up, how a sprint is summarised at each end, and how the whole Now column is mapped across sprints. |
+| SPRINTS.md | 123 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
+| STATE.md | 38 | Current state Updated: 2026-09-15 (Now column repopulated, Sprint Roadmap built; on branch claude/compassionate-planck-xl5uwl, not yet merged) # In progress Nothing blocking. |
+| VALUE-CAPTURE.md | 214 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
 ### .claude/
@@ -518,7 +535,7 @@ Repository root.
 | .githooks/pre-commit | 29 | Pre-commit gate. Fast, zero dependencies. |
 | .gitignore | 24 | Local configuration containing Supabase keys. Never commit. |
 | .gitmessage | 12 | <type>: <imperative summary, max 60 chars> |
-| CLAUDE.md | 265 |  |
+| CLAUDE.md | 273 |  |
 | README.md | 29 | LPIO A login-gated project hub: dashboard, API reference material and prototypes, organised as modules around a central dashboard. |
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |

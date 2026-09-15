@@ -180,6 +180,14 @@ half-finished change.
   wraps it. Database writes only; the repo does not change, and the
   portal at modules/app-review/ only displays what the session wrote.
   Never set confirmed_at yourself: confirmation is a human act.
+- Sprint delivery (a work item reaching Now, a sprint summary at either
+  end of a sprint, or re-mapping the Now column across sprints):
+  docs/SPRINT-DELIVERY.md. It carries the DevOps packaging format, the
+  summary structure and the allocation rules, and cites docs/SPRINTS.md
+  for the calendar rather than restating it. Only Now work is allocated,
+  which is what makes the Now column the conveyor belt between the
+  Product Roadmap and the Sprint Roadmap. Database writes only; the repo
+  does not change.
 - New prototype: create the page under modules/prototypes/, follow
   the script include order above, then insert a registry row into the
   prototypes table. Do not hand-edit navigation.

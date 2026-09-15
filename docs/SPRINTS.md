@@ -6,6 +6,14 @@ in `assets/js/core/sprints.js` (`App.sprints`); the looser "talk in
 sprints" phrasing is translated to database edits per the ruleset at the
 end of this file.
 
+This file is the calendar's one home. What happens to Now work once it
+is placed against those sprints - the allocation model, the DevOps
+package, the sprint summaries and the mapping rules - is
+docs/SPRINT-DELIVERY.md, which cites this file rather than restating
+any of it. The `sprints` table in supabase/schema/35_sprints.sql is a
+materialisation of `App.sprints` so SQL can join on a sprint, and
+tests/unit/sprints-table.test.js holds the two identical.
+
 ## The calendar
 
 - A sprint is a fortnight: it **starts on a Monday and ends on the
@@ -73,6 +81,12 @@ one, so a precise sprint and a coarse phrase resolve the same way:
 A run spanning several sprints uses `horizon` for the start sprint's
 band and `end_horizon` for the end sprint's band, so the bar spans
 columns (e.g. Now -> Next).
+
+For Now work this is now derived rather than typed: an allocation in
+`work_item_sprints` carries the slot and span, and a trigger projects
+`start_sprint` / `end_sprint` from it once the plan is anchored. The
+translation ruleset below still applies to everything else, and to a
+sprint code recorded by hand against work that has no allocation.
 
 ## Talking in sprints (translation ruleset)
 

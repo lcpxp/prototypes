@@ -111,7 +111,7 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `area_id` | a `work_areas` id (filing) | null | scope, Detailed grouping |
 | `summary` | text (Now-grade only) | null | card summary |
 | `effort` / `impact` | small/medium/large, low/medium/high | null | drawer |
-| `start_sprint` / `end_sprint` | `NN-NN` (e.g. 26-16) | null | drawer (docs/SPRINTS.md) |
+| `start_sprint` / `end_sprint` | `NN-NN` (e.g. 26-16) | null | drawer (docs/SPRINTS.md). DERIVED for Now work: a row in `work_item_sprints` is the source, and a trigger projects these once the plan is anchored (docs/SPRINT-DELIVERY.md) |
 | `business_benefit` | text | null | WHY the row exists; drawer panel above the fact grid (docs/VALUE-CAPTURE.md) |
 | `benefit_type` | cost_removed, failure_prevented, revenue_enabled, revenue_retained, decision_enabled, obligation_met, defect_cost | null | the shape of the benefit, so it can be queried and not only read |
 | `benefit_status` | drafted, confirmed | null | required whenever `business_benefit` is set; drafted renders with a visible marker |
@@ -122,6 +122,22 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 
 Items are never deleted. Close with `status='done'` or `'dropped'` plus a
 `resolution`; `resolved_at` is stamped by trigger. Reopening clears it.
+
+Two companion tables hang off a work item and are operated, not set on
+the row itself:
+
+- **`work_item_sprints`** - the sprint allocation. Only `horizon='now'`
+  work is allocated, which is what makes the Now column the conveyor
+  belt onto the Sprint Roadmap. Carries `slot` (relative: 0 is Sprint
+  +0), `span`, `sequence_position`, `overlap`
+  (exclusive/overlappable/parallel), an optional `external_party_id`
+  pointing at an `integrations` row, and `slip_slots`. An allocation
+  with an external party consumes no PXP capacity. Retired with a
+  `resolution`, never deleted. Rules: docs/SPRINT-DELIVERY.md.
+- **`work_item_metrics`** - the countable half of a benefit: what
+  changes, per what, and how sure. Sits alongside `business_benefit`
+  rather than replacing it, because prose cannot be summed across a
+  sprint. Method: docs/VALUE-CAPTURE.md.
 
 Delivered work splits into Recently and Previously completed by a 90-day
 freshness window on `resolved_at`. `previously_completed_at` overrides that:

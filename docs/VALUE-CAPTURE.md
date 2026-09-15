@@ -68,6 +68,46 @@ Rendered by `assets/js/pages/roadmap/detail-values.js` and held against
 the constraint by tests/checks/render-coverage.test.js, so adding a value
 without a label fails the build.
 
+## The countable half: work_item_metrics
+
+The four fields above are prose, and prose cannot be added up. "Thirty
+minutes per application" inside a paragraph is invisible to a query, so
+a sprint's worth or a workstream's worth can only be read one row at a
+time. `work_item_metrics` is the same claim as a number.
+
+One row per distinct claim, and never a restatement of the benefit:
+
+    metric_kind   time_saved, touches_removed, steps_removed,
+                  tools_removed, providers_removed, lag_removed,
+                  volume_enabled, spend_removed
+    unit          minutes, hours, days, count, percent, currency_gbp
+    value         the number
+    basis         per_application, per_merchant, per_order, per_partner,
+                  per_week, per_month, per_year, one_off
+    confidence    estimated, measured, owner_stated
+
+**`basis` is not optional decoration.** Thirty minutes per application
+and thirty minutes per year are different claims by three orders of
+magnitude, and a number without its basis is unreadable.
+
+**`confidence` is the counterpart to `benefit_status`, and the same
+discipline applies.** An assistant writes `estimated`. `owner_stated`
+only where the owner gave that figure in as many words - not where it
+was inferred from something he said. `measured` only where a source
+records it, and cite the source with `source_document_id`. A plausible
+number nobody checked is the failure this column exists to make visible,
+exactly as a fluent unverified benefit is.
+
+**A metric with no benefit is a figure nobody can interpret**, so write
+the prose first. And a row with no honest anchor gets no metric: an
+empty metric set is the accurate state, and a `work_notes` question
+saying what would make one honest is worth more than an invented figure.
+
+Rolled up by `v_work_item_metric_rollup`, summed by `(metric_kind, unit,
+basis)` and never across them. The Sprint Roadmap renders them as chips
+on a workstream bar; docs/SPRINT-DELIVERY.md is where they become the
+outcome line of a user story.
+
 ## The second audience: stories and collateral
 
 This content is not only read in a deck. It is the source material for

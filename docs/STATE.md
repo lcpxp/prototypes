@@ -1,39 +1,37 @@
 # Current state
 
-Updated: 2026-09-07 (platform restructured and grounded; on branch
-claude/platform-page-restructure-brexcz, not yet merged)
+Updated: 2026-09-15 (Now column repopulated, Sprint Roadmap built; on
+branch claude/compassionate-planck-xl5uwl, not yet merged)
 
 ## In progress
-Nothing blocking. The platform page is three views over a three-axis
-model (domain / kind / maturity, plus attestation and as_of), 18 derived
-capabilities cover seven previously empty areas, and the reference is
-joined to the graph. Six grounding figures now ratchet in
-tests/knowledge-budget.json.
+Nothing blocking. Five priority workstreams sit in Now (23 rows, every
+item under a workstream), 18 allocated across sprint slots 0-10 with
+streams in flight running 2-3-2. The plan is UNANCHORED on purpose:
+`sprint_plan.anchor_sprint` is null, so every surface reads Sprint +N.
 
 ## Next steps
-1. **Confirm the derived capabilities.** All 18 are `derived` - traceable
-   to delivered work, checked by nobody. Reading them and setting
-   `attestation = 'owner'` where they are right is the only way that
-   word enters the store; an assistant may never set it.
-2. **Confirm the drafted benefit.** 68 of 80 are `drafted`.
-   `items.benefit_unconfirmed` in `npm run audit` is the figure.
-   Method: docs/VALUE-CAPTURE.md.
-3. `grounding.delivered_without_affects` is 65 of 83. Lower it during
-   review Wave 4 rather than in a sweep - the point is the loop, not the
-   number.
-4. Three workstreams still carry a `work_notes` question instead of a
-   benefit; they need the owner.
+1. **Anchor the plan** when the start date and resource are known: set
+   `sprint_plan.anchor_sprint`, then `select sprint_plan_project();`.
+   Everything resolves at once.
+2. **Confirm the five drafted benefits and the 16 metrics.** Only the
+   owner can - confirmed and owner_stated both mean he said so.
+   `items.benefit_unconfirmed` is 79 of 92. Method: docs/VALUE-CAPTURE.md.
+3. **Confirm the seven proposed links** this session recorded (see the
+   knowledge-budget note on `links.proposed`).
+4. The Experian commercial model is still unknown - six open
+   integration_notes - and gates the screening cost case, not its build.
 
 ## Verification the repo cannot do for itself
-- The platform page signed in: three views, nothing expanded on load,
-  filter and expand/collapse, and a `#capability-<id>` link from a
-  roadmap drawer landing on an opened card.
-- Whether the 18 derived capabilities are actually true. Tests prove
-  they are traceable, not that they are right.
-- The six-department filter walk on the roadmap.
+- The two sprint views signed in: the axis reading Sprint +0 to +10, an
+  external bar drawn as an outline, overlap hatching on shared edges,
+  and a bar opening the existing drawer.
+- Whether the first-cut mapping matches how the owner would sequence it.
+  The shape is checked mechanically; the judgement is not.
 
 ## Open decisions
 - SECURITY: leaked-password protection still disabled in Supabase Auth.
 - Rename lcpxp/prototypes to lcpxp/lpio? Raised 2026-07, still open.
-- items.closed_without_resolution is 40 of 308, at its ceiling.
-- Pull versus push on the inbound onboarding API: unresolved with the COO.
+- Pull versus push on the inbound onboarding API: now its own Now row,
+  awaiting the COO session.
+- Roadmap page weight is 39 of 40 requests. The next view replaces a
+  sheet or raises the ceiling deliberately.

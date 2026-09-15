@@ -230,6 +230,45 @@ service connection. Age, group membership, the three-way split, the
 do-now ordering and duplicate detection are all derived at render time
 and never stored.
 
+### The Sprint Roadmap
+
+Two roadmaps read the same `work_items` rows. The **Product Roadmap**
+bands work by horizon and answers what is being done, in what order. The
+**Sprint Roadmap** takes the Now column and answers when, against whose
+capacity. One rule joins them, and it lives in `v_sprint_plan_items`:
+an item is on the Sprint Roadmap if it has a live allocation AND sits at
+`horizon='now'`.
+
+- sprints: the calendar materialised so SQL can join on a sprint.
+  `assets/js/core/sprints.js` stays the one home of the conversion, and
+  tests/unit/sprints-table.test.js re-derives the seed in JavaScript and
+  checks every row against the engine, so the copy cannot drift.
+- sprint_plan: exactly one row, holding the plan ANCHOR and the planning
+  constants. `anchor_sprint` null IS the unanchored state, so a plan
+  whose start date is unknown says so in the data rather than being
+  assumed. Anchoring is one write plus one call to
+  `sprint_plan_project()`.
+- work_item_sprints: the allocation. Relative `slot`, `span`,
+  `sequence_position`, `overlap` and an optional `external_party_id`
+  pointing at an `integrations` row. An allocation with an external
+  party consumes no PXP capacity, so externally-gated work is placed
+  honestly and slips without re-flowing the plan. Retired with a
+  resolution, never deleted.
+- work_item_metrics: the countable half of a benefit (docs/VALUE-CAPTURE.md).
+
+`work_items.start_sprint` / `end_sprint` remain, as a derived projection
+written by trigger, so the drawer and both exports keep working with no
+front-end change. The projection writes nothing while unanchored and
+only touches rows holding a live allocation, so a sprint code recorded
+by hand against unallocated work is left alone.
+
+Views: `v_sprint_plan_items` (the board reads this), plus
+`v_sprint_plan_streams`, `v_work_item_metric_rollup` and
+`v_sprint_plan_load` as read-and-operate surfaces in the spirit of
+`roadmap_current`. All security_invoker, granted to authenticated only.
+
+Process: docs/SPRINT-DELIVERY.md.
+
 ## Schema and migrations
 
 Two representations of the same database, kept in step:

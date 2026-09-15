@@ -10,6 +10,27 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Roadmap: a Sprint Roadmap alongside the existing board. Two new views -
+  Sprints: workstreams for what each stream spans and what it is worth,
+  and Sprints: work items for how the work rolls out - drawn as a Gantt
+  across sprint columns. Work reaches it by entering the Now column and
+  being given a slot. While the start date is unknown the columns read
+  Sprint +0, +1, +2 rather than inventing dates; setting the anchor later
+  fills in real sprint codes everywhere at once. Externally-gated work is
+  drawn as an outline and named, so it is clear which bars are not PXP's
+  to move.
+- Roadmap: the Now column is populated again, with five priority
+  workstreams - Payment Service, EIT fulfilment, the inbound lead API,
+  screening consolidation and the pricing engine. Payment Service is now
+  its own workstream rather than sitting inside Integrations.
+- Roadmap: work items can carry structured impact metrics - time saved,
+  touches removed, providers removed and so on - each with the basis it
+  is measured per and how sure it is. They roll up onto a workstream and
+  show as chips on the Sprint Roadmap, so a stream's value can be read
+  off the board rather than inferred from paragraphs.
+- Roadmap drawer: an allocated item now shows the sprints it spans, how
+  overlappable it is, and who is building it when that is not PXP.
+
 - Platform: the page is now three navigable views - what it does, how it is
   built, and reference - instead of one column. Capability cards are closed
   by default and carry title, maturity, who attests them and when they were

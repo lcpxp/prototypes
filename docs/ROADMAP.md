@@ -33,10 +33,10 @@ content in Supabase rather than in this public repo.
 Work is grouped as **themes over areas**:
 
 - **Themes** (`roadmap_categories`) are the top-level workstreams the
-  C-suite reads. There are 13: Core LP, Merchant Portal, Overhaul,
-  Integrations, Screening/Contracting/Fulfilment, Partners & PFAC,
-  Acquiring, APIs, Insights & Reporting, Automation & Approvals,
-  Sales & Commercial, Admin & Operations, Products & Pricing.
+  C-suite reads. The set is small and stable, and the table is its one
+  home - `select key, label from roadmap_categories order by sort_order`
+  rather than a list here, because the count was stated twice in this
+  file and both copies were stale within a month of a theme being added.
 - **Areas** (`work_areas`, `scope='product'`) are the finer development
   areas beneath a theme (`work_areas.category_id`), shared with the
   backlog and platform modules.
@@ -195,10 +195,8 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
   category_id nests an area under a theme (the two-level taxonomy). The
   roadmap reads product only; the scope column still serves the backlog
   and platform modules.
-- roadmap_categories: the 13 themes (Core LP, Merchant Portal, Overhaul,
-  Integrations, Screening/Contracting/Fulfilment, Partners & PFAC,
-  Acquiring, APIs, Insights & Reporting, Automation & Approvals,
-  Sales & Commercial, Admin & Operations, Products & Pricing). key,
+- roadmap_categories: the themes (read them from the table; see the
+  two-level taxonomy above for why they are not listed here). key,
   label, description, sort_order, and shareholder_visible (false marks a
   whole theme - Core LP, fixes - as internal-only for the
   shareholder-facing `roadmap_current` query below). Colour
@@ -239,8 +237,15 @@ Tables (all under supabase/schema/30_work.sql, RLS in policies.sql):
 - work_item_phases: optional Discovery / Build / Certification / Launch
   phases per item, each with a quarter, start/end dates and per-date TBC
   flags. Absent for high-level items; surfaced in the detail drawer.
-- roadmap_milestones, work_item_dependencies: named targets and
-  item-to-item ordering, for future timeline and waterfall views.
+- roadmap_milestones: named targets. Item-to-item ordering is the
+  `blocks` kind in knowledge_links, not a table: work_item_dependencies
+  was dropped on 2026-08-09 having never held a row, so there is one
+  mechanism for relationships rather than two.
+- sprints, sprint_plan, work_item_sprints: the Sprint Roadmap. The
+  calendar, the plan anchor and the per-item allocation. See
+  docs/SPRINT-DELIVERY.md, and docs/SPRINTS.md for the calendar itself.
+- work_item_metrics: the countable half of a benefit - what a row
+  changes, per what, and how sure. See docs/VALUE-CAPTURE.md.
 
 ## Working the roadmap with an AI assistant (Supabase access)
 

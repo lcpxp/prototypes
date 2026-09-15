@@ -46,6 +46,26 @@ Now holds whatever is genuinely in flight - there is no cap on how many items
 or workstreams sit there. Promote Next items on evidence
 (`horizon='now'`); demote when confidence drops.
 
+## Wave 2b - The conveyor belt
+
+Whatever waves 1 and 2 moved, the Sprint Roadmap has to follow, because
+only Now work is allocated and that is the whole join between the two
+roadmaps.
+
+- **Left Now** - retire its allocation with a `resolution` (never delete
+  it; the reason a slot changed is what a later reader needs).
+- **Entered Now** - allocate it, or say why not yet.
+- **Still in Now but re-sequenced** - re-map per docs/SPRINT-DELIVERY.md
+  Part C and record the delta as a decision. A re-map is a decision, not
+  a refresh.
+
+Then check the result rather than eyeballing it:
+
+    select * from v_sprint_plan_load;
+
+`over_capacity` or `over_concurrency` true on any row means the mapping
+is wrong, not that the bound is.
+
 ## Wave 3 - New capture
 
 "Anything new?" Then contextualise each line per docs/ROADMAP-INTAKE.md, and
