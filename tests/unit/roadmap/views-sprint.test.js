@@ -8,8 +8,10 @@
 //   2. A bar spans the sprints its allocation says, and no others.
 //   3. External work is visibly external, because the reader's question
 //      is "is anyone moving this".
-//   4. Durations never reach the surface - no days, no capacity, no
-//      velocity - whatever the data carries.
+//   4. How long the WORK takes never reaches the surface - no capacity,
+//      no velocity, no effort - whatever the data carries. A benefit
+//      measured in days is a different axis and does render; the last
+//      two cases hold that line in both directions.
 // ------------------------------------------------------------------
 "use strict";
 const test = require("node:test");
@@ -131,19 +133,36 @@ test("the stakeholder view carries the benefit and its metric chips", () => {
     "a chip whose weakest input is an estimate is marked as soft");
 });
 
-test("no duration, capacity or velocity reaches the surface", () => {
+test("no delivery duration, capacity or velocity reaches the surface", () => {
   const V = loadView();
   const data = anchored(sample());
   for (const html of [V.sprintStreams(data), V.sprintItems(data)]) {
-    for (const word of ["developer", "velocity", "capacity", "man-day", "person-day"]) {
+    for (const word of ["developer", "velocity", "capacity", "man-day",
+      "person-day", "effort", "estimate"]) {
       assert.ok(!html.toLowerCase().includes(word),
         `"${word}" must never appear on the Sprint Roadmap`);
     }
-    // "days" is allowed only inside a metric basis, never as a duration
-    // for the work itself. The sample carries no day-based metric, so
-    // any occurrence here would be a duration leaking out.
-    assert.doesNotMatch(html, /\bdays\b/, "durations in days must not be rendered");
   }
+});
+
+test("a benefit measured in days is not a delivery duration", () => {
+  // The rule is that how long the WORK takes stays off the surface -
+  // spans are the only unit for that. It is not a ban on the word: a
+  // lag_removed metric in days describes how long a MERCHANT waits
+  // today, which is the value being bought and is exactly the kind of
+  // figure the board exists to show. Held as its own case so the two
+  // are not confused by a later reader, or by a blunter assertion.
+  const V = loadView();
+  const data = sample();
+  data.metrics.push({ work_item_id: "i1", workstream_id: "w1",
+    metric_kind: "lag_removed", unit: "days", basis: "per_application",
+    total: 3, weakest_confidence: "estimated", metric_rows: 1 });
+  const html = V.sprintStreams(data);
+  assert.match(html, /Waiting time removed 3 days per application/,
+    "a lag metric renders as the wait it removes");
+  // And still no delivery duration anywhere near it.
+  assert.ok(!html.toLowerCase().includes("developer"));
+  assert.doesNotMatch(html, /\bsprints? to deliver\b/i);
 });
 
 test("an empty allocation says so rather than drawing an empty grid", () => {

@@ -97,7 +97,12 @@ drop view if exists public.v_work_item_metric_rollup;
 create view public.v_work_item_metric_rollup with (security_invoker = on) as
   select
     w.id as work_item_id, w.title as work_item_title,
-    w.parent_id as workstream_id, p.title as workstream_title,
+    -- A metric on a WORKSTREAM belongs to that workstream; a metric on
+    -- an item belongs to its parent. Taking parent_id alone left every
+    -- stream-level figure - the most quotable ones there are - rolling
+    -- up to null and never reaching the board.
+    case when w.level = 'workstream' then w.id else w.parent_id end as workstream_id,
+    case when w.level = 'workstream' then w.title else p.title end as workstream_title,
     m.metric_kind, m.unit, m.basis,
     sum(m.value) as total,
     min(m.confidence) as weakest_confidence,
@@ -105,7 +110,7 @@ create view public.v_work_item_metric_rollup with (security_invoker = on) as
   from public.work_item_metrics m
   join public.work_items w on w.id = m.work_item_id
   left join public.work_items p on p.id = w.parent_id
-  group by w.id, w.title, w.parent_id, p.title, m.metric_kind, m.unit, m.basis;
+  group by w.id, w.title, w.level, w.parent_id, p.title, m.metric_kind, m.unit, m.basis;
 
 revoke all on public.v_work_item_metric_rollup from public, anon;
 grant select on public.v_work_item_metric_rollup to authenticated;

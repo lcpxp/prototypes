@@ -359,6 +359,10 @@
     {
       "name": "sprint_plan_readable_by_roadmap_members",
       "version": "20260915165055"
+    },
+    {
+      "name": "metric_rollup_attributes_workstream_metrics",
+      "version": "20260915180000"
     }
   ],
   "policies": [

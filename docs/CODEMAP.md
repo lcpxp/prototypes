@@ -319,7 +319,7 @@ Schema, one file per domain, run in lexical order.
 | 33_links.sql | 361 | ---------------------------------------------------------------- 33_links.sql - The knowledge graph: typed, dated, owner-confirmed links between anything the system knows. |
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
 | 35_sprints.sql | 366 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
-| 36_value.sql | 115 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
+| 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
@@ -338,7 +338,7 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 | knowledge-coverage.json | 129 |  |
 | policies.sql | 549 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1674 |  |
+| schema-snapshot.json | 1678 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -398,7 +398,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | roadmap/export.test.js | 119 | tests/unit/roadmap/export.test.js - The roadmap's export dropdown wiring (App.roadmapExport.wire). |
 | roadmap/views-custom.test.js | 258 | tests/unit/roadmap/views-custom.test.js - Benchmarks for the roadmap |
 | roadmap/views-exec.test.js | 49 | tests/unit/roadmap/views-exec.test.js - Benchmarks for the Executive (Categories) board, split from roadmap-views.test.js per its size-budget exit plan. |
-| roadmap/views-sprint.test.js | 180 | tests/unit/roadmap/views-sprint.test.js - Benchmarks for the Sprint Roadmap builders (App.roadmapView.sprintStreams / sprintItems). |
+| roadmap/views-sprint.test.js | 199 | tests/unit/roadmap/views-sprint.test.js - Benchmarks for the Sprint Roadmap builders (App.roadmapView.sprintStreams / sprintItems). |
 | roadmap/views.test.js | 475 | tests/unit/roadmap/views.test.js - Benchmarks for the roadmap home's pure builders (App.roadmapView in roadmap-views.js + the exec board in roadmap-views-exec.js + the cascade half in roadmap-views-cascade.js). |
 | route-extract.test.js | 108 | tests/unit/route-extract.test.js - Benchmarks for the route extractor (scripts/extract-routes.js), inventory A of docs/plan/20-API-REFERENCE.md. |
 | search.test.js | 259 | tests/unit/search.test.js - Benchmarks for assets/js/core/search.js. |
