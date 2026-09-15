@@ -122,6 +122,12 @@ alter table public.product_capabilities    enable row level security;
 alter table public.domain_terms            enable row level security;
 alter table public.journey_stages          enable row level security;
 alter table public.work_item_embeddings    enable row level security;
+alter table public.integration_capabilities enable row level security;
+alter table public.integration_notes       enable row level security;
+alter table public.sprints                 enable row level security;
+alter table public.sprint_plan             enable row level security;
+alter table public.work_item_sprints       enable row level security;
+alter table public.work_item_metrics       enable row level security;
 
 do $$
 declare
@@ -134,6 +140,12 @@ begin
       ('api_tags',             '(select public.has_module_access(''reference''))'),
       ('api_topics',           '(select public.has_module_access(''reference''))'),
       ('integrations',         '(select public.has_module_access(''integrations''))'),
+      -- The estate behind each integration: what it can do, and what is
+      -- still unanswered about it. Same grant as the integrations row
+      -- they hang off. Declared 2026-09-15; they were applied live on
+      -- 2026-09-07 and never written back here.
+      ('integration_capabilities', '(select public.has_module_access(''integrations''))'),
+      ('integration_notes',        '(select public.has_module_access(''integrations''))'),
       -- portal_links is the one content table with no owning module:
       -- it drives icon buttons in the top nav, which every signed-in
       -- user sees on every page, so there is no grant to gate the read
@@ -160,7 +172,20 @@ begin
       ('work_notes',             '(select public.has_module_access(''backlog''))'),
       ('product_capabilities', '(select public.has_module_access(''platform''))'),
       ('domain_terms',         '(select public.has_module_access(''platform''))'),
-      ('journey_stages',       '(select public.has_module_access(''platform''))')
+      ('journey_stages',       '(select public.has_module_access(''platform''))'),
+      -- The Sprint Roadmap reads behind the roadmap grant. sprint_plan is
+      -- in here rather than admin-only because the sprint views are
+      -- security_invoker and resolve every sprint code through it: an
+      -- admin-only policy made the plan read as unanchored for everyone
+      -- else. The capacity constant it carries is kept off the SURFACE
+      -- (no page reads it, and tests/checks/style.test.js holds that),
+      -- which is the rule - not unreadability.
+      ('sprints',                '(select public.has_module_access(''roadmap''))'),
+      ('sprint_plan',            '(select public.has_module_access(''roadmap''))'),
+      ('work_item_sprints',      '(select public.has_module_access(''roadmap''))'),
+      -- Metrics are per-item value data shown in the drawer, so they read
+      -- behind the same pair of grants work_items does.
+      ('work_item_metrics',      '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))')
     ) as v(tbl, read_expr)
   loop
     execute format('drop policy if exists "%s: members read" on public.%I',
@@ -464,6 +489,17 @@ grant select on public.work_items_board to authenticated;
 revoke execute on function public.embed_texts(text[], integer) from public, anon, authenticated;
 revoke execute on function public.roadmap_embed_refresh(integer, integer) from public, anon, authenticated;
 revoke execute on function public.roadmap_embed_query(text) from public, anon, authenticated;
+
+-- sprint_plan_project() writes to work_items, so it must never be
+-- reachable over the REST RPC surface - same treatment as the embedding
+-- functions above. The statement trigger on work_item_sprints still
+-- fires: a trigger runs as the table owner and needs no caller grant.
+-- sprint_plan_project_trigger() is a trigger function and has no
+-- business being callable at all. sprint_code_for_slot() is read-only
+-- and security invoker, so signed-in users keep it and anon does not.
+revoke execute on function public.sprint_plan_project() from public, anon, authenticated;
+revoke execute on function public.sprint_plan_project_trigger() from public, anon, authenticated;
+revoke execute on function public.sprint_code_for_slot(integer) from public, anon;
 
 drop policy if exists "work_item_embeddings: members read" on public.work_item_embeddings;
 create policy "work_item_embeddings: members read"

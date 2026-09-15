@@ -97,6 +97,19 @@ const COVERAGE = {
   "work_items.benefit_type": { file: "assets/js/pages/roadmap/detail-values.js" },
   "work_items.benefit_status": { file: "assets/js/pages/roadmap/detail-values.js" },
   "work_items.sales_route": { file: "assets/js/pages/roadmap/detail-values.js" },
+  // The Sprint Roadmap's vocabularies. overlap decides whether two bars
+  // may share a sprint column and external_status is the only signal on
+  // the board that an externally-gated bar is moving, so both are read
+  // rather than filtered - a blank here is a bar nobody can interpret.
+  "work_item_sprints.overlap": { file: "assets/js/pages/roadmap/detail-values.js" },
+  "work_item_sprints.external_status": { file: "assets/js/pages/roadmap/detail-values.js" },
+  // The countable half of a benefit. Every one of these is rendered
+  // inline beside a number, so an unlabelled value reads as a figure
+  // with no meaning attached.
+  "work_item_metrics.metric_kind": { file: "assets/js/pages/roadmap/detail-values.js" },
+  "work_item_metrics.unit": { file: "assets/js/pages/roadmap/detail-values.js" },
+  "work_item_metrics.basis": { file: "assets/js/pages/roadmap/detail-values.js" },
+  "work_item_metrics.confidence": { file: "assets/js/pages/roadmap/detail-values.js" },
   // Owned by a stricter benchmark that checks the KINDS registry rather
   // than a mention anywhere in the file. One concept, one home.
   "product_capabilities.kind": { ownedBy: "tests/unit/platform/knowledge.test.js" },
@@ -121,6 +134,27 @@ const COVERAGE = {
   "future_prototypes.effort": { file: "assets/js/pages/ideas/render.js" },
   "integrations.status": { generic: "App.statusBadge renders any status" },
   "integrations.direction": { generic: "the integrations table prints the raw direction" },
+  // Declared as HOLES on 2026-09-15, not as generic rendering: nothing
+  // in the portal reads these at all. The estate tables were applied
+  // live on 2026-09-07 and the integrations page was never extended to
+  // show capabilities or notes, so every value here is currently read
+  // through v_integration_estate and v_integration_swap_map by a session
+  // rather than by a person on a page. Saying "generic" would claim a
+  // rendering that does not exist; this says what is true and leaves the
+  // gate pointing at it.
+  "integration_capabilities.availability": {
+    hole: "no page renders integration capabilities yet - read through " +
+      "v_integration_estate and v_integration_swap_map only. Closes when " +
+      "modules/integrations/ grows a capability section.",
+  },
+  "integration_notes.kind": {
+    hole: "no page renders integration notes yet - the open questions " +
+      "behind a consolidation decision are read through the estate views only.",
+  },
+  "integration_notes.status": {
+    hole: "no page renders integration notes yet; 'open' is the " +
+      "load-bearing value and is currently queried, never displayed.",
+  },
   "product_capabilities.maturity": { generic: "App.statusBadge renders any maturity" },
   "product_capabilities.attestation": {
     generic: "every value is badged by App.platformCards.attestationBadge, which " +

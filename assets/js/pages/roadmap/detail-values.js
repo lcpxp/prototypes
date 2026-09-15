@@ -51,6 +51,60 @@
   // carries a badge.
   var BENEFIT_STATUS = { drafted: "Draft - not yet confirmed", confirmed: "" };
   var SALES_ROUTE = { direct: "Direct sales", partner: "Partner sales" };
+
+  // How an allocated item behaves against the ones either side of it on
+  // the Sprint Roadmap. The label has to carry the CONSEQUENCE, not the
+  // key: "exclusive" alone tells a reader nothing about why two bars do
+  // or do not sit side by side in the same sprint column.
+  var OVERLAP = {
+    exclusive: "Holds its sprints alone",
+    overlappable: "Can share its first and last sprint",
+    parallel: "Runs alongside anything",
+  };
+  // Where a party outside PXP has got to. An allocation carrying one of
+  // these consumes no PXP capacity, so this is the only signal on the
+  // board that says whether that bar is moving.
+  var EXTERNAL_STATUS = {
+    not_started: "Not started", requested: "Requested", committed: "Committed",
+    in_progress: "In progress", delivered: "Delivered", slipped: "Slipped",
+  };
+  // The countable half of a benefit (docs/VALUE-CAPTURE.md). Labels are
+  // written for a stakeholder reading a bar, so they name the thing that
+  // stops happening rather than the column it is stored in.
+  var METRIC_KIND = {
+    time_saved: "Time saved", touches_removed: "Touches removed",
+    steps_removed: "Steps removed", tools_removed: "External tools removed",
+    providers_removed: "Providers removed", lag_removed: "Waiting time removed",
+    volume_enabled: "Volume enabled", spend_removed: "Spend removed",
+  };
+  // Units render INLINE beside the number, so they are lower case and
+  // count carries no word at all - "2 count per order" reads worse than
+  // "2 per order", and the kind already says what is being counted.
+  var METRIC_UNIT = {
+    minutes: "minutes", hours: "hours", days: "days",
+    count: "", percent: "%", currency_gbp: "GBP",
+  };
+  var METRIC_BASIS = {
+    per_application: "per application", per_merchant: "per merchant",
+    per_order: "per order", per_partner: "per partner",
+    per_week: "per week", per_month: "per month", per_year: "per year",
+    one_off: "one-off",
+  };
+  // Mirrors benefit_status: an unchecked figure must never read like a
+  // checked one. Owner stated is the strongest claim an assistant can
+  // record, and it may only be used where the owner gave the number.
+  var METRIC_CONFIDENCE = {
+    estimated: "Estimated", measured: "Measured", owner_stated: "Owner stated",
+  };
+  // "30 minutes per application". Trims cleanly when the unit is blank.
+  function metricText(m) {
+    if (!m) return "";
+    var n = Number(m.value);
+    var value = isFinite(n) ? String(n % 1 === 0 ? n : n.toFixed(2)) : String(m.value || "");
+    var unit = METRIC_UNIT[m.unit] !== undefined ? METRIC_UNIT[m.unit] : m.unit;
+    var basis = METRIC_BASIS[m.basis] || m.basis || "";
+    return [value, unit, basis].filter(Boolean).join(" ");
+  }
   var PHASE_ORDER = ["discovery", "build", "certification", "launch"];
   function day(x) { return x ? String(x).slice(0, 10) : ""; }
   function dateRange(a, b) {
@@ -124,6 +178,13 @@
     BENEFIT_TYPE: BENEFIT_TYPE,
     BENEFIT_STATUS: BENEFIT_STATUS,
     SALES_ROUTE: SALES_ROUTE,
+    OVERLAP: OVERLAP,
+    EXTERNAL_STATUS: EXTERNAL_STATUS,
+    METRIC_KIND: METRIC_KIND,
+    METRIC_UNIT: METRIC_UNIT,
+    METRIC_BASIS: METRIC_BASIS,
+    METRIC_CONFIDENCE: METRIC_CONFIDENCE,
+    metricText: metricText,
     KNOWN_ATTRS: KNOWN_ATTRS,
     day: day,
     dateRange: dateRange,

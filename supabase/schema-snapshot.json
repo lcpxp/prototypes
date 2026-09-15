@@ -64,6 +64,9 @@
     "set_prototype_idea_resolution()",
     "set_updated_at()",
     "set_work_item_resolution()",
+    "sprint_code_for_slot(p_slot integer)",
+    "sprint_plan_project()",
+    "sprint_plan_project_trigger()",
     "work_item_delete_guard()",
     "work_item_embed_text(p_title text, p_summary text, p_details text, p_resolution text)"
   ],
@@ -302,20 +305,60 @@
       "version": "20260901160444"
     },
     {
-      "version": "20260907180228",
-      "name": "platform_knowledge_axes"
+      "name": "platform_knowledge_axes",
+      "version": "20260907180228"
     },
     {
-      "version": "20260907180300",
-      "name": "platform_as_of_from_created"
+      "name": "platform_as_of_from_created",
+      "version": "20260907180300"
     },
     {
-      "version": "20260907180336",
-      "name": "platform_context_functions"
+      "name": "platform_context_functions",
+      "version": "20260907180336"
     },
     {
-      "version": "20260907184036",
-      "name": "platform_gaps_delivered_only"
+      "name": "platform_gaps_delivered_only",
+      "version": "20260907184036"
+    },
+    {
+      "name": "integration_estate_capabilities_and_notes",
+      "version": "20260907193920"
+    },
+    {
+      "name": "fix_integration_estate_view_fanout",
+      "version": "20260907194119"
+    },
+    {
+      "name": "integration_views_security_invoker",
+      "version": "20260907194138"
+    },
+    {
+      "name": "sprints_calendar",
+      "version": "20260915164810"
+    },
+    {
+      "name": "sprint_plan_and_allocation",
+      "version": "20260915164839"
+    },
+    {
+      "name": "work_item_metrics",
+      "version": "20260915164849"
+    },
+    {
+      "name": "sprint_tables_policies",
+      "version": "20260915164908"
+    },
+    {
+      "name": "sprint_functions_revoke_execute",
+      "version": "20260915164926"
+    },
+    {
+      "name": "sprint_plan_views",
+      "version": "20260915165028"
+    },
+    {
+      "name": "sprint_plan_readable_by_roadmap_members",
+      "version": "20260915165055"
     }
   ],
   "policies": [
@@ -414,6 +457,38 @@
     {
       "name": "future_prototypes: members read",
       "table": "future_prototypes"
+    },
+    {
+      "name": "integration_capabilities: admins delete",
+      "table": "integration_capabilities"
+    },
+    {
+      "name": "integration_capabilities: admins insert",
+      "table": "integration_capabilities"
+    },
+    {
+      "name": "integration_capabilities: admins update",
+      "table": "integration_capabilities"
+    },
+    {
+      "name": "integration_capabilities: members read",
+      "table": "integration_capabilities"
+    },
+    {
+      "name": "integration_notes: admins delete",
+      "table": "integration_notes"
+    },
+    {
+      "name": "integration_notes: admins insert",
+      "table": "integration_notes"
+    },
+    {
+      "name": "integration_notes: admins update",
+      "table": "integration_notes"
+    },
+    {
+      "name": "integration_notes: members read",
+      "table": "integration_notes"
     },
     {
       "name": "integrations: admins delete",
@@ -644,6 +719,38 @@
       "table": "roadmap_milestones"
     },
     {
+      "name": "sprint_plan: admins delete",
+      "table": "sprint_plan"
+    },
+    {
+      "name": "sprint_plan: admins insert",
+      "table": "sprint_plan"
+    },
+    {
+      "name": "sprint_plan: admins update",
+      "table": "sprint_plan"
+    },
+    {
+      "name": "sprint_plan: members read",
+      "table": "sprint_plan"
+    },
+    {
+      "name": "sprints: admins delete",
+      "table": "sprints"
+    },
+    {
+      "name": "sprints: admins insert",
+      "table": "sprints"
+    },
+    {
+      "name": "sprints: admins update",
+      "table": "sprints"
+    },
+    {
+      "name": "sprints: members read",
+      "table": "sprints"
+    },
+    {
       "name": "triage_categories: members read",
       "table": "triage_categories"
     },
@@ -696,6 +803,22 @@
       "table": "work_item_embeddings"
     },
     {
+      "name": "work_item_metrics: admins delete",
+      "table": "work_item_metrics"
+    },
+    {
+      "name": "work_item_metrics: admins insert",
+      "table": "work_item_metrics"
+    },
+    {
+      "name": "work_item_metrics: admins update",
+      "table": "work_item_metrics"
+    },
+    {
+      "name": "work_item_metrics: members read",
+      "table": "work_item_metrics"
+    },
+    {
       "name": "work_item_phases: admins delete",
       "table": "work_item_phases"
     },
@@ -710,6 +833,22 @@
     {
       "name": "work_item_phases: members read",
       "table": "work_item_phases"
+    },
+    {
+      "name": "work_item_sprints: admins delete",
+      "table": "work_item_sprints"
+    },
+    {
+      "name": "work_item_sprints: admins insert",
+      "table": "work_item_sprints"
+    },
+    {
+      "name": "work_item_sprints: admins update",
+      "table": "work_item_sprints"
+    },
+    {
+      "name": "work_item_sprints: members read",
+      "table": "work_item_sprints"
     },
     {
       "name": "work_items: admins delete",
@@ -832,6 +971,33 @@
       "tags",
       "updated_at",
       "value_note"
+    ],
+    "integration_capabilities": [
+      "as_of",
+      "availability",
+      "created_at",
+      "description",
+      "group_label",
+      "id",
+      "integration_id",
+      "name",
+      "replaces_integration_id",
+      "replaces_note",
+      "sort_order",
+      "updated_at",
+      "verified"
+    ],
+    "integration_notes": [
+      "body",
+      "captured_on",
+      "created_at",
+      "id",
+      "integration_id",
+      "kind",
+      "sort_order",
+      "source_document_id",
+      "status",
+      "updated_at"
     ],
     "integrations": [
       "category",
@@ -1109,6 +1275,23 @@
       "title",
       "updated_at"
     ],
+    "sprint_plan": [
+      "anchor_sprint",
+      "capacity_dev_equivalents",
+      "created_at",
+      "key",
+      "max_concurrent_streams",
+      "min_concurrent_streams",
+      "note",
+      "updated_at"
+    ],
+    "sprints": [
+      "code",
+      "ends_on",
+      "idx",
+      "quarter",
+      "starts_on"
+    ],
     "triage_categories": [
       "colour_token",
       "created_at",
@@ -1151,6 +1334,20 @@
       "updated_at",
       "work_item_id"
     ],
+    "work_item_metrics": [
+      "as_of",
+      "basis",
+      "confidence",
+      "created_at",
+      "id",
+      "metric_kind",
+      "note",
+      "source_document_id",
+      "unit",
+      "updated_at",
+      "value",
+      "work_item_id"
+    ],
     "work_item_phases": [
       "created_at",
       "end_tbc",
@@ -1161,6 +1358,22 @@
       "sort_order",
       "start_tbc",
       "starts_on",
+      "updated_at",
+      "work_item_id"
+    ],
+    "work_item_sprints": [
+      "created_at",
+      "external_party_id",
+      "external_status",
+      "id",
+      "note",
+      "overlap",
+      "resolution",
+      "retired_at",
+      "sequence_position",
+      "slip_slots",
+      "slot",
+      "span",
       "updated_at",
       "work_item_id"
     ],
@@ -1302,6 +1515,105 @@
       "title",
       "type",
       "updated_at",
+      "workstream_title"
+    ],
+    "v_integration_estate": [
+      "capabilities_available",
+      "capabilities_live",
+      "category",
+      "direction",
+      "estate",
+      "id",
+      "name",
+      "notes_total",
+      "open_questions",
+      "purpose",
+      "sort_order",
+      "status",
+      "swap_targets"
+    ],
+    "v_integration_swap_map": [
+      "as_of",
+      "availability",
+      "capability",
+      "group_label",
+      "offered_by",
+      "offered_by_id",
+      "replaces",
+      "replaces_category",
+      "replaces_id",
+      "replaces_note"
+    ],
+    "v_sprint_plan_items": [
+      "allocation_note",
+      "anchored",
+      "benefit_status",
+      "benefit_type",
+      "business_benefit",
+      "category_key",
+      "category_label",
+      "department",
+      "effective_end_slot",
+      "effective_slot",
+      "end_code",
+      "external_party",
+      "external_status",
+      "is_external",
+      "level",
+      "overlap",
+      "priority",
+      "progress",
+      "sequence_position",
+      "slip_slots",
+      "slot",
+      "span",
+      "start_code",
+      "status",
+      "summary",
+      "title",
+      "type",
+      "work_item_id",
+      "workstream_id",
+      "workstream_title"
+    ],
+    "v_sprint_plan_load": [
+      "capacity",
+      "code",
+      "exclusive_items",
+      "external_items",
+      "over_capacity",
+      "over_concurrency",
+      "pxp_items",
+      "slot",
+      "streams_in_flight"
+    ],
+    "v_sprint_plan_streams": [
+      "benefit_status",
+      "benefit_type",
+      "business_benefit",
+      "department",
+      "end_code",
+      "external_item_count",
+      "externally_gated",
+      "first_slot",
+      "item_count",
+      "last_slot",
+      "priority",
+      "slots_spanned",
+      "start_code",
+      "workstream_id",
+      "workstream_title"
+    ],
+    "v_work_item_metric_rollup": [
+      "basis",
+      "metric_kind",
+      "metric_rows",
+      "total",
+      "unit",
+      "weakest_confidence",
+      "work_item_id",
+      "work_item_title",
+      "workstream_id",
       "workstream_title"
     ],
     "work_items_board": [
