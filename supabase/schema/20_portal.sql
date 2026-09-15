@@ -193,3 +193,132 @@ drop trigger if exists portal_links_updated_at on public.portal_links;
 create trigger portal_links_updated_at
   before update on public.portal_links
   for each row execute function public.set_updated_at();
+
+-- ---------------------------------------------------------------
+-- The integration ESTATE: what each provider can do, what it could
+-- replace, and what is still unanswered about it.
+--
+-- integrations says which systems LaunchPad talks to. These two say
+-- what is actually on offer behind each one, which is the question a
+-- consolidation decision turns on: a provider PXP already holds a
+-- contract with may cover several it pays separately for, and that is
+-- only visible if capabilities are rows rather than prose.
+--
+-- Declared here on 2026-09-15. The tables were applied to the live
+-- project on 2026-09-07 and never written back to the repo, so
+-- supabase/schema/ could not rebuild them - the exact failure
+-- tests/checks/schema-drift.test.js exists to catch, and it stayed
+-- invisible only because schema-snapshot.json was also stale.
+-- ---------------------------------------------------------------
+
+create table if not exists public.integration_capabilities (
+  id uuid primary key default gen_random_uuid(),
+  integration_id uuid not null
+    references public.integrations (id) on delete cascade,
+  group_label text,
+  name text not null,
+  description text,
+  -- live: consumed today. available: offered and not taken up - the
+  -- gap a consolidation closes. planned/not_offered/unknown carry the
+  -- rest honestly rather than guessing.
+  availability text not null default 'available'
+    check (availability in ('live', 'available', 'planned', 'not_offered', 'unknown')),
+  -- The swap edge: this capability is direct cover for what that other
+  -- provider does today. Null for capabilities that replace nothing.
+  replaces_integration_id uuid
+    references public.integrations (id) on delete set null,
+  replaces_note text,
+  verified boolean not null default false,
+  as_of date,
+  sort_order integer not null default 100,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists integration_capabilities_integration_idx
+  on public.integration_capabilities (integration_id, availability);
+
+drop trigger if exists integration_capabilities_updated_at on public.integration_capabilities;
+create trigger integration_capabilities_updated_at
+  before update on public.integration_capabilities
+  for each row execute function public.set_updated_at();
+
+create table if not exists public.integration_notes (
+  id uuid primary key default gen_random_uuid(),
+  integration_id uuid not null
+    references public.integrations (id) on delete cascade,
+  kind text not null default 'comment'
+    check (kind in ('meeting', 'decision', 'question', 'commercial', 'comment', 'risk')),
+  body text not null,
+  -- 'open' is the load-bearing one: an unanswered commercial or
+  -- coverage question that a decision should not be taken over.
+  status text not null default 'active'
+    check (status in ('active', 'open', 'answered', 'superseded')),
+  captured_on date not null default current_date,
+  source_document_id uuid
+    references public.work_documents (id) on delete set null,
+  sort_order integer not null default 100,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists integration_notes_integration_idx
+  on public.integration_notes (integration_id, status);
+
+drop trigger if exists integration_notes_updated_at on public.integration_notes;
+create trigger integration_notes_updated_at
+  before update on public.integration_notes
+  for each row execute function public.set_updated_at();
+
+-- The estate in one row per provider. The subqueries are aggregated
+-- separately and joined, rather than counted across one join, because
+-- joining both children at once fans the rows out and doubles every
+-- count.
+
+drop view if exists public.v_integration_estate;
+create view public.v_integration_estate with (security_invoker = on) as
+  select
+    i.id, i.name, i.category, i.estate, i.status, i.direction, i.purpose, i.sort_order,
+    coalesce(c.capabilities_live, 0) as capabilities_live,
+    coalesce(c.capabilities_available, 0) as capabilities_available,
+    coalesce(c.swap_targets, 0) as swap_targets,
+    coalesce(n.open_questions, 0) as open_questions,
+    coalesce(n.notes_total, 0) as notes_total
+  from public.integrations i
+  left join (
+    select integration_id,
+           count(*) filter (where availability = 'live') as capabilities_live,
+           count(*) filter (where availability = 'available') as capabilities_available,
+           count(*) filter (where replaces_integration_id is not null) as swap_targets
+      from public.integration_capabilities group by integration_id) c on c.integration_id = i.id
+  left join (
+    select integration_id,
+           count(*) filter (where status = 'open') as open_questions,
+           count(*) as notes_total
+      from public.integration_notes group by integration_id) n on n.integration_id = i.id;
+
+revoke all on public.v_integration_estate from public, anon;
+grant select on public.v_integration_estate to authenticated;
+
+comment on view public.v_integration_estate is
+  'One row per integration with its capability and open-question counts. The consolidation read.';
+
+-- Every swap edge, resolved to names: what this provider offers that
+-- covers what that one does today.
+
+drop view if exists public.v_integration_swap_map;
+create view public.v_integration_swap_map with (security_invoker = on) as
+  select
+    src.id as offered_by_id, src.name as offered_by,
+    c.group_label, c.name as capability, c.availability,
+    tgt.id as replaces_id, tgt.name as replaces, tgt.category as replaces_category,
+    c.replaces_note, c.as_of
+  from public.integration_capabilities c
+  join public.integrations src on src.id = c.integration_id
+  join public.integrations tgt on tgt.id = c.replaces_integration_id;
+
+revoke all on public.v_integration_swap_map from public, anon;
+grant select on public.v_integration_swap_map to authenticated;
+
+comment on view public.v_integration_swap_map is
+  'Every capability that is direct cover for another provider, resolved to names.';
