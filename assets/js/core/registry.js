@@ -114,6 +114,19 @@
       // security_invoker view, so reads are filtered by the work_items
       // policy. docs/plan/80-LOAD-SPEED.md.
       workItemsBoard: "work_items_board",
+      // The Sprint Roadmap. The Now column placed against sprints: the
+      // items carry the allocation, the streams carry the spans and
+      // rollups a stakeholder reads, and the metric rollup is summed per
+      // kind, unit and basis. All security_invoker views, filtered by the
+      // same policies as the rows behind them. docs/SPRINT-DELIVERY.md.
+      sprintPlanItems: "v_sprint_plan_items",
+      sprintPlanStreams: "v_sprint_plan_streams",
+      workItemMetricRollup: "v_work_item_metric_rollup",
+      // The calendar, so an anchored plan can label every column rather
+      // than only the ones a bar starts or ends in.
+      sprints: "sprints",
+      workItemSprints: "work_item_sprints",
+      workItemMetrics: "work_item_metrics",
       knowledgeLinks: "knowledge_links",
       workDocuments: "work_documents",
       workNotes: "work_notes",

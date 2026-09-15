@@ -26,6 +26,8 @@
   var BENEFIT_TYPE = V.BENEFIT_TYPE;
   var BENEFIT_STATUS = V.BENEFIT_STATUS;
   var SALES_ROUTE = V.SALES_ROUTE;
+  var OVERLAP = V.OVERLAP;
+  var EXTERNAL_STATUS = V.EXTERNAL_STATUS;
   var PHASE_ORDER = V.PHASE_ORDER;
   var KNOWN_ATTRS = V.KNOWN_ATTRS;
   var day = V.day;
@@ -364,6 +366,34 @@
         return item.end_sprint && item.end_sprint !== item.start_sprint
           ? esc((item.start_sprint || "?") + " to " + item.end_sprint)
           : esc(item.start_sprint ? sprintRange(item.start_sprint) : "");
+      } },
+      // The sprint allocation, attached by roadmap.js from
+      // v_sprint_plan_items. Only Now work carries one, so these rows
+      // are absent everywhere else rather than showing as blanks.
+      { key: "_sprint_slot", label: "Sprint slot", html: function () {
+        var al = item.allocation;
+        if (!al) return "";
+        var span = Number(al.span) || 1;
+        var start = Number(al.effective_slot) || 0;
+        var end = Number(al.effective_end_slot);
+        if (!isFinite(end) || end < start) end = start + span - 1;
+        if (al.start_code) {
+          return esc(end !== start && al.end_code
+            ? al.start_code + " to " + al.end_code : sprintRange(al.start_code));
+        }
+        return esc(end !== start
+          ? "Sprint +" + start + " to Sprint +" + end
+          : "Sprint +" + start);
+      } },
+      { key: "_sprint_overlap", label: "Overlap", html: function () {
+        var al = item.allocation;
+        return al ? esc(OVERLAP[al.overlap] || al.overlap || "") : "";
+      } },
+      { key: "_sprint_external", label: "Built by", html: function () {
+        var al = item.allocation;
+        if (!al || !al.is_external) return "";
+        var st = EXTERNAL_STATUS[al.external_status] || al.external_status || "";
+        return esc(al.external_party + (st ? " - " + st.toLowerCase() : ""));
       } },
       { key: "_vertical", label: "Vertical", html: function () { return esc(a.pnl_vertical || ""); } },
       { key: "_team", label: "Team", html: function () { return esc(a.team || ""); } },

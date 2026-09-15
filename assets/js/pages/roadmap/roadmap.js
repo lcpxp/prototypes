@@ -24,7 +24,19 @@
     { key: "exec", label: "Categories" },
     { key: "team", label: "Work Items" },
     { key: "backlog", label: "Backlog" },
+    // The Sprint Roadmap. Two renderings of one allocation, and a level
+    // rather than a page: the hash already carries level/layout, the
+    // drawer is already shared, and the data is the same work_items rows
+    // seen against sprints instead of horizons. docs/SPRINT-DELIVERY.md.
+    { key: "sprint-streams", label: "Sprints: workstreams", sprint: true },
+    { key: "sprint-items", label: "Sprints: work items", sprint: true },
   ];
+  function isSprint(key) {
+    for (var i = 0; i < LEVELS.length; i++) {
+      if (LEVELS[i].key === key) return !!LEVELS[i].sprint;
+    }
+    return false;
+  }
   var LAYOUTS = [
     { key: "timeline", label: "Timeline" },
     { key: "cascade", label: "Cascade" },
@@ -95,6 +107,15 @@
       unpicked: unpicked, excluded: excluded, hideFixes: hideFixes, hiddenBands: hiddenBands,
       wide: wide };
     var vd = viewData();
+    if (isSprint(current)) {
+      // The sprint views read the allocation, not the horizon bands, so
+      // they take the sprint data rather than the department-filtered
+      // board set. Only the wide toggle applies to them.
+      host.innerHTML = current === "sprint-streams"
+        ? App.roadmapView.sprintStreams(data, { wide: wide })
+        : App.roadmapView.sprintItems(data, { wide: wide });
+      return;
+    }
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(vd, current, opts)
       : App.roadmapView.timeline(vd, current, opts);
@@ -152,7 +173,9 @@
     layoutNav.innerHTML = tabs(LAYOUTS, layout, "rmv-switch-btn");
     // Executive is a layout-independent summary, so the Timeline/Cascade
     // switch has no effect there; hide it rather than leave a dead toggle.
-    layoutNav.hidden = current === "exec";
+    // The sprint views are the same case: a Gantt over sprint columns has
+    // no cascade reading.
+    layoutNav.hidden = current === "exec" || isSprint(current);
     nav.querySelectorAll("button[data-key]").forEach(function (b) {
       b.addEventListener("click", function () { set(P.KEYS.level, "current", b.getAttribute("data-key"), nav, layoutNav, host); });
     });
@@ -374,12 +397,53 @@
       // invisible from the moment anybody first used it.
       App.db.from(App.registry.tables.roadmapMilestones)
         .select("id, title, due_on"),
+      // The Sprint Roadmap. Three reads rather than one because each
+      // answers a different question and the database already knows all
+      // three: the items carry the allocation, the streams carry the
+      // spans and rollups a stakeholder reads, and the metric rollup is
+      // summed per kind, unit and basis - which must not be re-derived
+      // here, or the board and a session querying the plan could
+      // disagree about what a stream is worth.
+      App.db.from(App.registry.tables.sprintPlanItems)
+        .select("*")
+        .order("slot", { ascending: true }),
+      App.db.from(App.registry.tables.sprintPlanStreams)
+        .select("*"),
+      App.db.from(App.registry.tables.workItemMetricRollup)
+        .select("*"),
+      // The calendar, so an anchored plan can label every column and not
+      // only the ones a bar starts or ends in.
+      App.db.from(App.registry.tables.sprints)
+        .select("idx, code")
+        .order("idx", { ascending: true }),
     ]);
 
     var itemsResult = results[2];
     if (itemsResult.error) {
       App.notice(host, "error", "Could not load the roadmap: " + itemsResult.error.message);
       return;
+    }
+    // Sprint reads are optional in the same way the others are: a denied
+    // or empty read leaves the Sprint Roadmap saying nothing is
+    // allocated, which is true, rather than failing the whole board.
+    data.sprintItems = results[7] && !results[7].error ? results[7].data || [] : [];
+    data.sprintStreams = results[8] && !results[8].error ? results[8].data || [] : [];
+    data.metrics = results[9] && !results[9].error ? results[9].data || [] : [];
+    data.sprintCodes = {};
+    if (results[10] && !results[10].error) {
+      var anchorIdx = null;
+      (data.sprintItems || []).forEach(function (r) {
+        if (anchorIdx === null && r.start_code) {
+          (results[10].data || []).forEach(function (sp) {
+            if (sp.code === r.start_code) anchorIdx = sp.idx - (Number(r.effective_slot) || 0);
+          });
+        }
+      });
+      if (anchorIdx !== null) {
+        (results[10].data || []).forEach(function (sp) {
+          if (sp.idx >= anchorIdx) data.sprintCodes[sp.idx - anchorIdx] = sp.code;
+        });
+      }
     }
     data.categories = results[0].error ? [] : results[0].data || [];
     data.areas = results[1].error ? [] : results[1].data || [];
@@ -392,9 +456,15 @@
     phases.forEach(function (p) {
       (phasesByItem[p.work_item_id] = phasesByItem[p.work_item_id] || []).push(p);
     });
+    // The sprint allocation, attached the same way phases are, so the
+    // drawer can show where an item sits on the Sprint Roadmap without a
+    // second fetch when it opens. Only Now work carries one.
+    var allocByItem = {};
+    (data.sprintItems || []).forEach(function (r) { allocByItem[r.work_item_id] = r; });
     itemsById = {};
     data.items.forEach(function (i) {
       i.phases = phasesByItem[i.id] || [];
+      i.allocation = allocByItem[i.id] || null;
       itemsById[i.id] = i;
     });
     // Split delivered work into Recently/Previously completed by stamping

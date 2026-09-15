@@ -25,6 +25,10 @@ function loadView() {
     "assets/js/pages/roadmap/views-breakdown.js",
     "assets/js/pages/roadmap/views-exec.js",
     "assets/js/pages/roadmap/views-cascade.js",
+    // detail-values before views-sprint: the sprint chips read the metric
+    // label maps and the metricText formatter from it.
+    "assets/js/pages/roadmap/detail-values.js",
+    "assets/js/pages/roadmap/views-sprint.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App.roadmapView;
 }

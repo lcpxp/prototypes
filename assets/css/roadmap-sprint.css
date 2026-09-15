@@ -1,0 +1,156 @@
+/* ------------------------------------------------------------------
+   roadmap-sprint.css - The Sprint Roadmap's own rules, and only those.
+
+   The grid, the bar, the sticky header, the horizontal scroll and the
+   progress overlay all come from .rmv-tl in roadmap-views.css: a sprint
+   column is just another column, and that sheet is already driven by
+   --tl-cols rather than a fixed set of bands.
+
+   That sheet's size-budget acknowledgement named "a seventh view" as
+   the trigger to split it. This is that seventh view, and the split it
+   pointed at was the wrong one: it warned that separating the shared
+   coordinate model means duplicating it or inventing a file that is
+   most of it. So the model is REUSED and only what is new to sprints
+   lives here.
+   ------------------------------------------------------------------ */
+
+/* The unanchored axis, stated once above the board rather than on every
+   bar. It is a fact about the plan, not a caption on the work. */
+.rmv-sp-note {
+  margin: 0 0 var(--s-3);
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+/* Sprint columns are narrower than horizon bands: there are more of
+   them and each says less, so the axis stays readable while scrolling.
+   Everything else about the grid is inherited. */
+.rmv-sp {
+  --tl-col: minmax(4.5rem, 1fr);
+}
+.rmv-sp.rmv-tl--wide {
+  --tl-col: minmax(7rem, 1fr);
+}
+
+/* A workstream bar carries its item count on the right. The count is
+   what the bar is worth structurally - how much sits inside it - and it
+   is deliberately the only number on any bar. */
+.rmv-sp-count {
+  margin-inline-start: auto;
+  padding-inline-start: var(--s-2);
+  color: var(--muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+/* Externally-gated work is an outline, not a fill: the plan is not
+   moving it, and a reader should see that without opening anything. */
+.rmv-sp-bar--ext {
+  background: transparent;
+  border: 1px dashed var(--rm-a, var(--line-strong));
+  border-inline-start-width: 3px;
+  border-inline-start-style: solid;
+}
+.rmv-sp-ext {
+  margin-inline-start: auto;
+  padding-inline-start: var(--s-2);
+  color: var(--muted);
+  font-size: var(--text-xs);
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+/* A workstream holding any external work says so quietly on its own
+   bar, so the stakeholder view carries the same signal as the delivery
+   view without listing the items. */
+.rmv-sp-bar--has-ext {
+  border-inline-end: 2px dashed var(--rm-a, var(--line-strong));
+}
+
+/* Overlappable: the first and last sprint of the bar may be shared with
+   the item before or after it. The hatch marks exactly those edges, so
+   what the property MEANS is visible rather than asserted. */
+.rmv-sp-bar--overlap {
+  --rmv-sp-hatch: color-mix(in srgb, var(--rm-a, var(--ink)) 28%, transparent);
+  background-image:
+    repeating-linear-gradient(45deg,
+      var(--rmv-sp-hatch) 0 2px, transparent 2px 6px),
+    repeating-linear-gradient(45deg,
+      var(--rmv-sp-hatch) 0 2px, transparent 2px 6px);
+  background-size: 1.25rem 100%, 1.25rem 100%;
+  background-position: left center, right center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+/* Parallel work imposes no sequencing at all, so it sits on a shallower
+   lane: it is not competing for the same hands as the bars around it. */
+.rmv-sp-bar--parallel {
+  min-block-size: 1.35rem;
+  align-self: center;
+  opacity: 0.92;
+}
+
+/* A slipped external commitment keeps its bar and gains a warning edge.
+   The allocation still says where it was planned; slip_slots moves it. */
+.rmv-sp-bar--slipped {
+  border-color: var(--warn);
+  box-shadow: inset 0 0 0 1px var(--warn-soft);
+}
+
+/* The stakeholder view's second line: what the stream buys. It sits
+   under the bar rather than inside it, because a bar has to stay
+   scannable and a benefit is a sentence. */
+.rmv-sp-meta {
+  margin: calc(var(--s-1) * -1) 0 var(--s-3);
+}
+.rmv-sp-benefit {
+  margin: 0 0 var(--s-2);
+  max-inline-size: var(--lede-max);
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+/* Metric chips: the countable half of the benefit, one per kind, unit
+   and basis. A chip whose weakest input is an estimate is dimmed, so a
+   figure never reads firmer than the softest thing inside it. */
+.rmv-sp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+.rmv-sp-chip {
+  padding: 2px var(--s-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--alt-surface);
+  color: var(--ink);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+.rmv-sp-chip--soft {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+/* A workstream header row in the delivery view reads as a divider, not
+   as another item. */
+.rmv-sp-row--head {
+  margin-block-start: var(--s-3);
+}
+
+/* Mobile-first: the benefit line runs full width on a narrow screen and
+   only indents to sit under the bars once there is room for the gutter,
+   which is the same breakpoint the indexed content shell uses. */
+@media (min-width: 48rem) {
+  .rmv-sp-meta {
+    padding-inline-start: var(--tl-gutter, 11rem);
+  }
+}
+
+@media print {
+  /* The axis note is screen guidance; on paper the column headings
+     already say Sprint +N. */
+  .rmv-sp-note { display: none; }
+  .rmv-sp-benefit { color: var(--ink); }
+  .rmv-sp-chip { border-color: var(--line-strong); }
+}
