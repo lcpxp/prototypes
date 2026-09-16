@@ -148,11 +148,27 @@
   box-shadow: inset 0 0 0 1px var(--warn-soft);
 }
 
-/* The stakeholder view's second line: what the stream buys. It sits
-   under the bar rather than inside it, because a bar has to stay
-   scannable and a benefit is a sentence. */
-.rmv-sp-meta {
-  margin: calc(var(--s-1) * -1) 0 var(--s-3);
+/* What each stream buys, collected BELOW the board rather than set
+   between the bars. A benefit is a sentence and a bar is a shape; the
+   two interleaved pushed the rows far enough apart that the waterfall
+   could not be read, which is the one thing this view exists to show.
+   The cards keep the board's order and the board's colour, so a card
+   and its bar are the same stream without being labelled as such. */
+.rmv-sp-notes {
+  display: grid;
+  gap: var(--s-3);
+  margin-block-start: var(--s-5);
+}
+.rmv-sp-note-card {
+  border-inline-start: 4px solid var(--rm-a, var(--line-strong));
+  padding-inline-start: var(--s-3);
+  cursor: pointer;
+}
+.rmv-sp-note-head {
+  margin: 0 0 var(--s-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--ink);
 }
 .rmv-sp-benefit {
   margin: 0 0 var(--s-2);
@@ -190,12 +206,13 @@
   margin-block-start: var(--s-3);
 }
 
-/* Mobile-first: the benefit line runs full width on a narrow screen and
-   only indents to sit under the bars once there is room for the gutter,
-   which is the same breakpoint the indexed content shell uses. */
+/* Mobile-first: one card per row on a narrow screen, two once there is
+   room for a readable measure beside another - the same breakpoint the
+   indexed content shell uses. */
 @media (min-width: 48rem) {
-  .rmv-sp-meta {
-    padding-inline-start: var(--tl-gutter, 11rem);
+  .rmv-sp-notes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-3) var(--s-5);
   }
 }
 

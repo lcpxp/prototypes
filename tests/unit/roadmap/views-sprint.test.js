@@ -186,6 +186,23 @@ test("items group under their workstream in slot then sequence order", () => {
     "a workstream's items stay together rather than interleaving by slot");
 });
 
+test("the stakeholder bars run contiguously, with the benefits below", () => {
+  // The waterfall is the one thing this view exists to show, and a
+  // benefit set between two bars pushes them far enough apart that it
+  // cannot be read. Bars first, in one block; what each stream buys
+  // after the board.
+  const V = loadView();
+  const html = V.sprintStreams(sample());
+  const lastBar = html.lastIndexOf("rmv-tl-row rmv-sp-row");
+  const firstNote = html.indexOf("rmv-sp-notes");
+  assert.ok(firstNote > lastBar,
+    "every bar row must come before the benefit block, not be split by it");
+  assert.equal((html.slice(0, lastBar).match(/rmv-sp-benefit/g) || []).length, 0,
+    "no benefit prose may sit between two bars");
+  assert.match(html, /Completes the automated path/,
+    "the benefit is still shown, below the board");
+});
+
 test("every bar carries its category's theme class", () => {
   // The sprint views come from a database VIEW, so they hold
   // category_key - a string - where every other view holds the category

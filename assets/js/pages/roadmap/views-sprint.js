@@ -223,6 +223,13 @@
         byNullableAsc(a.priority, b.priority);
     });
 
+    // The bars run CONTIGUOUSLY, and what each stream buys sits below
+    // the board rather than between the bars. A benefit is a sentence
+    // and a bar is a shape; interleaving them pushed the rows apart far
+    // enough that the waterfall - the whole point of this view - could
+    // not be seen. Above: five rows, uniform columns, the trickle.
+    // Below: the same five, in the same order and the same colour,
+    // saying what they are worth.
     var body = ordered.map(function (st) {
       var first = num(st.first_slot, 0);
       var last = num(st.last_slot, first);
@@ -235,19 +242,30 @@
         App.escape(st.workstream_title) + "</span>" +
         '<span class="rmv-sp-count">' + count +
         (count === 1 ? " item" : " items") + "</span></span>";
+      return '<div class="rmv-tl-row rmv-sp-row">' +
+        '<span class="rmv-tl-label rmv-sp-label' +
+        R.catClass(catByStream[st.workstream_id]) + '" title="' +
+        App.escape(st.workstream_title) + '">' +
+        App.escape(st.workstream_title) + "</span>" + bar + "</div>";
+    }).join("");
+
+    var notes = ordered.map(function (st) {
       var meta = "";
       if (st.business_benefit) {
         meta += '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) + "</p>";
       }
       meta += chips(metricsByStream[st.workstream_id]);
-      return '<div class="rmv-tl-row rmv-sp-row">' +
-        '<span class="rmv-tl-label">' + App.escape(st.workstream_title) + "</span>" +
-        bar + "</div>" +
-        (meta ? '<div class="rmv-sp-meta">' + meta + "</div>" : "");
+      if (!meta) return "";
+      return '<div class="rmv-sp-note-card' +
+        R.catClass(catByStream[st.workstream_id]) +
+        '" data-item-id="' + App.escape(st.workstream_id) + '">' +
+        '<h3 class="rmv-sp-note-head">' + App.escape(st.workstream_title) +
+        "</h3>" + meta + "</div>";
     }).join("");
 
     return axisNote(ax.anchored) +
-      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide);
+      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide) +
+      (notes ? '<div class="rmv-sp-notes">' + notes + "</div>" : "");
   }
 
   // ----------------------------------------------------------------
