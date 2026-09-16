@@ -8,9 +8,8 @@ item under a workstream), 18 allocated across sprint slots 0-10 with
 streams in flight running 2-3-2. The plan is UNANCHORED on purpose:
 `sprint_plan.anchor_sprint` is null, so every surface reads Sprint +N.
 
-The sprint views now live at modules/sprints/, not as roadmap levels.
-They render with the roadmap's own builders over the same .rmv-tl grid,
-and every bar opens the roadmap drawer.
+The sprint views live at modules/sprints/, not as roadmap levels. They
+render with the roadmap's own builders over the same .rmv-tl grid.
 
 ## Next steps
 1. **Anchor the plan** when the start date and resource are known: set
@@ -22,8 +21,6 @@ and every bar opens the roadmap drawer.
    in a review pass, not a build one. Method: docs/VALUE-CAPTURE.md.
 3. The Experian commercial model is still unknown - six open
    integration_notes - and gates the screening cost case, not its build.
-4. The COO pull-versus-push decision is now its own Now row, allocated
-   to the slot before the lead endpoints are built.
 
 ## Verification the repo cannot do for itself
 - The sprint page signed in: five stream colours reading apart at a
@@ -37,3 +34,6 @@ and every bar opens the roadmap drawer.
 - Rename lcpxp/prototypes to lcpxp/lpio? Raised 2026-07, still open.
 - work_item_phases stays dormant: empty, but the drawer reads it, and it
   is a finer axis than sprint allocation rather than a rival to it.
+- DEFERRED (owner, 2026-09-16): a gantt board could use more of the page
+  width than the shared .page measure allows. Explicitly not urgent -
+  after everything else is settled.
