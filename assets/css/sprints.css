@@ -170,6 +170,71 @@
   font-weight: var(--weight-semibold);
   color: var(--ink);
 }
+
+/* What this is, in one line, at full strength. A discussion opens on the
+   thing itself; everything under it is support. It is the only text in
+   the card that reads in --ink at weight, which is what makes it the
+   entry point rather than the first sentence of a paragraph. */
+.rmv-sp-lede {
+  margin: 0 0 var(--s-2);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1.45;
+}
+
+/* Who stops doing what. One line per audience, labelled, because the
+   first question about any claim in the room is whose problem it is. */
+.rmv-sp-points {
+  margin: 0 0 var(--s-2);
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-1);
+}
+.rmv-sp-points li {
+  position: relative;
+  padding-inline-start: var(--s-4);
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+}
+.rmv-sp-points li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.5em;
+  inset-inline-start: 0;
+  inline-size: 5px;
+  block-size: 5px;
+  border-radius: 50%;
+  background: var(--rm-a, var(--line-strong));
+}
+.rmv-sp-who {
+  color: var(--ink);
+  font-weight: var(--weight-medium);
+}
+
+/* The long-form case, folded away. It is the thing a benefit was written
+   as and it stays available, but it no longer stands between a reader
+   and the point. */
+.rmv-sp-more {
+  margin-block-start: var(--s-2);
+  font-size: var(--text-xs);
+}
+.rmv-sp-more > summary {
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+}
+.rmv-sp-more > summary::-webkit-details-marker { display: none; }
+.rmv-sp-more > summary::before {
+  content: "+ ";
+  color: var(--faint);
+}
+.rmv-sp-more[open] > summary::before { content: "- "; }
+.rmv-sp-more > summary:hover { color: var(--ink); }
+.rmv-sp-more .rmv-sp-benefit { margin-block-start: var(--s-2); }
+
 .rmv-sp-benefit {
   /* No measure cap: the card's own column is the measure, and a second
      limit inside it would leave a short line in a wide card. */
@@ -222,7 +287,11 @@
      already say Sprint +N. */
   .rmv-sp-note { display: none; }
   .rmv-sp-benefit { color: var(--ink); }
+  .rmv-sp-points li { color: var(--ink); }
   .rmv-sp-chip { border-color: var(--line-strong); }
+  /* Nobody can open a disclosure on paper, so everything prints open. */
+  .rmv-sp-more > summary { display: none; }
+  .rmv-sp-more > *:not(summary) { display: block; }
 }
 
 /* --- hiding a row ------------------------------------------------ */

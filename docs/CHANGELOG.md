@@ -10,27 +10,28 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
-- Sprint roadmap: rows can be hidden for the conversation you are having.
-  The eye in the toolbar puts an eye on every row; click a row's eye to
-  drop it, and click the toolbar eye again to leave. Hide a workstream
-  and everything inside it goes with it, or hide a single work item on
-  its own. While you are choosing, the rows you have marked stay on
-  screen and dim, so you can see what you are about to drop and bring it
-  back. The sprint columns never move, so what is left keeps its real
-  place in the plan, and the line above the board says how many rows are
-  hidden. It is a view preference held in your own browser - the plan
-  itself does not change and nobody else's board does either.
 - Sprint roadmap: a new page alongside the roadmap. Two views -
   workstreams for what each stream spans and what it is worth, and work
-  items for how the work rolls out - drawn across sprint columns, with
-  each stream in its own colour and each bar showing whether the work is
-  planned, in flight, delivered or blocked. Every bar opens that item's
-  detail back on the roadmap. Work reaches it by entering the Now column and
-  being given a slot. While the start date is unknown the columns read
-  Sprint +0, +1, +2 rather than inventing dates; setting the anchor later
-  fills in real sprint codes everywhere at once. Externally-gated work is
-  drawn as an outline and named, so it is clear which bars are not PXP's
-  to move.
+  items for how the work rolls out - drawn across sprint columns, each
+  stream in its own colour, each bar showing whether the work is planned,
+  in flight, delivered or blocked. A bar opens that item's full detail in
+  place. Externally-gated work is drawn as an outline and named, so it is
+  clear which bars are not PXP's to move. While the start date is unknown
+  the columns read Sprint +0, +1, +2 rather than inventing dates; setting
+  the anchor later fills in real sprint codes everywhere at once.
+- Sprint roadmap: the summaries below the board are built to be talked
+  about rather than read. Each opens with one bold line saying what the
+  thing is, then a bullet per audience - what we stop doing, what changes
+  for partners, what changes for merchants - then the benefit tags, with
+  the longer written case folded away for whoever asks. The five Now
+  workstreams had their summaries tightened to match; the detail they
+  carried moved into the item's own detail rather than away.
+- Sprint roadmap: rows can be hidden for the conversation you are having.
+  The toolbar eye puts an eye on every row; a row's eye drops it. Hide a
+  workstream and its items go too, or hide one item on its own. Marked
+  rows stay visible and dim until you leave, the sprint columns never
+  move, and the line above the board says how many rows are hidden. A
+  view preference in your own browser; the plan does not change.
 - Roadmap: the Now column is populated again, with five priority
   workstreams - Payment Service, EIT fulfilment, the inbound lead API,
   screening consolidation and the pricing engine. Payment Service is now
@@ -38,7 +39,7 @@ is the git history; what is unfinished is docs/STATE.md.
 - Roadmap: work items can carry structured impact metrics - time saved,
   touches removed, providers removed and so on - each with the basis it
   is measured per and how sure it is. They roll up onto a workstream and
-  show as chips on the Sprint Roadmap, so a stream's value can be read
+  show as chips on the sprint roadmap, so a stream's value can be read
   off the board rather than inferred from paragraphs.
 - Roadmap drawer: an allocated item now shows the sprints it spans, how
   overlappable it is, and who is building it when that is not PXP.

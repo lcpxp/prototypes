@@ -43,6 +43,9 @@ function sample(overrides) {
   ];
   const streams = [
     { workstream_id: "w1", workstream_title: "Payment Service", priority: 10,
+      summary: "Complete the automated path from approval to a configured merchant.",
+      pxp_staff_value: "An operator stops configuring settlement by hand.",
+      merchant_value: "A merchant is live on the terms agreed.",
       first_slot: 0, last_slot: 3, slots_spanned: 4, item_count: 2,
       external_item_count: 0, externally_gated: false,
       business_benefit: "Completes the automated path from approval to a configured merchant.",
@@ -131,6 +134,43 @@ test("the stakeholder view carries the benefit and its metric chips", () => {
     "a count metric drops the unit word rather than reading '2 count per order'");
   assert.match(html, /rmv-sp-chip--soft/,
     "a chip whose weakest input is an estimate is marked as soft");
+});
+
+test("a card opens on what the thing is, then who stops doing what", () => {
+  // The card is a discussion surface, not a paragraph. A block of prose
+  // has no entry point: a reader has to consume it before they can say
+  // anything about it.
+  const V = loadView();
+  const html = V.sprintStreams(sample());
+  const lede = html.indexOf("Complete the automated path");
+  const points = html.indexOf("rmv-sp-points");
+  const chip = html.indexOf("rmv-sp-chip");
+  const prose = html.indexOf("rmv-sp-more");
+  assert.ok(lede > -1, "the summary is the card's opening line");
+  assert.ok(lede < points, "the bullets come after it");
+  assert.ok(points < chip, "then the metric tags");
+  assert.ok(chip < prose, "and the long-form case last");
+  assert.match(html, /An operator stops configuring settlement by hand/,
+    "each audience line becomes a bullet");
+  assert.match(html, /rmv-sp-who">Us</, "labelled by whose problem it is");
+  assert.match(html, /rmv-sp-who">Merchants</, "for every audience that has one");
+  assert.doesNotMatch(html, /rmv-sp-who">Partners</,
+    "and only for the audiences the row actually carries");
+});
+
+test("the prose is folded away, but only when something else leads", () => {
+  const V = loadView();
+  const with_lede = V.sprintStreams(sample());
+  assert.match(with_lede, /<details class="rmv-sp-more"/,
+    "with a headline above it, the case in full is a disclosure");
+  assert.match(with_lede, /Completes the automated path/,
+    "and the prose is still there to open");
+
+  // w2 has a benefit but no summary, so its prose IS the summary.
+  const data = sample();
+  assert.ok(!data.sprintStreams[1].summary, "the second stream has no summary");
+  assert.match(V.sprintStreams(data), /Closes the loop on device serials/,
+    "a stream with no headline shows its benefit outright, not behind a fold");
 });
 
 test("no delivery duration, capacity or velocity reaches the surface", () => {

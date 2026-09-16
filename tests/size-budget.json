@@ -97,6 +97,9 @@
     },
     "assets/js/pages/roadmap/views-sprint.js": {
       "seam": "Not yet, at 408. The two renderings share more than they differ: the axis, the coordinate model, the metric chips, the stream picker and the benefit cards are all common, and sprintStreams is a rollup of what sprintItems draws row by row. Splitting on the obvious line - one file per view - would leave most of the file in a third shared one and cost modules/sprints/index.html a request it has just spent on the drawer. The seam when it passes 550 is the chrome (legend, picker, axis note, metric chips) leaving for a sprint-chrome module, since none of it reads an allocation row."
+    },
+    "assets/css/sprints.css": {
+      "seam": "Not yet, at 401, and the seam is real rather than hypothetical: the discussion cards below the board (.rmv-sp-notes and everything under it - lede, points, disclosure, chips) share no selector with the board itself, so they would move out cleanly to a sprint-cards sheet. It is not worth a request yet: modules/sprints/index.html has two left of its ceiling after taking the drawer, and this sheet is small. Take the split at 550, or sooner if the cards grow faster than the board."
     }
   },
   "why-acknowledgements-are-decisions": "An acknowledgement is a DECISION not to split, with the condition that would change it - not a queued task. Every one below was re-judged on 2026-08-30 against a question the earlier exit plans did not ask: what does the split COST? Splitting a stylesheet or a page module adds an HTTP request to every page that loads it, and this repo has no build step to hide that. The same session had just removed 21 requests by merging two nav tools; reintroducing them to shorten a file that sits 120 lines under its hard cap would be a bad trade made for tidiness. So the answer for all fifteen is currently 'not yet', each with the trigger that would change it. Reaching the hard cap is always such a trigger."

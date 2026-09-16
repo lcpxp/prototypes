@@ -310,7 +310,14 @@ create view public.v_sprint_plan_streams with (security_invoker = on) as
   select
     ws.id as workstream_id, ws.title as workstream_title,
     ws.priority, ws.department,
+    -- The stakeholder cards below the board are a DISCUSSION surface:
+    -- what the thing is (summary), who stops doing what (the three
+    -- audience-value fields), then the prose for whoever wants it. All
+    -- of it already exists on work_items, so the view carries it rather
+    -- than the page inventing structure out of one block of text.
+    ws.summary,
     ws.business_benefit, ws.benefit_type, ws.benefit_status,
+    ws.pxp_staff_value, ws.partner_staff_value, ws.merchant_value,
     min(v.effective_slot) as first_slot,
     max(v.effective_end_slot) as last_slot,
     max(v.effective_end_slot) - min(v.effective_slot) + 1 as slots_spanned,
@@ -321,14 +328,15 @@ create view public.v_sprint_plan_streams with (security_invoker = on) as
     public.sprint_code_for_slot(max(v.effective_end_slot)) as end_code
   from public.v_sprint_plan_items v
   join public.work_items ws on ws.id = v.workstream_id
-  group by ws.id, ws.title, ws.priority, ws.department,
-           ws.business_benefit, ws.benefit_type, ws.benefit_status;
+  group by ws.id, ws.title, ws.priority, ws.department, ws.summary,
+           ws.business_benefit, ws.benefit_type, ws.benefit_status,
+           ws.pxp_staff_value, ws.partner_staff_value, ws.merchant_value;
 
 revoke all on public.v_sprint_plan_streams from public, anon;
 grant select on public.v_sprint_plan_streams to authenticated;
 
 comment on view public.v_sprint_plan_streams is
-  'The Sprint Roadmap stakeholder view: one row per workstream with its span, contents and benefit. A read entry point, not a board dependency.';
+  'The Sprint Roadmap stakeholder view: one row per workstream with its span, contents, what it is (summary), who stops doing what (the audience-value fields) and the benefit prose behind them. A read entry point, not a board dependency.';
 
 -- Load per slot: the one place the capacity and concurrency arithmetic
 -- happens, so a re-map is checked rather than eyeballed. An allocation

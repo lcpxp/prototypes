@@ -259,22 +259,57 @@
   // question being asked is still "what do these five streams buy".
   // The cards keep the board's order and the board's colour, so a card
   // and its bar are the same stream without being labelled as such.
+  // Who stops doing what. Three audience fields on the work item, each
+  // a sentence about a real person's day, which is exactly the shape a
+  // bullet wants. Labelled by audience because in a discussion the first
+  // question about any claim is "whose problem is this".
+  var AUDIENCES = [
+    { field: "pxp_staff_value", label: "Us" },
+    { field: "partner_staff_value", label: "Partners" },
+    { field: "merchant_value", label: "Merchants" },
+  ];
+
+  function valueBullets(st) {
+    var rows = AUDIENCES.filter(function (a) {
+      return st[a.field] && String(st[a.field]).trim();
+    });
+    if (!rows.length) return "";
+    return '<ul class="rmv-sp-points">' + rows.map(function (a) {
+      return '<li><span class="rmv-sp-who">' + App.escape(a.label) +
+        "</span> " + App.escape(st[a.field]) + "</li>";
+    }).join("") + "</ul>";
+  }
+
+  // A discussion card, not a paragraph. What it is, in one bold line;
+  // who stops doing what, as bullets; what it is worth, as chips; and
+  // the long-form case folded away for whoever asks for it. The prose
+  // is still here - it is the thing a benefit was written as - but it
+  // no longer stands between a reader and the point.
   function streamNotes(ordered, catByStream, metricsByStream, opts) {
     var notes = ordered.filter(function (st) {
       return !dropped(st.workstream_id, opts);
     }).map(function (st) {
-      var meta = "";
+      var head = st.summary
+        ? '<p class="rmv-sp-lede">' + App.escape(st.summary) + "</p>" : "";
+      var points = valueBullets(st);
+      var tags = chips(metricsByStream[st.workstream_id]);
+      // The prose only earns a disclosure when there is a headline above
+      // it. Without one it IS the summary, so it stays open.
+      var prose = "";
       if (st.business_benefit) {
-        meta += '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) + "</p>";
+        prose = head
+          ? '<details class="rmv-sp-more"><summary>The case in full</summary>' +
+            '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) +
+            "</p></details>"
+          : '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) + "</p>";
       }
-      meta += chips(metricsByStream[st.workstream_id]);
-      if (!meta) return "";
+      if (!head && !points && !tags && !prose) return "";
       return '<div class="rmv-sp-note-card' +
         R.catClass(catByStream[st.workstream_id]) +
         hiddenCls(st.workstream_id, opts) +
         '" data-item-id="' + App.escape(st.workstream_id) + '">' +
         '<h3 class="rmv-sp-note-head">' + App.escape(st.workstream_title) +
-        "</h3>" + meta + "</div>";
+        "</h3>" + head + points + tags + prose + "</div>";
     }).join("");
     return notes ? '<div class="rmv-sp-notes">' + notes + "</div>" : "";
   }
