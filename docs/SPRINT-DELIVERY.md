@@ -212,20 +212,43 @@ surface.
    ended. `blocks` in `knowledge_links` is the only dependency mechanism
    - the old dependency table was dropped, and a second one would be two
    answers to one question.
-4. **Capacity**: no slot carries more PXP-consuming items than
-   `capacity_dev_equivalents`. An allocation with an `external_party_id`
-   consumes none.
+4. **Capacity**: no slot carries more `exclusive` PXP-consuming items
+   than `capacity_dev_equivalents`. `parallel` and `overlappable` work
+   rides alongside and is not counted, and an allocation with an
+   `external_party_id` consumes nothing at all.
+
+   Read the cap as *substantial builds running at once*, never as *items
+   per sprint*. A roadmap item is not a sprint of work for one person -
+   most are a fraction of one, and several landing together is the
+   ordinary case. Counting every item against the cap is what turns a
+   fortnight of work into a quarter of plan, which is a drafting error,
+   not a fact about the work.
 5. **Concurrency**: streams in flight per slot stay between
-   `min_concurrent_streams` and `max_concurrent_streams`. Open at the
-   minimum, widen through the middle, settle back. The shape matters as
-   much as the bound: a plan that starts every stream at once is not a
-   plan.
+   `min_concurrent_streams` and `max_concurrent_streams`.
+
+   Concurrency belongs to STREAMS, not to items. Two or three streams
+   running side by side is the shape being aimed at; a stream's own items
+   run in sequence behind each other, because the thing that starts an
+   item is the one before it finishing. A later stream may wait for an
+   earlier one to finish entirely - that is a legitimate and often
+   preferable shape, and it reads far better than everything starting at
+   once and nothing finishing.
 6. **Overlap**: an `overlappable` item may share its first slot with the
    previous item's last, and its last with the next item's first. An
-   `exclusive` item may not. A `parallel` item is unconstrained.
-7. **Span**: from `effort` where it is set (small 1, medium 2, large 3),
-   otherwise from the item's shape. A discovery or specification item is
-   one slot and `parallel` - it is a conversation, not a build.
+   `exclusive` item may not. A `parallel` item is unconstrained. Use the
+   property for what it says: `exclusive` is for a substantial build that
+   wants its own run, not a default.
+7. **Span**: **one slot, unless the work itself argues otherwise.** That
+   is the default and it should stay the common case. A longer span needs
+   a reason you can name - an external party's pace, a decision that must
+   land first, a genuinely large build - and `effort` is an input to that
+   judgement, not a formula for it. Several items of one stream finishing
+   inside one sprint is the expected outcome, not an optimistic one.
+
+   The failure mode is padding: a span nobody can justify, multiplied
+   across eighteen items, is a plan that tells a reader the work is
+   impossible. If you cannot say why an item needs a second sprint, it
+   does not need one.
 8. **Externally-gated work** is allocated where it is expected regardless
    of capacity, marked external, and the widening around it is sized to
    absorb it. Done properly, a slip **tightens** the plan rather than

@@ -363,6 +363,10 @@
     {
       "name": "metric_rollup_attributes_workstream_metrics",
       "version": "20260915180000"
+    },
+    {
+      "name": "sprint_load_counts_exclusive_builds_against_capacity",
+      "version": "20260916105118"
     }
   ],
   "policies": [
