@@ -805,6 +805,7 @@
         "assets/css/console-tool.css",
         "assets/css/roadmap-themes.css",
         "assets/css/roadmap-views.css",
+        "assets/css/roadmap-detail.css",
         "assets/css/sprints.css",
         "assets/css/skeleton.css"
       ],
@@ -819,9 +820,14 @@
         "assets/js/core/tools.js",
         "assets/js/core/console-tools.js",
         "assets/js/core/sprints.js",
+        "assets/js/core/detail.js",
         "assets/js/pages/roadmap/views.js",
         "assets/js/pages/roadmap/detail-values.js",
         "assets/js/pages/roadmap/views-sprint.js",
+        "assets/js/pages/shared/lazy-detail.js",
+        "assets/js/pages/shared/work-items-data.js",
+        "assets/js/pages/roadmap/detail.js",
+        "assets/js/pages/roadmap/drawer.js",
         "assets/js/pages/sprints/sprints.js"
       ]
     },

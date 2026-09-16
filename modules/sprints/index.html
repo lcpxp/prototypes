@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../../assets/css/console-tool.css">
   <link rel="stylesheet" href="../../assets/css/roadmap-themes.css">
   <link rel="stylesheet" href="../../assets/css/roadmap-views.css">
+  <link rel="stylesheet" href="../../assets/css/roadmap-detail.css">
   <link rel="stylesheet" href="../../assets/css/sprints.css">
   <link rel="stylesheet" href="../../assets/css/skeleton.css">
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
@@ -28,9 +29,14 @@
   <script defer src="../../assets/js/core/tools.js"></script>
   <script defer src="../../assets/js/core/console-tools.js"></script>
   <script defer src="../../assets/js/core/sprints.js"></script>
+  <script defer src="../../assets/js/core/detail.js"></script>
   <script defer src="../../assets/js/pages/roadmap/views.js"></script>
   <script defer src="../../assets/js/pages/roadmap/detail-values.js"></script>
   <script defer src="../../assets/js/pages/roadmap/views-sprint.js"></script>
+  <script defer src="../../assets/js/pages/shared/lazy-detail.js"></script>
+  <script defer src="../../assets/js/pages/shared/work-items-data.js"></script>
+  <script defer src="../../assets/js/pages/roadmap/detail.js"></script>
+  <script defer src="../../assets/js/pages/roadmap/drawer.js"></script>
   <script defer src="../../assets/js/pages/sprints/sprints.js"></script>
 </head>
 <body data-root="../.." data-module="sprints">
@@ -44,29 +50,38 @@
         says what is being done and in what order, this says when. Work
         arrives here by reaching the Now column and being given a sprint,
         so the two are one conveyor belt rather than two plans. Every bar
-        opens that item's detail back on the roadmap. Allocation itself is
-        a database write, not a page action (see docs/SPRINT-DELIVERY.md).</p>
+        opens that item's full detail here, the same drawer the roadmap
+        shows. Allocation itself is a database write, not a page action
+        (see docs/SPRINT-DELIVERY.md).</p>
       <p class="rm-print-hint">Print in landscape.</p>
     </div>
 
     <div class="rm-toolbar">
       <nav class="rmv-switch" id="sprints-switch" role="tablist"
            aria-label="Sprint roadmap view"></nav>
-      <button type="button" id="sprints-wide"
-              class="rm-icon-toggle rm-wide-toggle"
-              aria-pressed="false" title="Widen the sprint columns">
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"
-             fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M6 3 2 8l4 5M10 3l4 5-4 5"/>
+      <button class="rm-icon-toggle rm-wide-toggle" type="button" id="sprints-wide"
+        aria-pressed="false" aria-label="Widen the sprint columns"
+        title="Widen the sprint columns">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
         </svg>
-        <span class="sr-only">Widen the sprint columns</span>
       </button>
-      <p class="rm-state" id="sprints-state"></p>
+      <p class="rm-toolbar-state" id="sprints-state"></p>
     </div>
 
     <section id="sprints-content">
       <p class="notice">Loading</p>
     </section>
   </main>
+
+  <aside class="rmd-drawer" id="roadmap-drawer" role="dialog" aria-modal="true"
+    aria-label="Work item detail" tabindex="-1" hidden>
+    <button class="rmd-close button quiet" type="button" id="rmd-close">Close</button>
+    <div id="rmd-body"></div>
+  </aside>
 </body>
 </html>

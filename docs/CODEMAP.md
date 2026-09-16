@@ -92,7 +92,7 @@ Shared runtime. Loaded on every protected page in the order set by assets/js/cor
 | detail.js | 142 | detail.js - The completeness contract for rendering a row. |
 | drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and enforces per-module access. |
-| includes.json | 112 | The core script include order, in one place. Every protected page loads these in this sequence; tests/checks/structure.test.js enforces it, and CLAUDE.md and docs/ARCHITECTURE.md cite this file rather than restating it. It was stated in three places before, and all three were stale: none of them mentioned links.js, detail.js, blocks.js, drawer.js, sprints.js or send-tool.js, and the gate checked five of the fourteen. |
+| includes.json | 113 | The core script include order, in one place. Every protected page loads these in this sequence; tests/checks/structure.test.js enforces it, and CLAUDE.md and docs/ARCHITECTURE.md cite this file rather than restating it. It was stated in three places before, and all three were stale: none of them mentioned links.js, detail.js, blocks.js, drawer.js, sprints.js or send-tool.js, and the gate checked five of the fourteen. |
 | links.js | 159 | links.js - The typed knowledge graph, resolved for rendering. |
 | registry.js | 362 | registry.js - Single source of truth for the hub's modules, the Supabase tables they read, and role names. |
 | search.js | 356 | search.js - Global header search (App.search). |
@@ -147,7 +147,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | reference/topics.js | 48 | reference/topics.js - Pure HTML builders for api_topics rows: the narrative sections of a spec (overview, conventions, runbooks, accepted values, gap registers). |
 | roadmap/detail-export.js | 228 | roadmap/detail-export.js - The AI-optimised JSON and the flat CSV exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap / toCsvRoadmap). |
 | roadmap/detail-values.js | 206 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
-| roadmap/detail.js | 502 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
+| roadmap/detail.js | 508 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
 | roadmap/drawer.js | 97 | roadmap/drawer.js - The item detail drawer surface for the roadmap home: open/close, the ?item=<id> deep-link URL sync, and in-drawer navigation (a related-item link or a nested step row swaps the drawer to that item). |
 | roadmap/export.js | 101 | roadmap/export.js - The roadmap home's export dropdown wiring and the small download helpers it shares with the detail drawer (App.roadmapExport). |
 | roadmap/prefs.js | 106 | roadmap/prefs.js - The roadmap board's remembered view state (App.roadmapPrefs): which level and layout, and the eight view-only preferences that are NOT part of the shareable hash. |
@@ -161,7 +161,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | shared/lazy-detail.js | 111 | shared/lazy-detail.js - Fetching a row's heavy fields when the detail surface opens, instead of carrying them for every row on page load. |
 | shared/proto-svg.js | 125 | shared/proto-svg.js - Inline SVG diagram viewer for a prototype overview page. |
 | shared/work-items-data.js | 172 | shared/work-items-data.js - The reads over work_items and work_notes that the list pages deliberately no longer carry. |
-| sprints/sprints.js | 176 | sprints/sprints.js - The Sprint Roadmap page shell. |
+| sprints/sprints.js | 257 | sprints/sprints.js - The Sprint Roadmap page shell. |
 | users.js | 207 | users.js - User and access management for modules/users/. |
 
 ### assets/css/
@@ -189,7 +189,7 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | ps.css | 218 | ps.css - Acquirer Partner Portal replica shell for the PCI prototype (modules/prototypes/pci/demo.html). |
 | roadmap-detail.css | 403 | roadmap-detail.css - Coarse progress bars, the expanded Executive child lists, and the right-hand item detail drawer. |
 | roadmap-themes.css | 30 | roadmap-themes.css - The theme accent map: one rule per roadmap_categories.key, each setting the accent and soft tint that a lane label, card border, dot or rail reads. |
-| roadmap-views.css | 498 | roadmap-views.css - The roadmap home's level views (Executive theme rollup, Team, Backlog) in Timeline and Cascade layouts, plus the level switcher. |
+| roadmap-views.css | 515 | roadmap-views.css - The roadmap home's level views (Executive theme rollup, Team, Backlog) in Timeline and Cascade layouts, plus the level switcher. |
 | roadmap.css | 364 | roadmap.css - The roadmap board (modules/roadmap/). |
 | skeleton.css | 57 | skeleton.css - The loading placeholder for a region whose content arrives after first paint. |
 | sprints.css | 266 | sprints.css - The Sprint Roadmap's own rules, and only those. |
@@ -224,7 +224,7 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 | prototypes/website-screening/index.html | 45 | Website screening prototype - LPIO |
 | reference/index.html | 71 | API reference - LPIO |
 | roadmap/index.html | 135 | Roadmap - LPIO |
-| sprints/index.html | 73 | Sprint roadmap - LPIO |
+| sprints/index.html | 88 | Sprint roadmap - LPIO |
 | users/index.html | 51 | Users - LPIO |
 
 ### supabase/migrations/
@@ -432,10 +432,10 @@ Shared fixtures and the budgets the gates read.
 | knowledge-budget.json | 52 | Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them. |
 | lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | lib/roadmap.js | 91 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
-| page-weight-budget.json | 109 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
+| page-weight-budget.json | 110 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
 | size-budget.json | 101 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
-| surface-baseline.json | 853 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
+| surface-baseline.json | 859 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
 

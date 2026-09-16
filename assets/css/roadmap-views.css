@@ -52,7 +52,24 @@
 }
 
 /* What the board is currently showing, in the same mono register as a
-   column heading so it reads as instrumentation, not as copy. */
+   column heading so it reads as instrumentation, not as copy. It sits at
+   the far end of the strip: the controls are on the left where they are
+   reached, the readout on the right where it is read. On a narrow screen
+   the strip wraps and the auto margin collapses, so it simply takes the
+   next line. */
+.rm-toolbar-state {
+  margin: 0;
+  margin-inline-start: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-slight);
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: end;
+}
+
+/* A cascade card's presentation badge (current focus, bridge). Same
+   register, different job - it labels one item, not the board. */
 .rm-state {
   font-family: var(--font-mono);
   font-size: var(--text-xs);

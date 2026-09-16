@@ -492,8 +492,14 @@
       note("Blockers and dependencies", a.blockers) +
       note("Resolution" + (resolvedOn ? " (" + resolvedOn + ")" : ""), item.resolution) +
       notesHtml(item, state) +
+      // The export button is drawn only where a page can actually
+      // export. The sprint board opens the same drawer over the same
+      // rows but carries none of the export machinery, and a button
+      // that does nothing when pressed is worse than no button.
       '<div class="rmd-actions">' + prd +
-      '<button class="button" type="button" id="rmd-export">Export JSON</button></div>';
+      (ctx && ctx.canExport === false ? ""
+        : '<button class="button" type="button" id="rmd-export">Export JSON</button>') +
+      "</div>";
   }
 
 

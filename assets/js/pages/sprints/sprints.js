@@ -13,6 +13,16 @@
 // horizon board draws with. Only the column width and the colour are
 // this page's own (assets/css/sprints.css).
 //
+// The drawer is the roadmap's drawer - App.roadmapDrawer over
+// App.roadmapDetail.drawerHtml - so a bar opens detail in place rather
+// than sending the reader to another page and losing the board they were
+// reading. One detail surface, two boards.
+//
+// It fetches only the rows this board draws (the allocated items and the
+// workstreams they hang from), not the whole work set: about two dozen
+// rows against the roadmap's three hundred. The heavy fields still
+// arrive when a drawer opens, through the same lazy loader.
+//
 // Read-only, like every board here. Allocation is a database write;
 // docs/SPRINT-DELIVERY.md carries the rules.
 // ------------------------------------------------------------------
@@ -41,10 +51,11 @@
     return known(stored) ? stored : "plan";
   }
 
-  // App.linkHref is the one home for "where does a work item live"
-  // (registry.js), so this page and the drawer's own links cannot drift
-  // apart on it. It takes the entity TYPE, not a module - passing a
-  // module key here built no URL at all and every bar led to /undefined.
+  // Where an item lives, for the one case the drawer cannot serve: a row
+  // this board drew but did not fetch. App.linkHref is the one home for
+  // that address (registry.js). It takes the entity TYPE, not a module -
+  // passing a module key here built no URL at all and every bar led to
+  // /undefined.
   function itemHref(id) {
     return (App.linkHref && App.linkHref("work_item", id, App.root)) || "";
   }
@@ -84,6 +95,61 @@
     });
   }
 
+  // The roadmap's drawer, over this board's rows. Returns open(id),
+  // which reports whether it could open - so the caller has one place to
+  // decide what happens when it could not.
+  //
+  // Returns null rather than half a drawer if the read fails or the
+  // modules are absent: a bar then falls back to the roadmap, which is
+  // the behaviour this page had before the drawer existed.
+  async function wireDrawer(host, ids) {
+    if (!App.roadmapDrawer || !App.roadmapDetail || !ids.length) return null;
+
+    var reads = await Promise.all([
+      App.db.from(App.registry.tables.workItems).select("*").in("id", ids),
+      App.db.from(App.registry.tables.roadmapCategories).select("*"),
+      App.db.from(App.registry.tables.workAreas).select("*"),
+    ]);
+    if (reads[0].error) return null;
+
+    var board = {
+      items: reads[0].data || [],
+      categories: reads[1].error ? [] : reads[1].data || [],
+      areas: reads[2].error ? [] : reads[2].data || [],
+    };
+    var byId = {};
+    var allocByItem = {};
+    data.sprintItems.forEach(function (r) { allocByItem[r.work_item_id] = r; });
+    board.items.forEach(function (i) {
+      i.allocation = allocByItem[i.id] || null;
+      byId[i.id] = i;
+    });
+    if (App.roadmapView.markRecency) App.roadmapView.markRecency(board.items);
+
+    var ctx = App.roadmapView.context(board);
+    // This page carries no export machinery, so the drawer must not
+    // offer a button that would do nothing.
+    ctx.canExport = false;
+
+    var open = App.roadmapDrawer({
+      lookup: function (id) { return byId[id]; },
+      getCtx: function () { return ctx; },
+      lazyKeys: ["details", "notes"],
+      load: App.workItemsData.loadDrawer,
+      download: function () {},
+    });
+
+    // Opening by id keeps the caller from having to know how rows are
+    // indexed here, and gives it a truthful answer when the row is not
+    // one this board fetched.
+    return function (id) {
+      var item = byId[id];
+      if (!item) return false;
+      open(item);
+      return true;
+    };
+  }
+
   App.onAuthed(async function () {
     var host = document.getElementById("sprints-content");
     var nav = document.getElementById("sprints-switch");
@@ -105,18 +171,6 @@
         render(host);
       });
     }
-
-    // A bar opens the roadmap drawer for that item. The bars carry
-    // data-item-id rather than an href, so the click is delegated here.
-    host.addEventListener("click", function (e) {
-      var el = e.target.closest && e.target.closest("[data-item-id]");
-      if (!el) return;
-      // No address is better than a wrong one: a bar whose row cannot be
-      // resolved stays put rather than navigating somewhere that is not
-      // there.
-      var href = itemHref(el.getAttribute("data-item-id"));
-      if (href) window.location.href = href;
-    });
 
     var results = await Promise.all([
       App.db.from(App.registry.tables.sprintPlanItems).select("*")
@@ -153,6 +207,33 @@
         if (s.idx >= anchorIdx) data.sprintCodes[s.idx - anchorIdx] = s.code;
       });
     }
+
+    // Everything the drawer needs, for this board's rows only. The
+    // roadmap fetches the whole work set because it draws the whole work
+    // set; this one draws about two dozen rows and asks for those.
+    var ids = {};
+    data.sprintItems.forEach(function (r) {
+      if (r.work_item_id) ids[r.work_item_id] = true;
+      if (r.workstream_id) ids[r.workstream_id] = true;
+    });
+    data.sprintStreams.forEach(function (r) {
+      if (r.workstream_id) ids[r.workstream_id] = true;
+    });
+    var openDrawer = await wireDrawer(host, Object.keys(ids));
+
+    // A bar opens that item's detail in place. The bars carry
+    // data-item-id rather than an href, so the click is delegated here.
+    // A row this board drew but did not fetch (it should not happen, but
+    // a view can outrun a read) falls back to the roadmap rather than
+    // doing nothing; a row with no address at all stays put.
+    host.addEventListener("click", function (e) {
+      var el = e.target.closest && e.target.closest("[data-item-id]");
+      if (!el) return;
+      var id = el.getAttribute("data-item-id");
+      if (openDrawer && openDrawer(id)) return;
+      var href = itemHref(id);
+      if (href) window.location.href = href;
+    });
 
     if (stateLine) {
       var n = data.sprintItems.length;

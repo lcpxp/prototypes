@@ -89,6 +89,7 @@
         "modules/portal-review/wave.html",
         "modules/prototypes/ideas.html",
         "modules/roadmap/index.html",
+        "modules/sprints/index.html",
         "modules/users/index.html"
       ]
     },
