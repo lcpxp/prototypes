@@ -263,10 +263,13 @@
   // a sentence about a real person's day, which is exactly the shape a
   // bullet wants. Labelled by audience because in a discussion the first
   // question about any claim is "whose problem is this".
+  // Same labels the drawer uses (pages/roadmap/detail.js), so a reader
+  // meeting these on the board and again in the drawer meets one system
+  // rather than two vocabularies for one idea.
   var AUDIENCES = [
-    { field: "pxp_staff_value", label: "Us" },
-    { field: "partner_staff_value", label: "Partners" },
-    { field: "merchant_value", label: "Merchants" },
+    { field: "pxp_staff_value", label: "Acquirer staff" },
+    { field: "partner_staff_value", label: "Partner staff" },
+    { field: "merchant_value", label: "Merchant" },
   ];
 
   function valueBullets(st) {

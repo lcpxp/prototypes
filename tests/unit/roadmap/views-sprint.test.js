@@ -152,9 +152,9 @@ test("a card opens on what the thing is, then who stops doing what", () => {
   assert.ok(chip < prose, "and the long-form case last");
   assert.match(html, /An operator stops configuring settlement by hand/,
     "each audience line becomes a bullet");
-  assert.match(html, /rmv-sp-who">Us</, "labelled by whose problem it is");
-  assert.match(html, /rmv-sp-who">Merchants</, "for every audience that has one");
-  assert.doesNotMatch(html, /rmv-sp-who">Partners</,
+  assert.match(html, /rmv-sp-who">Acquirer staff</, "labelled by whose problem it is");
+  assert.match(html, /rmv-sp-who">Merchant</, "for every audience that has one");
+  assert.doesNotMatch(html, /rmv-sp-who">Partner staff</,
     "and only for the audiences the row actually carries");
 });
 

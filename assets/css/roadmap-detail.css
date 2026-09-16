@@ -206,7 +206,16 @@
 .rmd-close { position: absolute; top: var(--s-3); right: var(--s-3); }
 .rmd-head { margin: 0 0 var(--s-4); padding-right: var(--s-6); }
 .rmd-head h2 { margin: var(--s-1) 0 var(--s-3); }
-.rmd-summary { color: var(--muted); margin: 0 0 var(--s-4); }
+/* What it is, in one line, at full strength: the drawer's entry point.
+   It was muted, which made the first thing a reader met the faintest
+   thing on the page. */
+.rmd-summary {
+  color: var(--ink);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  line-height: 1.45;
+  margin: 0 0 var(--s-4);
+}
 /* The long-form details text keeps its authored line breaks. */
 .rmd-details {
   color: var(--ink);
@@ -255,14 +264,59 @@
   border-radius: var(--radius-sm);
   padding: 0 var(--s-2);
 }
-.rmd-benefit-audiences { margin: var(--s-3) 0 0; }
-.rmd-benefit-row { padding: var(--s-2) 0 0; }
-.rmd-benefit-row dt {
-  font-size: var(--text-xs);
-  color: var(--faint);
-  margin: 0 0 var(--s-1);
+/* Who feels it: one labelled bullet per audience. A list, because three
+   short readings about real people's days is what a list is for - the
+   two-column definition rows this replaced cost a reader a layout to
+   parse before they could take any of it in. Same shape as the sprint
+   board's discussion cards, so the two surfaces read as one system. */
+.rmd-points {
+  margin: var(--s-3) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-2);
 }
-.rmd-benefit-row dd { margin: 0; color: var(--ink); font-size: var(--text-sm); }
+.rmd-points li {
+  position: relative;
+  padding-inline-start: var(--s-4);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+}
+.rmd-points li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.55em;
+  inset-inline-start: 0;
+  inline-size: 5px;
+  block-size: 5px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+.rmd-who { color: var(--faint); }
+
+/* Reading material, folded. The written case and a mature item's
+   background both stay in full; they just stop sitting above everything
+   scannable in the drawer. */
+.rmd-fold {
+  margin: 0 0 var(--s-4);
+  font-size: var(--text-sm);
+}
+.rmd-fold > summary {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  list-style: none;
+}
+.rmd-fold > summary::-webkit-details-marker { display: none; }
+.rmd-fold > summary::before { content: "+ "; color: var(--faint); }
+.rmd-fold[open] > summary::before { content: "- "; }
+.rmd-fold > summary:hover { color: var(--ink); }
+.rmd-fold > p,
+.rmd-fold > .rmd-details { margin-block-start: var(--s-2); }
+.rmd-fold > p { color: var(--ink); }
 .rmd-facts { margin: 0 0 var(--s-4); }
 .rmd-row {
   display: grid;

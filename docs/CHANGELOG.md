@@ -10,6 +10,12 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Roadmap and sprint roadmap: the detail drawer is laid out to be glanced
+  at - the one-line summary, then what the work buys as labelled bullets
+  with its tags, then the facts, then what the item is made of. The
+  written case and the background moved below all of that and fold away.
+  Two fixes came out of it: an allocated item could read "Sprint +0" when
+  allocated elsewhere, and its allocation was dumped raw under the facts.
 - Sprint roadmap: a new page alongside the roadmap. Two views -
   workstreams for what each stream spans and what it is worth, and work
   items for how the work rolls out - drawn across sprint columns, each
@@ -20,27 +26,24 @@ is the git history; what is unfinished is docs/STATE.md.
   the columns read Sprint +0, +1, +2 rather than inventing dates; setting
   the anchor later fills in real sprint codes everywhere at once.
 - Sprint roadmap: the summaries below the board are built to be talked
-  about rather than read. Each opens with one bold line saying what the
-  thing is, then a bullet per audience - what we stop doing, what changes
-  for partners, what changes for merchants - then the benefit tags, with
-  the longer written case folded away for whoever asks. The five Now
-  workstreams had their summaries tightened to match; the detail they
-  carried moved into the item's own detail rather than away.
+  about rather than read - one bold line saying what the thing is, a
+  bullet per audience, then the benefit tags, with the longer written
+  case folded away. The five Now workstreams had their summaries
+  tightened to match; the detail they carried moved into the item's own
+  detail rather than away.
 - Sprint roadmap: rows can be hidden for the conversation you are having.
-  The toolbar eye puts an eye on every row; a row's eye drops it. Hide a
-  workstream and its items go too, or hide one item on its own. Marked
-  rows stay visible and dim until you leave, the sprint columns never
-  move, and the line above the board says how many rows are hidden. A
-  view preference in your own browser; the plan does not change.
+  The toolbar eye puts an eye on every row; a row's eye drops it, and a
+  workstream takes its items with it. Marked rows dim until you leave,
+  the sprint columns never move, and the line above the board says how
+  many are hidden. A view preference; the plan does not change.
 - Roadmap: the Now column is populated again, with five priority
   workstreams - Payment Service, EIT fulfilment, the inbound lead API,
   screening consolidation and the pricing engine. Payment Service is now
   its own workstream rather than sitting inside Integrations.
 - Roadmap: work items can carry structured impact metrics - time saved,
-  touches removed, providers removed and so on - each with the basis it
-  is measured per and how sure it is. They roll up onto a workstream and
-  show as chips on the sprint roadmap, so a stream's value can be read
-  off the board rather than inferred from paragraphs.
+  touches removed, providers removed - each with the basis it is measured
+  per and how sure it is. They roll up onto a workstream and show as
+  chips, so a stream's value is read off the board, not inferred.
 - Roadmap drawer: an allocated item now shows the sprints it spans, how
   overlappable it is, and who is building it when that is not PXP.
 

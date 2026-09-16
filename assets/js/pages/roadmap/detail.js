@@ -228,14 +228,24 @@
     }
     if (!item.details) return "";
     var parsed = parseDetails(item.details);
-    if (!parsed) return '<p class="rmd-details">' + esc(item.details) + "</p>";
-    var out = parsed.lead ? '<p class="rmd-details">' + esc(parsed.lead) + "</p>" : "";
-    out += parsed.sections.map(function (s) {
-      return '<section class="rmd-detail-sec"><h4>' + esc(cap(s.label)) +
-        '</h4><p class="rmd-details">' + esc(s.body) + "</p></section>";
-    }).join("");
-    return out;
+    var out = parsed
+      ? (parsed.lead ? '<p class="rmd-details">' + esc(parsed.lead) + "</p>" : "") +
+        parsed.sections.map(function (s) {
+          return '<section class="rmd-detail-sec"><h4>' + esc(cap(s.label)) +
+            '</h4><p class="rmd-details">' + esc(s.body) + "</p></section>";
+        }).join("")
+      : '<p class="rmd-details">' + esc(item.details) + "</p>";
+    // A mature workstream's detail runs to thousands of characters - the
+    // chronology of every merge and decision behind it. That is worth
+    // keeping and worth reading, and it is not worth scrolling past
+    // every time the drawer opens, so past a screenful it folds. Short
+    // detail stays open: a fold over two lines is a click for nothing.
+    return item.details.length > DETAIL_FOLD
+      ? '<details class="rmd-fold"><summary>Background and history</summary>' +
+        out + "</details>"
+      : out;
   }
+  var DETAIL_FOLD = 700;
   function extraAttrRows(a) {
     return Object.keys(a).filter(function (k) { return KNOWN_ATTRS.indexOf(k) === -1; })
       .sort().map(function (k) { return row(keyLabel(k), esc(listText(a[k]))); }).join("");
@@ -310,7 +320,13 @@
     // Rendered by benefitHtml as their own section above the grid, so
     // listing them here stops the shared builder printing them twice.
     "business_benefit", "benefit_type", "benefit_status",
-    "pxp_staff_value", "partner_staff_value", "merchant_value"];
+    "pxp_staff_value", "partner_staff_value", "merchant_value",
+    // The allocation is an OBJECT attached by the page, and three of its
+    // fields already render as curated rows above. Left undeclared, the
+    // overflow printed the whole thing as one run-on value - "Slot 3
+    // Span 1 Overlap parallel External party External status ..." -
+    // duplicating what was already there and exposing raw column names.
+    "allocation"];
 
   // The drawer keeps its own row layout (a bordered two-column grid per
   // row), so it passes that skin to the shared builder rather than
@@ -374,7 +390,12 @@
         var al = item.allocation;
         if (!al) return "";
         var span = Number(al.span) || 1;
-        var start = Number(al.effective_slot) || 0;
+        // effective_slot is the view's answer (slot + any slip); slot is
+        // the stored one. Fall back rather than defaulting to 0, which
+        // printed a confident "Sprint +0" for work allocated elsewhere.
+        var start = Number(al.effective_slot);
+        if (!isFinite(start)) start = Number(al.slot);
+        if (!isFinite(start)) return "";
         var end = Number(al.effective_end_slot);
         if (!isFinite(end) || end < start) end = start + span - 1;
         if (al.start_code) {
@@ -434,25 +455,48 @@
   // who feels it, then the thirty facts an editor needs. A drafted
   // benefit carries a visible marker - one that reads identically to a
   // confirmed one would defeat the whole point of storing the state.
-  function benefitHtml(item) {
-    if (!item.business_benefit) return "";
+  // Who feels it. One labelled line per audience, as bullets rather than
+  // a definition list: three short readings about real people's days are
+  // a list, and a reader should be able to take them at a glance without
+  // parsing a two-column layout.
+  var AUDIENCES = [
+    ["Acquirer staff", "pxp_staff_value"],
+    ["Partner staff", "partner_staff_value"],
+    ["Merchant", "merchant_value"],
+  ];
+
+  // What the work buys, kept SCANNABLE: the classifier tags and the
+  // audience readings, and no prose. It stays above the fact grid, which
+  // is the order a stakeholder reads in - what it buys, who feels it,
+  // then the facts an editor needs. What changed is that the paragraph
+  // making that case no longer rides at the top with it; it moved below
+  // the structure, where reading material belongs.
+  function valueHtml(item) {
     var type = BENEFIT_TYPE[item.benefit_type] || "";
     var draft = BENEFIT_STATUS[item.benefit_status] || "";
     var tags = (type ? '<span class="rmd-benefit-type">' + esc(type) + "</span>" : "") +
       (draft ? '<span class="rmd-benefit-draft">' + esc(draft) + "</span>" : "");
-    var audiences = [
-      ["For Acquirer staff", item.pxp_staff_value],
-      ["For partner staff", item.partner_staff_value],
-      ["For the merchant", item.merchant_value],
-    ].filter(function (pair) { return pair[1]; })
+    var points = AUDIENCES.filter(function (pair) { return item[pair[1]]; })
       .map(function (pair) {
-        return '<div class="rmd-benefit-row"><dt>' + esc(pair[0]) + "</dt><dd>" +
-          esc(pair[1]) + "</dd></div>";
+        return '<li><span class="rmd-who">' + esc(pair[0]) + "</span> " +
+          esc(item[pair[1]]) + "</li>";
       }).join("");
-    return '<section class="rmd-benefit"><h3>Business benefit' +
-      (tags ? " " + tags : "") + "</h3><p>" + esc(item.business_benefit) + "</p>" +
-      (audiences ? '<dl class="rmd-benefit-audiences">' + audiences + "</dl>" : "") +
+    // Nothing to say and nothing to classify: draw no section at all
+    // rather than a heading over a placeholder.
+    if (!points && !tags) return "";
+    return '<section class="rmd-benefit"><h3>What this buys' +
+      (tags ? " " + tags : "") + "</h3>" +
+      (points ? '<ul class="rmd-points">' + points + "</ul>" : "") +
       "</section>";
+  }
+
+  // The written case, below the structure and folded away. It is the
+  // thing a benefit was written as and it stays available in full; it
+  // just stops standing between a reader and everything scannable.
+  function benefitProseHtml(item) {
+    if (!item.business_benefit) return "";
+    return '<details class="rmd-fold"><summary>The case in full</summary>' +
+      "<p>" + esc(item.business_benefit) + "</p></details>";
   }
 
   // `state` is the lazy loader's: "ready", "waiting" or "failed".
@@ -482,12 +526,18 @@
         "<h2>" + esc(item.title) + "</h2>" +
         '<div class="rm-card-progress rmv-prog-' + prog.bucket +
         '" role="img" aria-label="Progress: ' + esc(prog.label) + '"><span></span></div></div>' +
+      // Top down, the order a reader actually works in: what it is, what
+      // it buys, the facts at a glance, then what it is made of - and
+      // only then the reading material. Details can run to thousands of
+      // characters on a mature workstream, and it used to sit third,
+      // above every scannable thing in the drawer.
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
-      benefitHtml(item) +
-      detailsHtml(item, state) +
+      valueHtml(item) +
       facts +
       itemsSection +
       deliverablesSection +
+      benefitProseHtml(item) +
+      detailsHtml(item, state) +
       phasesHtml(item) +
       note("Blockers and dependencies", a.blockers) +
       note("Resolution" + (resolvedOn ? " (" + resolvedOn + ")" : ""), item.resolution) +

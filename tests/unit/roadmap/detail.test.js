@@ -384,6 +384,96 @@ test("drawerHtml splits a workstream's work items from its deliverables", () => 
 // checked is the failure benefit_status exists to prevent), and the
 // benefit fields must not ALSO appear as fact rows.
 
+test("an allocation renders as curated rows, never as a raw object", () => {
+  // allocation is an OBJECT the page attaches. Undeclared, the shared
+  // overflow printed the whole thing as one run-on value - duplicating
+  // the rows above it and exposing raw column names to a stakeholder.
+  const App = load();
+  const data = sample();
+  const it = Object.assign({}, data.items[0], {
+    allocation: { slot: 3, span: 1, effective_slot: 3, effective_end_slot: 3,
+      overlap: "parallel", is_external: false, external_party: null,
+      external_status: null, start_code: null, end_code: null, anchored: false },
+  });
+  const html = App.roadmapDetail.drawerHtml(it, ctxOf(App, data));
+  assert.match(html, /Sprint slot<\/dt><dd>Sprint \+3/, "the slot renders as a fact");
+  assert.doesNotMatch(html, /Anchored No/,
+    "the object's remaining keys must not spill into the overflow");
+  assert.doesNotMatch(html, />Allocation</,
+    "and it must not appear as a row of its own");
+});
+
+test("an allocation with no effective_slot does not invent Sprint +0", () => {
+  // Defaulting a missing number to zero prints a confident wrong answer,
+  // which is worse than printing nothing.
+  const App = load();
+  const data = sample();
+  const it = Object.assign({}, data.items[0], {
+    allocation: { span: 1, overlap: "parallel" },
+  });
+  assert.doesNotMatch(App.roadmapDetail.drawerHtml(it, ctxOf(App, data)),
+    /Sprint \+0/, "no slot is stated when none is known");
+
+  // But the stored slot still answers when the view's field is absent.
+  const stored = Object.assign({}, data.items[0], {
+    allocation: { slot: 2, span: 1, overlap: "parallel" },
+  });
+  assert.match(App.roadmapDetail.drawerHtml(stored, ctxOf(App, data)),
+    /Sprint \+2/, "slot answers when effective_slot does not");
+});
+
+test("the drawer reads top down: what, what it buys, facts, then prose", () => {
+  // The order a reader actually works in. Details can run to thousands
+  // of characters on a mature workstream and it used to sit third, above
+  // every scannable thing in the drawer - so the first screen was a wall
+  // of text and the facts were below the fold.
+  const App = load();
+  const data = sample();
+  const it = data.items[0];
+  it.summary = "One line saying what this is.";
+  it.business_benefit = "The written case, at length.";
+  it.pxp_staff_value = "An operator stops keying it by hand.";
+  it.details = "Background that goes on.";
+  const html = App.roadmapDetail.drawerHtml(it, ctxOf(App, data));
+  const at = (s) => html.indexOf(s);
+  assert.ok(at("rmd-summary") > -1 && at("rmd-summary") < at('class="rmd-benefit"'),
+    "the one-line summary leads");
+  assert.ok(at('class="rmd-benefit"') < at('class="rmd-facts"'),
+    "what it buys comes before the facts");
+  assert.ok(at('class="rmd-facts"') < at("The written case, at length."),
+    "and the facts come before the written case");
+  assert.ok(at("The written case, at length.") < at("Background that goes on."),
+    "with the background last of the reading material");
+});
+
+test("long background folds away; short background does not", () => {
+  // A fold over two lines is a click for nothing; a fold over five
+  // thousand characters is the difference between a usable drawer and a
+  // scroll. The threshold is what separates them.
+  const App = load();
+  const data = sample();
+  const short = Object.assign({}, data.items[0], { details: "Two lines of context." });
+  assert.doesNotMatch(App.roadmapDetail.drawerHtml(short, ctxOf(App, data)),
+    /Background and history/, "short detail stays open");
+
+  const long = Object.assign({}, data.items[0], { details: "x".repeat(900) });
+  const html = App.roadmapDetail.drawerHtml(long, ctxOf(App, data));
+  assert.match(html, /<details class="rmd-fold"><summary>Background and history/,
+    "long detail folds");
+  assert.match(html, /x{900}/, "and every character of it is still there");
+});
+
+test("a value section with nothing to say is not drawn at all", () => {
+  const App = load();
+  const data = sample();
+  const bare = Object.assign({}, data.items[0], {
+    business_benefit: "", benefit_type: null, benefit_status: null,
+    pxp_staff_value: "", partner_staff_value: "", merchant_value: "",
+  });
+  assert.doesNotMatch(App.roadmapDetail.drawerHtml(bare, ctxOf(App, data)),
+    /What this buys/, "no heading over a placeholder");
+});
+
 test("drawerHtml puts the business benefit above the fact grid", () => {
   const App = load();
   const data = sample();
@@ -408,8 +498,9 @@ test("drawerHtml marks a drafted benefit and never prints benefit fields twice",
   const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
   assert.match(html, /rmd-benefit-draft">Draft - not yet confirmed/,
     "an unconfirmed benefit is visibly provisional");
-  assert.match(html, /For Acquirer staff<\/dt><dd>An operator composes from sections\./);
-  assert.doesNotMatch(html, /For the merchant/,
+  assert.match(html, /rmd-who">Acquirer staff<\/span> An operator composes from sections\./,
+    "an audience reading is a labelled bullet, not a two-column definition row");
+  assert.doesNotMatch(html, /Merchant<\/span>/,
     "an empty audience reading is omitted rather than rendered blank");
   const benefitCount = (html.match(/Stops the contract being assembled by hand\./g) || []).length;
   assert.equal(benefitCount, 1, "the benefit renders once, not also as a fact row");
