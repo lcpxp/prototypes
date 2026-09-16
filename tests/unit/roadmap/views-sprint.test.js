@@ -186,6 +186,23 @@ test("items group under their workstream in slot then sequence order", () => {
     "a workstream's items stay together rather than interleaving by slot");
 });
 
+test("every bar carries its category's theme class", () => {
+  // The sprint views come from a database VIEW, so they hold
+  // category_key - a string - where every other view holds the category
+  // row. R.catClass reads both; when it read only the row, every sprint
+  // bar rendered rm-cat-undefined, no --rm-a or --rm-s resolved, and the
+  // whole board came out the pale grey that made it unreadable.
+  const V = loadView();
+  for (const html of [V.sprintStreams(sample()), V.sprintItems(sample())]) {
+    assert.match(html, /rm-cat-integrations/,
+      "a bar must carry its own category's theme class");
+    assert.match(html, /rm-cat-pipeline/,
+      "a second category must resolve to its own class, not the first's");
+    assert.doesNotMatch(html, /rm-cat-undefined/,
+      "a category key must never render as rm-cat-undefined");
+  }
+});
+
 test("every rendered value is escaped", () => {
   const V = loadView();
   const data = sample();

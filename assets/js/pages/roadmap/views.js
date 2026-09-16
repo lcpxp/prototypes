@@ -258,7 +258,13 @@
     items.forEach(function (i) { var k = keyFn(i) || "none"; (out[k] = out[k] || []).push(i); });
     return out;
   }
-  function catClass(cat) { return cat ? " rm-cat-" + App.escape(cat.key) : ""; }
+  // Takes a category row, or the bare key a database view carries
+  // (v_sprint_plan_items has category_key, not the row). Either way the
+  // class name is minted here and nowhere else.
+  function catClass(cat) {
+    var key = typeof cat === "string" ? cat : cat && cat.key;
+    return key ? " rm-cat-" + App.escape(key) : "";
+  }
 
   // Custom view: a per-row checkbox for hand-picking what a one-off PDF or
   // export carries, without any database change. pick = { custom, unpicked,
