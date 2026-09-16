@@ -29,6 +29,14 @@
         statTable: null,
       },
       {
+        key: "sprints",
+        title: "Sprint roadmap",
+        path: "modules/sprints/",
+        heading: "Sprint roadmap",
+        description: "The Now column mapped across sprints, by workstream and by work item",
+        statTable: null,
+      },
+      {
         key: "backlog",
         title: "Backlog",
         path: "modules/backlog/",

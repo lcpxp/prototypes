@@ -101,9 +101,10 @@
     },
     {
       "file": "assets/js/core/sprints.js",
-      "purpose": "App.sprints: sprint codes to date ranges. The roadmap page.",
+      "purpose": "App.sprints: sprint codes to date ranges. The roadmap drawer resolves a code to its dates; the sprint roadmap resolves the plan's anchor across the whole axis.",
       "pages": [
-        "modules/roadmap/index.html"
+        "modules/roadmap/index.html",
+        "modules/sprints/index.html"
       ]
     }
   ]

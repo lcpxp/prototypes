@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------
-   roadmap-sprint.css - The Sprint Roadmap's own rules, and only those.
+   sprints.css - The Sprint Roadmap's own rules, and only those.
 
    The grid, the bar, the sticky header, the horizontal scroll and the
    progress overlay all come from .rmv-tl in roadmap-views.css: a sprint
@@ -26,10 +26,62 @@
    them and each says less, so the axis stays readable while scrolling.
    Everything else about the grid is inherited. */
 .rmv-sp {
-  --tl-col: minmax(4.5rem, 1fr);
+  /* The grid reading: uniform, narrow columns so a dozen sprints fit on
+     screen and the eye can follow a trickle of work down a column as
+     easily as across a row. The horizon board's columns are wide because
+     it has four of them; this one has as many as the plan is long, so
+     the same width would show three sprints and a scrollbar.
+     Fixed rather than 1fr for the same reason: every sprint must be the
+     same size, or a long plan silently squeezes the near sprints - the
+     ones anyone is actually working in - down to nothing. */
+  --tl-gutter: 14rem;
+  --tl-col: 6.25rem;
 }
 .rmv-sp.rmv-tl--wide {
-  --tl-col: minmax(7rem, 1fr);
+  --tl-gutter: 18rem;
+  --tl-col: 9rem;
+}
+/* The gutter carries the item name on every row, so it needs to read as
+   text rather than as the board's mono column label. */
+.rmv-sp-label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  line-height: 1.25;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-inline-start: 3px solid var(--rm-a, var(--line));
+  padding-inline-start: var(--s-2);
+}
+
+/* THE COLOUR FIX. .rmv-tl-bar fills at color-mix(--rm-a 10%, --rm-s),
+   which is almost white and is why this board read as pale and unclear.
+   A sprint bar fills with the category's own soft tint and rails in its
+   accent, so a lane is identifiable without being read, and the board
+   carries its own structure at a glance. */
+.rmv-sp-bar {
+  background: var(--rm-s, var(--alt-surface));
+  border-inline-start: 4px solid var(--rm-a, var(--line-strong));
+  color: var(--ink);
+}
+
+/* Status on top of category, so the board shows a flow of work being
+   completed rather than a set of intentions. */
+.rmv-sp-bar--done {
+  background: var(--rm-a, var(--ok));
+  border-color: var(--rm-a, var(--ok));
+  color: var(--on-accent);
+}
+.rmv-sp-bar--done .rmv-tl-title { font-weight: var(--weight-semibold); }
+.rmv-sp-bar--active {
+  box-shadow: inset 0 0 0 1px var(--rm-a, var(--accent));
+}
+.rmv-sp-bar--blocked {
+  background: var(--danger-soft);
+  border-inline-start-color: var(--danger);
 }
 
 /* A workstream bar carries its item count on the right. The count is
@@ -154,3 +206,42 @@
   .rmv-sp-benefit { color: var(--ink); }
   .rmv-sp-chip { border-color: var(--line-strong); }
 }
+
+/* --- the key to the colour --------------------------------------- */
+
+.rmv-sp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-block-end: var(--s-3);
+}
+.rmv-sp-key {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+.rmv-sp-key::before {
+  content: "";
+  inline-size: 1.5rem;
+  block-size: 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  border-inline-start: 4px solid var(--ink);
+  background: var(--alt-surface);
+}
+.rmv-sp-key--active::before { box-shadow: inset 0 0 0 1px var(--ink); }
+.rmv-sp-key--done::before { background: var(--ink); border-color: var(--ink); }
+.rmv-sp-key--blocked::before {
+  background: var(--danger-soft);
+  border-inline-start-color: var(--danger);
+}
+.rmv-sp-key--ext::before {
+  background: transparent;
+  border: 1px dashed var(--line-strong);
+  border-inline-start: 3px solid var(--line-strong);
+}
+
+@media print { .rmv-sp-legend { display: none; } }

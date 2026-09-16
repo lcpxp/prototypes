@@ -114,6 +114,13 @@ Layouts:
 - **Cascade** - the same work as stacked stage bands; an item that spans
   Now -> Next appears under both the Now and the Next band.
 
+The Now column is drawn a second time on its own page, modules/sprints/,
+against sprint columns rather than horizon bands - by workstream for
+stakeholders and by work item for delivery. It renders with this page's
+own builders and links every bar back to the drawer here, so the two are
+one system at two altitudes. The allocation model and the rules for
+mapping the Now column are docs/SPRINT-DELIVERY.md.
+
 The Delivered zone splits into two columns: **Recently completed** (shipped
 within a rolling **90-day** window, read from `resolved_at`, falling back to
 `updated_at` for rows closed before that stamp existed) and **Previously

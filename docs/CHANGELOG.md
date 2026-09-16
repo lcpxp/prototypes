@@ -10,10 +10,12 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
-- Roadmap: a Sprint Roadmap alongside the existing board. Two new views -
-  Sprints: workstreams for what each stream spans and what it is worth,
-  and Sprints: work items for how the work rolls out - drawn as a Gantt
-  across sprint columns. Work reaches it by entering the Now column and
+- Sprint roadmap: a new page alongside the roadmap. Two views -
+  workstreams for what each stream spans and what it is worth, and work
+  items for how the work rolls out - drawn across sprint columns, with
+  each stream in its own colour and each bar showing whether the work is
+  planned, in flight, delivered or blocked. Every bar opens that item's
+  detail back on the roadmap. Work reaches it by entering the Now column and
   being given a slot. While the start date is unknown the columns read
   Sprint +0, +1, +2 rather than inventing dates; setting the anchor later
   fills in real sprint codes everywhere at once. Externally-gated work is

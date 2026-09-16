@@ -91,8 +91,12 @@
       "maxBytes": 184000
     },
     "modules/roadmap/index.html": {
-      "maxRequests": 42,
-      "maxBytes": 385000
+      "maxRequests": 40,
+      "maxBytes": 369000
+    },
+    "modules/sprints/index.html": {
+      "maxRequests": 26,
+      "maxBytes": 252000
     },
     "modules/users/index.html": {
       "maxRequests": 20,
@@ -100,5 +104,5 @@
     }
   },
   "note-platform": "modules/platform/index.html was raised from 202000/24 to 212000/26 on 2026-09-07. The page went from one flat column to three navigable views with a sidebar index, a filter toolbar and collapsed cards, and its single module split into four (shell, views, cards, knowledge) because one file carrying all of it would have passed the 600-line hard cap in tests/size-budget.json. The bytes bought the fix for the page's actual problem - 46 capabilities rendered fully open in one scroll - so the trade is deliberate. Two of the requests are the new modules; the sidebar shell moved to components.css rather than adding a fifth.",
-  "note-roadmap": "modules/roadmap/index.html was raised from 369000/40 to 385000/42 on 2026-09-15, following the same reasoning as the platform note above. The ceiling was seeded when the page carried five views over one dataset; it now carries seven, because the Sprint Roadmap added a stakeholder and a delivery rendering of the Now column against sprints. That cost exactly two requests - one view module and one stylesheet - and the coordinate model was REUSED rather than duplicated, which is why the stylesheet is small. Measured after the change: 39 requests and 363,624 bytes. Raising to 42 restores roughly the headroom the original seeding intended rather than leaving the page one request from failing, which would have made the next change a budget argument instead of a design one. It stays the outlier on every axis, and it is the page to look at first if the site ever needs to get lighter."
+  "note-roadmap": "modules/roadmap/index.html was raised to 385000/42 on 2026-09-15 for the Sprint Roadmap, then LOWERED back to the original 369000/40 on 2026-09-16 when the sprint views moved to their own page (modules/sprints/). The page gave back the two requests it had taken and now measures 37 requests and 343,968 bytes. A ratchet is meant to come down after real work, and this is what that looks like: the ceiling follows the page rather than the page growing into the ceiling. It remains the outlier on every axis."
 }

@@ -2,6 +2,12 @@
 // roadmap/views-sprint.js - The Sprint Roadmap: the same Now work the
 // product board bands by horizon, placed instead against sprints.
 //
+// It lives in roadmap/ and attaches to App.roadmapView because that is
+// what it is - another reading of the same work over the same .rmv-tl
+// coordinate model - even though the page that draws it is
+// modules/sprints/. Moving the file to follow the page would have split
+// the view family across two directories to no end.
+//
 // Two renderings of one allocation. sprintStreams is the stakeholder
 // view - one bar per workstream, how far it spans, what it includes and
 // what it is worth. sprintItems is the delivery view - every allocated
@@ -11,7 +17,7 @@
 // .rmv-tl is already a spanning grid driven by --tl-cols and
 // grid-column, so N sprint columns need no new grid CSS and the bar,
 // sticky header, scroll and progress rules come for free. Only what is
-// genuinely new to sprints lives in assets/css/roadmap-sprint.css.
+// genuinely new to sprints lives in assets/css/sprints.css.
 //
 // Spans and rollups come from the database views rather than being
 // recomputed here: v_sprint_plan_items for the delivery view and
@@ -62,13 +68,35 @@
   // An external bar is drawn as an outline rather than a fill, so a
   // reader can see at a glance which parts of the plan PXP is not the
   // one moving. The party is named on the bar and in the drawer.
+  // Delivered, in flight, blocked or planned. Without this the board
+  // showed intent and never movement, so nothing on it read as a flow
+  // of work being completed - only as a set of intentions with dates.
+  function stateOf(row) {
+    if (row.status === "done") return "done";
+    if (row.status === "blocked") return "blocked";
+    if (row.status === "in_progress") return "active";
+    return "planned";
+  }
+
   function barClasses(row) {
-    var cls = "rmv-tl-bar rmv-sp-bar";
+    var cls = "rmv-tl-bar rmv-sp-bar rmv-sp-bar--" + stateOf(row);
     if (row.is_external) cls += " rmv-sp-bar--ext";
     if (row.overlap === "overlappable") cls += " rmv-sp-bar--overlap";
     if (row.overlap === "parallel") cls += " rmv-sp-bar--parallel";
     if (row.external_status === "slipped") cls += " rmv-sp-bar--slipped";
     return cls;
+  }
+
+  // The key to the colour. Colour is only information if the reader is
+  // told what it means, once, where it is used.
+  function legend() {
+    return '<div class="rmv-sp-legend">' +
+      '<span class="rmv-sp-key rmv-sp-key--planned">Planned</span>' +
+      '<span class="rmv-sp-key rmv-sp-key--active">In flight</span>' +
+      '<span class="rmv-sp-key rmv-sp-key--done">Delivered</span>' +
+      '<span class="rmv-sp-key rmv-sp-key--blocked">Blocked</span>' +
+      '<span class="rmv-sp-key rmv-sp-key--ext">Built elsewhere</span>' +
+      "</div>";
   }
 
   function colStyle(startSlot, endSlot) {
@@ -272,7 +300,9 @@
           colStyle(s, e) + '"><span class="rmv-tl-title">' +
           App.escape(r.title) + "</span>" + ext + "</span>";
         return '<div class="rmv-tl-row rmv-tl-row--child rmv-sp-row">' +
-          '<span class="rmv-tl-label"></span>' + bar + "</div>";
+          '<span class="rmv-tl-label rmv-sp-label' + R.catClass(r.category_key) +
+          '" title="' + App.escape(r.title) + '">' + App.escape(r.title) +
+          "</span>" + bar + "</div>";
       }).join("");
       return head + bars;
     }).join("");
@@ -283,4 +313,5 @@
 
   App.roadmapView.sprintStreams = sprintStreams;
   App.roadmapView.sprintItems = sprintItems;
+  App.roadmapView.sprintLegend = legend;
 })();

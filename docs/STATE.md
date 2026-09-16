@@ -1,12 +1,16 @@
 # Current state
 
-Updated: 2026-09-15 (Now column repopulated, Sprint Roadmap live on main)
+Updated: 2026-09-16 (Sprint roadmap moved to its own page and recoloured)
 
 ## In progress
 Nothing blocking. Five priority workstreams sit in Now (23 rows, every
 item under a workstream), 18 allocated across sprint slots 0-10 with
 streams in flight running 2-3-2. The plan is UNANCHORED on purpose:
 `sprint_plan.anchor_sprint` is null, so every surface reads Sprint +N.
+
+The sprint views now live at modules/sprints/ rather than as two levels
+on the roadmap board. They still render with the roadmap's own builders
+over the same .rmv-tl grid, and every bar opens the roadmap drawer.
 
 ## Next steps
 1. **Anchor the plan** when the start date and resource are known: set
@@ -22,9 +26,10 @@ streams in flight running 2-3-2. The plan is UNANCHORED on purpose:
    to the slot before the lead endpoints are built.
 
 ## Verification the repo cannot do for itself
-- The two sprint views signed in: the axis reading Sprint +0 to +10, an
-  external bar drawn as an outline, overlap hatching on shared edges,
-  and a bar opening the existing drawer.
+- The sprint page signed in: five stream colours reading apart at a
+  glance, the axis running Sprint +0 to +10 without a scrollbar hiding
+  the near sprints, external bars drawn as outlines, and a bar opening
+  the roadmap drawer.
 - Whether the first-cut mapping matches how the owner would sequence it.
   The shape is checked mechanically; the judgement is not.
 

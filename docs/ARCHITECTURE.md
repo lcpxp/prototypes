@@ -33,7 +33,8 @@ substance lives behind Supabase Row Level Security.
    modules/integrations/ (the integration overview and detail
    modals), modules/prototypes/ (the gallery plus the prototype
    pages themselves), modules/platform/ (what LP is and does
-   today), modules/roadmap/ (the roadmap view), modules/backlog/
+   today), modules/roadmap/ (the roadmap view), modules/sprints/
+   (the same Now work placed against sprints), modules/backlog/
    (rolling work items and ingested source material) and
    modules/users/ (the user and access register).
 
@@ -238,6 +239,16 @@ bands work by horizon and answers what is being done, in what order. The
 capacity. One rule joins them, and it lives in `v_sprint_plan_items`:
 an item is on the Sprint Roadmap if it has a live allocation AND sits at
 `horizon='now'`.
+
+They are two pages, not two tabs, because they answer different
+questions for different audiences and a stakeholder opening one should
+not have to find the other inside it. They stay one system rather than
+two: modules/sprints/ renders with the roadmap's own builders
+(`App.roadmapView.sprintStreams` / `sprintItems`) over the same `.rmv-tl`
+coordinate model, and every bar links back to that item's drawer on the
+roadmap - so there is one detail surface, not a second copy to keep in
+step. Only the column width and the colour treatment are the sprint
+page's own (assets/css/sprints.css).
 
 - sprints: the calendar materialised so SQL can join on a sprint.
   `assets/js/core/sprints.js` stays the one home of the conversion, and
