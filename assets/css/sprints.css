@@ -171,8 +171,9 @@
   color: var(--ink);
 }
 .rmv-sp-benefit {
+  /* No measure cap: the card's own column is the measure, and a second
+     limit inside it would leave a short line in a wide card. */
   margin: 0 0 var(--s-2);
-  max-inline-size: var(--lede-max);
   color: var(--muted);
   font-size: var(--text-sm);
   line-height: 1.5;
