@@ -51,7 +51,7 @@
       "seam": "Not yet. It is the one stylesheet for the roadmap drawer and the executive board, loaded only by modules/roadmap/, so splitting it would add a request to the heaviest page in the site to save three lines. The seam when it passes 550 is the executive board rules (.rmd-exec*, the department-first rollup) leaving for roadmap-exec.css, since the board and the drawer share no selectors."
     },
     "assets/css/roadmap-views.css": {
-      "seam": "Not yet, and the closest of the stylesheets to a real seam: six board layouts share one coordinate model, so splitting means duplicating that model or inventing a shared file that is most of it. Revisit when a seventh view is added, or at 550 - whichever comes first."
+      "seam": "Not yet, and the closest of the stylesheets to a real seam: the board layouts share one coordinate model, so splitting means duplicating that model or inventing a shared file that is most of it. The seventh view - the sprint roadmap - tested that and did not split it: assets/css/sprints.css reuses .rmv-tl and carries only what is new to sprints. Revisit at 550."
     },
     "assets/css/roadmap.css": {
       "seam": "Not yet. The print @media block is self-contained and would move cleanly, but it would cost the roadmap page a request. At 550, take it."
