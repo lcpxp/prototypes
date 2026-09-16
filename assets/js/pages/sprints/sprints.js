@@ -41,25 +41,25 @@
     sprintCodes: {}, currentCode: null };
   var current = "plan";
   var wide = false;
-  // Streams set aside for the discussion at hand: dimmed on the board,
-  // still in their place. View-only and per-browser, like every other
-  // preference here - it changes nothing in the database and no other
-  // reader sees it.
-  var aside = {};
-  var hideAside = false;
+  // Hide mode, and what is hidden. View-only and per-browser, like every
+  // other preference here - it changes nothing in the database and no
+  // other reader sees it.
+  var hideMode = false;
+  var hidden = {};
 
-  function readAside() {
+  function readHidden() {
     if (!App.store) return {};
-    var raw = App.store.get("sprints.aside");
+    var raw = App.store.get("sprints.hidden");
     if (!raw) return {};
     try {
       var parsed = JSON.parse(raw);
       return parsed && typeof parsed === "object" ? parsed : {};
     } catch (e) { return {}; }
   }
-  function writeAside() {
-    if (App.store) App.store.set("sprints.aside", JSON.stringify(aside));
+  function writeHidden() {
+    if (App.store) App.store.set("sprints.hidden", JSON.stringify(hidden));
   }
+  function hiddenCount() { return Object.keys(hidden).length; }
 
   function known(key) { return VIEWS.some(function (v) { return v.key === key; }); }
 
@@ -89,7 +89,7 @@
   }
 
   function render(host) {
-    var opts = { wide: wide, aside: aside, hideAside: hideAside };
+    var opts = { wide: wide, hideMode: hideMode, hidden: hidden };
     host.innerHTML = App.roadmapView.sprintLegend() +
       (current === "delivery"
         ? App.roadmapView.sprintItems(data, opts)
@@ -174,22 +174,23 @@
     var nav = document.getElementById("sprints-switch");
     var stateLine = document.getElementById("sprints-state");
     var wideBtn = document.getElementById("sprints-wide");
-    var hideBtn = document.getElementById("sprints-hide-aside");
+    var hideBtn = document.getElementById("sprints-hide");
     if (!host || !nav) return;
 
     current = readState();
     nav.innerHTML = tabs();
     wireTabs(nav, host);
 
-    aside = readAside();
+    hidden = readHidden();
     if (hideBtn) {
-      hideAside = !!(App.store && App.store.get("sprints.hideAside") === "1");
-      hideBtn.setAttribute("aria-pressed", String(hideAside));
+      // Hide mode is deliberately NOT remembered. It is the state you are
+      // in while choosing what to drop, not a way you want the board to
+      // open - what persists is the choice itself.
       hideBtn.addEventListener("click", function () {
-        hideAside = !hideAside;
-        if (App.store) App.store.set("sprints.hideAside", hideAside ? "1" : "0");
-        hideBtn.setAttribute("aria-pressed", String(hideAside));
+        hideMode = !hideMode;
+        hideBtn.setAttribute("aria-pressed", String(hideMode));
         render(host);
+        state();
       });
     }
 
@@ -262,12 +263,15 @@
       // The picker sits inside the render host, so it is handled here
       // and returns before the bar handler below - a chip is a control,
       // not a row, and must not also open a drawer.
-      var chip = e.target.closest && e.target.closest("[data-aside-id]");
-      if (chip) {
-        var key = chip.getAttribute("data-aside-id");
-        if (aside[key]) delete aside[key]; else aside[key] = true;
-        writeAside();
+      // A row's eye is a control, not the row: it must not also open a
+      // drawer, so it is handled first and returns.
+      var toggle = e.target.closest && e.target.closest("[data-hide-id]");
+      if (toggle) {
+        var key = toggle.getAttribute("data-hide-id");
+        if (hidden[key]) delete hidden[key]; else hidden[key] = true;
+        writeHidden();
         render(host);
+        state();
         return;
       }
       var el = e.target.closest && e.target.closest("[data-item-id]");
@@ -278,17 +282,24 @@
       if (href) window.location.href = href;
     });
 
-    if (stateLine) {
+    // The readout says what the board holds, and - crucially - how much
+    // of it is being kept off screen. Rows hidden with no trace of it
+    // anywhere is how a reader ends up quoting half a plan.
+    function state() {
+      if (!stateLine) return;
       var n = data.sprintItems.length;
       var streams = data.sprintStreams.length;
-      stateLine.textContent = n === 0
+      var h = hiddenCount();
+      stateLine.textContent = (n === 0
         ? "Nothing is allocated yet."
         : n + (n === 1 ? " item" : " items") + " across " + streams +
           (streams === 1 ? " workstream" : " workstreams") +
           (anchorIdx !== null
             ? ", anchored to real sprints."
-            : ". Not yet anchored to a start date.");
+            : ". Not yet anchored to a start date.")) +
+        (h ? " " + h + (h === 1 ? " row hidden." : " rows hidden.") : "");
     }
+    state();
 
     render(host);
     window.addEventListener("hashchange", function () {

@@ -234,59 +234,76 @@ test("every bar carries its category's theme class", () => {
   }
 });
 
-test("the picker offers every stream, and says which are set aside", () => {
+test("no eyes until hide mode is on", () => {
+  // The board stays clean when nobody is editing what it shows. This is
+  // the roadmap's custom-view bargain: a toolbar toggle reveals the
+  // per-row control, and nothing before that.
   const V = loadView();
-  const plain = V.sprintStreams(sample());
-  assert.match(plain, /rmv-sp-picker/, "the picker is drawn");
-  assert.equal((plain.match(/data-aside-id=/g) || []).length, 2,
-    "one chip per workstream");
-  assert.doesNotMatch(plain, /aria-pressed="true"/,
-    "nothing is set aside until something is");
-
-  const off = V.sprintStreams(sample(), { aside: { w2: true } });
-  assert.match(off, /data-aside-id="w2" aria-pressed="true"/,
-    "a set-aside stream's chip reads as pressed");
-  assert.match(off, /data-aside-id="w1" aria-pressed="false"/,
-    "the others stay unpressed");
-});
-
-test("a set-aside stream dims in place and keeps the axis", () => {
-  // Keeping its position is the point: setting a stream aside is about
-  // emphasis for a discussion, and a reader still needs to see where it
-  // sat relative to the streams still in view.
-  const V = loadView();
-  const o = { aside: { w2: true } };
-  for (const html of [V.sprintStreams(sample(), o), V.sprintItems(sample(), o)]) {
-    assert.match(html, /rmv-unpicked/, "the row dims");
-    assert.match(html, /Fulfilment/, "but it is still drawn");
-    assert.match(html, /Sprint \+3/, "and the axis still runs the whole plan");
+  for (const html of [V.sprintStreams(sample()), V.sprintItems(sample())]) {
+    assert.doesNotMatch(html, /data-hide-id=/, "no row carries an eye");
+    assert.doesNotMatch(html, /rmv-sp--hiding/, "the board is not in hide mode");
   }
 });
 
-test("hiding drops the set-aside stream but not the rest", () => {
+test("hide mode puts an eye on every workstream and every item", () => {
   const V = loadView();
-  const o = { aside: { w2: true }, hideAside: true };
+  const o = { hideMode: true };
+  const streams = V.sprintStreams(sample(), o);
+  assert.match(streams, /rmv-sp--hiding/, "the board says it is in hide mode");
+  assert.equal((streams.match(/data-hide-id=/g) || []).length, 2,
+    "the stakeholder view has one eye per workstream");
+
+  const items = V.sprintItems(sample(), o);
+  // Two workstream heads plus three items.
+  assert.equal((items.match(/data-hide-id=/g) || []).length, 5,
+    "the delivery view has an eye on each workstream AND each item");
+  assert.match(items, /data-hide-id="i2"/, "an item's eye carries its own id");
+  assert.match(items, /data-hide-id="w1"/, "a workstream's eye carries its own id");
+});
+
+test("a hidden row keeps its eye while hide mode is on", () => {
+  // A control you cannot reach is a row you cannot get back.
+  const V = loadView();
+  const o = { hideMode: true, hidden: { w2: true } };
+  const html = V.sprintItems(sample(), o);
+  assert.match(html, /data-hide-id="w2" aria-pressed="true"/,
+    "the hidden row's eye reads as pressed");
+  assert.match(html, /rmv-unpicked/, "and the row dims");
+  assert.match(html, /Fulfilment/, "but it is still there to bring back");
+});
+
+test("leaving hide mode is what actually removes the hidden rows", () => {
+  const V = loadView();
+  const o = { hidden: { w2: true } };
   for (const html of [V.sprintStreams(sample(), o), V.sprintItems(sample(), o)]) {
     assert.doesNotMatch(html, /Serials on the order/,
-      "a hidden stream's items go with it");
+      "a hidden workstream takes its items with it");
     assert.doesNotMatch(html, /Closes the loop on device serials/,
-      "and so does its benefit card");
-    assert.match(html, /Payment Service/, "the streams still in view stay");
-    assert.match(html, /data-aside-id="w2"/,
-      "the chip survives, or there would be no way to bring it back");
+      "and its benefit card");
+    assert.match(html, /Payment Service/, "everything else stays");
+    assert.match(html, /Sprint \+3/,
+      "and the axis still runs the whole plan, so nothing slides left");
   }
 });
 
-test("setting aside changes nothing about the plan itself", () => {
+test("an item can be hidden without hiding its workstream", () => {
+  const V = loadView();
+  const html = V.sprintItems(sample(), { hidden: { i2: true } });
+  assert.doesNotMatch(html, /Integrate/, "the item goes");
+  assert.match(html, /Map the process/, "its sibling stays");
+  assert.match(html, /Payment Service/, "and so does the workstream");
+});
+
+test("hiding changes nothing about the plan itself", () => {
   // It is a view preference. If it ever started filtering the DATA the
   // board would quietly disagree with the database about what is
   // allocated, which is the one thing this board must not do.
   const V = loadView();
-  const off = { aside: { w1: true, w2: true } };
+  const o = { hideMode: true, hidden: { w1: true, w2: true } };
   assert.equal(
     (V.sprintItems(sample()).match(/data-item-id=/g) || []).length,
-    (V.sprintItems(sample(), off).match(/data-item-id=/g) || []).length,
-    "dimming every stream must not remove a single bar");
+    (V.sprintItems(sample(), o).match(/data-item-id=/g) || []).length,
+    "while hide mode is on, dimming every row must not remove a single bar");
 });
 
 test("every rendered value is escaped", () => {

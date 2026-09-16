@@ -10,13 +10,16 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
-- Sprint roadmap: any workstream can be set aside for the conversation
-  you are having. Click its name in the strip above the board and it
-  dims, keeping its place so you can still see where it sat against the
-  streams still in play; a toolbar toggle drops the set-aside ones from
-  the board entirely when even the faint rows are in the way. It is a
-  view preference held in your own browser - the plan itself does not
-  change and nobody else's board does either.
+- Sprint roadmap: rows can be hidden for the conversation you are having.
+  The eye in the toolbar puts an eye on every row; click a row's eye to
+  drop it, and click the toolbar eye again to leave. Hide a workstream
+  and everything inside it goes with it, or hide a single work item on
+  its own. While you are choosing, the rows you have marked stay on
+  screen and dim, so you can see what you are about to drop and bring it
+  back. The sprint columns never move, so what is left keeps its real
+  place in the plan, and the line above the board says how many rows are
+  hidden. It is a view preference held in your own browser - the plan
+  itself does not change and nobody else's board does either.
 - Sprint roadmap: a new page alongside the roadmap. Two views -
   workstreams for what each stream spans and what it is worth, and work
   items for how the work rolls out - drawn across sprint columns, with

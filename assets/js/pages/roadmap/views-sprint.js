@@ -99,44 +99,58 @@
       "</div>";
   }
 
-  // A stream set aside for the discussion at hand. It stays where it is
-  // and dims, rather than being removed: the axis is a property of the
-  // PLAN, not of what is being looked at, so a stream keeps its position
-  // relative to the ones still in view. That is the whole value of
-  // setting one aside rather than filtering it out - you can still see
-  // where it sat. opts.hideAside drops them entirely for the case where
-  // even the dimmed row is in the way.
+  // Hiding a row. ONE mechanism, worked the way the roadmap's custom
+  // view already works: a toolbar toggle reveals a control on every row,
+  // and pressing a row's control drops it.
+  //
+  // In hide mode nothing actually disappears - a hidden row dims and
+  // keeps its eye, because a control you cannot reach is a row you
+  // cannot get back. Leaving hide mode is what removes them. The axis
+  // never changes either way: it is a property of the PLAN, not of what
+  // is being looked at, so the rows still shown keep their real
+  // positions rather than sliding left to fill a gap.
+  //
+  // Hiding a workstream hides everything inside it; hiding one item
+  // hides only that item. Both are the same gesture in the same place.
   //
   // View-only, held in the browser (assets/js/pages/sprints/sprints.js).
   // It changes nothing in the database and no other reader sees it.
-  function isAside(id, opts) {
-    return !!(opts && opts.aside && id && opts.aside[id]);
+  function isHidden(id, opts) {
+    return !!(opts && opts.hidden && id && opts.hidden[id]);
   }
-  function asideCls(id, opts) {
-    return isAside(id, opts) ? " rmv-unpicked rmv-sp-aside" : "";
+  function hiddenCls(id, opts) {
+    return isHidden(id, opts) ? " rmv-unpicked rmv-sp-hidden" : "";
   }
-  function dropped(id, opts) {
-    return isAside(id, opts) && opts.hideAside;
+  // Drawn only in hide mode, so the board stays clean the rest of the
+  // time. It is the last child of the row and .rmv-tl parks it in the
+  // trailing column, the same way the roadmap parks its pick box.
+  function eye(id, opts, what) {
+    if (!opts || !opts.hideMode || !id) return "";
+    var off = isHidden(id, opts);
+    return '<button type="button" class="rmv-sp-eye" data-hide-id="' +
+      App.escape(id) + '" aria-pressed="' + (off ? "true" : "false") +
+      '" title="' + (off ? "Show " : "Hide ") + App.escape(what) +
+      '" aria-label="' + (off ? "Show " : "Hide ") + App.escape(what) +
+      '">' + (off ? EYE_OFF : EYE_ON) + "</button>";
   }
+  var EYE_ON =
+    '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" ' +
+    'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+    'stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>' +
+    '<circle cx="12" cy="12" r="3"/></svg>';
+  var EYE_OFF =
+    '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" ' +
+    'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+    'stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M3 3l18 18"/>' +
+    '<path d="M10.6 5.1A9.7 9.7 0 0 1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-2.4 3.4"/>' +
+    '<path d="M6.3 6.4A17 17 0 0 0 2 12s3.5 7 10 7a9.6 9.6 0 0 0 4.2-1"/>' +
+    '<path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
 
-  // The stream picker: one chip per workstream, in board order and its
-  // own colour, each a button that sets that stream aside or brings it
-  // back. Above the board rather than on the rows, because it is one
-  // control that means the same thing on both views and because a row
-  // already does something when clicked.
-  function streamPicker(ordered, catByStream, opts) {
-    if (!ordered || ordered.length < 2) return "";
-    return '<div class="rmv-sp-picker" role="group" ' +
-      'aria-label="Show or set aside a workstream">' +
-      ordered.map(function (st) {
-        var off = isAside(st.workstream_id, opts);
-        return '<button type="button" class="rmv-sp-chip-stream' +
-          R.catClass(catByStream[st.workstream_id]) +
-          (off ? " rmv-sp-chip-stream--off" : "") +
-          '" data-aside-id="' + App.escape(st.workstream_id) + '"' +
-          ' aria-pressed="' + (off ? "true" : "false") + '">' +
-          App.escape(st.workstream_title) + "</button>";
-      }).join("") + "</div>";
+  // A row is drawn unless it is hidden AND we have left hide mode.
+  function dropped(id, opts) {
+    return isHidden(id, opts) && !(opts && opts.hideMode);
   }
 
   function colStyle(startSlot, endSlot) {
@@ -153,8 +167,9 @@
       cells + "</div>";
   }
 
-  function wrap(inner, cols, wide) {
+  function wrap(inner, cols, wide, opts) {
     return '<div class="rmv-tl rmv-sp' + (wide ? " rmv-tl--wide" : "") +
+      (opts && opts.hideMode ? " rmv-sp--hiding" : "") +
       '" style="--tl-cols:' + cols + '">' + inner + "</div>";
   }
 
@@ -256,7 +271,7 @@
       if (!meta) return "";
       return '<div class="rmv-sp-note-card' +
         R.catClass(catByStream[st.workstream_id]) +
-        asideCls(st.workstream_id, opts) +
+        hiddenCls(st.workstream_id, opts) +
         '" data-item-id="' + App.escape(st.workstream_id) + '">' +
         '<h3 class="rmv-sp-note-head">' + App.escape(st.workstream_title) +
         "</h3>" + meta + "</div>";
@@ -311,16 +326,16 @@
         '<span class="rmv-sp-count">' + count +
         (count === 1 ? " item" : " items") + "</span></span>";
       return '<div class="rmv-tl-row rmv-sp-row' +
-        asideCls(st.workstream_id, opts) + '">' +
+        hiddenCls(st.workstream_id, opts) + '">' +
         '<span class="rmv-tl-label rmv-sp-label' +
         R.catClass(catByStream[st.workstream_id]) + '" title="' +
         App.escape(st.workstream_title) + '">' +
-        App.escape(st.workstream_title) + "</span>" + bar + "</div>";
+        App.escape(st.workstream_title) + "</span>" + bar +
+        eye(st.workstream_id, opts, st.workstream_title) + "</div>";
     }).join("");
 
     return axisNote(ax.anchored) +
-      streamPicker(ordered, catByStream, opts) +
-      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide) +
+      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide, opts) +
       streamNotes(ordered, catByStream, metricsByStream, opts);
   }
 
@@ -350,7 +365,7 @@
     }).map(function (key) {
       var items = grouped.byStream[key];
       var st = streamById[items[0].workstream_id];
-      var off = asideCls(items[0].workstream_id, opts);
+      var off = hiddenCls(items[0].workstream_id, opts);
       var title = items[0].workstream_title || items[0].title;
       var first = st ? num(st.first_slot, 0) : num(items[0].effective_slot, 0);
       var last = st ? num(st.last_slot, first) : num(items[0].effective_end_slot, first);
@@ -361,9 +376,12 @@
         (items[0].workstream_id
           ? ' data-item-id="' + App.escape(items[0].workstream_id) + '"' : "") +
         ' style="' + colStyle(first, last) + '">' +
-        '<span class="rmv-tl-title">' + App.escape(title) + "</span></span></div>";
+        '<span class="rmv-tl-title">' + App.escape(title) + "</span></span>" +
+        eye(items[0].workstream_id, opts, title) + "</div>";
 
-      var bars = items.map(function (r) {
+      var bars = items.filter(function (r) {
+        return !dropped(r.work_item_id, opts);
+      }).map(function (r) {
         var s = num(r.effective_slot, 0);
         var e = num(r.effective_end_slot, s);
         if (e < s) e = s;
@@ -376,10 +394,11 @@
           progCls + '" data-item-id="' + App.escape(r.work_item_id) + '" style="' +
           colStyle(s, e) + '"><span class="rmv-tl-title">' +
           App.escape(r.title) + "</span>" + ext + "</span>";
-        return '<div class="rmv-tl-row rmv-tl-row--child rmv-sp-row' + off + '">' +
+        return '<div class="rmv-tl-row rmv-tl-row--child rmv-sp-row' + off +
+          hiddenCls(r.work_item_id, opts) + '">' +
           '<span class="rmv-tl-label rmv-sp-label' + R.catClass(r.category_key) +
           '" title="' + App.escape(r.title) + '">' + App.escape(r.title) +
-          "</span>" + bar + "</div>";
+          "</span>" + bar + eye(r.work_item_id, opts, r.title) + "</div>";
       }).join("");
       return head + bars;
     }).join("");
@@ -395,8 +414,7 @@
     });
 
     return axisNote(ax.anchored) +
-      streamPicker(notesOrder, catByStream, opts) +
-      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide) +
+      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide, opts) +
       streamNotes(notesOrder, catByStream,
         groupMetrics((data && data.metrics) || []), opts);
   }
