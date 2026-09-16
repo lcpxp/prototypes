@@ -198,6 +198,29 @@
     return { byStream: byStream, order: order };
   }
 
+  // What each stream buys, collected below the board. Both views carry
+  // it, and both carry it at WORKSTREAM level only: a per-item summary
+  // under the delivery view would be eighteen paragraphs where the
+  // question being asked is still "what do these five streams buy".
+  // The cards keep the board's order and the board's colour, so a card
+  // and its bar are the same stream without being labelled as such.
+  function streamNotes(ordered, catByStream, metricsByStream) {
+    var notes = ordered.map(function (st) {
+      var meta = "";
+      if (st.business_benefit) {
+        meta += '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) + "</p>";
+      }
+      meta += chips(metricsByStream[st.workstream_id]);
+      if (!meta) return "";
+      return '<div class="rmv-sp-note-card' +
+        R.catClass(catByStream[st.workstream_id]) +
+        '" data-item-id="' + App.escape(st.workstream_id) + '">' +
+        '<h3 class="rmv-sp-note-head">' + App.escape(st.workstream_title) +
+        "</h3>" + meta + "</div>";
+    }).join("");
+    return notes ? '<div class="rmv-sp-notes">' + notes + "</div>" : "";
+  }
+
   // ----------------------------------------------------------------
   // Stakeholder view. Reads v_sprint_plan_streams, so the span, the
   // item count and the external flag are the database's answer rather
@@ -249,23 +272,9 @@
         App.escape(st.workstream_title) + "</span>" + bar + "</div>";
     }).join("");
 
-    var notes = ordered.map(function (st) {
-      var meta = "";
-      if (st.business_benefit) {
-        meta += '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) + "</p>";
-      }
-      meta += chips(metricsByStream[st.workstream_id]);
-      if (!meta) return "";
-      return '<div class="rmv-sp-note-card' +
-        R.catClass(catByStream[st.workstream_id]) +
-        '" data-item-id="' + App.escape(st.workstream_id) + '">' +
-        '<h3 class="rmv-sp-note-head">' + App.escape(st.workstream_title) +
-        "</h3>" + meta + "</div>";
-    }).join("");
-
     return axisNote(ax.anchored) +
       wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide) +
-      (notes ? '<div class="rmv-sp-notes">' + notes + "</div>" : "");
+      streamNotes(ordered, catByStream, metricsByStream);
   }
 
   // ----------------------------------------------------------------
@@ -325,8 +334,20 @@
       return head + bars;
     }).join("");
 
+    // The same workstream cards the stakeholder view carries, in the
+    // order this board draws them, so switching view does not lose what
+    // the work is for.
+    var notesOrder = [], catByStream = {};
+    order.forEach(function (key) {
+      var items = grouped.byStream[key];
+      catByStream[items[0].workstream_id] = items[0].category_key;
+      if (streamById[key]) notesOrder.push(streamById[key]);
+    });
+
     return axisNote(ax.anchored) +
-      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide);
+      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide) +
+      streamNotes(notesOrder, catByStream,
+        groupMetrics((data && data.metrics) || []));
   }
 
   App.roadmapView.sprintStreams = sprintStreams;

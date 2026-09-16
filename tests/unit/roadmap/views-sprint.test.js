@@ -186,6 +186,20 @@ test("items group under their workstream in slot then sequence order", () => {
     "a workstream's items stay together rather than interleaving by slot");
 });
 
+test("both views carry the same workstream summaries, at stream level only", () => {
+  // Switching from the stakeholder view to the delivery view should not
+  // lose what the work is FOR. It should not gain eighteen paragraphs
+  // either: the cards stay at workstream level in both.
+  const V = loadView();
+  const items = V.sprintItems(sample());
+  assert.match(items, /rmv-sp-notes/,
+    "the delivery view must carry the workstream cards too");
+  assert.match(items, /Completes the automated path/,
+    "a workstream's benefit is shown on the delivery view");
+  assert.equal((items.match(/rmv-sp-note-card/g) || []).length, 2,
+    "one card per workstream, never one per item");
+});
+
 test("the stakeholder bars run contiguously, with the benefits below", () => {
   // The waterfall is the one thing this view exists to show, and a
   // benefit set between two bars pushes them far enough apart that it

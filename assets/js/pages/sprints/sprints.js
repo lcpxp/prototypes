@@ -41,10 +41,12 @@
     return known(stored) ? stored : "plan";
   }
 
-  // App.itemHref is the one home for the roadmap drawer's URL shape
-  // (registry.js), so the two pages cannot drift apart on it.
+  // App.linkHref is the one home for "where does a work item live"
+  // (registry.js), so this page and the drawer's own links cannot drift
+  // apart on it. It takes the entity TYPE, not a module - passing a
+  // module key here built no URL at all and every bar led to /undefined.
   function itemHref(id) {
-    return App.itemHref ? App.itemHref("roadmap", id, App.root) : "#";
+    return (App.linkHref && App.linkHref("work_item", id, App.root)) || "";
   }
 
   function tabs() {
@@ -109,7 +111,11 @@
     host.addEventListener("click", function (e) {
       var el = e.target.closest && e.target.closest("[data-item-id]");
       if (!el) return;
-      window.location.href = itemHref(el.getAttribute("data-item-id"));
+      // No address is better than a wrong one: a bar whose row cannot be
+      // resolved stays put rather than navigating somewhere that is not
+      // there.
+      var href = itemHref(el.getAttribute("data-item-id"));
+      if (href) window.location.href = href;
     });
 
     var results = await Promise.all([

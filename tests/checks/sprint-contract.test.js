@@ -109,3 +109,17 @@ test("the conveyor-belt rule is stated in SQL, not in the page", () => {
   assert.doesNotMatch(src, /["']now["']/,
     "the page must not compare against a horizon value");
 });
+
+test("a bar's address comes from the registry, not from this page", () => {
+  // App.itemHref takes a MODULE ROW and a WORK ITEM ROW; App.linkHref
+  // takes an entity TYPE, an id and a root. Calling itemHref with the
+  // module KEY matched no case, built no URL, and sent every bar on the
+  // sprint board to /undefined. Both are in registry.js and only one of
+  // them answers "where does this work item live".
+  const page = read("assets/js/pages/sprints/sprints.js");
+  assert.match(page, /App\.linkHref\("work_item",/,
+    "the sprint page must resolve a bar through App.linkHref('work_item', id, root)");
+  assert.doesNotMatch(page.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, ""),
+    /App\.itemHref\s*\(\s*["']/,
+    "App.itemHref takes a module row, never a module key string");
+});

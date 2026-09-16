@@ -44,14 +44,16 @@
         says what is being done and in what order, this says when. Work
         arrives here by reaching the Now column and being given a sprint,
         so the two are one conveyor belt rather than two plans. Every bar
-        opens that item's detail back on the roadmap.</p>
+        opens that item's detail back on the roadmap. Allocation itself is
+        a database write, not a page action (see docs/SPRINT-DELIVERY.md).</p>
       <p class="rm-print-hint">Print in landscape.</p>
     </div>
 
     <div class="rm-toolbar">
       <nav class="rmv-switch" id="sprints-switch" role="tablist"
            aria-label="Sprint roadmap view"></nav>
-      <button type="button" id="sprints-wide" class="btn-icon"
+      <button type="button" id="sprints-wide"
+              class="rm-icon-toggle rm-wide-toggle"
               aria-pressed="false" title="Widen the sprint columns">
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"
              fill="none" stroke="currentColor" stroke-width="1.5">
@@ -66,11 +68,5 @@
       <p class="notice">Loading</p>
     </section>
   </main>
-
-  <footer class="page-foot">
-    <p>Allocation is a database write, not a page action. The rules for
-      mapping the Now column across sprints, packaging an item for
-      DevOps and writing a sprint summary are in docs/SPRINT-DELIVERY.md.</p>
-  </footer>
 </body>
 </html>

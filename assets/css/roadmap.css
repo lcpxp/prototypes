@@ -12,50 +12,15 @@
 body[data-module="roadmap"] .page { max-inline-size: min(96rem, 100%); }
 
 /* Toolbar: the download action */
-.rm-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-3);
-  align-items: center;
-  margin-block-end: var(--s-5);
-}
-
 /* Hide fixes: an icon-only toggle (a bug). Selected (fixes shown) reads
    in the danger tint - a bug icon in its "on" colour - unselected
-   (fixes hidden) falls back to a neutral outline. */
-.rm-bug-toggle,
-.rm-wide-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 2.25rem;
-  block-size: 2.25rem;
-  padding: 0;
-  color: var(--faint);
-  background: var(--surface);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease),
-    background-color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
-}
-
-.rm-bug-toggle:hover,
-.rm-wide-toggle:hover { color: var(--muted); border-color: var(--faint); }
-
+   (fixes hidden) falls back to a neutral outline. The shape it wears is
+   .rm-icon-toggle in roadmap-views.css; only this page has a bug to
+   hide, so only its pressed colour lives here. */
 .rm-bug-toggle[aria-pressed="true"] {
   color: var(--danger);
   background: var(--danger-soft);
   border-color: var(--danger);
-}
-
-/* Expand board: pressed (board is wide) reads in the accent tint, matching
-   the other active view states. */
-.rm-wide-toggle[aria-pressed="true"] {
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-color: var(--accent);
 }
 
 /* Export: a single trigger with a dropdown of the three formats, in the
@@ -158,8 +123,6 @@ button.rmv-band-head {
 .rmv-band--off { margin-block-end: var(--s-4); }
 
 /* Screen: the orientation hint exists only for the export. */
-.rm-print-hint { display: none; }
-
 /* Grid: lane label + three horizon columns. Stacks on narrow screens. */
 .rm-grid {
   display: grid;
@@ -239,15 +202,6 @@ div.rm-cell { display: none; }
   -webkit-line-clamp: 1;
   overflow: hidden;
   line-clamp: 1;
-}
-
-.rm-state {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-slight);
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 0 0 var(--s-1);
 }
 
 .rm-state--current { color: var(--accent); }
