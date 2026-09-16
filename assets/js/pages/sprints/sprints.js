@@ -41,6 +41,25 @@
     sprintCodes: {}, currentCode: null };
   var current = "plan";
   var wide = false;
+  // Streams set aside for the discussion at hand: dimmed on the board,
+  // still in their place. View-only and per-browser, like every other
+  // preference here - it changes nothing in the database and no other
+  // reader sees it.
+  var aside = {};
+  var hideAside = false;
+
+  function readAside() {
+    if (!App.store) return {};
+    var raw = App.store.get("sprints.aside");
+    if (!raw) return {};
+    try {
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (e) { return {}; }
+  }
+  function writeAside() {
+    if (App.store) App.store.set("sprints.aside", JSON.stringify(aside));
+  }
 
   function known(key) { return VIEWS.some(function (v) { return v.key === key; }); }
 
@@ -70,7 +89,7 @@
   }
 
   function render(host) {
-    var opts = { wide: wide };
+    var opts = { wide: wide, aside: aside, hideAside: hideAside };
     host.innerHTML = App.roadmapView.sprintLegend() +
       (current === "delivery"
         ? App.roadmapView.sprintItems(data, opts)
@@ -155,11 +174,24 @@
     var nav = document.getElementById("sprints-switch");
     var stateLine = document.getElementById("sprints-state");
     var wideBtn = document.getElementById("sprints-wide");
+    var hideBtn = document.getElementById("sprints-hide-aside");
     if (!host || !nav) return;
 
     current = readState();
     nav.innerHTML = tabs();
     wireTabs(nav, host);
+
+    aside = readAside();
+    if (hideBtn) {
+      hideAside = !!(App.store && App.store.get("sprints.hideAside") === "1");
+      hideBtn.setAttribute("aria-pressed", String(hideAside));
+      hideBtn.addEventListener("click", function () {
+        hideAside = !hideAside;
+        if (App.store) App.store.set("sprints.hideAside", hideAside ? "1" : "0");
+        hideBtn.setAttribute("aria-pressed", String(hideAside));
+        render(host);
+      });
+    }
 
     if (wideBtn) {
       wide = !!(App.store && App.store.get("sprints.wide") === "1");
@@ -227,6 +259,17 @@
     // a view can outrun a read) falls back to the roadmap rather than
     // doing nothing; a row with no address at all stays put.
     host.addEventListener("click", function (e) {
+      // The picker sits inside the render host, so it is handled here
+      // and returns before the bar handler below - a chip is a control,
+      // not a row, and must not also open a drawer.
+      var chip = e.target.closest && e.target.closest("[data-aside-id]");
+      if (chip) {
+        var key = chip.getAttribute("data-aside-id");
+        if (aside[key]) delete aside[key]; else aside[key] = true;
+        writeAside();
+        render(host);
+        return;
+      }
       var el = e.target.closest && e.target.closest("[data-item-id]");
       if (!el) return;
       var id = el.getAttribute("data-item-id");

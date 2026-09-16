@@ -10,6 +10,13 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Sprint roadmap: any workstream can be set aside for the conversation
+  you are having. Click its name in the strip above the board and it
+  dims, keeping its place so you can still see where it sat against the
+  streams still in play; a toolbar toggle drops the set-aside ones from
+  the board entirely when even the faint rows are in the way. It is a
+  view preference held in your own browser - the plan itself does not
+  change and nobody else's board does either.
 - Sprint roadmap: a new page alongside the roadmap. Two views -
   workstreams for what each stream spans and what it is worth, and work
   items for how the work rolls out - drawn across sprint columns, with

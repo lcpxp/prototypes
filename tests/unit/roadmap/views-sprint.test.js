@@ -234,6 +234,61 @@ test("every bar carries its category's theme class", () => {
   }
 });
 
+test("the picker offers every stream, and says which are set aside", () => {
+  const V = loadView();
+  const plain = V.sprintStreams(sample());
+  assert.match(plain, /rmv-sp-picker/, "the picker is drawn");
+  assert.equal((plain.match(/data-aside-id=/g) || []).length, 2,
+    "one chip per workstream");
+  assert.doesNotMatch(plain, /aria-pressed="true"/,
+    "nothing is set aside until something is");
+
+  const off = V.sprintStreams(sample(), { aside: { w2: true } });
+  assert.match(off, /data-aside-id="w2" aria-pressed="true"/,
+    "a set-aside stream's chip reads as pressed");
+  assert.match(off, /data-aside-id="w1" aria-pressed="false"/,
+    "the others stay unpressed");
+});
+
+test("a set-aside stream dims in place and keeps the axis", () => {
+  // Keeping its position is the point: setting a stream aside is about
+  // emphasis for a discussion, and a reader still needs to see where it
+  // sat relative to the streams still in view.
+  const V = loadView();
+  const o = { aside: { w2: true } };
+  for (const html of [V.sprintStreams(sample(), o), V.sprintItems(sample(), o)]) {
+    assert.match(html, /rmv-unpicked/, "the row dims");
+    assert.match(html, /Fulfilment/, "but it is still drawn");
+    assert.match(html, /Sprint \+3/, "and the axis still runs the whole plan");
+  }
+});
+
+test("hiding drops the set-aside stream but not the rest", () => {
+  const V = loadView();
+  const o = { aside: { w2: true }, hideAside: true };
+  for (const html of [V.sprintStreams(sample(), o), V.sprintItems(sample(), o)]) {
+    assert.doesNotMatch(html, /Serials on the order/,
+      "a hidden stream's items go with it");
+    assert.doesNotMatch(html, /Closes the loop on device serials/,
+      "and so does its benefit card");
+    assert.match(html, /Payment Service/, "the streams still in view stay");
+    assert.match(html, /data-aside-id="w2"/,
+      "the chip survives, or there would be no way to bring it back");
+  }
+});
+
+test("setting aside changes nothing about the plan itself", () => {
+  // It is a view preference. If it ever started filtering the DATA the
+  // board would quietly disagree with the database about what is
+  // allocated, which is the one thing this board must not do.
+  const V = loadView();
+  const off = { aside: { w1: true, w2: true } };
+  assert.equal(
+    (V.sprintItems(sample()).match(/data-item-id=/g) || []).length,
+    (V.sprintItems(sample(), off).match(/data-item-id=/g) || []).length,
+    "dimming every stream must not remove a single bar");
+});
+
 test("every rendered value is escaped", () => {
   const V = loadView();
   const data = sample();

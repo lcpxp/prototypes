@@ -99,6 +99,46 @@
       "</div>";
   }
 
+  // A stream set aside for the discussion at hand. It stays where it is
+  // and dims, rather than being removed: the axis is a property of the
+  // PLAN, not of what is being looked at, so a stream keeps its position
+  // relative to the ones still in view. That is the whole value of
+  // setting one aside rather than filtering it out - you can still see
+  // where it sat. opts.hideAside drops them entirely for the case where
+  // even the dimmed row is in the way.
+  //
+  // View-only, held in the browser (assets/js/pages/sprints/sprints.js).
+  // It changes nothing in the database and no other reader sees it.
+  function isAside(id, opts) {
+    return !!(opts && opts.aside && id && opts.aside[id]);
+  }
+  function asideCls(id, opts) {
+    return isAside(id, opts) ? " rmv-unpicked rmv-sp-aside" : "";
+  }
+  function dropped(id, opts) {
+    return isAside(id, opts) && opts.hideAside;
+  }
+
+  // The stream picker: one chip per workstream, in board order and its
+  // own colour, each a button that sets that stream aside or brings it
+  // back. Above the board rather than on the rows, because it is one
+  // control that means the same thing on both views and because a row
+  // already does something when clicked.
+  function streamPicker(ordered, catByStream, opts) {
+    if (!ordered || ordered.length < 2) return "";
+    return '<div class="rmv-sp-picker" role="group" ' +
+      'aria-label="Show or set aside a workstream">' +
+      ordered.map(function (st) {
+        var off = isAside(st.workstream_id, opts);
+        return '<button type="button" class="rmv-sp-chip-stream' +
+          R.catClass(catByStream[st.workstream_id]) +
+          (off ? " rmv-sp-chip-stream--off" : "") +
+          '" data-aside-id="' + App.escape(st.workstream_id) + '"' +
+          ' aria-pressed="' + (off ? "true" : "false") + '">' +
+          App.escape(st.workstream_title) + "</button>";
+      }).join("") + "</div>";
+  }
+
   function colStyle(startSlot, endSlot) {
     return "grid-column:" + (startSlot + 2) + " / " + (endSlot + 3);
   }
@@ -204,8 +244,10 @@
   // question being asked is still "what do these five streams buy".
   // The cards keep the board's order and the board's colour, so a card
   // and its bar are the same stream without being labelled as such.
-  function streamNotes(ordered, catByStream, metricsByStream) {
-    var notes = ordered.map(function (st) {
+  function streamNotes(ordered, catByStream, metricsByStream, opts) {
+    var notes = ordered.filter(function (st) {
+      return !dropped(st.workstream_id, opts);
+    }).map(function (st) {
       var meta = "";
       if (st.business_benefit) {
         meta += '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) + "</p>";
@@ -214,6 +256,7 @@
       if (!meta) return "";
       return '<div class="rmv-sp-note-card' +
         R.catClass(catByStream[st.workstream_id]) +
+        asideCls(st.workstream_id, opts) +
         '" data-item-id="' + App.escape(st.workstream_id) + '">' +
         '<h3 class="rmv-sp-note-head">' + App.escape(st.workstream_title) +
         "</h3>" + meta + "</div>";
@@ -253,7 +296,9 @@
     // not be seen. Above: five rows, uniform columns, the trickle.
     // Below: the same five, in the same order and the same colour,
     // saying what they are worth.
-    var body = ordered.map(function (st) {
+    var body = ordered.filter(function (st) {
+      return !dropped(st.workstream_id, opts);
+    }).map(function (st) {
       var first = num(st.first_slot, 0);
       var last = num(st.last_slot, first);
       var count = num(st.item_count, 0);
@@ -265,7 +310,8 @@
         App.escape(st.workstream_title) + "</span>" +
         '<span class="rmv-sp-count">' + count +
         (count === 1 ? " item" : " items") + "</span></span>";
-      return '<div class="rmv-tl-row rmv-sp-row">' +
+      return '<div class="rmv-tl-row rmv-sp-row' +
+        asideCls(st.workstream_id, opts) + '">' +
         '<span class="rmv-tl-label rmv-sp-label' +
         R.catClass(catByStream[st.workstream_id]) + '" title="' +
         App.escape(st.workstream_title) + '">' +
@@ -273,8 +319,9 @@
     }).join("");
 
     return axisNote(ax.anchored) +
+      streamPicker(ordered, catByStream, opts) +
       wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide) +
-      streamNotes(ordered, catByStream, metricsByStream);
+      streamNotes(ordered, catByStream, metricsByStream, opts);
   }
 
   // ----------------------------------------------------------------
@@ -298,13 +345,16 @@
         byNullableAsc(sa.priority, sb.priority);
     });
 
-    var body = order.map(function (key) {
+    var body = order.filter(function (key) {
+      return !dropped(grouped.byStream[key][0].workstream_id, opts);
+    }).map(function (key) {
       var items = grouped.byStream[key];
       var st = streamById[items[0].workstream_id];
+      var off = asideCls(items[0].workstream_id, opts);
       var title = items[0].workstream_title || items[0].title;
       var first = st ? num(st.first_slot, 0) : num(items[0].effective_slot, 0);
       var last = st ? num(st.last_slot, first) : num(items[0].effective_end_slot, first);
-      var head = '<div class="rmv-tl-row rmv-sp-row--head">' +
+      var head = '<div class="rmv-tl-row rmv-sp-row--head' + off + '">' +
         '<span class="rmv-tl-label">' + App.escape(title) + "</span>" +
         '<span class="rmv-tl-bar rmv-tl-bar--ws rmv-sp-bar' +
         R.catClass(items[0].category_key) + '"' +
@@ -326,7 +376,7 @@
           progCls + '" data-item-id="' + App.escape(r.work_item_id) + '" style="' +
           colStyle(s, e) + '"><span class="rmv-tl-title">' +
           App.escape(r.title) + "</span>" + ext + "</span>";
-        return '<div class="rmv-tl-row rmv-tl-row--child rmv-sp-row">' +
+        return '<div class="rmv-tl-row rmv-tl-row--child rmv-sp-row' + off + '">' +
           '<span class="rmv-tl-label rmv-sp-label' + R.catClass(r.category_key) +
           '" title="' + App.escape(r.title) + '">' + App.escape(r.title) +
           "</span>" + bar + "</div>";
@@ -345,9 +395,10 @@
     });
 
     return axisNote(ax.anchored) +
+      streamPicker(notesOrder, catByStream, opts) +
       wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide) +
       streamNotes(notesOrder, catByStream,
-        groupMetrics((data && data.metrics) || []));
+        groupMetrics((data && data.metrics) || []), opts);
   }
 
   App.roadmapView.sprintStreams = sprintStreams;

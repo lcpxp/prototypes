@@ -225,6 +225,67 @@
   .rmv-sp-chip { border-color: var(--line-strong); }
 }
 
+/* --- setting a stream aside -------------------------------------- */
+
+/* One chip per workstream, in board order and its own colour. Pressed
+   means the stream is set aside for the discussion at hand: it dims on
+   the board but keeps its place, so you can still see where it sat.
+   The dim itself is .rmv-unpicked from roadmap-views.css - the board
+   already had one way of saying "this row is not part of what you are
+   looking at", and a second would be a second thing to learn. */
+.rmv-sp-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-block-end: var(--s-3);
+}
+.rmv-sp-chip-stream {
+  padding: 3px var(--s-3);
+  border: 1px solid var(--rm-a, var(--line-strong));
+  border-inline-start-width: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--rm-s, var(--alt-surface));
+  color: var(--ink);
+  font-size: var(--text-xs);
+  font-family: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: opacity var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease);
+}
+.rmv-sp-chip-stream:hover { border-color: var(--rm-a, var(--faint)); }
+
+/* Set aside: the chip reads as switched off - hollow, dimmed, struck
+   through - so which streams are in play is answerable from the picker
+   alone without scanning the board for faint rows. */
+.rmv-sp-chip-stream--off {
+  background: transparent;
+  color: var(--muted);
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+
+/* A set-aside row keeps its geometry and loses its weight. Pointer
+   events stay on: a dimmed bar still opens its detail, because setting
+   a stream aside is about emphasis, not about locking it. */
+.rmv-sp-aside .rmv-sp-bar { box-shadow: none; }
+
+/* Pressed means the set-aside streams are gone from the board entirely,
+   not merely dimmed. It reads in the accent tint like every other active
+   view state on this toolbar. */
+.rm-aside-toggle[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+@media print {
+  /* On paper the picker is a control nobody can press, and a set-aside
+     stream is one the reader was told not to look at - so it prints
+     dimmed, and the picker does not print at all. */
+  .rmv-sp-picker { display: none; }
+}
+
 /* --- the key to the colour --------------------------------------- */
 
 .rmv-sp-legend {
