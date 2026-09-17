@@ -99,15 +99,15 @@ test("the stakeholder view carries the benefit and its metric chips", () => {
     "a tile whose weakest input is unmeasured is marked in its own shape");
 });
 
-test("a card opens on what the thing is, then who stops doing what", () => {
+test("a card opens on what the thing is, then what we stop doing by hand", () => {
   // The card is a discussion surface, not a paragraph. A block of prose
   // has no entry point: a reader has to consume it before they can say
   // anything about it.
   const V = loadView();
   const html = V.sprintStreams(sample());
   // Fixed order on every card, so the eye lands in the same place each
-  // time the speaker moves on: name, span, summary, audiences, value,
-  // then the long-form case.
+  // time the speaker moves on: name, span, summary, the benefit, the
+  // figures, then the long-form case.
   const name = html.indexOf("rmv-sp-note-head");
   const meta = html.indexOf("rmv-sp-meta");
   const lede = html.indexOf("Complete the automated path");
@@ -117,15 +117,20 @@ test("a card opens on what the thing is, then who stops doing what", () => {
   assert.ok(name > -1, "the workstream name is the card's heading");
   assert.ok(name < meta, "its span and count sit directly under it");
   assert.ok(meta < lede, "then the summary");
-  assert.ok(lede < values, "then who stops doing what");
+  assert.ok(lede < values, "then what the acquirer stops doing by hand");
   assert.ok(values < tile, "then what it is worth");
   assert.ok(tile < prose, "and the long-form case last");
-  assert.match(html, /An operator stops configuring settlement by hand/,
-    "each audience line becomes a row");
-  assert.match(html, /<dt>Acquirer staff<\/dt>/, "labelled by whose problem it is");
-  assert.match(html, /<dt>Merchant<\/dt>/, "for every audience that has one");
-  assert.doesNotMatch(html, /<dt>Partner staff<\/dt>/,
-    "and only for the audiences the row actually carries");
+  // ONE reading, and it says whose. The partner and merchant readings
+  // are the work item's business, not this board's: three lines of
+  // audience detail pushed the figures down and split the attention of a
+  // room that came to hear the operational case.
+  assert.match(html,
+    /rmv-sp-vlabel">Business benefit \(Acquirer\/us\)<\/span>/,
+    "the beneficiary is named outright, not left as 'Acquirer staff'");
+  assert.match(html, /rmv-sp-vtext">An operator stops configuring settlement by hand/,
+    "and the reading sits under its label");
+  assert.doesNotMatch(html, /Partner staff|Merchant<\/|merchant_value/,
+    "the other audiences stay in the drawer, off this board");
 });
 
 test("the prose is folded away, but only when something else leads", () => {

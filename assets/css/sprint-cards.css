@@ -85,27 +85,30 @@
   line-height: 1.45;
 }
 
-/* Who stops doing what, as an aligned definition list rather than bold
-   run-in labels followed by prose. The labels hold their own column, so
-   the eye runs down them and stops at the audience it wants instead of
-   reading three sentences to find it. Same shape as .kv in
-   components.css, at the card's own rhythm. */
+/* The one reading this board carries: what the acquirer stops doing by
+   hand. The label stacks above its line rather than sitting beside it -
+   at thirty characters it would take most of the card as a max-content
+   column, and stacked it reads further across a room. Whose benefit it
+   is has to be unmissable, so the label is set in the card's own mono
+   register rather than whispered in grey beside the text. */
 .rmv-sp-values {
   display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: var(--s-1) var(--s-3);
-  margin: 0;
-  font-size: var(--text-sm);
-  line-height: 1.4;
+  gap: var(--s-1);
 }
-.rmv-sp-values dt {
+.rmv-sp-vlabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-slight);
+  text-transform: uppercase;
+  /* The lane's own accent, pulled toward --ink so it clears AA on every
+     stream in both themes - the same move the number chip makes. */
+  color: color-mix(in srgb, var(--rm-a, var(--muted)) 85%, var(--ink));
+}
+.rmv-sp-vtext {
+  margin: 0;
   color: var(--ink);
-  font-weight: var(--weight-medium);
-}
-.rmv-sp-values dd {
-  margin: 0;
-  color: var(--muted);
-  overflow-wrap: anywhere;
+  font-size: var(--text-md);
+  line-height: 1.45;
 }
 
 /* THE FIGURE IS THE HERO. These were sentences set in a pill - "Time
@@ -226,8 +229,7 @@
 }
 
 @media print {
-  .rmv-sp-benefit,
-  .rmv-sp-values dd { color: var(--ink); }
+  .rmv-sp-benefit { color: var(--ink); }
   .rmv-sp-metric { border-color: var(--line-strong); }
   /* Nobody can open a disclosure on paper, so everything prints open. */
   .rmv-sp-more > summary { display: none; }

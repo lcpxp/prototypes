@@ -459,10 +459,15 @@
   // a definition list: three short readings about real people's days are
   // a list, and a reader should be able to take them at a glance without
   // parsing a two-column layout.
+  // Each line names WHOSE benefit it is. "Acquirer staff" left a reader
+  // working out whether that meant us or someone we acquire for, so the
+  // first one says so outright and the other two are made parallel to it.
+  // The sprint board carries only the first of these; the detail is what
+  // this view is for.
   var AUDIENCES = [
-    ["Acquirer staff", "pxp_staff_value"],
-    ["Partner staff", "partner_staff_value"],
-    ["Merchant", "merchant_value"],
+    ["Business benefit (Acquirer/us)", "pxp_staff_value"],
+    ["Partner benefit", "partner_staff_value"],
+    ["Merchant benefit", "merchant_value"],
   ];
 
   // What the work buys, kept SCANNABLE: the classifier tags and the

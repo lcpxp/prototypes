@@ -10,6 +10,13 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Sprint roadmap: each workstream card now carries one value line, not
+  three - what the acquirer stops doing by hand - under the label
+  "Business benefit (Acquirer/us)", so it is unambiguous whose benefit is
+  being claimed. What a partner's staff and a merchant get is detail the
+  work item holds, and it stays in the drawer, where the same three
+  readings are now labelled "Business benefit (Acquirer/us)", "Partner
+  benefit" and "Merchant benefit".
 - Sprint roadmap: rebuilt to be read from a projector in a meeting
   rather than from a desk. A real label column carries full workstream
   titles; sprint columns touch, show their rules, and are named "Sprint 1"

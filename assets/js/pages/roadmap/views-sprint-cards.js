@@ -101,31 +101,32 @@
   // question being asked is still "what do these five streams buy".
   // The cards keep the board's order and the board's colour, so a card
   // and its bar are the same stream without being labelled as such.
-  // Who stops doing what. Three audience fields on the work item, each
-  // a sentence about a real person's day, which is exactly the shape a
-  // bullet wants. Labelled by audience because in a discussion the first
-  // question about any claim is "whose problem is this".
-  // Same labels the drawer uses (pages/roadmap/detail.js), so a reader
-  // meeting these on the board and again in the drawer meets one system
-  // rather than two vocabularies for one idea.
-  var AUDIENCES = [
-    { field: "pxp_staff_value", label: "Acquirer staff" },
-    { field: "partner_staff_value", label: "Partner staff" },
-    { field: "merchant_value", label: "Merchant" },
-  ];
+  // ONE reading, not three. The work item and the drawer hold what a
+  // partner's staff and a merchant get; this board does not, because
+  // this board exists for one question in one meeting - what does the
+  // acquirer stop doing by hand. Three lines of audience detail on every
+  // card pushed the figures down the screen and split the attention of a
+  // room that had come to hear about operational effort.
+  //
+  // The label names the beneficiary outright. "Acquirer staff" left a
+  // reader working out whether that meant us or someone we acquire for;
+  // on a card whose whole job is our own efficiency case, that is the one
+  // thing that cannot be ambiguous.
+  var BENEFIT = {
+    field: "pxp_staff_value",
+    label: "Business benefit (Acquirer/us)",
+  };
 
-  // A definition list rather than bold run-in labels: the labels align in
-  // their own column, so the eye runs down "who" and stops at the one it
-  // wants instead of reading three sentences to find it.
+  // The label sits ABOVE its line rather than beside it. At thirty
+  // characters it would take most of a card's width as a max-content
+  // column, and stacked it reads further across a room - the same move
+  // the meta line above it already makes.
   function valueList(st) {
-    var rows = AUDIENCES.filter(function (a) {
-      return st[a.field] && String(st[a.field]).trim();
-    });
-    if (!rows.length) return "";
-    return '<dl class="rmv-sp-values">' + rows.map(function (a) {
-      return "<dt>" + App.escape(a.label) + "</dt><dd>" +
-        App.escape(st[a.field]) + "</dd>";
-    }).join("") + "</dl>";
+    var text = st[BENEFIT.field];
+    if (!text || !String(text).trim()) return "";
+    return '<div class="rmv-sp-values"><span class="rmv-sp-vlabel">' +
+      App.escape(BENEFIT.label) + '</span><p class="rmv-sp-vtext">' +
+      App.escape(text) + "</p></div>";
   }
 
   // A discussion card, not a paragraph. What it is, in one bold line;

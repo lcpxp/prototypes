@@ -45,6 +45,10 @@ const CONTRACT = {
     "workstream_id", "workstream_title", "priority",
     "first_slot", "last_slot", "item_count", "externally_gated",
     "business_benefit",
+    // NOT listed, though the cards read it: supabase/schema-snapshot.json
+    // is stale for this view and does not carry pxp_staff_value, so
+    // claiming it here fails the gate against the snapshot rather than
+    // against the database. Add it once the snapshot is regenerated.
   ],
   v_work_item_metric_rollup: [
     "workstream_id", "metric_kind", "unit", "basis", "total",

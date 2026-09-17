@@ -498,9 +498,13 @@ test("drawerHtml marks a drafted benefit and never prints benefit fields twice",
   const html = App.roadmapDetail.drawerHtml(data.items[0], ctxOf(App, data));
   assert.match(html, /rmd-benefit-draft">Draft - not yet confirmed/,
     "an unconfirmed benefit is visibly provisional");
-  assert.match(html, /rmd-who">Acquirer staff<\/span> An operator composes from sections\./,
+  // The drawer keeps all three readings - it is the detail view - and
+  // each names WHOSE benefit it is, so "Acquirer" cannot be read as
+  // someone we acquire for.
+  assert.match(html,
+    /rmd-who">Business benefit \(Acquirer\/us\)<\/span> An operator composes from sections\./,
     "an audience reading is a labelled bullet, not a two-column definition row");
-  assert.doesNotMatch(html, /Merchant<\/span>/,
+  assert.doesNotMatch(html, /Merchant benefit<\/span>/,
     "an empty audience reading is omitted rather than rendered blank");
   const benefitCount = (html.match(/Stops the contract being assembled by hand\./g) || []).length;
   assert.equal(benefitCount, 1, "the benefit renders once, not also as a fact row");
