@@ -152,6 +152,9 @@
     "roadmapPrefs": [
       "assets/js/pages/roadmap/prefs.js"
     ],
+    "roadmapSprintCards": [
+      "assets/js/pages/roadmap/views-sprint-cards.js"
+    ],
     "roadmapView": [
       "assets/js/pages/roadmap/views-breakdown.js",
       "assets/js/pages/roadmap/views-cascade.js",
@@ -807,6 +810,7 @@
         "assets/css/roadmap-views.css",
         "assets/css/roadmap-detail.css",
         "assets/css/sprints.css",
+        "assets/css/sprint-cards.css",
         "assets/css/skeleton.css"
       ],
       "js": [
@@ -824,6 +828,7 @@
         "assets/js/pages/roadmap/views.js",
         "assets/js/pages/roadmap/detail-values.js",
         "assets/js/pages/roadmap/views-sprint.js",
+        "assets/js/pages/roadmap/views-sprint-cards.js",
         "assets/js/pages/shared/lazy-detail.js",
         "assets/js/pages/shared/work-items-data.js",
         "assets/js/pages/roadmap/detail.js",

@@ -21,7 +21,14 @@ const assert = require("node:assert/strict");
 const { read } = require("../lib/repo.js");
 
 const snapshot = JSON.parse(read("supabase/schema-snapshot.json"));
-const SOURCE = "assets/js/pages/roadmap/views-sprint.js";
+// The board and its cards are two modules over one contract: the board
+// reads the coordinate fields, the cards read the value fields. Both are
+// scanned, because a field is "read by the Sprint Roadmap" wherever the
+// Sprint Roadmap reads it.
+const SOURCES = [
+  "assets/js/pages/roadmap/views-sprint.js",
+  "assets/js/pages/roadmap/views-sprint-cards.js",
+];
 
 // What each rendering genuinely depends on. Listed rather than parsed
 // out of the source, because the claim being made is "the board needs
@@ -66,7 +73,7 @@ test("the builders actually read every field the contract claims", () => {
   // The other direction: a contract that over-claims is a contract
   // nobody maintains. If a field is listed here it should be in the
   // source, or the list has outlived what the board does.
-  const src = read(SOURCE);
+  const src = SOURCES.map(read).join("\n");
   const unused = [];
   for (const [view, fields] of Object.entries(CONTRACT)) {
     for (const field of fields) {
@@ -103,7 +110,8 @@ test("the conveyor-belt rule is stated in SQL, not in the page", () => {
   // Checked as a FILTER, not as a word: the builder's header comment
   // describes the horizon model in prose, which is documentation, not a
   // second home for the rule.
-  const src = read(SOURCE).replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
+  const src = SOURCES.map(read).join("\n")
+    .replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
   assert.doesNotMatch(src, /\.horizon\b/,
     "the page must not read horizon; that filter lives in the view");
   assert.doesNotMatch(src, /["']now["']/,

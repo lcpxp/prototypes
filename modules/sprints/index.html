@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="../../assets/css/roadmap-views.css">
   <link rel="stylesheet" href="../../assets/css/roadmap-detail.css">
   <link rel="stylesheet" href="../../assets/css/sprints.css">
+  <link rel="stylesheet" href="../../assets/css/sprint-cards.css">
   <link rel="stylesheet" href="../../assets/css/skeleton.css">
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
   <script defer src="../../assets/js/core/supabase.js"></script>
@@ -33,6 +34,7 @@
   <script defer src="../../assets/js/pages/roadmap/views.js"></script>
   <script defer src="../../assets/js/pages/roadmap/detail-values.js"></script>
   <script defer src="../../assets/js/pages/roadmap/views-sprint.js"></script>
+  <script defer src="../../assets/js/pages/roadmap/views-sprint-cards.js"></script>
   <script defer src="../../assets/js/pages/shared/lazy-detail.js"></script>
   <script defer src="../../assets/js/pages/shared/work-items-data.js"></script>
   <script defer src="../../assets/js/pages/roadmap/detail.js"></script>
@@ -42,47 +44,44 @@
 <body data-root="../.." data-module="sprints">
   <header id="app-nav"></header>
 
-  <main class="page">
+  <main class="page page--wide">
     <div class="page-head">
       <span class="eyebrow">Sprint roadmap</span>
       <h1>The Now column, across sprints</h1>
-      <p class="lede">Where the <a href="../roadmap/">product roadmap</a>
-        says what is being done and in what order, this says when. Work
-        arrives here by reaching the Now column and being given a sprint,
-        so the two are one conveyor belt rather than two plans. Every bar
-        opens that item's full detail here, the same drawer the roadmap
-        shows. Allocation itself is a database write, not a page action
-        (see docs/SPRINT-DELIVERY.md).</p>
+      <p class="sp-status" id="sprints-state"></p>
+      <p class="lede">The <a href="../roadmap/">product roadmap</a> says what
+        is being built and in what order; this says when. Every bar opens
+        that item's full detail.</p>
       <p class="rm-print-hint">Print in landscape.</p>
     </div>
 
     <div class="rm-toolbar">
       <nav class="rmv-switch" id="sprints-switch" role="tablist"
            aria-label="Sprint roadmap view"></nav>
-      <button class="rm-icon-toggle rm-wide-toggle" type="button" id="sprints-wide"
-        aria-pressed="false" aria-label="Widen the sprint columns"
-        title="Widen the sprint columns">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+      <button class="rm-icon-toggle rm-toggle-labelled rm-wide-toggle"
+        type="button" id="sprints-wide" aria-pressed="false"
+        title="Draw the sprint columns at double width">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polyline points="15 3 21 3 21 9"></polyline>
           <polyline points="9 21 3 21 3 15"></polyline>
           <line x1="21" y1="3" x2="14" y2="10"></line>
           <line x1="3" y1="21" x2="10" y2="14"></line>
         </svg>
+        <span>Wider columns</span>
       </button>
-      <button class="rm-icon-toggle rm-hide-toggle" type="button"
-        id="sprints-hide" aria-pressed="false"
-        aria-label="Choose which rows to hide"
-        title="Choose which rows to hide">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+      <button class="rm-icon-toggle rm-toggle-labelled rm-hide-toggle"
+        type="button" id="sprints-hide" aria-pressed="false"
+        title="Show an eye on every row, to set rows aside for this discussion">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M3 3l18 18"></path>
           <path d="M10.6 5.1A9.7 9.7 0 0 1 12 5c5 0 9 4.5 9 7a12 12 0 0 1-2.4 3.4"></path>
           <path d="M6.3 6.4A12.4 12.4 0 0 0 3 12c0 2.5 4 7 9 7a9.6 9.6 0 0 0 4.2-1"></path>
           <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path>
         </svg>
+        <span>Hide rows</span>
       </button>
-      <p class="rm-toolbar-state" id="sprints-state"></p>
     </div>
 
     <section id="sprints-content">

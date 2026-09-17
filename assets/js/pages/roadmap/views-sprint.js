@@ -38,6 +38,7 @@
 
   window.App = window.App || {};
   var R = App.roadmapViewsShared;
+  function C() { return App.roadmapSprintCards; }
 
   var EMPTY = '<p class="notice">No work is allocated to a sprint yet. ' +
     "An item reaches the Sprint Roadmap when it sits in Now and is given " +
@@ -51,18 +52,79 @@
     return (a == null ? Infinity : a) - (b == null ? Infinity : b);
   }
 
-  // The axis. Unanchored, a column is the offset the plan was built in;
-  // anchored, it is the real sprint. Saying "Sprint +0" rather than
-  // inventing a code is the honest state, and it is stated once above
-  // the axis rather than repeated on every bar.
+  // The axis. Unanchored, a column is counted from the first sprint of
+  // the plan; anchored, it is the real sprint. The SLOT stays
+  // zero-indexed everywhere - in the view, in the database and in every
+  // calculation - and only its label counts from one, because "Sprint +0"
+  // reads as the sprint before the first one to everyone who is not
+  // holding the data model in their head. That the numbering is relative
+  // is said once, on the column headings, where the question arises.
   function slotLabel(slot, codeBySlot) {
-    return codeBySlot[slot] || ("Sprint +" + slot);
+    return codeBySlot[slot] || ("Sprint " + (slot + 1));
   }
 
-  function axisNote(anchored) {
-    return anchored ? ""
-      : '<p class="rmv-sp-note">Sprint numbering starts when delivery ' +
-        "starts. Columns are offsets from the first sprint, not dates.</p>";
+  // Which sprints of a workstream hold work someone else is building, and
+  // who. Read from the item rows the board already has, so this adds no
+  // fetch: the stakeholder view can show WHICH sprints sit with EIT or
+  // the Payment Service team rather than only that some of them do.
+  function externalSlots(rows) {
+    var out = {};
+    rows.forEach(function (r) {
+      if (!r.is_external || !r.workstream_id) return;
+      var s = num(r.effective_slot, 0);
+      var e = num(r.effective_end_slot, s);
+      if (e < s) e = s;
+      var b = out[r.workstream_id] ||
+        (out[r.workstream_id] = { slots: {}, parties: [] });
+      for (var i = s; i <= e; i++) b.slots[i] = true;
+      var who = r.external_party || "external";
+      if (b.parties.indexOf(who) === -1) b.parties.push(who);
+    });
+    return out;
+  }
+
+  // Contiguous runs, so a two-sprint stretch draws as one marked segment
+  // rather than two abutting ones with a seam down the middle.
+  function slotRuns(slots) {
+    var keys = Object.keys(slots).map(Number).sort(function (a, b) {
+      return a - b;
+    });
+    var out = [], i = 0;
+    while (i < keys.length) {
+      var start = keys[i], end = start;
+      while (i + 1 < keys.length && keys[i + 1] === end + 1) end = keys[++i];
+      out.push([start, end]);
+      i++;
+    }
+    return out;
+  }
+
+  // The segments themselves ride in the row's own grid, in the same cells
+  // the bar spans, so they land on exactly the sprints they describe.
+  // Hatched AND dashed AND named: three encodings of one fact, so it
+  // survives a projector, a greyscale print and colour blindness alike.
+  function externalSegs(ext, cat) {
+    if (!ext) return "";
+    var who = ext.parties.join(", ");
+    return slotRuns(ext.slots).map(function (r) {
+      // The segment carries the stream's own theme class: it is a sibling
+      // of the bar, not a child, so --rm-a does not reach it otherwise and
+      // it would rail in the neutral fallback on a coloured row.
+      return '<span class="rmv-sp-ext-seg' + R.catClass(cat) + '" style="' +
+        colStyle(r[0], r[1]) +
+        '" title="Built by ' + App.escape(who) + '">' +
+        '<span class="rmv-sp-ext-who">' + App.escape(who) + "</span></span>";
+    }).join("");
+  }
+
+  // A stream's number is its position on the board, and it is the same
+  // number on the bar and on the card. Colour alone cannot carry "this
+  // one" across a room, and two streams can share a category; a number
+  // cannot collide and reads at any distance.
+  function numbering(ordered, idOf) {
+    var out = {};
+    ordered.forEach(function (row, i) { out[idOf(row)] = i + 1; });
+    return out;
   }
 
   // An external bar is drawn as an outline rather than a fill, so a
@@ -87,16 +149,21 @@
     return cls;
   }
 
-  // The key to the colour. Colour is only information if the reader is
-  // told what it means, once, where it is used.
+  // The key to the board. It READS as a key: a labelled list of
+  // swatches, not a strip of pills that look like filters and are not.
+  // Nothing here is clickable and nothing here pretends to be.
   function legend() {
+    var keys = [
+      ["planned", "Planned"], ["active", "In flight"],
+      ["done", "Delivered"], ["blocked", "Blocked"],
+      ["ext", "Built elsewhere"],
+    ];
     return '<div class="rmv-sp-legend">' +
-      '<span class="rmv-sp-key rmv-sp-key--planned">Planned</span>' +
-      '<span class="rmv-sp-key rmv-sp-key--active">In flight</span>' +
-      '<span class="rmv-sp-key rmv-sp-key--done">Delivered</span>' +
-      '<span class="rmv-sp-key rmv-sp-key--blocked">Blocked</span>' +
-      '<span class="rmv-sp-key rmv-sp-key--ext">Built elsewhere</span>' +
-      "</div>";
+      '<span class="rmv-sp-legend-head">Key</span><ul class="rmv-sp-keys">' +
+      keys.map(function (k) {
+        return '<li class="rmv-sp-key rmv-sp-key--' + k[0] + '">' + k[1] +
+          "</li>";
+      }).join("") + "</ul></div>";
   }
 
   // Hiding a row. ONE mechanism, worked the way the roadmap's custom
@@ -157,37 +224,25 @@
     return "grid-column:" + (startSlot + 2) + " / " + (endSlot + 3);
   }
 
-  function headRow(cols, codeBySlot) {
+  // The gutter cell heads the label column instead of sitting empty, and
+  // carries the one statement that the numbering is relative - attached
+  // to the headings it qualifies, and said nowhere else on the page.
+  function headRow(cols, codeBySlot, anchored) {
     var cells = "";
     for (var s = 0; s < cols; s++) {
-      cells += '<span class="rmv-tl-col">' +
+      cells += '<span class="rmv-tl-col rmv-sp-col">' +
         App.escape(slotLabel(s, codeBySlot)) + "</span>";
     }
-    return '<div class="rmv-tl-head"><span class="rmv-tl-label"></span>' +
-      cells + "</div>";
+    return '<div class="rmv-tl-head rmv-sp-head">' +
+      '<span class="rmv-tl-label rmv-sp-head-label">Workstream' +
+      (anchored ? "" : '<span class="rmv-sp-note">Numbering is relative ' +
+        "until a start date is set.</span>") + "</span>" + cells + "</div>";
   }
 
   function wrap(inner, cols, wide, opts) {
     return '<div class="rmv-tl rmv-sp' + (wide ? " rmv-tl--wide" : "") +
       (opts && opts.hideMode ? " rmv-sp--hiding" : "") +
       '" style="--tl-cols:' + cols + '">' + inner + "</div>";
-  }
-
-  // Metric chips, one per (kind, unit, basis) and never summed across
-  // them: minutes per application and minutes per year are different
-  // claims, and a total over both means nothing. A chip whose weakest
-  // input is an estimate is marked, so a figure never reads firmer than
-  // the softest thing inside it.
-  function chips(metrics) {
-    if (!metrics || !metrics.length) return "";
-    var V = App.roadmapDetailValues;
-    return '<span class="rmv-sp-chips">' + metrics.map(function (m) {
-      var kind = (V.METRIC_KIND && V.METRIC_KIND[m.metric_kind]) || m.metric_kind;
-      var text = V.metricText({ value: m.total, unit: m.unit, basis: m.basis });
-      var soft = m.weakest_confidence === "estimated" ? " rmv-sp-chip--soft" : "";
-      return '<span class="rmv-sp-chip' + soft + '">' + App.escape(kind) +
-        " " + App.escape(text) + "</span>";
-    }).join("") + "</span>";
   }
 
   // Roll metric rows up to the workstream, keeping (kind, unit, basis)
@@ -253,68 +308,14 @@
     return { byStream: byStream, order: order };
   }
 
-  // What each stream buys, collected below the board. Both views carry
-  // it, and both carry it at WORKSTREAM level only: a per-item summary
-  // under the delivery view would be eighteen paragraphs where the
-  // question being asked is still "what do these five streams buy".
-  // The cards keep the board's order and the board's colour, so a card
-  // and its bar are the same stream without being labelled as such.
-  // Who stops doing what. Three audience fields on the work item, each
-  // a sentence about a real person's day, which is exactly the shape a
-  // bullet wants. Labelled by audience because in a discussion the first
-  // question about any claim is "whose problem is this".
-  // Same labels the drawer uses (pages/roadmap/detail.js), so a reader
-  // meeting these on the board and again in the drawer meets one system
-  // rather than two vocabularies for one idea.
-  var AUDIENCES = [
-    { field: "pxp_staff_value", label: "Acquirer staff" },
-    { field: "partner_staff_value", label: "Partner staff" },
-    { field: "merchant_value", label: "Merchant" },
-  ];
-
-  function valueBullets(st) {
-    var rows = AUDIENCES.filter(function (a) {
-      return st[a.field] && String(st[a.field]).trim();
-    });
-    if (!rows.length) return "";
-    return '<ul class="rmv-sp-points">' + rows.map(function (a) {
-      return '<li><span class="rmv-sp-who">' + App.escape(a.label) +
-        "</span> " + App.escape(st[a.field]) + "</li>";
-    }).join("") + "</ul>";
-  }
-
-  // A discussion card, not a paragraph. What it is, in one bold line;
-  // who stops doing what, as bullets; what it is worth, as chips; and
-  // the long-form case folded away for whoever asks for it. The prose
-  // is still here - it is the thing a benefit was written as - but it
-  // no longer stands between a reader and the point.
-  function streamNotes(ordered, catByStream, metricsByStream, opts) {
-    var notes = ordered.filter(function (st) {
-      return !dropped(st.workstream_id, opts);
-    }).map(function (st) {
-      var head = st.summary
-        ? '<p class="rmv-sp-lede">' + App.escape(st.summary) + "</p>" : "";
-      var points = valueBullets(st);
-      var tags = chips(metricsByStream[st.workstream_id]);
-      // The prose only earns a disclosure when there is a headline above
-      // it. Without one it IS the summary, so it stays open.
-      var prose = "";
-      if (st.business_benefit) {
-        prose = head
-          ? '<details class="rmv-sp-more"><summary>The case in full</summary>' +
-            '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) +
-            "</p></details>"
-          : '<p class="rmv-sp-benefit">' + App.escape(st.business_benefit) + "</p>";
-      }
-      if (!head && !points && !tags && !prose) return "";
-      return '<div class="rmv-sp-note-card' +
-        R.catClass(catByStream[st.workstream_id]) +
-        hiddenCls(st.workstream_id, opts) +
-        '" data-item-id="' + App.escape(st.workstream_id) + '">' +
-        '<h3 class="rmv-sp-note-head">' + App.escape(st.workstream_title) +
-        "</h3>" + head + points + tags + prose + "</div>";
-    }).join("");
-    return notes ? '<div class="rmv-sp-notes">' + notes + "</div>" : "";
+  // The label lane. A full title at body size on its own line, a colour
+  // chip and the stream's number - no truncation, because a title that
+  // ends in an ellipsis is a title nobody can say out loud.
+  function labelCell(no, title, cat, child) {
+    return '<span class="rmv-tl-label rmv-sp-label' +
+      (child ? " rmv-sp-label--child" : "") + R.catClass(cat) + '">' +
+      (no ? '<span class="rmv-sp-no" aria-hidden="true">' + no + "</span>" : "") +
+      '<span class="rmv-sp-name">' + App.escape(title) + "</span></span>";
   }
 
   // ----------------------------------------------------------------
@@ -335,46 +336,56 @@
         catByStream[r.workstream_id] = r.category_key;
       }
     });
-    var metricsByStream = groupMetrics(data.metrics);
+    var ctx = {
+      cat: catByStream,
+      metrics: groupMetrics(data.metrics),
+      ext: externalSlots(rows),
+      no: {},
+      cls: function (id) { return hiddenCls(id, opts); },
+    };
 
     var ordered = streams.slice().sort(function (a, b) {
       return num(a.first_slot, 0) - num(b.first_slot, 0) ||
         byNullableAsc(a.priority, b.priority);
     });
+    ctx.no = numbering(ordered, function (r) { return r.workstream_id; });
 
     // The bars run CONTIGUOUSLY, and what each stream buys sits below
     // the board rather than between the bars. A benefit is a sentence
     // and a bar is a shape; interleaving them pushed the rows apart far
     // enough that the waterfall - the whole point of this view - could
     // not be seen. Above: five rows, uniform columns, the trickle.
-    // Below: the same five, in the same order and the same colour,
+    // Below: the same five, in the same order, colour and number,
     // saying what they are worth.
+    //
+    // A bar carries the item count and nothing else. The title is in the
+    // label lane, in full and once: printing it inside the bar as well
+    // meant two truncated copies of one string fighting for the same
+    // pixels.
     var body = ordered.filter(function (st) {
       return !dropped(st.workstream_id, opts);
     }).map(function (st) {
+      var id = st.workstream_id;
       var first = num(st.first_slot, 0);
       var last = num(st.last_slot, first);
-      var count = num(st.item_count, 0);
       var bar = '<span class="rmv-tl-bar rmv-tl-bar--ws rmv-sp-bar' +
-        R.catClass(catByStream[st.workstream_id]) +
+        R.catClass(catByStream[id]) +
         (st.externally_gated ? " rmv-sp-bar--has-ext" : "") +
-        '" data-item-id="' + App.escape(st.workstream_id) + '" style="' +
-        colStyle(first, last) + '"><span class="rmv-tl-title">' +
-        App.escape(st.workstream_title) + "</span>" +
-        '<span class="rmv-sp-count">' + count +
-        (count === 1 ? " item" : " items") + "</span></span>";
-      return '<div class="rmv-tl-row rmv-sp-row' +
-        hiddenCls(st.workstream_id, opts) + '">' +
-        '<span class="rmv-tl-label rmv-sp-label' +
-        R.catClass(catByStream[st.workstream_id]) + '" title="' +
-        App.escape(st.workstream_title) + '">' +
-        App.escape(st.workstream_title) + "</span>" + bar +
-        eye(st.workstream_id, opts, st.workstream_title) + "</div>";
+        '" data-item-id="' + App.escape(id) + '" style="' +
+        colStyle(first, last) + '"><span class="rmv-sp-count">' +
+        C().countText(num(st.item_count, 0)) + "</span></span>";
+      return '<div class="rmv-tl-row rmv-sp-row' + hiddenCls(id, opts) + '">' +
+        labelCell(ctx.no[id], st.workstream_title, catByStream[id]) + bar +
+        externalSegs(ctx.ext[id], catByStream[id]) +
+        eye(id, opts, st.workstream_title) +
+        "</div>";
     }).join("");
 
-    return axisNote(ax.anchored) +
-      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide, opts) +
-      streamNotes(ordered, catByStream, metricsByStream, opts);
+    return wrap(headRow(ax.cols, ax.codeBySlot, ax.anchored) + body,
+      ax.cols, opts.wide, opts) +
+      C().streamNotes(ordered.filter(function (st) {
+        return !dropped(st.workstream_id, opts);
+      }), ctx);
   }
 
   // ----------------------------------------------------------------
@@ -398,24 +409,41 @@
         byNullableAsc(sa.priority, sb.priority);
     });
 
+    // The same numbers, colours and order the stakeholder view uses, so
+    // switching tab does not renumber the plan under the reader.
+    var notesOrder = [], catByStream = {};
+    order.forEach(function (key) {
+      var items = grouped.byStream[key];
+      catByStream[items[0].workstream_id] = items[0].category_key;
+      if (streamById[key]) notesOrder.push(streamById[key]);
+    });
+    var ctx = {
+      cat: catByStream,
+      metrics: groupMetrics((data && data.metrics) || []),
+      ext: externalSlots(rows),
+      no: numbering(notesOrder, function (r) { return r.workstream_id; }),
+      cls: function (id) { return hiddenCls(id, opts); },
+    };
+
     var body = order.filter(function (key) {
       return !dropped(grouped.byStream[key][0].workstream_id, opts);
     }).map(function (key) {
       var items = grouped.byStream[key];
-      var st = streamById[items[0].workstream_id];
-      var off = hiddenCls(items[0].workstream_id, opts);
+      var wsId = items[0].workstream_id;
+      var st = streamById[wsId];
+      var off = hiddenCls(wsId, opts);
       var title = items[0].workstream_title || items[0].title;
+      var cat = items[0].category_key;
       var first = st ? num(st.first_slot, 0) : num(items[0].effective_slot, 0);
-      var last = st ? num(st.last_slot, first) : num(items[0].effective_end_slot, first);
-      var head = '<div class="rmv-tl-row rmv-sp-row--head' + off + '">' +
-        '<span class="rmv-tl-label">' + App.escape(title) + "</span>" +
-        '<span class="rmv-tl-bar rmv-tl-bar--ws rmv-sp-bar' +
-        R.catClass(items[0].category_key) + '"' +
-        (items[0].workstream_id
-          ? ' data-item-id="' + App.escape(items[0].workstream_id) + '"' : "") +
-        ' style="' + colStyle(first, last) + '">' +
-        '<span class="rmv-tl-title">' + App.escape(title) + "</span></span>" +
-        eye(items[0].workstream_id, opts, title) + "</div>";
+      var last = st ? num(st.last_slot, first)
+        : num(items[0].effective_end_slot, first);
+      var head = '<div class="rmv-tl-row rmv-sp-row rmv-sp-row--head' + off +
+        '">' + labelCell(ctx.no[wsId], title, cat) +
+        '<span class="rmv-tl-bar rmv-tl-bar--ws rmv-sp-bar' + R.catClass(cat) +
+        '"' + (wsId ? ' data-item-id="' + App.escape(wsId) + '"' : "") +
+        ' style="' + colStyle(first, last) + '"><span class="rmv-sp-count">' +
+        C().countText(items.length) + "</span></span>" +
+        externalSegs(ctx.ext[wsId], cat) + eye(wsId, opts, title) + "</div>";
 
       var bars = items.filter(function (r) {
         return !dropped(r.work_item_id, opts);
@@ -425,36 +453,27 @@
         if (e < s) e = s;
         var prog = R.progressOf && R.progressOf(r);
         var progCls = prog && prog.bucket ? " rmv-prog-" + prog.bucket : "";
+        // An external item names its party ON the bar as well as wearing
+        // the hatch, so the fact survives without the colour.
         var ext = r.is_external
           ? '<span class="rmv-sp-ext">' +
             App.escape(r.external_party || "external") + "</span>" : "";
         var bar = '<span class="' + barClasses(r) + R.catClass(r.category_key) +
-          progCls + '" data-item-id="' + App.escape(r.work_item_id) + '" style="' +
-          colStyle(s, e) + '"><span class="rmv-tl-title">' +
-          App.escape(r.title) + "</span>" + ext + "</span>";
+          progCls + '" data-item-id="' + App.escape(r.work_item_id) +
+          '" style="' + colStyle(s, e) + '">' + ext + "</span>";
         return '<div class="rmv-tl-row rmv-tl-row--child rmv-sp-row' + off +
           hiddenCls(r.work_item_id, opts) + '">' +
-          '<span class="rmv-tl-label rmv-sp-label' + R.catClass(r.category_key) +
-          '" title="' + App.escape(r.title) + '">' + App.escape(r.title) +
-          "</span>" + bar + eye(r.work_item_id, opts, r.title) + "</div>";
+          labelCell(0, r.title, r.category_key, true) + bar +
+          eye(r.work_item_id, opts, r.title) + "</div>";
       }).join("");
       return head + bars;
     }).join("");
 
-    // The same workstream cards the stakeholder view carries, in the
-    // order this board draws them, so switching view does not lose what
-    // the work is for.
-    var notesOrder = [], catByStream = {};
-    order.forEach(function (key) {
-      var items = grouped.byStream[key];
-      catByStream[items[0].workstream_id] = items[0].category_key;
-      if (streamById[key]) notesOrder.push(streamById[key]);
-    });
-
-    return axisNote(ax.anchored) +
-      wrap(headRow(ax.cols, ax.codeBySlot) + body, ax.cols, opts.wide, opts) +
-      streamNotes(notesOrder, catByStream,
-        groupMetrics((data && data.metrics) || []), opts);
+    return wrap(headRow(ax.cols, ax.codeBySlot, ax.anchored) + body,
+      ax.cols, opts.wide, opts) +
+      C().streamNotes(notesOrder.filter(function (st) {
+        return !dropped(st.workstream_id, opts);
+      }), ctx);
   }
 
   App.roadmapView.sprintStreams = sprintStreams;

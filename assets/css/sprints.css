@@ -1,133 +1,314 @@
 /* ------------------------------------------------------------------
-   sprints.css - The Sprint Roadmap's own rules, and only those.
+   sprints.css - The Sprint Roadmap BOARD, and only that. The cards
+   below it live in sprint-cards.css; they share no selector with the
+   board and nothing here reads one of theirs.
 
-   The grid, the bar, the sticky header, the horizontal scroll and the
-   progress overlay all come from .rmv-tl in roadmap-views.css: a sprint
-   column is just another column, and that sheet is already driven by
-   --tl-cols rather than a fixed set of bands.
-
-   That sheet's size-budget acknowledgement named "a seventh view" as
-   the trigger to split it. This is that seventh view, and the split it
-   pointed at was the wrong one: it warned that separating the shared
-   coordinate model means duplicating it or inventing a file that is
-   most of it. So the model is REUSED and only what is new to sprints
-   lives here.
+   The grid, the sticky header, the horizontal scroll and the progress
+   overlay still come from .rmv-tl in roadmap-views.css: a sprint column
+   is just another column. What this sheet does is make that model read
+   from a projector rather than from a desk - a real label lane, columns
+   that touch, rules you can see, and bars that carry the weight the row
+   fills used to steal from them.
    ------------------------------------------------------------------ */
 
-/* The unanchored axis, stated once above the board rather than on every
-   bar. It is a fact about the plan, not a caption on the work. */
-.rmv-sp-note {
-  margin: 0 0 var(--s-3);
-  color: var(--muted);
-  font-size: var(--text-sm);
+/* What the board holds, stated under the heading it belongs to. It used
+   to float at the far end of the toolbar in mono small caps, attached to
+   nothing and reading as instrumentation for a machine. It is a sentence
+   about the plan, so it is set as one, directly below the plan's name.
+   What it no longer says is whether the plan is anchored: that belongs to
+   the column headings, and it is said there once. */
+.sp-status {
+  margin: var(--s-2) 0 0;
+  color: var(--ink);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
 }
 
-/* Sprint columns are narrower than horizon bands: there are more of
-   them and each says less, so the axis stays readable while scrolling.
-   Everything else about the grid is inherited. */
+/* --- the board's own measure ------------------------------------- */
+
+/* Sprint columns are narrower than horizon bands and there are more of
+   them, so the label lane is fixed and generous and the columns are
+   fixed and equal. Fixed rather than 1fr because every sprint must be
+   the same size, or a long plan silently squeezes the near sprints -
+   the ones anyone is actually working in - down to nothing. */
 .rmv-sp {
-  /* The grid reading: uniform, narrow columns so a dozen sprints fit on
-     screen and the eye can follow a trickle of work down a column as
-     easily as across a row. The horizon board's columns are wide because
-     it has four of them; this one has as many as the plan is long, so
-     the same width would show three sprints and a scrollbar.
-     Fixed rather than 1fr for the same reason: every sprint must be the
-     same size, or a long plan silently squeezes the near sprints - the
-     ones anyone is actually working in - down to nothing. */
-  --tl-gutter: 14rem;
-  --tl-col: 6.25rem;
+  /* Mobile-first: on a narrow screen a 19rem label lane leaves the board
+     a sliver, so the lane gives way and the titles wrap harder. The
+     projector case takes over at laptop width and up, which is where
+     this page is actually used. */
+  --tl-gutter: var(--sp-label-narrow);
+  --sp-floor: var(--sp-col);
+  --tl-col: minmax(var(--sp-floor), 1fr);
+  gap: 0;
 }
 .rmv-sp.rmv-tl--wide {
-  --tl-gutter: 18rem;
-  --tl-col: 9rem;
+  --sp-floor: var(--sp-col-wide);
 }
-/* The gutter carries the item name on every row, so it needs to read as
-   text rather than as the board's mono column label. */
-.rmv-sp-label {
+
+@media (min-width: 64rem) {
+  .rmv-sp { --tl-gutter: var(--sp-label); }
+  .rmv-sp.rmv-tl--wide { --tl-gutter: var(--sp-label-wide); }
+}
+
+/* The inherited minimum assumes 8rem of column, which this board does
+   not use. Left alone it forces the grid wider than its own tracks and
+   pools the surplus at the end, which is why the bars never looked like
+   they sat in the columns: they did, and the columns had drifted. */
+.rmv-sp .rmv-tl-head,
+.rmv-sp .rmv-tl-row,
+.rmv-sp.rmv-tl--wide .rmv-tl-head,
+.rmv-sp.rmv-tl--wide .rmv-tl-row {
+  min-inline-size: calc(var(--tl-gutter) + var(--tl-cols, 4) * var(--sp-floor));
+  column-gap: 0;
+  padding-inline: 0;
+}
+
+/* THE COLUMN GRID. A bar spanning sprints 1 to 3 has always started and
+   ended on the right grid lines; there were simply no lines drawn, and a
+   half-column gap between every track, so nothing looked aligned to
+   anything. The gap is gone and the rules are drawn, once, in the data
+   area only - offset past the label lane so they never cross it. */
+.rmv-sp .rmv-tl-head,
+.rmv-sp .rmv-tl-row {
+  /* The rule period is a PERCENTAGE of the data area, not a length, so it
+     tracks the columns whether they sit at their floor or stretch into a
+     wide page - and the area itself stops at the last column, so the grid
+     never runs on past the plan. */
+  background-image: repeating-linear-gradient(to right,
+    var(--sp-col-line) 0 1px,
+    transparent 1px calc(100% / var(--tl-cols, 4)));
+  background-position: var(--tl-gutter) 0;
+  background-size: calc(100% - var(--tl-gutter)) 100%;
+  background-repeat: no-repeat;
+}
+
+/* Every cell of a row sits on the row's single line. Without this the
+   external segment - the one item that is explicitly placed - claimed
+   the first line and the auto-placed bar was pushed onto a second,
+   doubling every row's height and floating the marker above the work it
+   marks rather than over it. */
+.rmv-sp-row > *,
+.rmv-sp-head > * { grid-row: 1; }
+
+/* --- the label lane ---------------------------------------------- */
+
+/* A real gutter, not a chip parked in the first sprint's space. The
+   title reads at body size, in full, wrapping rather than ellipsing: a
+   title that ends in three dots is a title nobody can say out loud. It
+   stays put when the board scrolls sideways, because a row whose name
+   has scrolled away is a row nobody can name. */
+.rmv-sp-label,
+.rmv-sp-head-label {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  padding-inline: var(--s-2) var(--s-4);
+  background: var(--paper);
   font-family: var(--font-body);
-  font-size: var(--text-xs);
-  line-height: 1.25;
+  font-size: var(--text-md);
+  line-height: 1.3;
   color: var(--ink);
   text-transform: none;
   letter-spacing: normal;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  border-inline-start: 3px solid var(--rm-a, var(--line));
+  white-space: normal;
+  overflow: visible;
+}
+.rmv-sp-label--child {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  padding-inline-start: var(--s-5);
+}
+.rmv-sp-name { min-inline-size: 0; }
+
+/* The stream's number. Colour cannot carry "this one" across a room on
+   its own - two streams can share a category, and a projector flattens
+   hue - so every stream also wears a number, the same one on its bar
+   and on its card. */
+.rmv-sp-no {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: var(--radius-pill);
+  /* Pulled a little toward --ink so the number clears AA on every lane.
+     This deepens the chip in light and lifts it in dark - in both cases
+     away from --on-accent, which is the text sitting on it - so one
+     declaration serves both themes and no lane needs its own exception. */
+  background: color-mix(in srgb, var(--rm-a, var(--line-strong)) 85%,
+    var(--ink));
+  color: var(--on-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+/* --- the axis ----------------------------------------------------- */
+
+/* Headings sit at the START of the column they name, so "Sprint 3" is
+   directly above the point where a bar reaching sprint 3 begins. Centred
+   headings put the word half a column away from the edge it describes,
+   which is most of why the axis read as unaligned. */
+.rmv-sp-col {
+  text-align: start;
   padding-inline-start: var(--s-2);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-slight);
+  text-transform: none;
+  color: var(--muted);
+}
+.rmv-sp-head {
+  align-items: end;
+  padding-block-end: var(--s-2);
+  border-block-end: 1px solid var(--line-strong);
+}
+.rmv-sp-head-label {
+  flex-direction: column;
+  align-items: start;
+  gap: var(--s-0);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--faint);
 }
 
-/* THE COLOUR FIX. .rmv-tl-bar fills at color-mix(--rm-a 10%, --rm-s),
-   which is almost white and is why this board read as pale and unclear.
-   A sprint bar fills with the category's own soft tint and rails in its
-   accent, so a lane is identifiable without being read, and the board
-   carries its own structure at a glance. */
+/* That the numbering is relative is stated HERE and nowhere else on the
+   page: attached to the headings it qualifies, which is where the
+   question is actually asked. */
+.rmv-sp-note {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--muted);
+}
+
+/* --- the rows and the bars ---------------------------------------- */
+
+/* The row fill is gone. A recessed grey track under every bar competed
+   with the bars for the eye and, in light mode, very nearly matched
+   them - which is what made the whole board read as washed out. A
+   hairline separates the rows; the bars carry the weight. */
+.rmv-sp-row {
+  background-color: transparent;
+  border-radius: 0;
+  border-block-end: 1px solid var(--line);
+  padding-block: var(--s-2);
+}
+.rmv-sp-row--head { margin-block-start: var(--s-4); }
+
+/* A bar fills with its stream's soft tint and rails in its accent, so a
+   stream is identifiable without being read. It spans whole columns
+   edge to edge and carries no text but its item count: the title is in
+   the label lane, in full, once. */
 .rmv-sp-bar {
-  background: var(--rm-s, var(--alt-surface));
+  /* The soft tint alone sits about 1.1:1 against the page, which is a
+     block you can find but not one you can point at from the back of a
+     room. A measure of the lane's own accent mixed in deepens it without
+     leaving the lane's colour or needing a token per stream. */
+  background: color-mix(in srgb, var(--rm-a, var(--line-strong)) 22%,
+    var(--rm-s, var(--alt-surface)));
   border-inline-start: 4px solid var(--rm-a, var(--line-strong));
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding-block: var(--s-2);
   color: var(--ink);
+  font-size: var(--text-sm);
+}
+/* The count reads in --ink, not --muted: it now sits on a tinted bar
+   rather than on the page, and it is the only text the bar carries. */
+.rmv-sp-count {
+  margin-inline-start: auto;
+  padding-inline-start: var(--s-2);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  white-space: nowrap;
 }
 
-/* Status on top of category, so the board shows a flow of work being
-   completed rather than a set of intentions. */
+/* Status is carried by the RAIL's pattern as well as its colour, so the
+   four states stay apart in greyscale, on a washed-out projector and to
+   a reader who does not separate red from green. */
 .rmv-sp-bar--done {
   background: var(--rm-a, var(--ok));
   border-color: var(--rm-a, var(--ok));
   color: var(--on-accent);
 }
-.rmv-sp-bar--done .rmv-tl-title { font-weight: var(--weight-semibold); }
+.rmv-sp-bar--done .rmv-sp-count { color: var(--on-accent); }
 .rmv-sp-bar--active {
-  box-shadow: inset 0 0 0 1px var(--rm-a, var(--accent));
+  box-shadow: inset 0 0 0 2px var(--rm-a, var(--accent));
 }
 .rmv-sp-bar--blocked {
   background: var(--danger-soft);
+  border-inline-start-style: dotted;
+  border-inline-start-width: 6px;
   border-inline-start-color: var(--danger);
 }
 
-/* A workstream bar carries its item count on the right. The count is
-   what the bar is worth structurally - how much sits inside it - and it
-   is deliberately the only number on any bar. */
-.rmv-sp-count {
-  margin-inline-start: auto;
-  padding-inline-start: var(--s-2);
-  color: var(--muted);
-  font-size: var(--text-xs);
-  white-space: nowrap;
+/* Work someone else is building. Hatch AND dashed edge AND the party's
+   name: three encodings of one fact, because this is how the room sees
+   which constraints are ours and which sit with EIT or the Payment
+   Service team, and it must survive a projector and a greyscale print. */
+.rmv-sp-bar--ext,
+.rmv-sp-ext-seg {
+  --rmv-sp-hatch: color-mix(in srgb, var(--rm-a, var(--ink)) 34%, transparent);
+  background-image: repeating-linear-gradient(45deg,
+    var(--rmv-sp-hatch) 0 3px, transparent 3px 9px);
 }
-
-/* Externally-gated work is an outline, not a fill: the plan is not
-   moving it, and a reader should see that without opening anything. */
 .rmv-sp-bar--ext {
-  background: transparent;
-  border: 1px dashed var(--rm-a, var(--line-strong));
-  border-inline-start-width: 3px;
-  border-inline-start-style: solid;
+  background-color: var(--surface);
+  border: 2px dashed var(--rm-a, var(--line-strong));
 }
 .rmv-sp-ext {
   margin-inline-start: auto;
   padding-inline-start: var(--s-2);
   color: var(--muted);
   font-size: var(--text-xs);
-  text-transform: lowercase;
   white-space: nowrap;
 }
-/* A workstream holding any external work says so quietly on its own
-   bar, so the stakeholder view carries the same signal as the delivery
-   view without listing the items. */
-.rmv-sp-bar--has-ext {
-  border-inline-end: 2px dashed var(--rm-a, var(--line-strong));
+
+/* On the stakeholder board the stream bar is one shape across several
+   sprints, so the external stretch is marked as its own segment riding
+   the same grid cells - naming WHICH sprints sit elsewhere, not merely
+   that some of them do. */
+.rmv-sp-ext-seg {
+  /* Positioned, because the bar it marks is positioned too: without a
+     stacking position of its own the segment paints UNDER the bar
+     whatever the document order says, and disappears entirely. */
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  margin-block: var(--s-1);
+  border: 2px dashed var(--rm-a, var(--line-strong));
+  border-radius: var(--radius-sm);
+  pointer-events: none;
 }
+.rmv-sp-ext-who {
+  padding-inline: var(--s-1);
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+.rmv-sp-bar--has-ext { border-inline-end: 2px dashed var(--rm-a, var(--line-strong)); }
 
 /* Overlappable: the first and last sprint of the bar may be shared with
    the item before or after it. The hatch marks exactly those edges, so
    what the property MEANS is visible rather than asserted. */
 .rmv-sp-bar--overlap {
-  --rmv-sp-hatch: color-mix(in srgb, var(--rm-a, var(--ink)) 28%, transparent);
+  --rmv-sp-edge: color-mix(in srgb, var(--rm-a, var(--ink)) 28%, transparent);
   background-image:
-    repeating-linear-gradient(45deg,
-      var(--rmv-sp-hatch) 0 2px, transparent 2px 6px),
-    repeating-linear-gradient(45deg,
-      var(--rmv-sp-hatch) 0 2px, transparent 2px 6px);
+    repeating-linear-gradient(45deg, var(--rmv-sp-edge) 0 2px, transparent 2px 6px),
+    repeating-linear-gradient(45deg, var(--rmv-sp-edge) 0 2px, transparent 2px 6px);
   background-size: 1.25rem 100%, 1.25rem 100%;
   background-position: left center, right center;
   background-repeat: no-repeat, no-repeat;
@@ -136,174 +317,89 @@
 /* Parallel work imposes no sequencing at all, so it sits on a shallower
    lane: it is not competing for the same hands as the bars around it. */
 .rmv-sp-bar--parallel {
-  min-block-size: 1.35rem;
+  padding-block: var(--s-1);
   align-self: center;
-  opacity: 0.92;
 }
 
 /* A slipped external commitment keeps its bar and gains a warning edge.
    The allocation still says where it was planned; slip_slots moves it. */
 .rmv-sp-bar--slipped {
   border-color: var(--warn);
-  box-shadow: inset 0 0 0 1px var(--warn-soft);
+  box-shadow: inset 0 0 0 2px var(--warn-soft);
 }
 
-/* What each stream buys, collected BELOW the board rather than set
-   between the bars. A benefit is a sentence and a bar is a shape; the
-   two interleaved pushed the rows far enough apart that the waterfall
-   could not be read, which is the one thing this view exists to show.
-   The cards keep the board's order and the board's colour, so a card
-   and its bar are the same stream without being labelled as such. */
-.rmv-sp-notes {
-  display: grid;
-  gap: var(--s-3);
-  margin-block-start: var(--s-5);
-}
-.rmv-sp-note-card {
-  border-inline-start: 4px solid var(--rm-a, var(--line-strong));
-  padding-inline-start: var(--s-3);
-  cursor: pointer;
-}
-.rmv-sp-note-head {
-  margin: 0 0 var(--s-1);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  color: var(--ink);
-}
+/* --- the key ------------------------------------------------------ */
 
-/* What this is, in one line, at full strength. A discussion opens on the
-   thing itself; everything under it is support. It is the only text in
-   the card that reads in --ink at weight, which is what makes it the
-   entry point rather than the first sentence of a paragraph. */
-.rmv-sp-lede {
-  margin: 0 0 var(--s-2);
-  color: var(--ink);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  line-height: 1.45;
-}
-
-/* Who stops doing what. One line per audience, labelled, because the
-   first question about any claim in the room is whose problem it is. */
-.rmv-sp-points {
-  margin: 0 0 var(--s-2);
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: var(--s-1);
-}
-.rmv-sp-points li {
-  position: relative;
-  padding-inline-start: var(--s-4);
-  color: var(--muted);
-  font-size: var(--text-sm);
-  line-height: 1.45;
-}
-.rmv-sp-points li::before {
-  content: "";
-  position: absolute;
-  inset-block-start: 0.5em;
-  inset-inline-start: 0;
-  inline-size: 5px;
-  block-size: 5px;
-  border-radius: 50%;
-  background: var(--rm-a, var(--line-strong));
-}
-.rmv-sp-who {
-  color: var(--ink);
-  font-weight: var(--weight-medium);
-}
-
-/* The long-form case, folded away. It is the thing a benefit was written
-   as and it stays available, but it no longer stands between a reader
-   and the point. */
-.rmv-sp-more {
-  margin-block-start: var(--s-2);
-  font-size: var(--text-xs);
-}
-.rmv-sp-more > summary {
-  color: var(--muted);
-  cursor: pointer;
-  list-style: none;
-}
-.rmv-sp-more > summary::-webkit-details-marker { display: none; }
-.rmv-sp-more > summary::before {
-  content: "+ ";
-  color: var(--faint);
-}
-.rmv-sp-more[open] > summary::before { content: "- "; }
-.rmv-sp-more > summary:hover { color: var(--ink); }
-.rmv-sp-more .rmv-sp-benefit { margin-block-start: var(--s-2); }
-
-.rmv-sp-benefit {
-  /* No measure cap: the card's own column is the measure, and a second
-     limit inside it would leave a short line in a wide card. */
-  margin: 0 0 var(--s-2);
-  color: var(--muted);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-}
-
-/* Metric chips: the countable half of the benefit, one per kind, unit
-   and basis. A chip whose weakest input is an estimate is dimmed, so a
-   figure never reads firmer than the softest thing inside it. */
-.rmv-sp-chips {
+/* It READS as a key: a heading and a labelled list of swatches. It used
+   to be a row of pills wearing switch styling, which asked to be clicked
+   and did nothing when it was. Nothing here is a control. */
+.rmv-sp-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s-1);
+  align-items: center;
+  gap: var(--s-2) var(--s-4);
+  margin-block-end: var(--s-4);
 }
-.rmv-sp-chip {
-  padding: 2px var(--s-2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--alt-surface);
-  color: var(--ink);
+.rmv-sp-legend-head {
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
-  white-space: nowrap;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--faint);
 }
-.rmv-sp-chip--soft {
-  border-style: dashed;
+.rmv-sp-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rmv-sp-key {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--text-sm);
   color: var(--muted);
 }
-
-/* A workstream header row in the delivery view reads as a divider, not
-   as another item. */
-.rmv-sp-row--head {
-  margin-block-start: var(--s-3);
+.rmv-sp-key::before {
+  content: "";
+  flex: none;
+  /* Shaped like the bar it stands for, at a size nothing would mistake
+     for a switch: a short length of lane, railed on the left exactly as
+     a bar is. */
+  inline-size: 3.25rem;
+  block-size: 1.15rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-inline-start: 4px solid var(--muted);
+  background: var(--alt-surface);
+}
+.rmv-sp-key--active::before { box-shadow: inset 0 0 0 2px var(--muted); }
+.rmv-sp-key--done::before {
+  background: var(--muted);
+  border-inline-start-color: var(--muted);
+}
+.rmv-sp-key--blocked::before {
+  background: var(--danger-soft);
+  border-inline-start: 6px dotted var(--danger);
+}
+.rmv-sp-key--ext::before {
+  background: var(--surface);
+  background-image: repeating-linear-gradient(45deg,
+    var(--line-strong) 0 3px, transparent 3px 9px);
+  border: 2px dashed var(--line-strong);
 }
 
-/* Mobile-first: one card per row on a narrow screen, two once there is
-   room for a readable measure beside another - the same breakpoint the
-   indexed content shell uses. */
-@media (min-width: 48rem) {
-  .rmv-sp-notes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s-3) var(--s-5);
-  }
-}
-
-@media print {
-  /* The axis note is screen guidance; on paper the column headings
-     already say Sprint +N. */
-  .rmv-sp-note { display: none; }
-  .rmv-sp-benefit { color: var(--ink); }
-  .rmv-sp-points li { color: var(--ink); }
-  .rmv-sp-chip { border-color: var(--line-strong); }
-  /* Nobody can open a disclosure on paper, so everything prints open. */
-  .rmv-sp-more > summary { display: none; }
-  .rmv-sp-more > *:not(summary) { display: block; }
-}
-
-/* --- hiding a row ------------------------------------------------ */
+/* --- hiding a row ------------------------------------------------- */
 
 /* One mechanism, worked the way the roadmap's custom view already works:
    the toolbar eye reveals a control on every row, and pressing a row's
    control drops it. The board carries no eyes the rest of the time.
 
    The eye rides in a trailing column added only while hiding, exactly as
-   the roadmap adds one for its pick box (roadmap-views.css) - so a bar's
-   placement is never disturbed and the axis stays aligned, because the
-   head row grows the same column. */
+   the roadmap adds one for its pick box - so a bar's placement is never
+   disturbed and the axis stays aligned, because the head row grows the
+   same column. */
 .rmv-sp--hiding.rmv-tl .rmv-tl-head,
 .rmv-sp--hiding.rmv-tl .rmv-tl-row {
   grid-template-columns:
@@ -339,11 +435,6 @@
   color: var(--accent);
   opacity: 1;
 }
-
-/* Hidden while hide mode is on: dimmed in place, so what you are about
-   to drop is visible before you leave. The dim is .rmv-unpicked from
-   roadmap-views.css - the board already had one way of saying "this row
-   is not part of what you are looking at". */
 .rmv-sp-hidden .rmv-sp-bar { box-shadow: none; }
 .rmv-sp-hidden .rmv-sp-eye { opacity: 1; }
 
@@ -355,46 +446,9 @@
 }
 
 @media print {
-  /* Paper has no controls, and a hidden row was hidden for a reason. */
   .rmv-sp-eye { display: none; }
   .rmv-sp-hidden { display: none; }
+  .rmv-sp-legend { display: none; }
+  .rmv-sp-label,
+  .rmv-sp-head-label { background: transparent; }
 }
-
-/* --- the key to the colour --------------------------------------- */
-
-.rmv-sp-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-3);
-  margin-block-end: var(--s-3);
-}
-.rmv-sp-key {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-1);
-  font-size: var(--text-xs);
-  color: var(--muted);
-}
-.rmv-sp-key::before {
-  content: "";
-  inline-size: 1.5rem;
-  block-size: 0.85rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line-strong);
-  border-inline-start: 4px solid var(--ink);
-  background: var(--alt-surface);
-}
-.rmv-sp-key--active::before { box-shadow: inset 0 0 0 1px var(--ink); }
-.rmv-sp-key--done::before { background: var(--ink); border-color: var(--ink); }
-.rmv-sp-key--blocked::before {
-  background: var(--danger-soft);
-  border-inline-start-color: var(--danger);
-}
-.rmv-sp-key--ext::before {
-  background: transparent;
-  border: 1px dashed var(--line-strong);
-  border-inline-start: 3px solid var(--line-strong);
-}
-
-@media print { .rmv-sp-legend { display: none; } }

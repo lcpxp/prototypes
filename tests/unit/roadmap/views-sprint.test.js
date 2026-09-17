@@ -1,6 +1,12 @@
 // ------------------------------------------------------------------
 // tests/unit/roadmap/views-sprint.test.js - Benchmarks for the Sprint
-// Roadmap builders (App.roadmapView.sprintStreams / sprintItems).
+// Roadmap BOARD (App.roadmapView.sprintStreams / sprintItems): the axis,
+// the spans, the external marking and hide mode.
+//
+// The cards below the board are benchmarked in views-sprint-cards.test.js,
+// following the split the builders themselves took. Both files share the
+// fixture below, deliberately: two readings of one allocation have to be
+// checked against the same allocation or they prove nothing together.
 //
 // The claims worth defending, in the order they would hurt if broken:
 //   1. An unanchored plan never shows a sprint code. Inventing one is
@@ -79,12 +85,21 @@ function anchored(data) {
 test("an unanchored plan labels columns as offsets and shows no sprint code", () => {
   const V = loadView();
   for (const html of [V.sprintStreams(sample()), V.sprintItems(sample())]) {
-    assert.match(html, /Sprint \+0/, "the axis must label the first slot");
-    assert.match(html, /Sprint \+3/, "the axis must run to the last occupied slot");
+    // Counted from one, not from zero. The SLOT stays zero-indexed
+    // everywhere behind this; only the label counts, because "Sprint +0"
+    // reads as the sprint before the first one to anyone not holding the
+    // data model in their head.
+    assert.match(html, /Sprint 1</, "the axis must label the first slot");
+    assert.match(html, /Sprint 4</, "the axis must run to the last occupied slot");
+    assert.doesNotMatch(html, /Sprint \+/,
+      "an offset from zero is not a sprint anyone can name");
     assert.doesNotMatch(html, /\b\d{2}-\d{2}\b/,
       "an unanchored plan must never render a YY-NN sprint code");
-    assert.match(html, /Sprint numbering starts when delivery starts/,
-      "the unanchored state is stated once, above the axis");
+    assert.match(html, /Numbering is relative until a start date is set/,
+      "the unanchored state is stated once, on the column headings");
+    assert.equal(
+      html.split("Numbering is relative until a start date is set").length - 1, 1,
+      "and exactly once: a fact with two homes is a fact that will drift");
   }
 });
 
@@ -124,55 +139,6 @@ test("overlappability is rendered, not merely stored", () => {
   assert.match(html, /rmv-sp-bar--parallel/, "a parallel bar is marked");
 });
 
-test("the stakeholder view carries the benefit and its metric chips", () => {
-  const V = loadView();
-  const html = V.sprintStreams(sample());
-  assert.match(html, /Completes the automated path/, "the workstream benefit is shown");
-  assert.match(html, /Time saved 30 minutes per application/,
-    "a metric renders as a readable quantity with its basis");
-  assert.match(html, /Touches removed 2 per order/,
-    "a count metric drops the unit word rather than reading '2 count per order'");
-  assert.match(html, /rmv-sp-chip--soft/,
-    "a chip whose weakest input is an estimate is marked as soft");
-});
-
-test("a card opens on what the thing is, then who stops doing what", () => {
-  // The card is a discussion surface, not a paragraph. A block of prose
-  // has no entry point: a reader has to consume it before they can say
-  // anything about it.
-  const V = loadView();
-  const html = V.sprintStreams(sample());
-  const lede = html.indexOf("Complete the automated path");
-  const points = html.indexOf("rmv-sp-points");
-  const chip = html.indexOf("rmv-sp-chip");
-  const prose = html.indexOf("rmv-sp-more");
-  assert.ok(lede > -1, "the summary is the card's opening line");
-  assert.ok(lede < points, "the bullets come after it");
-  assert.ok(points < chip, "then the metric tags");
-  assert.ok(chip < prose, "and the long-form case last");
-  assert.match(html, /An operator stops configuring settlement by hand/,
-    "each audience line becomes a bullet");
-  assert.match(html, /rmv-sp-who">Acquirer staff</, "labelled by whose problem it is");
-  assert.match(html, /rmv-sp-who">Merchant</, "for every audience that has one");
-  assert.doesNotMatch(html, /rmv-sp-who">Partner staff</,
-    "and only for the audiences the row actually carries");
-});
-
-test("the prose is folded away, but only when something else leads", () => {
-  const V = loadView();
-  const with_lede = V.sprintStreams(sample());
-  assert.match(with_lede, /<details class="rmv-sp-more"/,
-    "with a headline above it, the case in full is a disclosure");
-  assert.match(with_lede, /Completes the automated path/,
-    "and the prose is still there to open");
-
-  // w2 has a benefit but no summary, so its prose IS the summary.
-  const data = sample();
-  assert.ok(!data.sprintStreams[1].summary, "the second stream has no summary");
-  assert.match(V.sprintStreams(data), /Closes the loop on device serials/,
-    "a stream with no headline shows its benefit outright, not behind a fold");
-});
-
 test("no delivery duration, capacity or velocity reaches the surface", () => {
   const V = loadView();
   const data = anchored(sample());
@@ -185,24 +151,45 @@ test("no delivery duration, capacity or velocity reaches the surface", () => {
   }
 });
 
-test("a benefit measured in days is not a delivery duration", () => {
-  // The rule is that how long the WORK takes stays off the surface -
-  // spans are the only unit for that. It is not a ban on the word: a
-  // lag_removed metric in days describes how long a MERCHANT waits
-  // today, which is the value being bought and is exactly the kind of
-  // figure the board exists to show. Held as its own case so the two
-  // are not confused by a later reader, or by a blunter assertion.
+test("an external stretch is marked on the sprints it actually occupies", () => {
+  // The stakeholder bar is one shape across several sprints, so saying
+  // "this stream is externally gated" does not answer the question the
+  // room asks, which is WHICH sprints sit with someone else. The segment
+  // rides the same grid cells the work does. w2's external item runs
+  // slots 0 to 3, so the segment spans grid columns 2 to 6.
   const V = loadView();
-  const data = sample();
-  data.metrics.push({ work_item_id: "i1", workstream_id: "w1",
-    metric_kind: "lag_removed", unit: "days", basis: "per_application",
-    total: 3, weakest_confidence: "estimated", metric_rows: 1 });
-  const html = V.sprintStreams(data);
-  assert.match(html, /Waiting time removed 3 days per application/,
-    "a lag metric renders as the wait it removes");
-  // And still no delivery duration anywhere near it.
-  assert.ok(!html.toLowerCase().includes("developer"));
-  assert.doesNotMatch(html, /\bsprints? to deliver\b/i);
+  const html = V.sprintStreams(sample());
+  assert.match(html, /rmv-sp-ext-seg rm-cat-pipeline" style="grid-column:2 \/ 6"/,
+    "the segment lands on the external work's own sprints, in the stream's colour");
+  assert.match(html, /rmv-sp-ext-who">EIT</,
+    "and names the party, so the fact survives without the colour");
+  assert.match(html, /Built elsewhere: EIT/,
+    "the card says the same thing in words");
+});
+
+test("a stream wears the same number on its bar and on its card", () => {
+  // Colour cannot carry "this one" across a room on its own: a projector
+  // flattens hue and two streams can share a category. The number can,
+  // and it must be the SAME number in both halves or it pairs nothing.
+  const V = loadView();
+  for (const html of [V.sprintStreams(sample()), V.sprintItems(sample())]) {
+    const label = html.indexOf('rmv-sp-no" aria-hidden="true">1</span><span class="rmv-sp-name">Payment Service');
+    const card = html.indexOf('rmv-sp-no" aria-hidden="true">1</span>Payment Service');
+    assert.ok(label > -1, "the board's first stream is numbered on its row");
+    assert.ok(card > -1, "and its card carries the same number");
+    assert.ok(label < card, "board first, then cards, in one order");
+  }
+});
+
+test("the key is a key, and nothing on it invites a click", () => {
+  // It used to be a strip of pills wearing switch styling that asked to
+  // be clicked and did nothing when it was. An ambiguous control is
+  // worse than no control.
+  const V = loadView();
+  const html = V.sprintLegend();
+  assert.match(html, /rmv-sp-legend-head">Key</, "it says what it is");
+  assert.doesNotMatch(html, /<button|data-item-id|data-hide-id|aria-pressed|href=/,
+    "and carries nothing a reader could mistake for a control");
 });
 
 test("an empty allocation says so rather than drawing an empty grid", () => {
@@ -224,20 +211,6 @@ test("items group under their workstream in slot then sequence order", () => {
     "slot 0 must render before slot 2 within the same workstream");
   assert.ok(integrateAt < serialsAt,
     "a workstream's items stay together rather than interleaving by slot");
-});
-
-test("both views carry the same workstream summaries, at stream level only", () => {
-  // Switching from the stakeholder view to the delivery view should not
-  // lose what the work is FOR. It should not gain eighteen paragraphs
-  // either: the cards stay at workstream level in both.
-  const V = loadView();
-  const items = V.sprintItems(sample());
-  assert.match(items, /rmv-sp-notes/,
-    "the delivery view must carry the workstream cards too");
-  assert.match(items, /Completes the automated path/,
-    "a workstream's benefit is shown on the delivery view");
-  assert.equal((items.match(/rmv-sp-note-card/g) || []).length, 2,
-    "one card per workstream, never one per item");
 });
 
 test("the stakeholder bars run contiguously, with the benefits below", () => {
@@ -321,7 +294,7 @@ test("leaving hide mode is what actually removes the hidden rows", () => {
     assert.doesNotMatch(html, /Closes the loop on device serials/,
       "and its benefit card");
     assert.match(html, /Payment Service/, "everything else stays");
-    assert.match(html, /Sprint \+3/,
+    assert.match(html, /Sprint 4</,
       "and the axis still runs the whole plan, so nothing slides left");
   }
 });

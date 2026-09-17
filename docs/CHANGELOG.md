@@ -10,6 +10,18 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Sprint roadmap: rebuilt to be read from a projector in a meeting
+  rather than from a desk. A real label column carries full workstream
+  titles; sprint columns touch, show their rules, and are named "Sprint 1"
+  onward rather than "Sprint +0", so a bar plainly starts and ends where
+  it says. Work built elsewhere is hatched and named on the exact sprints
+  it occupies. Each stream carries a number shared by its bar and its
+  card. Cards lead with the name, state their span and item count, align
+  the audience lines and show each measured value as a figure with its
+  basis in plain English. The status pills became a labelled key - they
+  never filtered - and the icon buttons now read "Wider columns" and
+  "Hide rows". Both themes were designed, and the page takes the full
+  width of the screen.
 - Roadmap and sprint roadmap: the detail drawer is laid out to be glanced
   at - the one-line summary, then what the work buys as labelled bullets
   with its tags, then the facts, then what the item is made of. The

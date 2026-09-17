@@ -89,8 +89,8 @@
   --rm-apis: #4a58a8;         --rm-apis-soft: #e9eaf6;
   --rm-overhaul: #5b4fae;     --rm-overhaul-soft: #ebe8f7;
   /* Operations & Onboarding - greens */
-  --rm-pipeline: #3f7a2e;     --rm-pipeline-soft: #e6f1e0;
-  --rm-automation: #2f7a56;   --rm-automation-soft: #e2f1ea;
+  --rm-pipeline: #2f6b21;     --rm-pipeline-soft: #dbedca;
+  --rm-automation: #1f7d69;   --rm-automation-soft: #cfe9e2;
   --rm-admin: #5f7a2b;        --rm-admin-soft: #edf1df;
   /* Finance & Revenue - violets */
   --rm-insights: #6a4bb0;     --rm-insights-soft: #ece7f7;
@@ -152,6 +152,7 @@
   --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono",
     Menlo, Consolas, monospace;
 
+  --text-2xs: 0.6875rem; /* 11px - the smallest tag that still reads */
   --text-xs: 0.75rem;   /* 12px - eyebrows, badges, meta */
   --text-sm: 0.8125rem; /* 13px - table data, code */
   --text-md: 0.9375rem; /* 15px - body */
@@ -211,6 +212,19 @@
   --card-min: 16rem;      /* minimum card width in card grids */
   --login-max: 24rem;     /* login card width cap */
   --lede-max: 44rem;      /* measure cap for page ledes */
+  --wide-max: 120rem;     /* cap for boards that read across, not down */
+
+  /* Sprint board geometry. The board is read from a projector, so its
+     label lane holds a full workstream title at body size and its sprint
+     columns are wide enough to name. Both double-ish under Wider
+     columns. Here rather than in sprints.css because a measurement is a
+     design value like any other. */
+  --sp-label-narrow: 10rem; /* below a laptop the board needs the room */
+  --sp-label: 19rem;
+  --sp-label-wide: 26rem;
+  --sp-col: 7.5rem;
+  --sp-col-wide: 11rem;
+  --sp-col-line: #dfe3e9; /* the vertical sprint rule: present, not loud */
 
   /* Acquirer Partner Portal replica (modules/prototypes/pci/ prototype).
      Brand-fixed and LIGHT-LOCKED: the real portal has no dark mode, so
@@ -309,6 +323,8 @@
   --accent-soft: #1e2050;
   --on-accent: #0b0b2e;
 
+  --sp-col-line: #2f343d;
+
   --danger: #e2727a;
   --danger-soft: #391f22;
   --warn: #d3a648;
@@ -328,8 +344,8 @@
   --rm-apis: #939ce6;         --rm-apis-soft: #1e2140;
   --rm-overhaul: #9a90e0;     --rm-overhaul-soft: #221f3f;
   /* Operations & Onboarding - greens */
-  --rm-pipeline: #7cc06a;     --rm-pipeline-soft: #16240f;
-  --rm-automation: #5cbf94;   --rm-automation-soft: #0f2419;
+  --rm-pipeline: #8ec766;     --rm-pipeline-soft: #1b2a10;
+  --rm-automation: #45c2ad;   --rm-automation-soft: #0d2622;
   --rm-admin: #a3c065;        --rm-admin-soft: #1f240f;
   /* Finance & Revenue - violets */
   --rm-insights: #a68be0;     --rm-insights-soft: #1e1a38;
@@ -402,6 +418,8 @@
     --accent-pressed: #6c6fff;
     --accent-soft: #1e2050;
     --on-accent: #0b0b2e;
+
+    --sp-col-line: #2f343d;
 
     --danger: #e2727a;
     --danger-soft: #391f22;

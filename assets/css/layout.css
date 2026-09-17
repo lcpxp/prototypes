@@ -358,6 +358,20 @@ a.nav-icon-btn:hover {
   padding-inline: var(--gutter);
 }
 
+/* A board read across rather than down. The shared measure is set for
+   prose - 72rem is a readable line - but a timeline's job is to show a
+   span, and capping it at a paragraph's width throws away the half of a
+   projected screen the board most needs. Only a page whose primary
+   object is a board takes this; its prose keeps --lede-max, so the wide
+   measure widens the board and nothing else. */
+.page--wide {
+  max-inline-size: var(--wide-max);
+}
+
+/* A wide page is a projected page, so its heading is sized to be read
+   from the back of a room rather than from a desk. */
+.page--wide .page-head h1 { font-size: var(--text-2xl); }
+
 .page-head {
   margin-block-end: var(--section-gap);
 }

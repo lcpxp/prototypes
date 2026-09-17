@@ -274,6 +274,9 @@
         state();
         return;
       }
+      // A disclosure inside a card is a control, not the card. Without
+      // this, reaching for the long-form case opened the drawer over it.
+      if (e.target.closest && e.target.closest("[data-no-drawer]")) return;
       var el = e.target.closest && e.target.closest("[data-item-id]");
       if (!el) return;
       var id = el.getAttribute("data-item-id");
@@ -290,13 +293,13 @@
       var n = data.sprintItems.length;
       var streams = data.sprintStreams.length;
       var h = hiddenCount();
+      // Whether the plan is anchored is NOT repeated here. It is stated
+      // on the column headings, where the confusion it answers actually
+      // arises, and a fact with two homes is a fact that will drift.
       stateLine.textContent = (n === 0
         ? "Nothing is allocated yet."
         : n + (n === 1 ? " item" : " items") + " across " + streams +
-          (streams === 1 ? " workstream" : " workstreams") +
-          (anchorIdx !== null
-            ? ", anchored to real sprints."
-            : ". Not yet anchored to a start date.")) +
+          (streams === 1 ? " workstream." : " workstreams.")) +
         (h ? " " + h + (h === 1 ? " row hidden." : " rows hidden.") : "");
     }
     state();
