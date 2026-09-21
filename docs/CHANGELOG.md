@@ -12,7 +12,7 @@ is the git history; what is unfinished is docs/STATE.md.
 
 - Sprint roadmap: a workstream card now says whether the stream ever
   ends. "Finite scope - this one ends", "Staged scope - each stage is a
-  stopping point" and "Ongoing - maintained and improved, not finished"
+  stopping point" and "Ongoing - maintained and improved"
   answer a question a bar's length cannot, and the ongoing case is
   dashed as well as worded so it survives a projector.
 - Sprint roadmap: cards carry the ceilings a stream lifts, as short

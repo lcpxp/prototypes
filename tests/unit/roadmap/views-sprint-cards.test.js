@@ -199,7 +199,7 @@ test("a card says whether the stream ever ends", () => {
     /rmv-sp-scope rmv-sp-scope--finite">Finite scope - this one ends</,
     "a bounded stream says so");
   assert.match(html,
-    /rmv-sp-scope--continuous">Ongoing - maintained and improved, not finished</,
+    /rmv-sp-scope--continuous">Ongoing - maintained and improved</,
     "and a standing one says something different in WORDS, so the fact " +
     "survives a projector that flattens the dashed outline carrying it too");
 });

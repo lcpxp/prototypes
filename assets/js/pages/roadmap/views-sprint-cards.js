@@ -154,7 +154,7 @@
   var SCOPE = {
     finite: "Finite scope - this one ends",
     staged: "Staged scope - each stage is a stopping point",
-    continuous: "Ongoing - maintained and improved, not finished",
+    continuous: "Ongoing - maintained and improved",
   };
 
   function scopeChip(st) {
