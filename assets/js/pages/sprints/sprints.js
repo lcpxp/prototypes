@@ -41,6 +41,11 @@
     sprintCodes: {}, currentCode: null };
   var current = "plan";
   var wide = false;
+  // Which reading the column headings carry: sprints, or a priority
+  // scale. A view preference like the two below it - it relabels the
+  // axis and changes nothing about the plan - so it is remembered per
+  // browser and no other reader sees it.
+  var priorityLabels = false;
   // Hide mode, and what is hidden. View-only and per-browser, like every
   // other preference here - it changes nothing in the database and no
   // other reader sees it.
@@ -89,7 +94,8 @@
   }
 
   function render(host) {
-    var opts = { wide: wide, hideMode: hideMode, hidden: hidden };
+    var opts = { wide: wide, hideMode: hideMode, hidden: hidden,
+      priorityLabels: priorityLabels };
     host.innerHTML = App.roadmapView.sprintLegend() +
       (current === "delivery"
         ? App.roadmapView.sprintItems(data, opts)
@@ -175,6 +181,7 @@
     var stateLine = document.getElementById("sprints-state");
     var wideBtn = document.getElementById("sprints-wide");
     var hideBtn = document.getElementById("sprints-hide");
+    var priorityBtn = document.getElementById("sprints-priority");
     if (!host || !nav) return;
 
     current = readState();
@@ -201,6 +208,20 @@
         wide = !wide;
         if (App.store) App.store.set("sprints.wide", wide ? "1" : "0");
         wideBtn.setAttribute("aria-pressed", String(wide));
+        render(host);
+      });
+    }
+
+    if (priorityBtn) {
+      priorityLabels = !!(App.store &&
+        App.store.get("sprints.priorityLabels") === "1");
+      priorityBtn.setAttribute("aria-pressed", String(priorityLabels));
+      priorityBtn.addEventListener("click", function () {
+        priorityLabels = !priorityLabels;
+        if (App.store) {
+          App.store.set("sprints.priorityLabels", priorityLabels ? "1" : "0");
+        }
+        priorityBtn.setAttribute("aria-pressed", String(priorityLabels));
         render(host);
       });
     }

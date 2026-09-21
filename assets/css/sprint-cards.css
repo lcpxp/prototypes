@@ -235,3 +235,56 @@
   .rmv-sp-more > summary { display: none; }
   .rmv-sp-more > *:not(summary) { display: block; }
 }
+
+/* WHAT SHAPE THE STREAM IS. A bar says when work runs; it cannot say
+   whether the stream ever ends, and that is what a room asks about a
+   stream it is being asked to fund. It sits directly under the span and
+   count, because it belongs with the other facts about the stream
+   rather than with what the stream buys.
+
+   Self-aligned so the chip is the width of its own words: stretched to
+   the card it would read as a banner, which overstates a classifier. */
+.rmv-sp-scope {
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--s-1) var(--s-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-slight);
+  color: var(--ink);
+}
+
+/* An ongoing stream is marked in its own SHAPE as well as its words - a
+   dashed edge, because the thing being said is that it has no end, and
+   a reader scanning six cards for "which of these finish" should get
+   the answer from the outline before they read a syllable. */
+.rmv-sp-scope--continuous { border-style: dashed; }
+
+/* THE CEILINGS THIS WORK LIFTS, under the figures. They are sentences,
+   so they are full-width rows and not inline pills: a sentence in a
+   pill wraps into a shape nobody can scan. No background either - the
+   metric tiles above own that treatment, and repeating it here would
+   read as a second row of figures rather than as the prose half of the
+   same claim. A rule in the stream's own accent is enough to tie them
+   to it. */
+.rmv-sp-scale {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rmv-sp-scale-tag {
+  padding-inline-start: var(--s-3);
+  border-inline-start: 2px solid var(--rm-a, var(--line-strong));
+  color: var(--ink);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+@media print {
+  .rmv-sp-scope { border-color: var(--line-strong); }
+  .rmv-sp-scale-tag { border-inline-start-color: var(--line-strong); }
+}

@@ -129,6 +129,48 @@
       App.escape(text) + "</p></div>";
   }
 
+  // WHAT SHAPE THE STREAM IS. A bar's length says when the work runs,
+  // never whether it ever ends - and that is the question a room asks
+  // about a stream it is being asked to fund. Three answers, because
+  // three is what the work divides into: bounded activities with a
+  // clear objective, bounded ones delivered in stages where a stage is
+  // a legitimate place to stop, and standing objectives that are
+  // maintained and improved rather than finished.
+  //
+  // The wording carries the distinction rather than a colour, because
+  // the difference between "this ends" and "this is maintained" is the
+  // whole point and a hue cannot say it across a room.
+  var SCOPE = {
+    finite: "Finite scope - this one ends",
+    staged: "Staged scope - each stage is a stopping point",
+    continuous: "Ongoing - maintained and improved, not finished",
+  };
+
+  function scopeChip(st) {
+    var label = SCOPE[st.scope];
+    if (!label) return "";
+    return '<p class="rmv-sp-scope rmv-sp-scope--' + App.escape(st.scope) +
+      '">' + App.escape(label) + "</p>";
+  }
+
+  // THE CEILINGS A STREAM LIFTS, under the figures rather than beside
+  // them. A metric tile answers "how much, per unit"; these answer
+  // "and what stops being a limit", which is the half a figure cannot
+  // carry. "8-10 merchants a day" is not a quantity to be summed
+  // across a sprint - it is a wall, and the claim is that it stops
+  // being there. Summing it would mean nothing, which is exactly why
+  // these are prose and not work_item_metrics rows.
+  //
+  // Sentences, so they are set as full-width rows rather than inline
+  // pills: a sentence in a pill wraps into a shape nobody can scan.
+  function scaleTags(st) {
+    var notes = st.scale_notes;
+    if (!notes || !notes.length) return "";
+    return '<ul class="rmv-sp-scale">' + notes.map(function (n) {
+      return '<li class="rmv-sp-scale-tag">' + App.escape(n) + "</li>";
+    }).join("") + "</ul>";
+  }
+
   // A discussion card, not a paragraph. What it is, in one bold line;
   // who stops doing what, as bullets; what it is worth, as chips; and
   // the long-form case folded away for whoever asks for it. The prose
@@ -168,7 +210,8 @@
         '<p class="rmv-sp-meta">' + meta.map(function (bit) {
           return '<span class="rmv-sp-meta-bit">' + App.escape(bit) + "</span>";
         }).join("") + "</p>" +
-        head + valueList(st) + metricTiles(ctx.metrics[id]) + prose + "</div>";
+        scopeChip(st) + head + valueList(st) +
+        metricTiles(ctx.metrics[id]) + scaleTags(st) + prose + "</div>";
     }).join("");
     return notes ? '<div class="rmv-sp-notes">' + notes + "</div>" : "";
   }
@@ -177,6 +220,8 @@
     streamNotes: streamNotes,
     metricTiles: metricTiles,
     valueList: valueList,
+    scopeChip: scopeChip,
+    scaleTags: scaleTags,
     spanText: spanText,
     countText: countText,
   };

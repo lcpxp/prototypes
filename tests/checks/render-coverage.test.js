@@ -103,6 +103,11 @@ const COVERAGE = {
   // rather than filtered - a blank here is a bar nobody can interpret.
   "work_item_sprints.overlap": { file: "assets/js/pages/roadmap/detail-values.js" },
   "work_item_sprints.external_status": { file: "assets/js/pages/roadmap/detail-values.js" },
+  // scope is the one vocabulary on this board whose whole job is the
+  // WORDING: "finite" and "continuous" are only useful as the sentences
+  // they expand into, so the labels live with the cards that say them
+  // rather than in the shared value map.
+  "work_items.scope": { file: "assets/js/pages/roadmap/views-sprint-cards.js" },
   // The countable half of a benefit. Every one of these is rendered
   // inline beside a number, so an unlabelled value reads as a figure
   // with no meaning attached.

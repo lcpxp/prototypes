@@ -335,6 +335,28 @@ create table if not exists public.work_items (
   -- access, so the route is the distinction that carries weight, and
   -- it decides which staff audience a benefit is written for.
   sales_route text check (sales_route in ('direct', 'partner')),
+  -- What SHAPE the work is, which a bar's length cannot say. A reader
+  -- looking at the Sprint Roadmap asks whether a stream ENDS: settlement
+  -- automation and the EIT build work are bounded activities with a
+  -- clear objective, the inbound API is bounded but delivered in stages
+  -- where any stage is a legitimate stopping point, and risk automation
+  -- is a standing objective maintained and improved rather than
+  -- finished. Null means unclassified.
+  --
+  -- NOT work_areas.scope, which is the filing taxonomy's portal/product
+  -- split and is what roadmap_current exposes under that name. Same
+  -- word, different question: that one asks WHERE work is filed, this
+  -- one asks WHETHER it ends.
+  scope text check (scope in ('finite', 'staged', 'continuous')),
+  -- The CEILINGS this work removes, one short sentence each. Not a
+  -- work_item_metrics row, and deliberately so: a metric counts what
+  -- changes per unit and sums across a sprint, whereas a cap - "8-10
+  -- merchants a day, because a human has to do the middle of it" - is a
+  -- limit that stops existing, and summing it would mean nothing.
+  -- Without this the board showed minutes saved and never the ceiling
+  -- that actually caps growth. Rendered on the workstream cards beneath
+  -- the metric tiles.
+  scale_notes text[] not null default '{}',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint work_items_parent_not_self check (parent_id is null or parent_id <> id),

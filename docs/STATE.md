@@ -1,37 +1,37 @@
 # Current state
 
-Updated: 2026-09-17 (Sprint roadmap overhauled; live on main)
+Updated: 2026-09-21 (Sprint roadmap re-mapped, widened to six streams)
 
 ## In progress
-Nothing blocking. Five workstreams sit in Now (23 rows, every item under
-one), 18 allocated across slots 0-10, streams in flight running 2-3-2.
-The plan is UNANCHORED on purpose: `sprint_plan.anchor_sprint` is null,
-so columns read Sprint 1..N and say so; slots stay zero-indexed. Board
-and cards are two modules now and two sheets.
+Nothing blocking. Six workstreams sit in Now, 25 items allocated across
+slots 0-4, streams in flight running 2-3-2-2-1. The plan is UNANCHORED
+on purpose: `sprint_plan.anchor_sprint` is null, so columns read
+Sprint 1..N and say so; slots stay zero-indexed.
 
 ## Next steps
 1. **Anchor the plan** when the start date and resource are known: set
    `sprint_plan.anchor_sprint`, then `select sprint_plan_project();`.
    Every column, code and date resolves from those two statements.
-2. **Regenerate the schema snapshot.** Stale for v_sprint_plan_streams:
-   15 columns recorded, 19 live, missing `summary` and the three audience
-   fields the 2026-09-16 migration added. Checked: the only drifted view,
-   and supabase/schema/ already declares them, so `npm run snapshot` then
-   `--write`. The sprint contract can then claim `pxp_staff_value`.
-3. **Cut a release.** docs/CHANGELOG.md hit its 600-line cap and could
-   not take a line, so the cap is raised as a HOLDING MEASURE only
-   (tests/size-budget.json). Roll Unreleased into a dated heading, tag
-   it, and put the cap back to 600.
-4. **Confirm what only the owner can.** Drafted benefits, metrics and
-   links wait: an assistant may never set `confirmed` or `owner_stated`.
-5. Pricing engine overhaul carries NO metrics; its card shows the empty
-   state. Experian's commercial model is still unknown and gates the
-   screening cost case, not its build.
+2. **Confirm what only the owner can.** Contract Adjustments is
+   `benefit_status = 'drafted'` and its link to Contract Management
+   Features is `proposed`. The four benefits rewritten on 21 Sep kept
+   the `confirmed` they held, because the owner dictated the substance.
+3. **Cut a release.** docs/CHANGELOG.md sits at 634 against a cap
+   raised to 700 as a HOLDING MEASURE (tests/size-budget.json). Roll
+   Unreleased into a dated heading, tag it, put the cap back to 600.
+4. `scope` and `scale_notes` are set on the six sprint workstreams
+   only. Everything else is null and `{}` and renders as nothing -
+   correct, but the Product Roadmap reads neither field yet.
+5. Pricing engine overhaul carries NO metrics; its card shows the
+   empty state. Experian's commercial model is still unknown and gates
+   the screening cost case, not its build.
 
 ## Verification the repo cannot do for itself
-- The sprint page signed in, on the projector: five stream colours
-  reading apart at a glance, and a bar opening the roadmap drawer.
-- Whether the mapping matches how the owner would sequence it.
+- The sprint page signed in, on the projector: six stream colours
+  reading apart, the scope chips, and the Priority scale toggle.
+- Whether the Sprint 5 contract set is the right MVP cut, and whether
+  the two rows moved out of Contract Management Features were the only
+  necessary ones.
 
 ## Open decisions
 - SECURITY: leaked-password protection still disabled in Supabase Auth.

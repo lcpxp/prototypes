@@ -148,6 +148,7 @@ create view public.work_items_board
     department, associated_departments, assignee, support_assignee,
     business_benefit, benefit_type, benefit_status,
     pxp_staff_value, partner_staff_value, merchant_value, sales_route,
+    scope, scale_notes,
     external_ref, requested_by, tags, attributes, sort_order,
     resolution, resolved_at, previously_completed_at, created_at, updated_at
   from public.work_items;

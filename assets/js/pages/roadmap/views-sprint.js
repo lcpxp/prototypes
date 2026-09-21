@@ -224,19 +224,62 @@
     return "grid-column:" + (startSlot + 2) + " / " + (endSlot + 3);
   }
 
-  // The gutter cell heads the label column instead of sitting empty, and
-  // carries the one statement that the numbering is relative - attached
-  // to the headings it qualifies, and said nowhere else on the page.
-  function headRow(cols, codeBySlot, anchored) {
-    var cells = "";
-    for (var s = 0; s < cols; s++) {
-      cells += '<span class="rmv-tl-col rmv-sp-col">' +
-        App.escape(slotLabel(s, codeBySlot)) + "</span>";
+  // The same axis, read as a PRIORITY SCALE instead of as sprints.
+  // Nothing about the plan changes: the columns, the order and the bars
+  // are identical, and what the reader is told they mean is what
+  // switches. That is honest rather than a relabelling trick, because
+  // the sequence already IS the ordering - work is allocated by
+  // workstream priority, so earlier columns hold higher-priority work
+  // by construction. Saying so lets the board be discussed as a set of
+  // priorities in a room that has not agreed a start date, without a
+  // second ordering to keep in step with the first.
+  //
+  // Only the two ENDS are labelled. A scale is defined by its extremes,
+  // and captioning every column "high-ish" would be inventing precision
+  // the ordering does not carry; the rule drawn across the heads
+  // (assets/css/sprints.css) is what joins them into one scale.
+  function priorityCells(cols) {
+    if (cols === 1) {
+      return '<span class="rmv-tl-col rmv-sp-col rmv-sp-col--priority">' +
+        "Priority</span>";
     }
-    return '<div class="rmv-tl-head rmv-sp-head">' +
+    var out = "";
+    for (var s = 0; s < cols; s++) {
+      var label = s === 0 ? "Highest priority"
+        : (s === cols - 1 ? "Lowest priority" : "");
+      out += '<span class="rmv-tl-col rmv-sp-col rmv-sp-col--priority">' +
+        label + "</span>";
+    }
+    return out;
+  }
+
+  // The gutter cell heads the label column instead of sitting empty, and
+  // carries the one statement that qualifies the headings beside it -
+  // that the numbering is relative, or that the columns are a scale.
+  // Whichever reading is on, it is said once and nowhere else.
+  function headRow(cols, codeBySlot, anchored, opts) {
+    var priority = !!(opts && opts.priorityLabels);
+    var cells = "";
+    if (priority) {
+      cells = priorityCells(cols);
+    } else {
+      for (var s = 0; s < cols; s++) {
+        cells += '<span class="rmv-tl-col rmv-sp-col">' +
+          App.escape(slotLabel(s, codeBySlot)) + "</span>";
+      }
+    }
+    // The sprint note would be answering a question nobody asked once
+    // the columns stop claiming to be sprints, so the two are
+    // alternatives rather than both.
+    var note = priority
+      ? '<span class="rmv-sp-note">Left is highest priority, right is ' +
+        "lowest.</span>"
+      : (anchored ? "" : '<span class="rmv-sp-note">Numbering is relative ' +
+        "until a start date is set.</span>");
+    return '<div class="rmv-tl-head rmv-sp-head' +
+      (priority ? " rmv-sp-head--priority" : "") + '">' +
       '<span class="rmv-tl-label rmv-sp-head-label">Workstream' +
-      (anchored ? "" : '<span class="rmv-sp-note">Numbering is relative ' +
-        "until a start date is set.</span>") + "</span>" + cells + "</div>";
+      note + "</span>" + cells + "</div>";
   }
 
   function wrap(inner, cols, wide, opts) {
@@ -381,7 +424,7 @@
         "</div>";
     }).join("");
 
-    return wrap(headRow(ax.cols, ax.codeBySlot, ax.anchored) + body,
+    return wrap(headRow(ax.cols, ax.codeBySlot, ax.anchored, opts) + body,
       ax.cols, opts.wide, opts) +
       C().streamNotes(ordered.filter(function (st) {
         return !dropped(st.workstream_id, opts);
@@ -469,7 +512,7 @@
       return head + bars;
     }).join("");
 
-    return wrap(headRow(ax.cols, ax.codeBySlot, ax.anchored) + body,
+    return wrap(headRow(ax.cols, ax.codeBySlot, ax.anchored, opts) + body,
       ax.cols, opts.wide, opts) +
       C().streamNotes(notesOrder.filter(function (st) {
         return !dropped(st.workstream_id, opts);

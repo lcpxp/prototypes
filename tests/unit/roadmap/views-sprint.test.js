@@ -329,3 +329,68 @@ test("every rendered value is escaped", () => {
   assert.doesNotMatch(html, /<script>alert/, "benefit text must be escaped");
   assert.match(html, /&lt;img/, "the escaped form is what reaches the DOM");
 });
+
+test("the axis can be read as a priority scale instead of as sprints", () => {
+  // The columns, the order and the bars are identical; what switches is
+  // what the reader is told they mean. Not a relabelling trick: work is
+  // allocated by workstream priority, so earlier columns hold
+  // higher-priority work by construction. This lets the board be
+  // discussed as an ordering in a room that has not agreed a start date.
+  const V = loadView();
+  const o = { priorityLabels: true };
+  for (const html of [V.sprintStreams(sample(), o), V.sprintItems(sample(), o)]) {
+    assert.match(html, /Highest priority/, "one end of the scale is labelled");
+    assert.match(html, /Lowest priority/, "and so is the other");
+    assert.doesNotMatch(html, /rmv-sp-col">Sprint /,
+      "the column heads stop claiming to be sprints while the scale is on");
+    assert.match(html, /Left is highest priority, right is lowest/,
+      "and the gutter says which way the scale runs");
+    assert.doesNotMatch(html, /Numbering is relative until a start date is set/,
+      "the sprint note answers a question nobody asked in this reading");
+    assert.match(html, /rmv-sp-head--priority/,
+      "the head says which reading it is carrying");
+  }
+});
+
+test("only the ends of the priority scale are captioned", () => {
+  // A scale is defined by its extremes. Captioning the columns between
+  // them would invent precision the ordering does not carry.
+  const V = loadView();
+  const html = V.sprintStreams(sample(), { priorityLabels: true });
+  assert.equal((html.match(/Highest priority/g) || []).length, 1);
+  assert.equal((html.match(/Lowest priority/g) || []).length, 1);
+  assert.equal((html.match(/rmv-sp-col--priority/g) || []).length, 4,
+    "every column still gets a head cell, captioned or not, or the rule " +
+    "joining them into one scale would stop halfway");
+});
+
+test("the priority scale relabels the axis and moves nothing", () => {
+  // If it ever started reordering or re-spanning, the board would
+  // disagree with the database about what is allocated - the one thing
+  // this board must not do, in either reading.
+  const V = loadView();
+  const plain = V.sprintItems(sample());
+  const scaled = V.sprintItems(sample(), { priorityLabels: true });
+  const bars = (h) => (h.match(/grid-column:\d+ \/ \d+/g) || []).join(",");
+  assert.equal(bars(plain), bars(scaled),
+    "every bar occupies exactly the columns it did before");
+  assert.equal((plain.match(/data-item-id=/g) || []).length,
+    (scaled.match(/data-item-id=/g) || []).length,
+    "and the same rows are drawn");
+});
+
+test("a one-column plan calls the scale what it is", () => {
+  // "Highest" and "Lowest" on the same cell would be nonsense.
+  const V = loadView();
+  const base = sample();
+  const one = {
+    sprintItems: [base.sprintItems[0]],
+    sprintStreams: [Object.assign({}, base.sprintStreams[0],
+      { first_slot: 0, last_slot: 0, item_count: 1 })],
+    metrics: [], sprintCodes: {},
+  };
+  const html = V.sprintStreams(one, { priorityLabels: true });
+  assert.match(html, /rmv-sp-col--priority">Priority</,
+    "a single column is simply the priority column");
+  assert.doesNotMatch(html, /Highest priority/, "with no scale to run along");
+});

@@ -185,3 +185,80 @@ test("both views carry the same workstream summaries, at stream level only", () 
     "one card per workstream, never one per item");
 });
 
+test("a card says whether the stream ever ends", () => {
+  // A bar's length says when work runs and never whether it stops. A
+  // room being asked to fund a stream asks the second question, and the
+  // board had no answer to it: six bars of similar shape, one of which
+  // is a standing commitment rather than a piece of work with an end.
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].scope = "finite";
+  data.sprintStreams[1].scope = "continuous";
+  const html = V.sprintStreams(data);
+  assert.match(html,
+    /rmv-sp-scope rmv-sp-scope--finite">Finite scope - this one ends</,
+    "a bounded stream says so");
+  assert.match(html,
+    /rmv-sp-scope--continuous">Ongoing - maintained and improved, not finished</,
+    "and a standing one says something different in WORDS, so the fact " +
+    "survives a projector that flattens the dashed outline carrying it too");
+});
+
+test("a staged stream says a stage is a place it can stop", () => {
+  // The distinction that would otherwise be lost: staged work is
+  // finite, but stopping after a stage is a legitimate outcome rather
+  // than an abandonment, and that is a different thing to say about a
+  // stream than either "this ends" or "this runs forever".
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].scope = "staged";
+  assert.match(V.sprintStreams(data),
+    /Staged scope - each stage is a stopping point/);
+});
+
+test("a stream with no scope recorded claims none", () => {
+  // Defaulting to "finite" would be inventing a commitment nobody made.
+  const V = loadView();
+  assert.doesNotMatch(V.sprintStreams(sample()), /rmv-sp-scope/,
+    "an unclassified stream must not be labelled as bounded by default");
+});
+
+test("the ceilings a stream lifts sit under the figures", () => {
+  // The tiles answer "how much, per unit". These answer "and what stops
+  // being a limit", which is the half a figure cannot carry: 8-10
+  // merchants a day is a wall, not a quantity to be summed across a
+  // sprint. They sit under the tiles because they are the prose half of
+  // the same claim, not a second set of numbers.
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].scale_notes = [
+    "Manual setup caps throughput at 8-10 merchants a day; automating it removes the ceiling.",
+    "An approval landing out of hours stops waiting for someone to be at a desk.",
+  ];
+  const html = V.sprintStreams(data);
+  assert.match(html,
+    /rmv-sp-scale-tag">Manual setup caps throughput at 8-10 merchants a day/,
+    "the ceiling is stated in full, not truncated to a figure");
+  assert.equal((html.match(/rmv-sp-scale-tag/g) || []).length, 2,
+    "one tag per ceiling: merged into a paragraph they stop being scannable");
+  const tile = html.indexOf("rmv-sp-metrics");
+  const scale = html.indexOf("rmv-sp-scale");
+  const prose = html.indexOf("rmv-sp-more");
+  assert.ok(tile > -1 && tile < scale, "the figures come first");
+  assert.ok(scale < prose, "and the long-form case is still last on the card");
+});
+
+test("a stream with no ceiling recorded renders no tag list", () => {
+  const V = loadView();
+  assert.doesNotMatch(V.sprintStreams(sample()), /rmv-sp-scale/,
+    "an empty list must not leave an empty ul on the card");
+});
+
+test("scope and ceiling text are escaped like everything else", () => {
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].scale_notes = ['<script>alert(1)</script>'];
+  const html = V.sprintStreams(data);
+  assert.doesNotMatch(html, /<script>alert/, "a ceiling note must be escaped");
+  assert.match(html, /&lt;script/, "the escaped form is what reaches the DOM");
+});

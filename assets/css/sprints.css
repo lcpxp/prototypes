@@ -452,3 +452,27 @@
   .rmv-sp-label,
   .rmv-sp-head-label { background: transparent; }
 }
+
+/* THE AXIS READ AS A PRIORITY SCALE. Same columns, same bars; the
+   headings stop claiming to be sprints and say what the ordering
+   already means. Only the two ends carry words, so the rule drawn
+   across every head is what joins them into one scale rather than two
+   captions that happen to sit in the same row. */
+.rmv-sp-col--priority {
+  border-block-start: 2px solid var(--line-strong);
+  padding-block-start: var(--s-1);
+}
+
+/* The ends are the scale's definition, so they are set in the heading's
+   own weight while the columns between them carry the rule alone. */
+.rmv-sp-head--priority .rmv-sp-col--priority:first-of-type,
+.rmv-sp-head--priority .rmv-sp-col--priority:last-of-type {
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
+}
+
+/* Right-aligned, so "Lowest priority" ends where the scale ends rather
+   than floating in the middle of its column. */
+.rmv-sp-head--priority .rmv-sp-col--priority:last-of-type {
+  text-align: end;
+}

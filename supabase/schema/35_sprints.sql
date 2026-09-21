@@ -318,6 +318,10 @@ create view public.v_sprint_plan_streams with (security_invoker = on) as
     ws.summary,
     ws.business_benefit, ws.benefit_type, ws.benefit_status,
     ws.pxp_staff_value, ws.partner_staff_value, ws.merchant_value,
+    -- What shape the stream is, and which ceilings it lifts. Both sit
+    -- on work_items; the view carries them so a card needs no second
+    -- fetch to say whether a stream ends.
+    ws.scope, ws.scale_notes,
     min(v.effective_slot) as first_slot,
     max(v.effective_end_slot) as last_slot,
     max(v.effective_end_slot) - min(v.effective_slot) + 1 as slots_spanned,
@@ -330,13 +334,14 @@ create view public.v_sprint_plan_streams with (security_invoker = on) as
   join public.work_items ws on ws.id = v.workstream_id
   group by ws.id, ws.title, ws.priority, ws.department, ws.summary,
            ws.business_benefit, ws.benefit_type, ws.benefit_status,
-           ws.pxp_staff_value, ws.partner_staff_value, ws.merchant_value;
+           ws.pxp_staff_value, ws.partner_staff_value, ws.merchant_value,
+           ws.scope, ws.scale_notes;
 
 revoke all on public.v_sprint_plan_streams from public, anon;
 grant select on public.v_sprint_plan_streams to authenticated;
 
 comment on view public.v_sprint_plan_streams is
-  'The Sprint Roadmap stakeholder view: one row per workstream with its span, contents, what it is (summary), who stops doing what (the audience-value fields) and the benefit prose behind them. A read entry point, not a board dependency.';
+  'The Sprint Roadmap stakeholder view: one row per workstream with its span, contents, what it is (summary), its scope and the ceilings it lifts (scale_notes), who stops doing what (the audience-value fields) and the benefit prose behind them. A read entry point, not a board dependency.';
 
 -- Load per slot: the one place the capacity and concurrency arithmetic
 -- happens, so a re-map is checked rather than eyeballed. An allocation

@@ -371,6 +371,14 @@
     {
       "name": "sprint_plan_streams_carries_summary_and_audience_value",
       "version": "20260916121500"
+    },
+    {
+      "name": "work_items_scope_and_scale_notes",
+      "version": "20260921080014"
+    },
+    {
+      "name": "work_items_board_carries_scope_and_scale_notes",
+      "version": "20260921105313"
     }
   ],
   "policies": [
@@ -1425,6 +1433,8 @@
       "resolution",
       "resolved_at",
       "sales_route",
+      "scale_notes",
+      "scope",
       "sort_order",
       "source_document_id",
       "start_sprint",
@@ -1610,9 +1620,15 @@
       "first_slot",
       "item_count",
       "last_slot",
+      "merchant_value",
+      "partner_staff_value",
       "priority",
+      "pxp_staff_value",
+      "scale_notes",
+      "scope",
       "slots_spanned",
       "start_code",
+      "summary",
       "workstream_id",
       "workstream_title"
     ],
@@ -1663,6 +1679,8 @@
       "resolution",
       "resolved_at",
       "sales_route",
+      "scale_notes",
+      "scope",
       "sort_order",
       "source_document_id",
       "start_sprint",

@@ -117,6 +117,8 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `benefit_status` | drafted, confirmed | null | required whenever `business_benefit` is set; drafted renders with a visible marker |
 | `pxp_staff_value` / `partner_staff_value` / `merchant_value` | text | null | who feels it. All optional, and an empty merchant reading is usually CORRECT |
 | `sales_route` | direct, partner | null | Acquirer staff onboarding, or a partner's staff doing it |
+| `scope` | finite, staged, continuous | null | Whether the work ENDS: a bounded activity with a clear objective, one delivered in stages where any stage is a valid stopping point, or a standing objective maintained and improved rather than finished. Sprint Roadmap cards. NOT `work_areas.scope`, which is the portal/product filing split |
+| `scale_notes` | text[] | `{}` | The ceilings this work lifts, one short sentence each - a daily cap or throughput limit that stops existing ("8-10 merchants a day"). Prose, because a cap cannot be summed across a sprint; `work_item_metrics` holds the countable half. Rendered under the metric tiles |
 | `resolution` | text | null | closing note (park/drop) |
 | `previously_completed_at` | timestamptz | null | delivered latch: pins a done item to Previously completed (see below) |
 
