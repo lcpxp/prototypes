@@ -262,3 +262,24 @@ test("scope and ceiling text are escaped like everything else", () => {
   assert.doesNotMatch(html, /<script>alert/, "a ceiling note must be escaped");
   assert.match(html, /&lt;script/, "the escaped form is what reaches the DOM");
 });
+
+test("a card states its rank when the axis is read as priority", () => {
+  // Reading the columns as a priority scale while every card underneath
+  // says "SPRINTS 1 TO 4" is two answers to one question. The rank
+  // REPLACES the span, and it is the number already on the bar, so the
+  // board and the card cannot disagree about where a stream sits.
+  const V = loadView();
+  const html = V.sprintStreams(sample(), { priorityLabels: true });
+  assert.match(html, /Priority 1 of 2/, "the leading stream states its rank");
+  assert.match(html, /Priority 2 of 2/, "and so does the one behind it");
+  assert.doesNotMatch(html, /Sprints 1 to 4/,
+    "the sprint span goes: in this reading the columns are not sprints");
+});
+
+test("the sprint span is what a card leads with by default", () => {
+  const V = loadView();
+  const html = V.sprintStreams(sample());
+  assert.match(html, /Sprints 1 to 4/, "the default reading is still the span");
+  assert.doesNotMatch(html, /Priority \d+ of/,
+    "and it does not claim a rank nobody asked for");
+});

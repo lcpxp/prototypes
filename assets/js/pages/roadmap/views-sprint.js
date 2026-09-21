@@ -385,6 +385,9 @@
       ext: externalSlots(rows),
       no: {},
       cls: function (id) { return hiddenCls(id, opts); },
+      // Which reading the axis is carrying, so a card does not talk in
+      // sprints while the columns above it are a priority scale.
+      byPriority: !!opts.priorityLabels,
     };
 
     var ordered = streams.slice().sort(function (a, b) {
@@ -392,6 +395,7 @@
         byNullableAsc(a.priority, b.priority);
     });
     ctx.no = numbering(ordered, function (r) { return r.workstream_id; });
+    ctx.streamCount = ordered.length;
 
     // The bars run CONTIGUOUSLY, and what each stream buys sits below
     // the board rather than between the bars. A benefit is a sentence
@@ -446,10 +450,21 @@
       streamById[s.workstream_id] = s;
     });
 
+    // Ordered on the STREAM's own slot and priority, which is what the
+    // stakeholder view sorts on - not on the first item's. Sorting by the
+    // first item silently renumbered the board between the two tabs
+    // whenever a stream's leading item did not share its rank: Payment
+    // Service (stream priority 10, leading item 20) fell behind EIT
+    // (stream 20, leading item 10), so stream 1 on one tab was stream 2
+    // on the other while both claimed to be the same plan. Falls back to
+    // the item for a loose row with no stream of its own.
     var order = grouped.order.slice().sort(function (a, b) {
+      var wa = streamById[a], wb = streamById[b];
       var sa = grouped.byStream[a][0], sb = grouped.byStream[b][0];
-      return num(sa.effective_slot, 0) - num(sb.effective_slot, 0) ||
-        byNullableAsc(sa.priority, sb.priority);
+      return (wa ? num(wa.first_slot, 0) : num(sa.effective_slot, 0)) -
+             (wb ? num(wb.first_slot, 0) : num(sb.effective_slot, 0)) ||
+        byNullableAsc(wa ? wa.priority : sa.priority,
+                      wb ? wb.priority : sb.priority);
     });
 
     // The same numbers, colours and order the stakeholder view uses, so
@@ -465,7 +480,11 @@
       metrics: groupMetrics((data && data.metrics) || []),
       ext: externalSlots(rows),
       no: numbering(notesOrder, function (r) { return r.workstream_id; }),
+      streamCount: notesOrder.length,
       cls: function (id) { return hiddenCls(id, opts); },
+      // Which reading the axis is carrying, so a card does not talk in
+      // sprints while the columns above it are a priority scale.
+      byPriority: !!opts.priorityLabels,
     };
 
     var body = order.filter(function (key) {

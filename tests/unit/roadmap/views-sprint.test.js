@@ -394,3 +394,31 @@ test("a one-column plan calls the scale what it is", () => {
     "a single column is simply the priority column");
   assert.doesNotMatch(html, /Highest priority/, "with no scale to run along");
 });
+
+test("both tabs number the plan the same way", () => {
+  // The delivery view sorted streams by their FIRST ITEM's priority
+  // while the stakeholder view sorted by the stream's own, so a stream
+  // whose leading item did not share its rank swapped places between
+  // tabs: stream 1 on one tab was stream 2 on the other, both claiming
+  // to be the same plan. The number is the thing that pairs a bar with
+  // its card across a room, and it cannot move when a tab does.
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].priority = 10;   // Payment Service leads as a STREAM
+  data.sprintStreams[1].priority = 20;
+  data.sprintStreams[0].first_slot = 0;
+  data.sprintStreams[1].first_slot = 0;
+  data.sprintItems.forEach((r) => {
+    r.priority = r.workstream_id === "w1" ? 20 : 10;  // ...but not by item
+  });
+  const leads = (html, title) =>
+    html.includes('rmv-sp-no" aria-hidden="true">1</span>' + title);
+  const plan = V.sprintStreams(data);
+  const delivery = V.sprintItems(data);
+  assert.ok(leads(plan, "Payment Service"),
+    "the stakeholder view numbers the leading STREAM 1");
+  assert.ok(leads(delivery, "Payment Service"),
+    "and the delivery view must reach the same answer, not sort on the item");
+  assert.ok(!leads(delivery, "Fulfilment"),
+    "the stream with the higher-ranked leading item must not take the number");
+});

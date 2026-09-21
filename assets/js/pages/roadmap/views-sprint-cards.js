@@ -45,6 +45,17 @@
       : "Sprints " + (first + 1) + " to " + (last + 1);
   }
 
+  // Where the stream sits in the ordering, for when the axis is being
+  // read as a priority scale. It REPLACES the span rather than joining
+  // it: in that reading the columns are not sprints, so a sprint span
+  // is answering a question the board is no longer asking. The number
+  // is the one already on the bar and the card, so the two cannot
+  // disagree.
+  function rankText(rank, total) {
+    if (!rank) return "Unranked";
+    return total ? "Priority " + rank + " of " + total : "Priority " + rank;
+  }
+
   function countText(n) {
     return n + (n === 1 ? " item" : " items");
   }
@@ -183,7 +194,9 @@
     var notes = ordered.map(function (st) {
       var id = st.workstream_id;
       var ext = ctx.ext[id];
-      var meta = [spanText(st), countText(num(st.item_count, 0))];
+      var meta = [
+        ctx.byPriority ? rankText(ctx.no[id], ctx.streamCount) : spanText(st),
+        countText(num(st.item_count, 0))];
       if (ext && ext.parties.length) {
         meta.push("Built elsewhere: " + ext.parties.join(", "));
       }
@@ -223,6 +236,7 @@
     scopeChip: scopeChip,
     scaleTags: scaleTags,
     spanText: spanText,
+    rankText: rankText,
     countText: countText,
   };
 })();

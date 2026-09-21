@@ -461,6 +461,18 @@
 .rmv-sp-col--priority {
   border-block-start: 2px solid var(--line-strong);
   padding-block-start: var(--s-1);
+  /* .rmv-sp-head bottom-aligns its cells to their own content, which
+     this rule cannot live with: an uncaptioned cell has no line box and
+     a captioned one has one or two depending on how the words wrap, so
+     every cell started its top border at a different height and the
+     scale read as three offset boxes rather than one line.
+
+     Stretching is the fix that holds BY CONSTRUCTION. Matching the
+     heights instead - a min-height, or a shim line box - works until
+     the captions wrap at a narrow column, which they do at 768px and
+     below, and then steps again. A stretched cell is the height of its
+     grid row whatever is in it, so every top edge is the same edge. */
+  align-self: stretch;
 }
 
 /* The ends are the scale's definition, so they are set in the heading's
