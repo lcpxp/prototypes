@@ -283,3 +283,43 @@ test("the sprint span is what a card leads with by default", () => {
   assert.doesNotMatch(html, /Priority \d+ of/,
     "and it does not claim a rank nobody asked for");
 });
+
+test("a card tags the functions that have a claim but do not own it", () => {
+  // Product and Technology or Operations own every stream on this board,
+  // so printing the OWNER would put the same two words on all six cards
+  // and carry no information. What a reader wants is the function
+  // outside that pair whose requirements the work answers to.
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].associated_departments =
+    ["operations_onboarding", "risk_underwriting"];
+  const html = V.sprintStreams(data);
+  assert.match(html, /rmv-sp-stake-label">Also a stakeholder</,
+    "the relationship is named, singular for one function");
+  assert.match(html, /rmv-sp-stake-tag">Risk &amp; Underwriting</,
+    "and the function is tagged, in the registry's exact wording");
+  assert.doesNotMatch(html, /Operations and Onboarding/,
+    "a delivery function is not a stakeholder tag: it owns the work");
+});
+
+test("two extra stakeholders read as plural, and both are tagged", () => {
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].associated_departments =
+    ["legal_compliance", "finance_revenue", "product_technology"];
+  const html = V.sprintStreams(data);
+  assert.match(html, /rmv-sp-stake-label">Also stakeholders</);
+  assert.match(html, /Legal &amp; Compliance/);
+  assert.match(html, /Finance and Revenue/);
+  assert.doesNotMatch(html, /Product and Technology/,
+    "the delivery pair stays out however many others there are");
+});
+
+test("a stream with no outside stakeholder shows no tag row", () => {
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].associated_departments = ["product_technology"];
+  data.sprintStreams[1].associated_departments = [];
+  assert.doesNotMatch(V.sprintStreams(data), /rmv-sp-stake/,
+    "an empty list must not leave a dangling label on the card");
+});

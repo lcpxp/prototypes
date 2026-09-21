@@ -288,3 +288,51 @@
   .rmv-sp-scope { border-color: var(--line-strong); }
   .rmv-sp-scale-tag { border-inline-start-color: var(--line-strong); }
 }
+
+/* The classifier row: what shape the stream is, and who else has a claim
+   on it. Both answer "what kind of thing is this" rather than "what does
+   it buy", so they sit together under the span and count and above the
+   summary. Wrapping rather than scrolling, because a card is a column
+   and these are the two facts that must never be cut off. */
+.rmv-sp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+/* Set as a label plus its tags, not as one sentence: the label is the
+   relationship and the tags are the functions, and a reader scanning six
+   cards for "who cares about this" needs the second to be the thing that
+   stands out. The owner is deliberately absent - Product and Technology
+   or Operations own every stream here, so naming them would be six
+   identical tags carrying no information. */
+.rmv-sp-stake {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-2);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-slight);
+}
+.rmv-sp-stake-label {
+  text-transform: uppercase;
+  color: var(--faint);
+}
+/* The lane's own accent pulled toward --ink, the same move the value
+   label and the number chip make, so the tag clears AA on every stream
+   in both themes rather than only on the darker lanes. */
+.rmv-sp-stake-tag {
+  padding: var(--s-0) var(--s-2);
+  border: 1px solid color-mix(in srgb, var(--rm-a, var(--line-strong)) 45%, transparent);
+  border-radius: var(--radius-sm);
+  background: var(--alt-surface);
+  color: color-mix(in srgb, var(--rm-a, var(--muted)) 85%, var(--ink));
+  text-transform: none;
+}
+
+@media print {
+  .rmv-sp-stake-tag { border-color: var(--line-strong); }
+}

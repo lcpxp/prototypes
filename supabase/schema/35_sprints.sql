@@ -310,6 +310,11 @@ create view public.v_sprint_plan_streams with (security_invoker = on) as
   select
     ws.id as workstream_id, ws.title as workstream_title,
     ws.priority, ws.department,
+    -- Who ELSE has a claim on the stream. The owner is Product and
+    -- Technology or Operations on every row of this board, so it is the
+    -- same two words on every card; the function outside that pair is
+    -- what a reader is actually looking for.
+    ws.associated_departments,
     -- The stakeholder cards below the board are a DISCUSSION surface:
     -- what the thing is (summary), who stops doing what (the three
     -- audience-value fields), then the prose for whoever wants it. All
@@ -332,7 +337,8 @@ create view public.v_sprint_plan_streams with (security_invoker = on) as
     public.sprint_code_for_slot(max(v.effective_end_slot)) as end_code
   from public.v_sprint_plan_items v
   join public.work_items ws on ws.id = v.workstream_id
-  group by ws.id, ws.title, ws.priority, ws.department, ws.summary,
+  group by ws.id, ws.title, ws.priority, ws.department,
+           ws.associated_departments, ws.summary,
            ws.business_benefit, ws.benefit_type, ws.benefit_status,
            ws.pxp_staff_value, ws.partner_staff_value, ws.merchant_value,
            ws.scope, ws.scale_notes;
@@ -341,7 +347,7 @@ revoke all on public.v_sprint_plan_streams from public, anon;
 grant select on public.v_sprint_plan_streams to authenticated;
 
 comment on view public.v_sprint_plan_streams is
-  'The Sprint Roadmap stakeholder view: one row per workstream with its span, contents, what it is (summary), its scope and the ceilings it lifts (scale_notes), who stops doing what (the audience-value fields) and the benefit prose behind them. A read entry point, not a board dependency.';
+  'The Sprint Roadmap stakeholder view: one row per workstream with its span, contents, what it is (summary), its scope and the ceilings it lifts (scale_notes), who owns it and who else has a claim on it (department, associated_departments), who stops doing what (the audience-value fields) and the benefit prose behind them. A read entry point, not a board dependency.';
 
 -- Load per slot: the one place the capacity and concurrency arithmetic
 -- happens, so a re-map is checked rather than eyeballed. An allocation

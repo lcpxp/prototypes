@@ -164,6 +164,33 @@
       '">' + App.escape(label) + "</p>";
   }
 
+  // WHO ELSE HAS A CLAIM ON THE STREAM. Product and Technology or
+  // Operations own every row on this board, so printing the owner would
+  // put the same two words on all six cards and say nothing. What earns
+  // a tag is a function OUTSIDE that delivery pair whose requirements
+  // the work answers to - Risk & Underwriting on the risk pipeline,
+  // Legal & Compliance on the contract - which is exactly what
+  // associated_departments records: visibility without ownership.
+  //
+  // A rule rather than two special cases, so Finance and Revenue shows
+  // on the pricing engine for the same reason and nothing has to be
+  // hand-maintained when a seventh stream arrives.
+  var DELIVERS = ["product_technology", "operations_onboarding"];
+
+  function stakeTags(st) {
+    var extra = (st.associated_departments || []).filter(function (key) {
+      return DELIVERS.indexOf(key) === -1;
+    });
+    if (!extra.length) return "";
+    // App.departmentLabel is the ONE home for the exact wording, mixed
+    // "&" and "and" included; a label typed here would be a second.
+    return '<p class="rmv-sp-stake"><span class="rmv-sp-stake-label">' +
+      (extra.length === 1 ? "Also a stakeholder" : "Also stakeholders") +
+      "</span>" + extra.map(function (key) {
+        return '<span class="rmv-sp-stake-tag">' +
+          App.escape(App.departmentLabel(key) || key) + "</span>";
+      }).join("") + "</p>";
+  }
   // THE CEILINGS A STREAM LIFTS, under the figures rather than beside
   // them. A metric tile answers "how much, per unit"; these answer
   // "and what stops being a limit", which is the half a figure cannot
@@ -223,7 +250,8 @@
         '<p class="rmv-sp-meta">' + meta.map(function (bit) {
           return '<span class="rmv-sp-meta-bit">' + App.escape(bit) + "</span>";
         }).join("") + "</p>" +
-        scopeChip(st) + head + valueList(st) +
+        '<div class="rmv-sp-chips">' + scopeChip(st) + stakeTags(st) +
+        "</div>" + head + valueList(st) +
         metricTiles(ctx.metrics[id]) + scaleTags(st) + prose + "</div>";
     }).join("");
     return notes ? '<div class="rmv-sp-notes">' + notes + "</div>" : "";
@@ -234,6 +262,7 @@
     metricTiles: metricTiles,
     valueList: valueList,
     scopeChip: scopeChip,
+    stakeTags: stakeTags,
     scaleTags: scaleTags,
     spanText: spanText,
     rankText: rankText,

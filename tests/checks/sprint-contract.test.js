@@ -50,6 +50,10 @@ const CONTRACT = {
     // pxp_staff_value - are now claimable, along with the two added
     // with them: what shape a stream is, and which ceilings it lifts.
     "scope", "scale_notes",
+    // Who else has a claim on the stream. The OWNER is deliberately not
+    // claimed: it is Product and Technology or Operations on every row
+    // here, so the cards never print it.
+    "associated_departments",
   ],
   v_work_item_metric_rollup: [
     "workstream_id", "metric_kind", "unit", "basis", "total",

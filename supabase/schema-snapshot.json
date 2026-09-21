@@ -379,6 +379,10 @@
     {
       "name": "work_items_board_carries_scope_and_scale_notes",
       "version": "20260921105313"
+    },
+    {
+      "name": "sprint_plan_streams_carries_associated_departments",
+      "version": "20260921150444"
     }
   ],
   "policies": [
@@ -1610,6 +1614,7 @@
       "streams_in_flight"
     ],
     "v_sprint_plan_streams": [
+      "associated_departments",
       "benefit_status",
       "benefit_type",
       "business_benefit",
