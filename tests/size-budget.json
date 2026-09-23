@@ -52,7 +52,7 @@
       "seam": "Re-judged 2026-09-07 at 586 lines, the revisit its previous note set at 550. Still not worth splitting, and the seam is now a real one rather than a hypothetical: the indexed content shell (.ref-layout, .ref-sidebar, .ref-toolbar and their 48rem breakpoint) is used by exactly two pages, the reference viewer and the platform page, so it could move to its own sheet. That trade is 1.5KB off 22 pages against one extra request on 2 - and this repo has already decided that direction once, removing 21 requests by merging two nav tools. It stays. Next trigger is the 600-line hard cap, where the shell is what leaves."
     },
     "assets/css/roadmap-detail.css": {
-      "seam": "Not yet. It is the one stylesheet for the roadmap drawer and the executive board, loaded only by modules/roadmap/, so splitting it would add a request to the heaviest page in the site to save three lines. The seam when it passes 550 is the executive board rules (.rmd-exec*, the department-first rollup) leaving for roadmap-exec.css, since the board and the drawer share no selectors."
+      "seam": "Not yet, at 533. It is the one stylesheet for the roadmap drawer and the executive board, loaded by modules/roadmap/ and - for the drawer - modules/sprints/. It grew on 23 Sep 2026 by the drawer's \"Where it stands\" brief and the .rm-em emphasis rule, both drawer concerns. The seam when it passes 550 is the executive board rules (.rmd-exec*, the department-first rollup) leaving for roadmap-exec.css: the sprint page loads this sheet for the drawer alone and pays for board rules it never uses, so that split now saves bytes on a page as well as lines."
     },
     "assets/css/roadmap-views.css": {
       "seam": "Not yet, and the closest of the stylesheets to a real seam: the board layouts share one coordinate model, so splitting means duplicating that model or inventing a shared file that is most of it. The seventh view - the sprint roadmap - tested that and did not split it: assets/css/sprints.css reuses .rmv-tl and carries only what is new to sprints. It then took in the board chrome (.rm-toolbar, .rm-icon-toggle, .rm-state) that both board pages need, which is why it grew - a shared sheet is the right home for a shared strip. Revisit at 550, where the seam is that chrome leaving for a sheet of its own once a third page wants it."
@@ -61,7 +61,7 @@
       "seam": "Do not split. Tokens plus the dark-theme overrides: inherently long, no logic, and every value in the design system resolves here. A tokens-dark.css would add a request to all 24 pages for no reading gain."
     },
     "assets/js/pages/roadmap/detail.js": {
-      "seam": "Not yet. The value helpers already left for detail-values.js, which is what unfroze this file. The details and notes parsers are the next seam, at 550."
+      "seam": "Not yet, at 563 - one line over the 562 it stood at. The value helpers already left for detail-values.js, and on 23 Sep 2026 the current-state brief was built as its own file (detail-brief.js) rather than here, with the sprint-slot row collapsing onto the shared sprintWhen helper to pay for the wiring. The details and notes parsers are the next seam and the next addition to this file must take it."
     },
     "assets/js/pages/roadmap/roadmap.js": {
       "seam": "Not yet. The roadmap page already loads twelve modules and is the heaviest page in the site; a roadmap-fetch.js would make it thirteen. The page-load fetch and the phase/link enrichment in onAuthed are the seam when it passes 550."

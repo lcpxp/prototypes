@@ -323,3 +323,22 @@ test("a stream with no outside stakeholder shows no tag row", () => {
   assert.doesNotMatch(V.sprintStreams(data), /rmv-sp-stake/,
     "an empty list must not leave a dangling label on the card");
 });
+
+test("a card names what it unlocks and emphasises the cap and the amount", () => {
+  // The card answers two questions in turn - what the work saves, then
+  // what it unlocks - and the second is labelled so it does not read as
+  // more of the first. The ceiling and the figure carry emphasis in the
+  // stored sentence, bold and underlined, because they are the words a
+  // room should leave with.
+  const V = loadView();
+  const data = sample();
+  data.sprintStreams[0].scale_notes = [
+    "Keying by hand **caps fulfilment at 15-20 orders a day**; carrying them on the order **removes the ceiling**.",
+    "<script>alert(1)</script> **<b>x</b>**",
+  ];
+  const html = V.sprintStreams(data);
+  assert.match(html, /rmv-sp-vlabel">What it unlocks<\/span><ul class="rmv-sp-scale">/);
+  assert.match(html,
+    /Keying by hand <strong class="rm-em">caps fulfilment at 15-20 orders a day<\/strong>; carrying them on the order <strong class="rm-em">removes the ceiling<\/strong>\./);
+  assert.doesNotMatch(html, /\*\*|<script>|<b>x/, "markers are consumed and markup is escaped first");
+});

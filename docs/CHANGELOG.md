@@ -10,6 +10,15 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+- Work item drawer: opens on "Where it stands" - the current plan, not
+  the history. Status, sprint, step in the stream and its neighbours,
+  who builds it, stakeholders, and every open question, risk and
+  action; a workstream lists its planned steps with their summaries.
+  The fact grid folds under "All recorded fields", and a sprint reads
+  "Sprint 4" as the board does, never "Sprint +3".
+- Sprint roadmap: the caps a stream removes and their amounts are bold
+  and underlined, under a "What it unlocks" label on the card and in
+  the drawer.
 - Sprint roadmap: a workstream card now says whether the stream ever
   ends. "Finite scope - this one ends", "Staged scope - each stage is a
   stopping point" and "Ongoing - maintained and improved"

@@ -107,7 +107,7 @@ const COVERAGE = {
   // WORDING: "finite" and "continuous" are only useful as the sentences
   // they expand into, so the labels live with the cards that say them
   // rather than in the shared value map.
-  "work_items.scope": { file: "assets/js/pages/roadmap/views-sprint-cards.js" },
+  "work_items.scope": { file: "assets/js/pages/roadmap/detail-values.js" },
   // The countable half of a benefit. Every one of these is rendered
   // inline beside a number, so an unlabelled value reads as a figure
   // with no meaning attached.

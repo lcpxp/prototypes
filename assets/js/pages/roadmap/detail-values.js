@@ -120,6 +120,51 @@
     var r = App.sprints && App.sprints.sprintToRange(code);
     return r ? code + " (" + r.start + " to " + r.end + ")" : code;
   }
+  // Where an allocation sits, in the board's own words. Counted from
+  // one, like the board's columns: "Sprint +0" read as the sprint
+  // before the first one, and a drawer saying "+3" beside a board saying
+  // "Sprint 4" is two answers to one question. The stored slot answers
+  // when the view's effective slot is absent, and nothing is invented
+  // when neither is known.
+  function sprintWhen(al) {
+    if (!al) return "";
+    var n = function (v) { return v == null || v === "" ? NaN : Number(v); };
+    var start = n(al.effective_slot);
+    if (!isFinite(start)) start = n(al.slot);
+    if (!isFinite(start)) return "";
+    var end = n(al.effective_end_slot);
+    if (!isFinite(end) || end < start) end = start + (Number(al.span) || 1) - 1;
+    if (al.start_code) {
+      return end !== start && al.end_code
+        ? al.start_code + " to " + al.end_code : sprintRange(al.start_code);
+    }
+    return end !== start ? "Sprints " + (start + 1) + " to " + (end + 1)
+      : "Sprint " + (start + 1);
+  }
+
+  // WHAT SHAPE A STREAM IS. A bar's length says when the work runs,
+  // never whether it ever ends - the question a room asks about a stream
+  // it is being asked to fund. The wording carries the distinction
+  // rather than a colour, because "this ends" against "this is
+  // maintained" is the whole point and a hue cannot say it. One home:
+  // the sprint cards chip it and the drawer states it as a fact.
+  var SCOPE = {
+    finite: "Finite scope - this one ends",
+    staged: "Staged scope - each stage is a stopping point",
+    continuous: "Ongoing - maintained and improved",
+  };
+  function scopeLabel(v) { return SCOPE[v] || ""; }
+
+  // The one piece of inline markup a stored sentence may carry: a
+  // **ceiling or amount** a reader should not be able to miss. Escaped
+  // FIRST, so the only tag that can reach the DOM is the one added here,
+  // and a pair of asterisks is all an editor needs to know. Deliberately
+  // not Markdown: nothing else is interpreted.
+  function emphasis(text) {
+    return App.escape(String(text == null ? "" : text))
+      .replace(/\*\*([^*]+?)\*\*/g, '<strong class="rm-em">$1</strong>');
+  }
+
   function cap(v) { return v ? String(v).charAt(0).toUpperCase() + String(v).slice(1) : ""; }
   function keyLabel(k) { return cap(String(k).replace(/_/g, " ")); }
   function titleOf(id, ctx) {
@@ -190,6 +235,10 @@
     dateRange: dateRange,
     byPhase: byPhase,
     sprintRange: sprintRange,
+    sprintWhen: sprintWhen,
+    SCOPE: SCOPE,
+    scopeLabel: scopeLabel,
+    emphasis: emphasis,
     cap: cap,
     keyLabel: keyLabel,
     titleOf: titleOf,

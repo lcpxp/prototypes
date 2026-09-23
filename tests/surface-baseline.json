@@ -140,6 +140,9 @@
       "assets/js/pages/roadmap/detail-export.js",
       "assets/js/pages/roadmap/detail.js"
     ],
+    "roadmapDetailBrief": [
+      "assets/js/pages/roadmap/detail-brief.js"
+    ],
     "roadmapDetailValues": [
       "assets/js/pages/roadmap/detail-values.js"
     ],
@@ -788,6 +791,7 @@
         "assets/js/pages/roadmap/views-exec.js",
         "assets/js/pages/roadmap/views-cascade.js",
         "assets/js/pages/roadmap/detail-values.js",
+        "assets/js/pages/roadmap/detail-brief.js",
         "assets/js/pages/roadmap/detail.js",
         "assets/js/pages/roadmap/detail-export.js",
         "assets/js/pages/roadmap/export.js",
@@ -827,6 +831,7 @@
         "assets/js/core/detail.js",
         "assets/js/pages/roadmap/views.js",
         "assets/js/pages/roadmap/detail-values.js",
+        "assets/js/pages/roadmap/detail-brief.js",
         "assets/js/pages/roadmap/views-sprint.js",
         "assets/js/pages/roadmap/views-sprint-cards.js",
         "assets/js/pages/shared/lazy-detail.js",

@@ -30,6 +30,7 @@ function load() {
     "assets/js/pages/roadmap/views.js",
     "assets/js/pages/roadmap/views-breakdown.js",
     "assets/js/pages/roadmap/detail-values.js",
+    "assets/js/pages/roadmap/detail-brief.js",
     "assets/js/pages/roadmap/detail.js",
     "assets/js/pages/roadmap/detail-export.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
@@ -396,14 +397,17 @@ test("an allocation renders as curated rows, never as a raw object", () => {
       external_status: null, start_code: null, end_code: null, anchored: false },
   });
   const html = App.roadmapDetail.drawerHtml(it, ctxOf(App, data));
-  assert.match(html, /Sprint slot<\/dt><dd>Sprint \+3/, "the slot renders as a fact");
+  // Counted from one, as the board's columns are: slot 3 is the board's
+  // "Sprint 4", and a drawer saying "+3" beside it is a second answer.
+  assert.match(html, /Sprint slot<\/dt><dd>Sprint 4</, "the slot renders as a fact");
+  assert.doesNotMatch(html, /Sprint \+/, "never as an offset from zero");
   assert.doesNotMatch(html, /Anchored No/,
     "the object's remaining keys must not spill into the overflow");
   assert.doesNotMatch(html, />Allocation</,
     "and it must not appear as a row of its own");
 });
 
-test("an allocation with no effective_slot does not invent Sprint +0", () => {
+test("an allocation with no effective_slot does not invent a sprint", () => {
   // Defaulting a missing number to zero prints a confident wrong answer,
   // which is worse than printing nothing.
   const App = load();
@@ -412,14 +416,14 @@ test("an allocation with no effective_slot does not invent Sprint +0", () => {
     allocation: { span: 1, overlap: "parallel" },
   });
   assert.doesNotMatch(App.roadmapDetail.drawerHtml(it, ctxOf(App, data)),
-    /Sprint \+0/, "no slot is stated when none is known");
+    /Sprint slot|Sprint 1\b/, "no slot is stated when none is known");
 
   // But the stored slot still answers when the view's field is absent.
   const stored = Object.assign({}, data.items[0], {
     allocation: { slot: 2, span: 1, overlap: "parallel" },
   });
   assert.match(App.roadmapDetail.drawerHtml(stored, ctxOf(App, data)),
-    /Sprint \+2/, "slot answers when effective_slot does not");
+    /Sprint slot<\/dt><dd>Sprint 3</, "slot answers when effective_slot does not");
 });
 
 test("the drawer reads top down: what, what it buys, facts, then prose", () => {

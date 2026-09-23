@@ -140,25 +140,11 @@
       App.escape(text) + "</p></div>";
   }
 
-  // WHAT SHAPE THE STREAM IS. A bar's length says when the work runs,
-  // never whether it ever ends - and that is the question a room asks
-  // about a stream it is being asked to fund. Three answers, because
-  // three is what the work divides into: bounded activities with a
-  // clear objective, bounded ones delivered in stages where a stage is
-  // a legitimate place to stop, and standing objectives that are
-  // maintained and improved rather than finished.
-  //
-  // The wording carries the distinction rather than a colour, because
-  // the difference between "this ends" and "this is maintained" is the
-  // whole point and a hue cannot say it across a room.
-  var SCOPE = {
-    finite: "Finite scope - this one ends",
-    staged: "Staged scope - each stage is a stopping point",
-    continuous: "Ongoing - maintained and improved",
-  };
-
+  // WHAT SHAPE THE STREAM IS: finite, staged or ongoing. The wording
+  // lives in roadmap/detail-values.js, because the drawer states the
+  // same fact and one sentence must not have two homes.
   function scopeChip(st) {
-    var label = SCOPE[st.scope];
+    var label = App.roadmapDetailValues.scopeLabel(st.scope);
     if (!label) return "";
     return '<p class="rmv-sp-scope rmv-sp-scope--' + App.escape(st.scope) +
       '">' + App.escape(label) + "</p>";
@@ -201,12 +187,20 @@
   //
   // Sentences, so they are set as full-width rows rather than inline
   // pills: a sentence in a pill wraps into a shape nobody can scan.
+  // Labelled, because the card answers two questions in turn - what
+  // the work saves (the benefit line and the figures) and what it
+  // unlocks (these) - and an unlabelled list reads as more of the first.
+  // The ceiling and the amount carry **emphasis** in the stored text,
+  // so the words a room should leave with are the ones that stand out.
   function scaleTags(st) {
     var notes = st.scale_notes;
     if (!notes || !notes.length) return "";
-    return '<ul class="rmv-sp-scale">' + notes.map(function (n) {
-      return '<li class="rmv-sp-scale-tag">' + App.escape(n) + "</li>";
-    }).join("") + "</ul>";
+    var em = App.roadmapDetailValues.emphasis;
+    return '<div class="rmv-sp-values"><span class="rmv-sp-vlabel">' +
+      "What it unlocks</span>" +
+      '<ul class="rmv-sp-scale">' + notes.map(function (n) {
+        return '<li class="rmv-sp-scale-tag">' + em(n) + "</li>";
+      }).join("") + "</ul></div>";
   }
 
   // A discussion card, not a paragraph. What it is, in one bold line;

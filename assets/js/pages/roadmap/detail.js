@@ -326,7 +326,11 @@
     // overflow printed the whole thing as one run-on value - "Slot 3
     // Span 1 Overlap parallel External party External status ..." -
     // duplicating what was already there and exposing raw column names.
-    "allocation"];
+    "allocation",
+    // Stated where they mean something: the ceilings a stream lifts are
+    // read under "What this buys", and _recentDone is a page-side flag
+    // for the board's recency filter, not something recorded here.
+    "scale_notes", "_recentDone"];
 
   // The drawer keeps its own row layout (a bordered two-column grid per
   // row), so it passes that skin to the shared builder rather than
@@ -365,6 +369,7 @@
       { key: "horizon", label: "Band", also: ["end_horizon"],
         html: function () { return esc(bandText(item)); } },
       { key: "status", label: "Status", html: function () { return esc(STATUS[item.status] || item.status); } },
+      { key: "scope", label: "Shape", html: function () { return esc(App.roadmapDetailValues.scopeLabel(item.scope)); } },
       { key: "level", label: "Level",
         html: function () { return item.level && item.level !== "workstream" ? esc(cap(item.level)) : ""; } },
       { key: "presentation", label: "Presentation", html: function () { return esc(V.presentationLabel(item.presentation)); } },
@@ -387,24 +392,7 @@
       // v_sprint_plan_items. Only Now work carries one, so these rows
       // are absent everywhere else rather than showing as blanks.
       { key: "_sprint_slot", label: "Sprint slot", html: function () {
-        var al = item.allocation;
-        if (!al) return "";
-        var span = Number(al.span) || 1;
-        // effective_slot is the view's answer (slot + any slip); slot is
-        // the stored one. Fall back rather than defaulting to 0, which
-        // printed a confident "Sprint +0" for work allocated elsewhere.
-        var start = Number(al.effective_slot);
-        if (!isFinite(start)) start = Number(al.slot);
-        if (!isFinite(start)) return "";
-        var end = Number(al.effective_end_slot);
-        if (!isFinite(end) || end < start) end = start + span - 1;
-        if (al.start_code) {
-          return esc(end !== start && al.end_code
-            ? al.start_code + " to " + al.end_code : sprintRange(al.start_code));
-        }
-        return esc(end !== start
-          ? "Sprint +" + start + " to Sprint +" + end
-          : "Sprint +" + start);
+        return esc(App.roadmapDetailValues.sprintWhen(item.allocation));
       } },
       { key: "_sprint_overlap", label: "Overlap", html: function () {
         var al = item.allocation;
@@ -486,12 +474,19 @@
         return '<li><span class="rmd-who">' + esc(pair[0]) + "</span> " +
           esc(item[pair[1]]) + "</li>";
       }).join("");
+    // What it unlocks: the ceilings it lifts, with the cap and the amount
+    // emphasised in the stored sentence so they are the words that land.
+    var unlocks = (item.scale_notes || []).map(function (n) {
+      return "<li>" + V.emphasis(n) + "</li>";
+    }).join("");
     // Nothing to say and nothing to classify: draw no section at all
     // rather than a heading over a placeholder.
-    if (!points && !tags) return "";
+    if (!points && !tags && !unlocks) return "";
     return '<section class="rmd-benefit"><h3>What this buys' +
       (tags ? " " + tags : "") + "</h3>" +
       (points ? '<ul class="rmd-points">' + points + "</ul>" : "") +
+      (unlocks ? '<h4 class="rmd-brief-sub">What it unlocks</h4>' +
+        '<ul class="rmd-points rmd-unlocks">' + unlocks + "</ul>" : "") +
       "</section>";
   }
 
@@ -518,7 +513,11 @@
     // A workstream lists its nested work items (each a board bar, clickable
     // through to its own drawer); every level lists its deliverables (the
     // drawer-only detail beneath it).
-    var itemsList = V.itemListHtml ? V.itemListHtml(item, ctx) : "";
+    // Skipped when the brief's plan already lists every one of them - on
+    // the sprint page it always does, and the same titles twice is noise.
+    var planned = App.roadmapDetailBrief ? App.roadmapDetailBrief.plannedSteps(item, ctx) : [];
+    var itemsList = V.itemListHtml && planned.length < V.barKids(item, ctx).length
+      ? V.itemListHtml(item, ctx) : "";
     var itemsSection = itemsList
       ? '<section class="rmd-section"><h3>Work items</h3>' + itemsList + "</section>" : "";
     var deliverables = V.checklistHtml(item, ctx);
@@ -531,14 +530,16 @@
         "<h2>" + esc(item.title) + "</h2>" +
         '<div class="rm-card-progress rmv-prog-' + prog.bucket +
         '" role="img" aria-label="Progress: ' + esc(prog.label) + '"><span></span></div></div>' +
-      // Top down, the order a reader actually works in: what it is, what
-      // it buys, the facts at a glance, then what it is made of - and
-      // only then the reading material. Details can run to thousands of
-      // characters on a mature workstream, and it used to sit third,
-      // above every scannable thing in the drawer.
+      // Top down, the order a reader actually works in: what it is,
+      // where it stands now, what it buys, then what it is made of - and
+      // only then the record. The thirty-row fact grid folds: everything
+      // a planning conversation needs from it is lifted into the brief,
+      // and the rest is for whoever is editing the row.
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
+      (App.roadmapDetailBrief ? App.roadmapDetailBrief.html(item, ctx, state) : "") +
       valueHtml(item) +
-      facts +
+      (facts ? '<details class="rmd-fold rmd-fold--facts"><summary>' +
+        "All recorded fields</summary>" + facts + "</details>" : "") +
       itemsSection +
       deliverablesSection +
       benefitProseHtml(item) +
