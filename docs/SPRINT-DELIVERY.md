@@ -1,9 +1,9 @@
 # Sprint delivery
 
-What happens to a work item once it reaches the Now column: how it
-becomes a DevOps package a developer can pick up, how a sprint is
-summarised at each end, how the whole Now column is mapped across
-sprints, and how the two roadmaps are kept in one order.
+What happens to a work item once it reaches the Now column: how its
+stories and acceptance criteria are written and handed to DevOps, how a
+sprint is summarised at each end, how the whole Now column is mapped
+across sprints, and how the two roadmaps are kept in one order.
 
 Public repo, so this file is **process only** - no item titles, no
 benefit text, no sprint contents, no names, no addresses. The material
@@ -39,14 +39,17 @@ Until then every surface says Sprint N, and nothing invents a date.
 
 ---
 
-# Part A - Now to a DevOps package
+# Part A - Stories, acceptance criteria and the DevOps hand-off
+
+The one home for user stories and acceptance criteria. The
+`/sprint-stories` command runs it; it does not restate it.
 
 ## When
 
-An item reaches `horizon = 'now'` and takes an allocation. That is the
-trigger, and it is the only one: an item still at Next is not ready to
-be provisioned, and an allocated item with no package is work nobody can
-start.
+For work on the Sprint Roadmap and only for it, before its sprint
+starts, when the owner asks. An item reaching Now is on the plan at once
+(Part C), its stories area empty. Work at Next is not written for:
+stories written early go stale before they are used.
 
 ## What gets pulled
 
@@ -60,60 +63,83 @@ Read these before writing anything:
 | `source_document_id`, and documents linked `about` | the original material |
 | `business_benefit`, `pxp_staff_value`, `partner_staff_value`, `merchant_value` | the role and the behaviour each story is written from |
 | `work_item_metrics` | the number the story's outcome is measured by |
-| `work_item_sprints` | the sprint, the span, and whether an external party gates it |
+| open `work_notes` | the questions a story must not answer by guessing |
 
-**Acceptance criteria already recorded in `details` are lifted verbatim.**
-Where a row carries dated criteria that someone agreed, re-deriving them
-loses the agreement, which was the valuable part. Write new criteria only
-where none exist.
+## Where they live
 
-## The package
+`work_items.user_stories` holds an array of `{title, story, criteria[]}`
+and `stories_status` says `drafted` or `confirmed`; one is never set
+without the other. A workstream holds its epic; a work item holds its own
+stories; a deliverable's content becomes a story on its parent item. The
+database refuses an empty or runaway set (`work_item_stories_valid`);
+how much to write is the judgement below.
 
-One roadmap item becomes one DevOps **parent**, with user stories as its
-children. This is the only place developer-ready decomposition is
-allowed - the roadmap itself stays high level, and an item that has been
-broken into tasks on the board has been broken in the wrong place.
+## How much to write
 
-Fields, in the shape the existing backlog exports use:
+- **A workstream:** exactly one epic story, with 3-5 outcome criteria.
+- **A work item:** 1-3 stories, each with 2-5 criteria. An item with
+  deliverables takes one story per deliverable instead, up to five.
+- **Titles** are imperative and ten words at most.
 
-    Parent            the DevOps parent, or blank for the parent itself
-    Title             imperative and specific
-    State             New
-    Effort            blank unless the team has sized it
-    Iteration Path    <TeamProject>\Sprint <YY-NN>
-    Team Project      the DevOps project
-    Dependencies      the DevOps ids of anything that blocks it
+More than this is bloat: a story that needs eight criteria is two stories,
+and an item that needs five stories is two items.
 
-Generate titles rather than retyping them: the exports already in
-`work_documents` carry typos that survived into the sprint because
-someone typed each line.
-
-## User stories
+## Writing them
 
     As a <role>, I want <behaviour>, so that <outcome>.
 
 - **Role** comes from the benefit field the value sits in - the staff
-  audience, the partner's staff, or the merchant. docs/VALUE-CAPTURE.md
-  already requires every granular line to carry a role and a behaviour,
-  precisely because this is what they become.
-- **Behaviour** comes from the benefit sentence.
-- **Outcome** comes from the metric, stated as the thing that stops
-  happening. Never state a duration or a capacity figure (see Part C).
+  audience, the partner's staff, or the merchant. It is always a person;
+  for work between systems it is the person whose work changes, never
+  "the system".
+- **Behaviour** comes from the benefit sentence; **outcome** from the
+  metric, stated as the thing that stops happening. A story's outcome may
+  come from its workstream's benefit by parentage (docs/VALUE-CAPTURE.md).
+- **Criteria** are one sentence each: observable, testable without
+  reading code, never an implementation. Where the item names a failure
+  that fires today, one criterion is that it stops firing.
+- **Criteria already agreed in `details` are lifted verbatim.** Where a
+  row carries dated criteria someone agreed, re-deriving them loses the
+  agreement, which was the valuable part.
+- An open question becomes a `work_notes` question, never a criterion.
+- No durations, no capacity figures, no internal shorthand (Part C,
+  Durations).
 
-## Acceptance criteria
+## Confirming and freezing
 
-Observable conditions, never implementation. Each one is something a
-tester can check without reading the code. Where the item names a
-failure that fires today, one criterion is that it stops firing.
+- Stories stay `drafted` until the owner confirms them in as many words,
+  one stream at a time. Confirmed stories change only at the owner's
+  request.
+- Overwriting a story set records the previous JSON in that run's
+  `decision` note: it is the undo.
+- Once `external_ref` holds the DevOps id, the stories are frozen. A
+  later change is reported as a difference to make in DevOps, not
+  written over what was pasted.
+
+## The pack
+
+    select sprint_story_pack(null, 'devops');
+    select sprint_story_pack(null, 'roadmap');
+
+A workstream's or an item's id in place of null gives one stream or one
+item. The drawer's copy buttons call the same function, so every copy
+matches. Copy the pack; never retype it - the exports in `work_documents`
+carry typos that reached a sprint because someone typed each line.
+
+- **Azure DevOps**: a workstream is an **Epic**, a work item a
+  **Feature**, a story a **User Story**; the criteria go in the User
+  Story's Acceptance Criteria field. Each block carries its Parent, its
+  Iteration ("Sprint N" until the plan is anchored, the real code after),
+  who builds it when that is not the team, and what it depends on. State
+  is New; Effort stays blank unless the team has sized it.
+- **The company roadmap**: per stream, its sprints, its summary, the epic
+  story and its outcomes.
 
 ## Keeping the two associated
 
-Write the DevOps id back to `work_items.external_ref` - the column
-already exists, already renders in the drawer as "External ref", and
-docs/WORKFLOW.md already names it as the home for a ticket reference. Do
-not invent a second field.
-
-Record the packaging as a `work_notes` row with `kind = 'decision'`.
+Write the DevOps id back to `work_items.external_ref`, the home
+docs/WORKFLOW.md already names for a ticket reference - never a second
+field - and record the hand-off as a `work_notes` `decision`.
 
 ## What is deliberately not carried across
 
@@ -160,9 +186,8 @@ procedure:
 2. **Restructure** into a headline list plus one sentence per item.
 3. **Reconcile every line against the board** and classify it:
    **corroborates**, **updates**, **contradicts**, or **new**.
-4. **Apply** the corroborations and updates. Take anything genuinely new
-   through docs/ROADMAP-INTAKE.md before it becomes a row - a relayed
-   line is exactly the kind of "add" that is really an update to
+4. **Apply** the corroborations and updates. Take anything new through
+   docs/ROADMAP-INTAKE.md first - a relayed "add" is often an update to
    something already tracked.
 5. **Raise the contradictions; never resolve them silently.** Where the
    account and the board disagree, the disagreement is the finding. Say
@@ -225,9 +250,8 @@ true without anyone remembering to:
 - **Done keeps its allocation**, as the record of the sprint the work was
   delivered in. The board's view already leaves it out.
 
-A deliverable is never allocated; it is drawn as part of its item. The
-trigger watches the item's own row, so a change to its workstream alone
-(a re-level, say) is for the mapping pass to catch.
+A deliverable is never allocated; it is drawn as part of its item. A
+change to a workstream alone is caught by the checks (Part D).
 
 ## The inputs
 
@@ -353,12 +377,8 @@ orders.
 - Do not hand-edit `priority` on a row that is on the plan. Change the
   plan - its slot or sequence - and sync. The sprint decides the order.
 
-What the roadmap page shows after a sync: the Timeline's Now band orders
-by priority, so it reads in sprint order, and a workstream's own Now
-items follow its sprints the same way. Every other band still orders by
-span, then priority. A bug sinks below other work in its band
-everywhere. Cascade groups each band by theme first, on purpose; inside
-a theme the sprint order holds.
+The roadmap page's Now band orders by priority (docs/ROADMAP.md,
+Layouts), so after a sync it reads in sprint order.
 
 ## Before a sprint
 
@@ -366,12 +386,10 @@ a theme the sprint order holds.
 
 One row per finding, worst first. The severity says who answers it:
 
-- **fix** - a session corrects it before anything is drafted: the order
-  (`order`), a row in Now that is off the plan or should not be on it
-  (`unplaced`, `stream_empty`, `stream_not_now`, `not_an_item`), a
-  blocker that is not done or ends after the work it blocks starts
-  (`dependency`), a row with no summary or no details (`thin`), a slot
-  over its bounds (`load`). Raise them; never patch one silently.
+- **fix** - corrected before anything is drafted, and raised rather
+  than patched silently: `order`, the rows off the belt (`unplaced`,
+  `stream_empty`, `stream_not_now`, `not_an_item`), `dependency`,
+  `thin` and `load`.
 - **confirm** - the owner says so, in as many words: a slot the intake
   trigger chose (`placement`), stories drafted and not yet confirmed
   (`stories_drafted`).

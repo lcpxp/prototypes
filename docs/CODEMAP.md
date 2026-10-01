@@ -372,7 +372,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | knowledge-drift.test.js | 142 | tests/checks/knowledge-drift.test.js - Keeps what the system was told from quietly decaying. |
 | knowledge-links.test.js | 143 | tests/checks/knowledge-links.test.js - The link vocabulary gate. |
 | links.test.js | 160 | tests/checks/links.test.js - Internal references resolve. |
-| one-home.test.js | 136 | tests/checks/one-home.test.js - One concept, one home. |
+| one-home.test.js | 157 | tests/checks/one-home.test.js - One concept, one home. |
 | perf.test.js | 272 | tests/checks/perf.test.js - Performance gates. |
 | reference-drift.test.js | 191 | tests/checks/reference-drift.test.js - Keeps the API reference from drifting further from the code it documents. |
 | render-coverage.test.js | 417 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
@@ -381,6 +381,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | security.test.js | 205 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 152 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
+| sprint-stories.test.js | 94 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -509,26 +510,26 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 373 | Architecture How the portal fits together. |
-| CHANGELOG.md | 239 | Changelog All notable user-facing changes to LPIO, newest first. |
+| CHANGELOG.md | 242 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
 | KNOWLEDGE-MODEL.md | 230 | The knowledge model Why the roadmap and platform knowledge are shaped the way they are. |
-| NAVIGATION.md | 65 | Navigation *I want to change X - what do I read?** docs/CODEMAP.md answers *where is it*. |
+| NAVIGATION.md | 66 | Navigation *I want to change X - what do I read?** docs/CODEMAP.md answers *where is it*. |
 | PLATFORM.md | 281 | Platform product-knowledge protocol How the durable, structured answer to "what is LP, what does it do, what is in place today" gets built and kept current. |
 | PORTAL-REVIEW.md | 208 | Portal review playbook How a portal review wave is opened, walked, answered, verified, triaged and closed. |
 | PROTOTYPE-IDEAS.md | 150 | Prototype ideas and plans How an idea for a prototype is captured, prioritised, planned and promoted. |
 | ROADMAP-INTAKE.md | 458 | Roadmap intake The contextualisation protocol: how a new request is placed against what already exists before anything is written. |
-| ROADMAP-PLAYBOOK.md | 304 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
+| ROADMAP-PLAYBOOK.md | 306 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
 | ROADMAP-REVIEW.md | 172 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
 | ROADMAP.md | 282 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINT-DELIVERY.md | 381 | Sprint delivery |
+| SPRINT-DELIVERY.md | 399 | Sprint delivery |
 | SPRINTS.md | 123 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
 | STATE.md | 35 | Current state Updated: 2026-10-01 (release 0.1.0 cut; sprint stories work in progress) # In progress Nothing blocking. |
-| VALUE-CAPTURE.md | 214 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
+| VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
 ### .claude/
@@ -542,6 +543,7 @@ Slash commands and the permission settings a session runs under.
 | commands/prototype-idea.md | 43 | Capture a prototype idea in one line, or run the review pass that prioritises and plans them |
 | commands/roadmap-add.md | 56 | Quick-capture or update roadmap work from a one-line request, applied straight to Supabase |
 | commands/roadmap.md | 39 | Run the roadmap review ritual - a quick, clickable pass over Now/Next, promotions, new work and decisions |
+| commands/sprint-stories.md | 62 | Prepare the Sprint Roadmap for its sprint - order and readiness checks, user stories and acceptance criteria drafted and confirmed per workstream, then the packs for Azure DevOps and the company roadmap |
 | settings.json | 50 | Committed, shared permissions for a session in this repo: an allow list covering the routine commands (npm/node, read-only and write git, the search tools, a local http server, file reads and edits) and a deny list that blocks the hard rules mechanically - reading config.js or .env, force-pushing, git add -f, rm -rf. .claude/settings.local.json is per-developer and gitignored. |
 
 ### .github/
@@ -561,7 +563,7 @@ Repository root.
 | .githooks/pre-commit | 29 | Pre-commit gate. Fast, zero dependencies. |
 | .gitignore | 24 | Local configuration containing Supabase keys. Never commit. |
 | .gitmessage | 12 | <type>: <imperative summary, max 60 chars> |
-| CLAUDE.md | 273 |  |
+| CLAUDE.md | 275 |  |
 | README.md | 29 | LPIO A login-gated project hub: dashboard, API reference material and prototypes, organised as modules around a central dashboard. |
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |

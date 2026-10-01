@@ -133,3 +133,24 @@ test("the size numbers are stated only in the budget", () => {
       `Cite ${BUDGET}.`);
   }
 });
+
+test("how much a story set holds is stated only in the sprint delivery doc", () => {
+  // The caps on stories and criteria are judgement, written once in
+  // docs/SPRINT-DELIVERY.md Part A. A command or a field table carrying
+  // its own copy is how a session ends up writing to a remembered number
+  // while the doc has moved on. (The database's hard ceilings are a
+  // different, wider guard and live in 37_sprint_delivery.sql.)
+  const DOC = "docs/SPRINT-DELIVERY.md";
+  const CAPS = [/\b3-5 outcome criteria\b/, /\b1-3 stories\b/, /\b2-5 criteria\b/];
+  const doc = read(DOC);
+  for (const cap of CAPS) assert.match(doc, cap, `${DOC} must state ${cap} - it is its one home`);
+  for (const file of [".claude/commands/sprint-stories.md", "CLAUDE.md",
+    "docs/ROADMAP-PLAYBOOK.md", "docs/VALUE-CAPTURE.md", "docs/NAVIGATION.md",
+    "docs/ROADMAP-REVIEW.md"]) {
+    const text = read(file);
+    for (const cap of CAPS) {
+      assert.doesNotMatch(text, cap, `${file} restates a story cap. Cite ${DOC} instead.`);
+    }
+  }
+  assert.match(read(".claude/commands/sprint-stories.md"), /SPRINT-DELIVERY\.md/);
+});

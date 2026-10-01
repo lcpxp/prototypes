@@ -125,6 +125,8 @@ every wave:
 
 The test before accepting any draft: could somebody who has never seen
 this roadmap turn this line into a user story without asking a question?
+How those stories are then written, confirmed and handed to DevOps is
+docs/SPRINT-DELIVERY.md Part A.
 
 ## The accuracy discipline
 

@@ -30,6 +30,7 @@ holds structure, styling and rendering only.
 | Change a table, a column or a policy | `supabase/schema/<domain>.sql` and `supabase/policies.sql`, in the same commit, applied as a migration. Then `npm run snapshot`. |
 | Add roadmap work, or review the roadmap | Database only, no repo change. docs/ROADMAP-INTAKE.md then docs/ROADMAP-PLAYBOOK.md; docs/ROADMAP-REVIEW.md for the ritual. |
 | Triage a wave of applications | docs/APP-REVIEW.md. Database only. |
+| Write the user stories and acceptance criteria for the next sprint, or copy them for DevOps | `/sprint-stories`, which runs docs/SPRINT-DELIVERY.md: Part A for the stories, Part D for the order and the readiness checks. Database only. |
 | Fill in or confirm the business benefit on roadmap items | docs/VALUE-CAPTURE.md - the four fields, the accuracy discipline, the wave ritual and the queue. Every workstream and Now/Next item carries a drafted benefit; confirming them is the open work. Database only. |
 | Record work material or platform knowledge from chat | docs/WORKFLOW.md, docs/PLATFORM.md. Database only. |
 | Understand why the knowledge model is shaped this way | docs/KNOWLEDGE-MODEL.md. |
