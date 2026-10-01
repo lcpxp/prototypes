@@ -501,6 +501,12 @@ revoke execute on function public.sprint_plan_project() from public, anon, authe
 revoke execute on function public.sprint_plan_project_trigger() from public, anon, authenticated;
 revoke execute on function public.sprint_code_for_slot(integer) from public, anon;
 
+-- work_item_stories_valid() is the shape check behind work_items.user_stories
+-- (supabase/schema/37_sprint_delivery.sql). A check constraint runs as the
+-- role doing the write, so signed-in users keep EXECUTE and anon does not.
+revoke execute on function public.work_item_stories_valid(jsonb) from public, anon;
+grant execute on function public.work_item_stories_valid(jsonb) to authenticated;
+
 drop policy if exists "work_item_embeddings: members read" on public.work_item_embeddings;
 create policy "work_item_embeddings: members read"
   on public.work_item_embeddings for select

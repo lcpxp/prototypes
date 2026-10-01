@@ -50,6 +50,9 @@
   // a confirmed benefit reads as plain prose and only the unchecked one
   // carries a badge.
   var BENEFIT_STATUS = { drafted: "Draft - not yet confirmed", confirmed: "" };
+  // Stories follow the same rule: a drafted set carries the marker, a
+  // confirmed one reads plain (docs/SPRINT-DELIVERY.md).
+  var STORIES_STATUS = { drafted: "Draft - not yet confirmed", confirmed: "" };
   var SALES_ROUTE = { direct: "Direct sales", partner: "Partner sales" };
 
   // How an allocated item behaves against the ones either side of it on
@@ -222,6 +225,7 @@
     PHASE_ORDER: PHASE_ORDER,
     BENEFIT_TYPE: BENEFIT_TYPE,
     BENEFIT_STATUS: BENEFIT_STATUS,
+    STORIES_STATUS: STORIES_STATUS,
     SALES_ROUTE: SALES_ROUTE,
     OVERLAP: OVERLAP,
     EXTERNAL_STATUS: EXTERNAL_STATUS,

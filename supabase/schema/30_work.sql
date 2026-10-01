@@ -357,6 +357,12 @@ create table if not exists public.work_items (
   -- that actually caps growth. Rendered on the workstream cards beneath
   -- the metric tiles.
   scale_notes text[] not null default '{}',
+  -- The user stories and acceptance criteria written for this row once
+  -- it is sprint work: an array of {title, story, criteria[]}, its shape
+  -- held by work_item_stories_valid() in 37_sprint_delivery.sql, drafted
+  -- until the owner confirms them. docs/SPRINT-DELIVERY.md is their home.
+  user_stories jsonb,
+  stories_status text check (stories_status in ('drafted', 'confirmed')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint work_items_parent_not_self check (parent_id is null or parent_id <> id),
@@ -364,7 +370,11 @@ create table if not exists public.work_items (
   -- A stored benefit always carries its checked state, or the point of
   -- benefit_status is lost the first time somebody forgets to set it.
   constraint work_items_benefit_status_present
-    check (business_benefit is null or benefit_status is not null)
+    check (business_benefit is null or benefit_status is not null),
+  -- The same rule for stories: written stories always carry their
+  -- checked state, and a state never outlives the stories it described.
+  constraint work_items_stories_status_present
+    check ((user_stories is null) = (stories_status is null))
 );
 
 create index if not exists work_items_area_idx

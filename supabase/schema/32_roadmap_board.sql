@@ -118,7 +118,9 @@ comment on function public.roadmap_move_workstream(uuid, text) is
 -- work_items_board: every work_items column EXCEPT details, which is
 -- paragraphs of free text - 46.6% of the table by stored size, and
 -- 102,956 bytes of a cold page load spent on prose that only ever
--- appears in one drawer at a time. The roadmap and the backlog both
+-- appears in one drawer at a time - and user_stories, which is the same
+-- kind of long text shown the same way. stories_status stays, so the
+-- board can say which rows have stories without fetching them. The roadmap and the backlog both
 -- select("*") from here instead; App.workItemsData fetches details when
 -- a drawer opens and in bulk when an export is pressed.
 -- docs/plan/80-LOAD-SPEED.md.
@@ -129,7 +131,7 @@ comment on function public.roadmap_move_workstream(uuid, text) is
 -- self-updating: a view freezes its columns at creation. That is held
 -- mechanically instead - tests/checks/schema-drift.test.js compares
 -- this view's columns against work_items' and fails on any column
--- present in the table and absent here other than details.
+-- present in the table and absent here other than the two it omits.
 --
 -- security_invoker, so every read is filtered by the "work_items:
 -- members read" policy on the base table. Without it the view would run
@@ -148,7 +150,7 @@ create view public.work_items_board
     department, associated_departments, assignee, support_assignee,
     business_benefit, benefit_type, benefit_status,
     pxp_staff_value, partner_staff_value, merchant_value, sales_route,
-    scope, scale_notes,
+    scope, scale_notes, stories_status,
     external_ref, requested_by, tags, attributes, sort_order,
     resolution, resolved_at, previously_completed_at, created_at, updated_at
   from public.work_items;
@@ -157,4 +159,4 @@ revoke all on public.work_items_board from public, anon;
 grant select on public.work_items_board to authenticated;
 
 comment on view public.work_items_board is
-  'work_items without details, for the roadmap board and the backlog list. security_invoker: reads are filtered by the base table policy. See docs/plan/80-LOAD-SPEED.md.';
+  'work_items without details or user_stories, for the roadmap board and the backlog list. security_invoker: reads are filtered by the base table policy. See docs/plan/80-LOAD-SPEED.md.';

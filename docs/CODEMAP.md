@@ -61,7 +61,7 @@ Everything one file can call in another. A surface in
 | `App.roadmapDetail` | assets/js/pages/roadmap/detail-export.js:223 (+5 more) |
 | `App.roadmapDetailBrief` | assets/js/pages/roadmap/detail-brief.js:194 |
 | `App.roadmapDetailProse` | assets/js/pages/roadmap/detail-prose.js:133 |
-| `App.roadmapDetailValues` | assets/js/pages/roadmap/detail-values.js:217 |
+| `App.roadmapDetailValues` | assets/js/pages/roadmap/detail-values.js:220 |
 | `App.roadmapDrawer` | assets/js/pages/roadmap/drawer.js:19 |
 | `App.roadmapExport` | assets/js/pages/roadmap/export.js:99 |
 | `App.roadmapPrefs` | assets/js/pages/roadmap/prefs.js:52 |
@@ -151,7 +151,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | roadmap/detail-brief.js | 200 | roadmap/detail-brief.js - "Where it stands": the current state of a piece of planned work, at the top of its drawer. |
 | roadmap/detail-export.js | 228 | roadmap/detail-export.js - The AI-optimised JSON and the flat CSV exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap / toCsvRoadmap). |
 | roadmap/detail-prose.js | 143 | roadmap/detail-prose.js - The drawer's late-arriving sections: an item's written detail and the notes recorded against it. |
-| roadmap/detail-values.js | 255 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
+| roadmap/detail-values.js | 259 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
 | roadmap/detail.js | 464 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
 | roadmap/drawer.js | 97 | roadmap/drawer.js - The item detail drawer surface for the roadmap home: open/close, the ?item=<id> deep-link URL sync, and in-drawer navigation (a related-item link or a nested step row swaps the drawer to that item). |
 | roadmap/export.js | 101 | roadmap/export.js - The roadmap home's export dropdown wiring and the small download helpers it shares with the detail drawer (App.roadmapExport). |
@@ -318,6 +318,7 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20260921080014_work_items_scope_and_scale_notes.sql | 63 | Two readings the Sprint Roadmap could not carry before: what SHAPE a piece of work is, and which ceiling it lifts. |
 | 20260921105313_work_items_board_carries_scope_and_scale_notes.sql | 28 | A view freezes its column list at creation, so the two columns added |
 | 20260921150444_sprint_plan_streams_carries_associated_departments.sql | 40 | The cards can name the OWNING function but not the ones that merely have a claim on the work, because the view carried `department` and not `associated_departments`. |
+| 20261001090000_work_items_user_stories.sql | 89 | User stories and acceptance criteria, held on the work item they describe, so Now work carries its own delivery detail and the drawer can show it. |
 
 ### supabase/schema/
 
@@ -328,13 +329,14 @@ Schema, one file per domain, run in lexical order.
 | 00_core.sql | 79 | ---------------------------------------------------------------- 00_core.sql - Users, access grants and shared plumbing. |
 | 10_reference.sql | 145 | ---------------------------------------------------------------- 10_reference.sql - The API reference domain: specs, endpoints, tag catalogue and narrative topics. |
 | 20_portal.sql | 325 | ---------------------------------------------------------------- 20_portal.sql - Portal content domains: the integrations overview, the prototype gallery registry and the nav's outbound tool links. |
-| 30_work.sql | 531 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
+| 30_work.sql | 541 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
 | 31_roadmap_search.sql | 289 | Roadmap search: the contextualisation read surface. |
-| 32_roadmap_board.sql | 161 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
+| 32_roadmap_board.sql | 163 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
 | 33_links.sql | 361 | ---------------------------------------------------------------- 33_links.sql - The knowledge graph: typed, dated, owner-confirmed links between anything the system knows. |
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
 | 35_sprints.sql | 391 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
 | 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
+| 37_sprint_delivery.sql | 65 | ------------------------------------------------------------------ |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
@@ -351,9 +353,9 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
 | knowledge-coverage.json | 129 |  |
-| policies.sql | 549 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
+| policies.sql | 555 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1709 |  |
+| schema-snapshot.json | 1718 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -369,9 +371,9 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | one-home.test.js | 136 | tests/checks/one-home.test.js - One concept, one home. |
 | perf.test.js | 271 | tests/checks/perf.test.js - Performance gates. |
 | reference-drift.test.js | 191 | tests/checks/reference-drift.test.js - Keeps the API reference from drifting further from the code it documents. |
-| render-coverage.test.js | 411 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
+| render-coverage.test.js | 414 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
-| schema-drift.test.js | 193 | tests/checks/schema-drift.test.js - The repo must describe the database. |
+| schema-drift.test.js | 194 | tests/checks/schema-drift.test.js - The repo must describe the database. |
 | security.test.js | 205 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 143 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
@@ -502,7 +504,7 @@ Architecture, security, design, and the operating protocols.
 | File | Lines | Purpose |
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
-| ARCHITECTURE.md | 350 | Architecture How the portal fits together. |
+| ARCHITECTURE.md | 355 | Architecture How the portal fits together. |
 | CHANGELOG.md | 223 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |

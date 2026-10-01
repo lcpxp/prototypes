@@ -96,6 +96,9 @@ const COVERAGE = {
   "work_items.department": { file: "assets/js/core/registry.js" },
   "work_items.benefit_type": { file: "assets/js/pages/roadmap/detail-values.js" },
   "work_items.benefit_status": { file: "assets/js/pages/roadmap/detail-values.js" },
+  // Drafted stories read differently from confirmed ones, the same rule
+  // as a benefit: the label map sits beside BENEFIT_STATUS.
+  "work_items.stories_status": { file: "assets/js/pages/roadmap/detail-values.js" },
   "work_items.sales_route": { file: "assets/js/pages/roadmap/detail-values.js" },
   // The Sprint Roadmap's vocabularies. overlap decides whether two bars
   // may share a sprint column and external_status is the only signal on

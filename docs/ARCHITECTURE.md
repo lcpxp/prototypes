@@ -266,6 +266,11 @@ page's own (assets/css/sprints.css).
   honestly and slips without re-flowing the plan. Retired with a
   resolution, never deleted.
 - work_item_metrics: the countable half of a benefit (docs/VALUE-CAPTURE.md).
+- work_items.user_stories / stories_status: the user stories and
+  acceptance criteria written for sprint work, and whether the owner has
+  confirmed them. Their shape is held by `work_item_stories_valid()` in
+  supabase/schema/37_sprint_delivery.sql, the file for the delivery flow
+  that runs over the plan.
 
 `work_items.start_sprint` / `end_sprint` remain, as a derived projection
 written by trigger, so the drawer and both exports keep working with no
