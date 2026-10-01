@@ -528,7 +528,7 @@ Architecture, security, design, and the operating protocols.
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINT-DELIVERY.md | 399 | Sprint delivery |
 | SPRINTS.md | 123 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 35 | Current state Updated: 2026-10-01 (release 0.1.0 cut; sprint stories work in progress) # In progress Nothing blocking. |
+| STATE.md | 40 | Current state Updated: 2026-10-01 (the sprint belt is live; the first stories run is next) # In progress Seven workstreams sit in Now: 39 items across slots 0-4, in the order `v_sprint_plan_order` holds (synced 1 Oct). |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
