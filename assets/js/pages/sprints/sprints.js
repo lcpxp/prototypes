@@ -159,7 +159,7 @@
     var open = App.roadmapDrawer({
       lookup: function (id) { return byId[id]; },
       getCtx: function () { return ctx; },
-      lazyKeys: ["details", "notes"],
+      lazyKeys: ["details", "user_stories", "notes"],
       load: App.workItemsData.loadDrawer,
       download: function () {},
     });
@@ -321,6 +321,14 @@
       var p = data.sprintItems.filter(function (r) {
         return r.placement === "provisional";
       }).length;
+      // How far the stories have got, counted over the items: what a
+      // session preparing the sprint is asked to finish first.
+      var written = data.sprintItems.filter(function (r) {
+        return r.stories_status;
+      }).length;
+      var confirmed = data.sprintItems.filter(function (r) {
+        return r.stories_status === "confirmed";
+      }).length;
       // Whether the plan is anchored is NOT repeated here. It is stated
       // on the column headings, where the confusion it answers actually
       // arises, and a fact with two homes is a fact that will drift.
@@ -329,6 +337,8 @@
         : n + (n === 1 ? " item" : " items") + " across " + streams +
           (streams === 1 ? " workstream." : " workstreams.")) +
         (p ? " " + p + " not yet placed." : "") +
+        (n ? " Stories written for " + written + " of " + n +
+          (confirmed ? ", " + confirmed + " confirmed." : ".") : "") +
         (h ? " " + h + (h === 1 ? " row hidden." : " rows hidden.") : "");
     }
     state();

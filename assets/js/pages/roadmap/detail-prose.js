@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------
 // roadmap/detail-prose.js - The drawer's late-arriving sections: an
-// item's written detail and the notes recorded against it.
+// item's written detail, its user stories and acceptance criteria, and
+// the notes recorded against it.
 //
 // Split from detail.js on the seam tests/size-budget.json recorded for
 // it. These builders share one property that the rest of the drawer
@@ -130,13 +131,72 @@
       notes.map(noteRow).join("") + "</section>";
   }
 
+  // The user stories and acceptance criteria written for sprint work
+  // (docs/SPRINT-DELIVERY.md Part A). A workstream holds its epic, an
+  // item its own stories. They arrive with the prose when the drawer
+  // opens, so they take the same three states - but only on a row that
+  // is ON THE PLAN, because that is where stories are owed. Off the plan
+  // a row without stories is the normal case and gets no section at all.
+  //
+  // Until the column has arrived nothing is drawn: "not written yet" in
+  // the moment before the stories land would be a claim, not a wait.
+  var STORIES_HEAD = { item: "User stories and acceptance criteria",
+    workstream: "Epic and acceptance criteria" };
+  var STORIES_NONE = "Not written yet. Stories are written for sprint work " +
+    "before its sprint starts.";
+  function storyHtml(s) {
+    var criteria = (s.criteria || []).map(function (c) {
+      return "<li>" + esc(c) + "</li>";
+    }).join("");
+    return '<div class="rmd-story"><h4>' + esc(s.title) + "</h4><p>" +
+      esc(s.story) + "</p>" +
+      (criteria ? '<ul class="rmd-points">' + criteria + "</ul>" : "") + "</div>";
+  }
+  // Copying runs through the database's own paste format
+  // (sprint_story_pack), so drawer.js binds these by data attribute and
+  // nothing here builds the text. The company roadmap is written per
+  // workstream, so only a workstream offers it.
+  function copyButtons(item, ws) {
+    var btn = function (part, label) {
+      return '<button class="button secondary" type="button" data-story-pack="' +
+        part + '" data-story-id="' + esc(item.id) + '">' + label + "</button>";
+    };
+    return '<div class="rmd-story-copy">' + btn("devops", "Copy for DevOps") +
+      (ws ? btn("roadmap", "Copy for company roadmap") : "") + "</div>";
+  }
+  function storiesHtml(item, onPlan, state) {
+    var ws = item.level === "workstream";
+    var loaded = Object.prototype.hasOwnProperty.call(item, "user_stories");
+    var stories = Array.isArray(item.user_stories) ? item.user_stories : [];
+    if (!onPlan && !stories.length) return "";
+    var body;
+    if (state === "waiting") {
+      body = '<div class="skeleton" aria-hidden="true"><span></span><span></span></div>' +
+        '<p class="visually-hidden">Loading the stories</p>';
+    } else if (state === "failed") {
+      body = '<p class="notice tone-warn">Couldn\'t load the stories - try reopening.</p>';
+    } else if (!loaded) {
+      return "";
+    } else {
+      body = stories.length ? stories.map(storyHtml).join("")
+        : '<p class="rmd-story-none">' + esc(STORIES_NONE) + "</p>";
+    }
+    var draft = V.STORIES_STATUS[item.stories_status] || "";
+    return '<section class="rmd-section rmd-stories"><h3>' +
+      esc(ws ? STORIES_HEAD.workstream : STORIES_HEAD.item) +
+      (draft ? ' <span class="rmd-benefit-draft">' + esc(draft) + "</span>" : "") +
+      "</h3>" + body + (onPlan ? copyButtons(item, ws) : "") + "</section>";
+  }
+
   App.roadmapDetailProse = {
     detailsHtml: detailsHtml,
+    storiesHtml: storiesHtml,
     notesHtml: notesHtml,
     parseDetails: parseDetails,
     DETAIL_LABELS: DETAIL_LABELS,
     DETAIL_FOLD: DETAIL_FOLD,
     NOTE_KINDS: NOTE_KINDS,
     NOTE_STATUS: NOTE_STATUS,
+    STORIES_NONE: STORIES_NONE,
   };
 })();

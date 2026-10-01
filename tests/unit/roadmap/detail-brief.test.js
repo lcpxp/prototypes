@@ -103,6 +103,29 @@ test("an item's brief places it in its stream: step, neighbours, builder", () =>
   assert.doesNotMatch(html, /Placement</, "a placed step says nothing about placement");
 });
 
+test("the brief says how far the stories have got, and where they went", () => {
+  // The question asked before every sprint. The status travels with the
+  // board row; the counts arrive with the drawer's long columns.
+  const App = load();
+  const data = sample();
+  const s1 = byId(data, "s1");
+  const s2 = byId(data, "s2");
+  s1.stories_status = "drafted";
+  s1.user_stories = [{ title: "A", story: "As a, I want b, so that c.", criteria: ["x", "y"] },
+    { title: "B", story: "As a, I want d, so that e.", criteria: ["z"] }];
+  s1.external_ref = "4521";
+  s2.stories_status = "confirmed";
+  const one = App.roadmapDetail.drawerHtml(s1, ctxOf(App, data), "ready");
+  assert.match(one, /Stories<\/dt><dd>Drafted - 2 stories, 3 criteria</);
+  assert.match(one, /DevOps<\/dt><dd>4521</);
+  assert.match(App.roadmapDetail.drawerHtml(s2, ctxOf(App, data), "ready"),
+    /Stories<\/dt><dd>Confirmed</, "the status alone until the stories arrive");
+  assert.match(App.roadmapDetail.drawerHtml(byId(data, "s3"), ctxOf(App, data), "ready"),
+    /Stories<\/dt><dd>Not written yet</);
+  const ws = App.roadmapDetail.drawerHtml(byId(data, "ws"), ctxOf(App, data), "ready");
+  assert.match(ws, /Stories<\/dt><dd>Epic not written yet; 2 of 3 steps written, 1 confirmed</);
+});
+
 test("a step the intake trigger placed says so, and its stream counts it", () => {
   // supabase/schema/37_sprint_delivery.sql puts an item arriving at Now
   // at the end of its stream; until a mapping pass confirms it the

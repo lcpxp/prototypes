@@ -149,6 +149,23 @@ test("toKpiItem and toCsvRoadmap carry the extended context", () => {
   assert.match(lines[1], /DEVOPS-123/);
 });
 
+test("the JSON export carries the stories and whether they are confirmed", () => {
+  // Stories are fetched with the drawer, not the board; an export that
+  // dropped them would look complete and not be.
+  const App = load();
+  const data = sample();
+  const item = data.items[0];
+  const stories = [{ title: "Configure itself", story: "As an agent, I want x, so that y.",
+    criteria: ["It works.", "It is checked."] }];
+  item.user_stories = stories;
+  item.stories_status = "drafted";
+  const kpi = plain(App.roadmapDetail.toKpiItem(item, ctxOf(App, data)));
+  assert.deepEqual(kpi.user_stories, stories);
+  assert.equal(kpi.stories_status, "drafted");
+  const bare = plain(App.roadmapDetail.toKpiItem(data.items[1], ctxOf(App, data)));
+  assert.equal("user_stories" in bare, false, "no stories, no key");
+});
+
 test("the exports carry previously_completed_at as real delivered state", () => {
   const App = load();
   const data = sample();

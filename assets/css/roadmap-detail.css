@@ -295,6 +295,24 @@
 }
 .rmd-who { color: var(--faint); }
 
+/* User stories and acceptance criteria (docs/SPRINT-DELIVERY.md Part A):
+   each story a short block - title, sentence, criteria - with the copy
+   buttons beneath what they copy, never above it. */
+.rmd-story { margin-block-start: var(--s-3); }
+.rmd-story h4 {
+  margin: 0 0 var(--s-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+.rmd-story p, .rmd-story-none { margin: 0; font-size: var(--text-sm); }
+.rmd-story-none { color: var(--muted); }
+.rmd-story-copy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-block-start: var(--s-3);
+}
+
 /* Reading material, folded. The written case and a mature item's
    background both stay in full; they just stop sitting above everything
    scannable in the drawer. */

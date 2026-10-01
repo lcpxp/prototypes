@@ -46,6 +46,9 @@ const CONTRACT = {
     // (supabase/schema/37_sprint_delivery.sql): a provisional bar is
     // marked on both tabs and counted in the readout.
     "placement",
+    // How far the stories have got, counted in the readout above the
+    // board without fetching the stories themselves.
+    "stories_status",
   ],
   v_sprint_plan_streams: [
     "workstream_id", "workstream_title", "priority",

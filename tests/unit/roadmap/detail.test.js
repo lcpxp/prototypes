@@ -451,6 +451,32 @@ test("the drawer reads top down: what, what it buys, facts, then prose", () => {
     "with the background last of the reading material");
 });
 
+test("sprint work carries its stories between what it buys and the facts", () => {
+  // The stories are what the sprint will build, as it will be handed
+  // over, so they sit with what the work buys - and their raw columns
+  // never reach the fact grid as a JSON blob.
+  const App = load();
+  const data = sample();
+  const it = Object.assign({}, data.items[0], {
+    pxp_staff_value: "An operator stops keying it by hand.",
+    user_stories: [{ title: "Configure itself", story: "As an agent, I want x, so that y.",
+      criteria: ["It works."] }],
+    stories_status: "confirmed",
+    allocation: { slot: 0, span: 1, effective_slot: 0, effective_end_slot: 0, overlap: "parallel" },
+  });
+  const html = App.roadmapDetail.drawerHtml(it, ctxOf(App, data), "ready");
+  const at = (s) => html.indexOf(s);
+  assert.ok(at('class="rmd-benefit"') > -1 && at('class="rmd-benefit"') < at("rmd-stories"),
+    "what it buys, then the stories");
+  assert.ok(at("rmd-stories") < at('class="rmd-facts"'), "the stories, then the facts");
+  assert.match(html, /data-story-pack="devops"/, "an allocated item can be copied");
+  assert.doesNotMatch(html, /User stories<\/dt>|Stories status<\/dt>|&quot;criteria&quot;/,
+    "the raw columns are not repeated in the fact grid");
+  const off = Object.assign({}, data.items[0], { user_stories: null });
+  assert.doesNotMatch(App.roadmapDetail.drawerHtml(off, ctxOf(App, data), "ready"),
+    /rmd-stories/, "a row off the plan with no stories gets no section");
+});
+
 test("long background folds away; short background does not", () => {
   // A fold over two lines is a click for nothing; a fold over five
   // thousand characters is the difference between a usable drawer and a

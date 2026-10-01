@@ -15,6 +15,10 @@ is the git history; what is unfinished is docs/STATE.md.
 - Sprint roadmap: an item moving into Now joins the plan by itself, at the
   end of its workstream, marked "Not yet placed" on both tabs and in its
   drawer until a planning pass confirms it; an item leaving Now drops off.
+- Work item drawer: sprint work shows its user stories and acceptance
+  criteria, with "Copy for DevOps" and "Copy for company roadmap"; the
+  brief and the sprint page say how far the stories have got, and the JSON
+  export carries them.
 
 ### Changed
 - Roadmap: the Now column lists work in the order the Sprint Roadmap runs

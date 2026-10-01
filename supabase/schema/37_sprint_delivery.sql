@@ -6,7 +6,8 @@
 --
 -- 35_sprints.sql holds the plan itself - the calendar, the anchor, the
 -- allocation table and the views the board reads. 38_sprint_handoff.sql
--- holds what is read before a sprint: what the plan still needs.
+-- holds what is read before a sprint: what the plan still needs, and the
+-- pack that carries the stories out.
 -- docs/SPRINT-DELIVERY.md is the process all three serve.
 -- ------------------------------------------------------------------
 

@@ -79,6 +79,10 @@
       progress_label: prog.label,
       summary: item.summary || null,
       details: item.details || null,
+      // The sprint hand-off: the stories as written, and whether the
+      // owner has confirmed them (docs/SPRINT-DELIVERY.md Part A).
+      user_stories: item.user_stories || null,
+      stories_status: item.stories_status || null,
       start_date: item.starts_on || null,
       end_date: item.ends_on || null,
       start_sprint: item.start_sprint || null,

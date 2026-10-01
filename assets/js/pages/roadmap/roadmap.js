@@ -275,7 +275,7 @@
     var openDrawer = App.roadmapDrawer({
       lookup: function (id) { return itemsById[id]; },
       getCtx: function () { return ctx; },
-      lazyKeys: ["details", "notes"],
+      lazyKeys: ["details", "user_stories", "notes"],
       load: App.workItemsData.loadDrawer,
       download: function (item) {
         App.roadmapExport.downloadJson(

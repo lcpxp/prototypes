@@ -53,6 +53,17 @@
             inFlight.then(function () { deps.download(item); });
           });
         }
+        // The stories leave as the database lays them out
+        // (sprint_story_pack), so the button asks for that text and
+        // copies it unchanged; a refused read says so on the button.
+        drawerBody.querySelectorAll("[data-story-pack]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            App.workItemsData.loadStoryPack(btn.getAttribute("data-story-id"),
+              btn.getAttribute("data-story-pack")).then(function (text) {
+              App.copyText(text, btn);
+            }, function () { App.flashLabel(btn, "Copy failed"); });
+          });
+        });
       },
     });
 
@@ -80,7 +91,7 @@
     // In-drawer navigation: a related-item link or a nested step row swaps
     // the drawer to that item rather than following its href.
     if (drawerBody) drawerBody.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest("#rmd-export")) return;
+      if (e.target.closest && e.target.closest("#rmd-export, [data-story-pack]")) return;
       var link = e.target.closest ? e.target.closest("[data-item-id]") : null;
       if (!link) return;
       e.preventDefault();

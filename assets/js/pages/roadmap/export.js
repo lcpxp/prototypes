@@ -78,7 +78,7 @@
     var jsonBtn = document.getElementById("roadmap-export-json");
     if (jsonBtn) jsonBtn.addEventListener("click", function () {
       var s = source();
-      withHeavy(s.rows, ["details", "notes"], function () {
+      withHeavy(s.rows, ["details", "user_stories", "notes"], function () {
         downloadJson("roadmap-kpi-export.json", App.roadmapDetail.toKpiRoadmap(s.rows, s.ctx));
       });
     });

@@ -23,6 +23,11 @@ const { read } = require("../../lib/repo.js");
 function fakeDb(reply) {
   const sent = [];
   const db = {
+    rpc(fn, args) {
+      const q = { rpc: fn, args };
+      sent.push(q);
+      return Promise.resolve().then(() => reply(q));
+    },
     from(table) {
       const q = { table, filters: {} };
       sent.push(q);
@@ -174,17 +179,55 @@ test("a drawer's notes read is scoped to the one open item", async () => {
   assert.deepEqual(out.notes.map((n) => n.body), ["live", "resolved"]);
 });
 
-test("a drawer asks for the prose and the notes together", async () => {
+test("a drawer asks for the prose, the stories and the notes together", async () => {
+  const stories = [{ title: "T", story: "As a user, I want x, so that y.", criteria: ["c"] }];
   const { data, sent, tables } = load((q) =>
     (q.table === tables.workItems
-      ? { data: { details: "the write-up" } }
+      ? { data: { details: "the write-up", user_stories: stories } }
       : { data: [{ work_item_id: "a", body: "n", status: "active" }] }));
   const out = await data.loadDrawer({ id: "a" });
   assert.deepEqual(sent.map((q) => q.table).sort(),
     [tables.workItems, tables.workNotes].sort());
-  assert.equal(sent.find((q) => q.table === tables.workItems).filters.id, "a");
+  const row = sent.find((q) => q.table === tables.workItems);
+  assert.equal(row.filters.id, "a");
+  assert.equal(row.select, "details, user_stories", "one read for both long columns");
   assert.equal(out.details, "the write-up");
+  assert.deepEqual(plain(out.user_stories), stories);
   assert.deepEqual(plain(out.notes).map((n) => n.body), ["n"]);
+});
+
+test("a drawer row with no stories answers null for them, not undefined", async () => {
+  // App.lazyDetail decides loaded by presence: an unset key would send
+  // the drawer back to the database on every open.
+  const { data, tables } = load((q) =>
+    (q.table === tables.workItems ? { data: null } : { data: [] }));
+  const out = plain(await data.loadDrawer({ id: "a" }));
+  assert.equal(Object.prototype.hasOwnProperty.call(out, "user_stories"), true);
+  assert.equal(out.user_stories, null);
+});
+
+test("an export can hydrate the stories the same way as the prose", async () => {
+  const { data, sent, tables } = load((q) => ({
+    data: q.filters.id.map((id) => ({ id, user_stories: [{ title: id }] })),
+  }));
+  const items = [{ id: "a" }, { id: "b", user_stories: null }];
+  await data.loadForExport(items, ["user_stories"]);
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].table, tables.workItems);
+  assert.equal(sent[0].select, "id, user_stories");
+  assert.deepEqual(sent[0].filters.id, ["a"], "a row already answered is not asked again");
+  assert.deepEqual(plain(items[0].user_stories), [{ title: "a" }]);
+});
+
+test("the story pack is the database's text, and a failed call rejects", async () => {
+  // The paste format has one home, sprint_story_pack: the page asks for
+  // it by id and part and copies what comes back, unchanged.
+  const { data, sent } = load((q) => ({ data: "EPIC 1: " + q.args.p_part }));
+  assert.equal(await data.loadStoryPack("ws", "devops"), "EPIC 1: devops");
+  assert.equal(sent[0].rpc, "sprint_story_pack");
+  assert.deepEqual(plain(sent[0].args), { p_id: "ws", p_part: "devops" });
+  const failing = load(() => ({ error: { message: "denied" } }));
+  await assert.rejects(() => failing.data.loadStoryPack("ws", "roadmap"));
 });
 
 test("a drawer read that fails on either half fails the pair", async () => {

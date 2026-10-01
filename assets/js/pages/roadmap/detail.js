@@ -230,7 +230,10 @@
     // Stated where they mean something: the ceilings a stream lifts are
     // read under "What this buys", and _recentDone is a page-side flag
     // for the board's recency filter, not something recorded here.
-    "scale_notes", "_recentDone"];
+    "scale_notes", "_recentDone",
+    // Drawn as their own section by detail-prose.js; raw here they would
+    // print as a JSON blob under "Also recorded against this item".
+    "user_stories", "stories_status"];
 
   // The drawer keeps its own row layout (a bordered two-column grid per
   // row), so it passes that skin to the shared builder rather than
@@ -438,6 +441,9 @@
       (item.summary ? '<p class="rmd-summary">' + esc(item.summary) + "</p>" : "") +
       (App.roadmapDetailBrief ? App.roadmapDetailBrief.html(item, ctx, state) : "") +
       valueHtml(item) +
+      // What the sprint will build, as it will be handed over: owed by
+      // every row on the plan, so it sits with what the work buys.
+      P.storiesHtml(item, !!item.allocation || planned.length > 0, state) +
       (facts ? '<details class="rmd-fold rmd-fold--facts"><summary>' +
         "All recorded fields</summary>" + facts + "</details>" : "") +
       itemsSection +

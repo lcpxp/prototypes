@@ -46,7 +46,8 @@ function harness(loadForExport) {
   App.roadmapDetail = {
     // The builders read what the wiring left on the rows, so returning
     // them is enough to prove the order of the two steps.
-    toKpiRoadmap: (rows) => ({ items: rows.map((r) => ({ id: r.id, details: r.details, notes: r.notes })) }),
+    toKpiRoadmap: (rows) => ({ items: rows.map((r) => ({ id: r.id, details: r.details,
+      user_stories: r.user_stories, notes: r.notes })) }),
     toCsvRoadmap: (rows) => rows.map((r) => r.id + "," + (r.details || "")).join("\r\n"),
   };
   const asked = [];
@@ -62,6 +63,7 @@ function harness(loadForExport) {
 function hydrate(rows) {
   rows.forEach((r) => {
     r.details = "prose " + r.id;
+    r.user_stories = [{ title: "story " + r.id, story: "s", criteria: ["c"] }];
     r.notes = [{ body: "note " + r.id }];
   });
   return Promise.resolve(rows);
@@ -77,15 +79,18 @@ function wired(h) {
 
 const tick = () => new Promise((r) => setTimeout(r, 0));
 
-test("the JSON export fetches details and notes before it builds", async () => {
+test("the JSON export fetches details, stories and notes before it builds", async () => {
+  // All three are fetched with the drawer, not the board; the file writes
+  // all three for every row.
   const h = wired(harness(hydrate));
   h.buttons["roadmap-export-json"].handlers.click();
   await tick();
   assert.deepEqual(JSON.parse(JSON.stringify(h.asked)),
-    [{ keys: ["details", "notes"], ids: ["a", "b"] }]);
+    [{ keys: ["details", "user_stories", "notes"], ids: ["a", "b"] }]);
   assert.equal(h.written.length, 1);
   const out = JSON.parse(h.written[0].text);
   assert.deepEqual(out.items.map((i) => i.details), ["prose a", "prose b"]);
+  assert.deepEqual(out.items.map((i) => i.user_stories[0].title), ["story a", "story b"]);
   assert.deepEqual(out.items.map((i) => i.notes[0].body), ["note a", "note b"]);
 });
 

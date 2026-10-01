@@ -66,9 +66,10 @@
       });
   }
 
-  function loadDetail(item) {
+  // One row's long columns, the ones a surface shows one row at a time.
+  function loadColumns(item, cols) {
     return App.db.from(App.registry.tables.workItems)
-      .select("details")
+      .select(cols.join(", "))
       .eq("id", item.id)
       .maybeSingle()
       .then(function (res) {
@@ -76,48 +77,56 @@
         // A row RLS withheld answers null rather than undefined, so the
         // drawer caches "nothing to show" instead of asking again on
         // every open.
-        return res.data ? res.data.details : null;
+        var out = {};
+        cols.forEach(function (c) { out[c] = res.data ? res.data[c] : null; });
+        return out;
       });
   }
 
-  // What a drawer needs and the board does not carry. One settled pair,
-  // so the drawer paints once rather than twice, and one failed read
-  // fails the pair - the drawer says so instead of showing half of it as
-  // though it were all of it.
+  // What a drawer needs and the board does not carry: the prose, the
+  // stories and the notes. One settled set, so the drawer paints once
+  // rather than three times, and one failed read fails the set - the
+  // drawer says so instead of showing part of it as though it were all
+  // of it.
   function loadDrawer(item) {
-    return Promise.all([loadDetail(item), loadNotes(item)])
+    return Promise.all([loadColumns(item, ["details", "user_stories"]), loadNotes(item)])
       .then(function (parts) {
-        return { details: parts[0], notes: parts[1].notes };
+        return { details: parts[0].details, user_stories: parts[0].user_stories,
+          notes: parts[1].notes };
       });
   }
 
-  // The backlog modal shows the prose but not the notes, so it asks for
-  // one field rather than paying for a section it does not render.
+  // The backlog modal shows the prose but not the notes or the stories,
+  // so it asks for one field rather than paying for sections it does not
+  // render.
   function loadModal(item) {
-    return loadDetail(item).then(function (details) {
-      return { details: details };
-    });
+    return loadColumns(item, ["details"]);
   }
 
-  function loadDetails(items) {
-    var todo = pending(items, "details");
-    if (!todo.length) return Promise.resolve();
-    var byId = {};
-    todo.forEach(function (i) { byId[i.id] = i; });
-    return Promise.all(batches(Object.keys(byId)).map(function (ids) {
-      return App.db.from(App.registry.tables.workItems)
-        .select("id, details").in("id", ids);
-    })).then(function (results) {
-      results.forEach(function (res) {
-        if (res.error) throw res.error;
-        (res.data || []).forEach(function (row) {
-          if (byId[row.id]) byId[row.id].details = row.details;
+  // One long column for a whole set of rows, in batches. details and
+  // user_stories are both shown one row at a time, so both stay off the
+  // page load and come back for an export that writes them.
+  function columnLoader(col) {
+    return function (items) {
+      var todo = pending(items, col);
+      if (!todo.length) return Promise.resolve();
+      var byId = {};
+      todo.forEach(function (i) { byId[i.id] = i; });
+      return Promise.all(batches(Object.keys(byId)).map(function (ids) {
+        return App.db.from(App.registry.tables.workItems)
+          .select("id, " + col).in("id", ids);
+      })).then(function (results) {
+        results.forEach(function (res) {
+          if (res.error) throw res.error;
+          (res.data || []).forEach(function (row) {
+            if (byId[row.id]) byId[row.id][col] = row[col];
+          });
         });
+        // A row RLS withheld has been answered too, or the next export
+        // asks again for something it will never be given.
+        todo.forEach(function (i) { if (!has(i, col)) i[col] = null; });
       });
-      // A row RLS withheld has been answered too, or the next export
-      // asks again for something it will never be given.
-      todo.forEach(function (i) { if (!has(i, "details")) i.details = null; });
-    });
+    };
   }
 
   function loadNotesFor(items) {
@@ -145,7 +154,23 @@
     });
   }
 
-  var LOADERS = { details: loadDetails, notes: loadNotesFor };
+  var LOADERS = {
+    details: columnLoader("details"),
+    user_stories: columnLoader("user_stories"),
+    notes: loadNotesFor,
+  };
+
+  // The stories as paste-ready text, for Azure DevOps ("devops") or the
+  // company roadmap ("roadmap"). The layout is the database's
+  // (sprint_story_pack in supabase/schema/38_sprint_handoff.sql), so a
+  // copy from the drawer and a session's printout are the same text.
+  function loadStoryPack(id, part) {
+    return App.db.rpc("sprint_story_pack", { p_id: id, p_part: part })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data || "";
+      });
+  }
 
   // Fetch the named heavy fields for a set of rows and write them onto
   // those rows, so the export builders stay pure and stay synchronous.
@@ -164,6 +189,7 @@
     loadModal: loadModal,
     loadNotes: loadNotes,
     loadForExport: loadForExport,
+    loadStoryPack: loadStoryPack,
     ranked: ranked,
     STATUS_RANK: STATUS_RANK,
     BATCH: BATCH,

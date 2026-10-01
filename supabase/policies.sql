@@ -509,6 +509,11 @@ revoke execute on function public.work_items_sprint_intake() from public, anon, 
 -- whole Sprint Roadmap as its owner. It is run deliberately from an
 -- admin session, like sprint_plan_project(), and is callable by nobody.
 revoke execute on function public.sprint_plan_sync_order() from public, anon, authenticated;
+-- sprint_story_pack() is security invoker and only reads, so it answers
+-- with what the caller's own policies allow. Signed-in users call it
+-- from the drawer's copy buttons; anon has no business with it.
+revoke execute on function public.sprint_story_pack(uuid, text) from public, anon;
+grant execute on function public.sprint_story_pack(uuid, text) to authenticated;
 
 -- work_item_stories_valid() is the shape check behind work_items.user_stories
 -- (supabase/schema/37_sprint_delivery.sql). A check constraint runs as the

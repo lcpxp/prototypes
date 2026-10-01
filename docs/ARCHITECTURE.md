@@ -275,6 +275,11 @@ page's own (assets/css/sprints.css).
   (`v_sprint_plan_order`) onto `priority` and `sort_order`, so the Now
   column lists the work in the order the sprints run it. Run from an
   admin session after any re-map; revoked from every caller.
+- sprint_story_pack(id, part): the stories and acceptance criteria as
+  paste-ready text, for Azure DevOps (Epic, Feature, User Story) or the
+  company roadmap. The one home of that layout: the drawer's copy
+  buttons and the /sprint-stories command both call it. Security
+  invoker, granted to signed-in users (supabase/schema/38_sprint_handoff.sql).
 - work_item_metrics: the countable half of a benefit (docs/VALUE-CAPTURE.md).
 - work_items.user_stories / stories_status: the user stories and
   acceptance criteria written for sprint work, and whether the owner has

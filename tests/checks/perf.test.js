@@ -131,8 +131,8 @@ test("a bulk read is filtered to the rows that asked for it", () => {
 
 test("both board-wide exports fetch the heavy fields before building", () => {
   const roadmap = read("assets/js/pages/roadmap/export.js");
-  assert.match(roadmap, /withHeavy\(s\.rows, \["details", "notes"\]/,
-    "the roadmap JSON export writes both fields, so it must fetch both");
+  assert.match(roadmap, /withHeavy\(s\.rows, \["details", "user_stories", "notes"\]/,
+    "the roadmap JSON export writes all three long fields, so it must fetch all three");
   assert.match(roadmap, /withHeavy\(s\.rows, \["details"\]/,
     "the roadmap CSV export writes details");
   const backlog = read("assets/js/pages/backlog/export.js");
@@ -169,6 +169,7 @@ test("every lazily loaded region tells the reader which of three states it is in
   const surfaces = [
     ["assets/js/pages/roadmap/detail-prose.js", /function notesHtml\(item, state\)/],
     ["assets/js/pages/roadmap/detail-prose.js", /function detailsHtml\(item, state\)/],
+    ["assets/js/pages/roadmap/detail-prose.js", /function storiesHtml\(item, onPlan, state\)/],
     ["assets/js/pages/backlog/backlog.js", /function itemFactsHtml\(item, names, state\)/],
   ];
   for (const [file, signature] of surfaces) {

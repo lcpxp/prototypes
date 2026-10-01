@@ -68,6 +68,7 @@
     "sprint_plan_project()",
     "sprint_plan_project_trigger()",
     "sprint_plan_sync_order()",
+    "sprint_story_pack(p_id uuid, p_part text)",
     "work_item_delete_guard()",
     "work_item_embed_text(p_title text, p_summary text, p_details text, p_resolution text)",
     "work_item_stories_valid(p jsonb)",
@@ -398,6 +399,10 @@
     {
       "name": "sprint_order_sync_and_checks",
       "version": "20261001090941"
+    },
+    {
+      "name": "sprint_story_pack",
+      "version": "20261001094457"
     }
   ],
   "policies": [

@@ -97,6 +97,32 @@
       "</dt><dd>" + value + "</dd></div>" : "";
   }
 
+  // How far the stories have got - the question asked before every
+  // sprint (docs/SPRINT-DELIVERY.md Part A). The status travels with the
+  // board row; the counts arrive with the drawer's other long columns.
+  function storiesLine(item) {
+    if (!item.stories_status) return "Not written yet";
+    var label = item.stories_status === "confirmed" ? "Confirmed" : "Drafted";
+    var list = Array.isArray(item.user_stories) ? item.user_stories : null;
+    if (!list) return label;
+    var criteria = list.reduce(function (n, st) {
+      return n + (st.criteria || []).length;
+    }, 0);
+    return label + " - " + list.length + (list.length === 1 ? " story, " : " stories, ") +
+      criteria + (criteria === 1 ? " criterion" : " criteria");
+  }
+  function streamStories(ws, steps) {
+    var written = steps.filter(function (k) { return k.stories_status; }).length;
+    var confirmed = steps.filter(function (k) {
+      return k.stories_status === "confirmed";
+    }).length;
+    var epic = ws.stories_status === "confirmed" ? "Epic confirmed"
+      : ws.stories_status === "drafted" ? "Epic drafted" : "Epic not written yet";
+    return epic + "; " + written + " of " + steps.length +
+      (steps.length === 1 ? " step" : " steps") + " written" +
+      (confirmed ? ", " + confirmed + " confirmed" : "");
+  }
+
   // The item's own coordinates. Each line is a question someone asks in
   // a planning conversation, answered in the words the board uses.
   function itemFacts(item, ctx) {
@@ -115,7 +141,10 @@
       if (at > 0) out += fact("Follows", link(steps[at - 1]));
       if (at < steps.length - 1) out += fact("Leads into", link(steps[at + 1]));
     }
-    return out + fact("Built by", esc(builder(al))) + fact("Stakeholders", stakeholders(item));
+    return out + fact("Built by", esc(builder(al))) +
+      fact("Stories", esc(storiesLine(item))) +
+      fact("DevOps", esc(item.external_ref || "")) +
+      fact("Stakeholders", stakeholders(item));
   }
 
   // A workstream's current plan: its span, then every planned step in
@@ -143,6 +172,7 @@
       fact("Planned", esc(steps.length + (steps.length === 1 ? " step" : " steps") +
         (ext ? ", " + ext + " built outside the team" : "") +
         (prov ? ", " + prov + " not yet placed" : ""))) +
+      fact("Stories", esc(streamStories(ws, steps))) +
       fact("Shape", esc(V().scopeLabel(ws.scope))) +
       fact("Stakeholders", stakeholders(ws));
   }
