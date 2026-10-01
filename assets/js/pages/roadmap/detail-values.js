@@ -71,6 +71,15 @@
     not_started: "Not started", requested: "Requested", committed: "Committed",
     in_progress: "In progress", delivered: "Delivered", slipped: "Slipped",
   };
+  // Whether a person has placed an allocation yet. An item reaching Now
+  // is put at the end of its workstream by a trigger and stays
+  // provisional until a mapping pass confirms or moves it
+  // (docs/SPRINT-DELIVERY.md Part C). Planned is unmarked, by the same
+  // rule as BENEFIT_STATUS: only the unchecked state carries a label.
+  var PLACEMENT = {
+    provisional: "Provisional - placed automatically, not yet confirmed",
+    planned: "",
+  };
   // The countable half of a benefit (docs/VALUE-CAPTURE.md). Labels are
   // written for a stakeholder reading a bar, so they name the thing that
   // stops happening rather than the column it is stored in.
@@ -229,6 +238,7 @@
     SALES_ROUTE: SALES_ROUTE,
     OVERLAP: OVERLAP,
     EXTERNAL_STATUS: EXTERNAL_STATUS,
+    PLACEMENT: PLACEMENT,
     METRIC_KIND: METRIC_KIND,
     METRIC_UNIT: METRIC_UNIT,
     METRIC_BASIS: METRIC_BASIS,

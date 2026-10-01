@@ -328,6 +328,16 @@
   box-shadow: inset 0 0 0 2px var(--warn-soft);
 }
 
+/* Provisional: a trigger put the bar here when the item reached Now and
+   nobody has placed it yet (docs/SPRINT-DELIVERY.md Part C). An outline,
+   because the border and the inset shadow already say the item's state,
+   and "not yet placed" can be true of a bar in any state. Dotted, so it
+   survives greyscale; the key names it in words. */
+.rmv-sp-bar--provisional {
+  outline: 2px dotted var(--ink);
+  outline-offset: -4px;
+}
+
 /* --- the key ------------------------------------------------------ */
 
 /* It READS as a key: a heading and a labelled list of swatches. It used
@@ -388,6 +398,10 @@
   background-image: repeating-linear-gradient(45deg,
     var(--line-strong) 0 3px, transparent 3px 9px);
   border: 2px dashed var(--line-strong);
+}
+.rmv-sp-key--provisional::before {
+  outline: 2px dotted var(--ink);
+  outline-offset: -4px;
 }
 
 /* --- hiding a row ------------------------------------------------- */

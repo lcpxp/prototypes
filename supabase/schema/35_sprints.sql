@@ -97,7 +97,10 @@ create trigger sprint_plan_updated_at
 -- slips without re-flowing the plan.
 --
 -- Allocations are never deleted (CLAUDE.md): they retire with a
--- resolution when an item leaves Now, so the reason survives.
+-- resolution when an item leaves Now, so the reason survives. Joining
+-- and leaving are automatic - work_items_sprint_intake in
+-- 37_sprint_delivery.sql - and a joining row is placement 'provisional'
+-- until a mapping pass confirms it.
 -- ---------------------------------------------------------------
 
 create table if not exists public.work_item_sprints (
@@ -116,6 +119,8 @@ create table if not exists public.work_item_sprints (
                                'in_progress', 'delivered', 'slipped')),
   slip_slots smallint not null default 0 check (slip_slots >= 0),
   note text,
+  placement text not null default 'planned'
+    check (placement in ('provisional', 'planned')),
   retired_at timestamptz,
   resolution text,
   created_at timestamptz not null default now(),
@@ -289,7 +294,8 @@ create view public.v_sprint_plan_items with (security_invoker = on) as
     public.sprint_code_for_slot(a.slot + a.slip_slots + a.span - 1) as end_code,
     (select sp.anchor_sprint is not null from public.sprint_plan sp
       where sp.key = 'default') as anchored,
-    w.business_benefit, w.benefit_type, w.benefit_status
+    w.business_benefit, w.benefit_type, w.benefit_status,
+    a.placement, w.stories_status
   from public.work_item_sprints a
   join public.work_items w on w.id = a.work_item_id
   left join public.work_items p on p.id = w.parent_id

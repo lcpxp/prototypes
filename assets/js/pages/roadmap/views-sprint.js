@@ -40,9 +40,9 @@
   var R = App.roadmapViewsShared;
   function C() { return App.roadmapSprintCards; }
 
-  var EMPTY = '<p class="notice">No work is allocated to a sprint yet. ' +
-    "An item reaches the Sprint Roadmap when it sits in Now and is given " +
-    "a slot.</p>";
+  var EMPTY = '<p class="notice">No work is on the sprint plan yet. An ' +
+    "item joins it automatically when it moves into Now under a " +
+    "workstream.</p>";
 
   function num(v, fallback) {
     var n = Number(v);
@@ -146,6 +146,7 @@
     if (row.overlap === "overlappable") cls += " rmv-sp-bar--overlap";
     if (row.overlap === "parallel") cls += " rmv-sp-bar--parallel";
     if (row.external_status === "slipped") cls += " rmv-sp-bar--slipped";
+    if (row.placement === "provisional") cls += " rmv-sp-bar--provisional";
     return cls;
   }
 
@@ -156,7 +157,7 @@
     var keys = [
       ["planned", "Planned"], ["active", "In flight"],
       ["done", "Delivered"], ["blocked", "Blocked"],
-      ["ext", "Built elsewhere"],
+      ["ext", "Built elsewhere"], ["provisional", "Not yet placed"],
     ];
     return '<div class="rmv-sp-legend">' +
       '<span class="rmv-sp-legend-head">Key</span><ul class="rmv-sp-keys">' +
@@ -374,10 +375,13 @@
 
     var ax = axis(rows, data.sprintCodes);
     var catByStream = {};
+    // Unplaced work marks its stream too, or this tab reads it as settled.
+    var provisional = {};
     rows.forEach(function (r) {
       if (r.workstream_id && !catByStream[r.workstream_id]) {
         catByStream[r.workstream_id] = r.category_key;
       }
+      if (r.placement === "provisional") provisional[r.workstream_id] = true;
     });
     var ctx = {
       cat: catByStream,
@@ -418,6 +422,7 @@
       var bar = '<span class="rmv-tl-bar rmv-tl-bar--ws rmv-sp-bar' +
         R.catClass(catByStream[id]) +
         (st.externally_gated ? " rmv-sp-bar--has-ext" : "") +
+        (provisional[id] ? " rmv-sp-bar--provisional" : "") +
         '" data-item-id="' + App.escape(id) + '" style="' +
         colStyle(first, last) + '"><span class="rmv-sp-count">' +
         C().countText(num(st.item_count, 0)) + "</span></span>";

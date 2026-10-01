@@ -52,9 +52,14 @@ Whatever waves 1 and 2 moved, the Sprint Roadmap has to follow, because
 only Now work is allocated and that is the whole join between the two
 roadmaps.
 
-- **Left Now** - retire its allocation with a `resolution` (never delete
-  it; the reason a slot changed is what a later reader needs).
-- **Entered Now** - allocate it, or say why not yet.
+Joining and leaving are automatic (docs/SPRINT-DELIVERY.md Part C,
+"Getting on and off the belt is automatic"); what is left is judgement:
+
+- **Entered Now** - it is already on the plan, provisionally, at the end
+  of its stream. Confirm the slot or move it, and set `placement` to
+  `planned`.
+- **Left Now** - its allocation has retired itself. Check the
+  `resolution` reads right; the retired row is never deleted.
 - **Still in Now but re-sequenced** - re-map per docs/SPRINT-DELIVERY.md
   Part C and record the delta as a decision. A re-map is a decision, not
   a refresh.

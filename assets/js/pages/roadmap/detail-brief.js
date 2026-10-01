@@ -105,7 +105,10 @@
     var steps = parent ? plannedSteps(parent, ctx) : [];
     var at = steps.map(function (k) { return k.id; }).indexOf(item.id);
     var out = fact("Status", esc(V().STATUS[item.status] || item.status || "")) +
-      fact("When", esc(V().sprintWhen(al)));
+      fact("When", esc(V().sprintWhen(al))) +
+      // Said only while a trigger's placement awaits a person's: planned
+      // maps to nothing, so a settled plan reads plain.
+      fact("Placement", esc(al ? V().PLACEMENT[al.placement] || "" : ""));
     if (at > -1) {
       out += fact("Step", esc((at + 1) + " of " + steps.length + " in ") +
         link(parent));
@@ -132,10 +135,14 @@
       start_code: first.start_code, end_code: last.end_code,
     };
     var ext = steps.filter(function (k) { return builder(k.allocation); }).length;
+    var prov = steps.filter(function (k) {
+      return k.allocation.placement === "provisional";
+    }).length;
     return fact("Status", esc(V().STATUS[ws.status] || ws.status || "")) +
       fact("When", esc(V().sprintWhen(span))) +
       fact("Planned", esc(steps.length + (steps.length === 1 ? " step" : " steps") +
-        (ext ? ", " + ext + " built outside the team" : ""))) +
+        (ext ? ", " + ext + " built outside the team" : "") +
+        (prov ? ", " + prov + " not yet placed" : ""))) +
       fact("Shape", esc(V().scopeLabel(ws.scope))) +
       fact("Stakeholders", stakeholders(ws));
   }

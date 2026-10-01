@@ -106,6 +106,9 @@ const COVERAGE = {
   // rather than filtered - a blank here is a bar nobody can interpret.
   "work_item_sprints.overlap": { file: "assets/js/pages/roadmap/detail-values.js" },
   "work_item_sprints.external_status": { file: "assets/js/pages/roadmap/detail-values.js" },
+  // placement says whether a person has put the bar where it is or a
+  // trigger did, so a provisional bar must read as one in the drawer.
+  "work_item_sprints.placement": { file: "assets/js/pages/roadmap/detail-values.js" },
   // scope is the one vocabulary on this board whose whole job is the
   // WORDING: "finite" and "continuous" are only useful as the sentences
   // they expand into, so the labels live with the cards that say them

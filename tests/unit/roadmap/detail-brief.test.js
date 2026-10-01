@@ -100,6 +100,20 @@ test("an item's brief places it in its stream: step, neighbours, builder", () =>
   assert.match(html, /Built by<\/dt><dd>Payment Service - requested</);
   const first = App.roadmapDetail.drawerHtml(byId(data, "s1"), ctxOf(App, data), "ready");
   assert.doesNotMatch(first, /Follows</, "the first step follows nothing");
+  assert.doesNotMatch(html, /Placement</, "a placed step says nothing about placement");
+});
+
+test("a step the intake trigger placed says so, and its stream counts it", () => {
+  // supabase/schema/37_sprint_delivery.sql puts an item arriving at Now
+  // at the end of its stream; until a mapping pass confirms it the
+  // drawer must not read as though a person chose that sprint.
+  const App = load();
+  const data = sample();
+  byId(data, "s3").allocation.placement = "provisional";
+  const html = App.roadmapDetail.drawerHtml(byId(data, "s3"), ctxOf(App, data), "ready");
+  assert.match(html, /Placement<\/dt><dd>Provisional - placed automatically, not yet confirmed</);
+  const ws = App.roadmapDetail.drawerHtml(byId(data, "ws"), ctxOf(App, data), "ready");
+  assert.match(ws, /Planned<\/dt><dd>3 steps, 1 built outside the team, 1 not yet placed</);
 });
 
 test("the brief leads the drawer and the fact grid folds beneath it", () => {

@@ -192,11 +192,35 @@ test("the key is a key, and nothing on it invites a click", () => {
     "and carries nothing a reader could mistake for a control");
 });
 
+test("work the intake trigger placed reads as not yet placed, on both tabs", () => {
+  // An item reaching Now is put at the end of its stream automatically
+  // (supabase/schema/37_sprint_delivery.sql) and stays provisional until
+  // a mapping pass places it. A bar that looks settled when nobody has
+  // settled it would be the disagreement the trigger exists to remove.
+  const V = loadView();
+  const data = sample();
+  data.sprintItems[1].placement = "provisional";
+  data.sprintItems[0].placement = "planned";
+  const items = V.sprintItems(data);
+  assert.match(items, /rmv-sp-bar--provisional[^"]*" data-item-id="i2"/,
+    "the provisional bar is marked");
+  assert.doesNotMatch(items, /rmv-sp-bar--provisional[^"]*" data-item-id="i1"/,
+    "a planned bar is not");
+  const streams = V.sprintStreams(data);
+  assert.match(streams, /rmv-sp-bar--provisional" data-item-id="w1"/,
+    "the stakeholder tab marks the stream holding it");
+  assert.doesNotMatch(streams, /rmv-sp-bar--provisional" data-item-id="w2"/);
+  assert.match(V.sprintLegend(), /rmv-sp-key--provisional">Not yet placed</,
+    "and the key says it in words, so it never rests on the outline alone");
+  assert.doesNotMatch(V.sprintItems(sample()) + V.sprintStreams(sample()),
+    /rmv-sp-bar--provisional/, "a plan with nothing provisional carries no marker");
+});
+
 test("an empty allocation says so rather than drawing an empty grid", () => {
   const V = loadView();
   const empty = { sprintItems: [], sprintStreams: [], metrics: [], sprintCodes: {} };
   for (const html of [V.sprintStreams(empty), V.sprintItems(empty)]) {
-    assert.match(html, /No work is allocated to a sprint yet/);
+    assert.match(html, /No work is on the sprint plan yet\. An item joins it automatically when it moves into Now/);
     assert.doesNotMatch(html, /rmv-tl-head/, "no axis is drawn when there is nothing on it");
   }
 });

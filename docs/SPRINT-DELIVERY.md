@@ -27,14 +27,15 @@ the Sprint Roadmap if it has a live row in `work_item_sprints`, and it
 may only have one while `horizon = 'now'`. The Now column is therefore a
 conveyor belt - work enters, is allocated, is delivered, and leaves.
 
-Allocation is always **relative**: `slot` 0 is Sprint +0. A real sprint
-code exists only once `sprint_plan.anchor_sprint` is set, which is a
-single deliberate act:
+Allocation is always **relative**: `slot` 0 is the plan's first sprint,
+which every surface labels "Sprint 1" - the slot is zero-indexed and only
+its label counts from one. A real sprint code exists only once
+`sprint_plan.anchor_sprint` is set, which is a single deliberate act:
 
     update sprint_plan set anchor_sprint = '<YY-NN>' where key = 'default';
     select sprint_plan_project();
 
-Until then every surface says Sprint +N, and nothing invents a date.
+Until then every surface says Sprint N, and nothing invents a date.
 
 ---
 
@@ -194,6 +195,40 @@ Run this whenever the Now column changes. It is deterministic enough
 that a session with no memory of the last one should land in the same
 place.
 
+## Getting on and off the belt is automatic
+
+A trigger on `work_items` - `work_items_sprint_intake`, in
+`supabase/schema/37_sprint_delivery.sql` - keeps the conveyor-belt rule
+true without anyone remembering to:
+
+- **Joining.** A work item (`level = 'item'`) under a workstream gets a
+  live allocation the moment it reaches Now, by whatever route: a
+  promotion, its workstream moving, an insert, a re-parent or a
+  re-level. It goes at the end of its own stream - sharing the last slot
+  the stream reaches, `overlappable`, span 1 - or, when the stream is not
+  on the plan yet, in the first slot after the last one in use.
+  Appending never displaces work already placed.
+- **Provisional until placed.** That allocation carries
+  `placement = 'provisional'`, and the board marks it "Not yet placed"
+  on both tabs. A mapping pass under the rules below confirms or moves it,
+  with the reason in `note`:
+
+      update work_item_sprints
+         set slot = <n>, span = <n>, overlap = '<...>',
+             placement = 'planned', note = '<why this slot>'
+       where work_item_id = '<id>' and retired_at is null;
+
+- **Leaving.** Demoted, dropped, or no longer a work item under a
+  workstream: the live allocation retires with a `resolution` saying
+  which. To undo a mistaken move, move the item back - it rejoins
+  provisionally, and the retired row still holds the slot it had.
+- **Done keeps its allocation**, as the record of the sprint the work was
+  delivered in. The board's view already leaves it out.
+
+A deliverable is never allocated; it is drawn as part of its item. The
+trigger watches the item's own row, so a change to its workstream alone
+(a re-level, say) is for the mapping pass to catch.
+
 ## The inputs
 
     select * from v_sprint_plan_items order by priority, slot;
@@ -266,7 +301,8 @@ is wrong, not that the bound is. Fix the mapping.
 
 1. Retire the affected allocations - set `retired_at` and a `resolution`.
    They are never deleted; the reason a slot changed is the part a later
-   reader needs.
+   reader needs. An item still in Now is off the plan from that moment
+   until step 2 gives it a new allocation.
 2. Re-run the rules above.
 3. Record the delta as a `work_notes` `decision`. A re-map is a decision,
    not a refresh.
@@ -280,7 +316,7 @@ slip breaks a dependency or empties a slot.
 ## Durations
 
 Sprint spans are the only unit that appears anywhere a person reads:
-"spans Sprint +0 to Sprint +2". No day counts, no hour counts, no
+"Sprints 1 to 3", as the board prints it. No day counts, no hour counts, no
 developer-days, no velocity - not on a bar, not in a tooltip, not in a
 drawer, not in an export, not in a sprint summary. The planning constants
 exist to produce the mapping, not to be published with it.

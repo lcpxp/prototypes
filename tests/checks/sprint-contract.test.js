@@ -28,6 +28,8 @@ const snapshot = JSON.parse(read("supabase/schema-snapshot.json"));
 const SOURCES = [
   "assets/js/pages/roadmap/views-sprint.js",
   "assets/js/pages/roadmap/views-sprint-cards.js",
+  // The page reads the rows too, for the readout above the board.
+  "assets/js/pages/sprints/sprints.js",
 ];
 
 // What each rendering genuinely depends on. Listed rather than parsed
@@ -40,6 +42,10 @@ const CONTRACT = {
     "effective_slot", "effective_end_slot", "span", "sequence_position",
     "overlap", "is_external", "external_party", "external_status",
     "start_code", "end_code", "anchored",
+    // Whether a person placed the bar or the intake trigger did
+    // (supabase/schema/37_sprint_delivery.sql): a provisional bar is
+    // marked on both tabs and counted in the readout.
+    "placement",
   ],
   v_sprint_plan_streams: [
     "workstream_id", "workstream_title", "priority",

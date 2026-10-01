@@ -11,6 +11,11 @@ is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
+### Added
+- Sprint roadmap: an item moving into Now joins the plan by itself, at the
+  end of its workstream, marked "Not yet placed" on both tabs and in its
+  drawer until a planning pass confirms it; an item leaving Now drops off.
+
 ## [0.1.0] - 2026-10-01
 
 ### Added

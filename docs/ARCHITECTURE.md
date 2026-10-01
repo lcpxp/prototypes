@@ -264,7 +264,13 @@ page's own (assets/css/sprints.css).
   pointing at an `integrations` row. An allocation with an external
   party consumes no PXP capacity, so externally-gated work is placed
   honestly and slips without re-flowing the plan. Retired with a
-  resolution, never deleted.
+  resolution, never deleted. `placement` says whether a person placed
+  it (`planned`) or the intake trigger did (`provisional`).
+- work_items_sprint_intake: the trigger that runs the belt. An item
+  reaching Now under a workstream is given a provisional allocation at
+  the end of its stream; one leaving has its allocation retired with a
+  resolution. Done keeps its allocation as the record of delivery. It
+  lives in supabase/schema/37_sprint_delivery.sql.
 - work_item_metrics: the countable half of a benefit (docs/VALUE-CAPTURE.md).
 - work_items.user_stories / stories_status: the user stories and
   acceptance criteria written for sprint work, and whether the owner has

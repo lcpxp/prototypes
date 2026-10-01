@@ -246,7 +246,8 @@
 
     // Resolve the anchor from any allocated row already carrying a real
     // code, then label every column from it. Unanchored, this stays
-    // empty and the board reads Sprint +N, which is the truth.
+    // empty and the board reads Sprint N, counted from the plan's
+    // first sprint, which is the truth.
     var sprints = results[3].error ? [] : results[3].data || [];
     var byCode = {};
     sprints.forEach(function (s) { byCode[s.code] = s.idx; });
@@ -314,13 +315,20 @@
       var n = data.sprintItems.length;
       var streams = data.sprintStreams.length;
       var h = hiddenCount();
+      // Work a trigger placed and nobody has confirmed yet
+      // (docs/SPRINT-DELIVERY.md Part C) is counted, so a board about to
+      // be shown to a room says it is not settled.
+      var p = data.sprintItems.filter(function (r) {
+        return r.placement === "provisional";
+      }).length;
       // Whether the plan is anchored is NOT repeated here. It is stated
       // on the column headings, where the confusion it answers actually
       // arises, and a fact with two homes is a fact that will drift.
       stateLine.textContent = (n === 0
-        ? "Nothing is allocated yet."
+        ? "Nothing is on the sprint plan yet."
         : n + (n === 1 ? " item" : " items") + " across " + streams +
           (streams === 1 ? " workstream." : " workstreams.")) +
+        (p ? " " + p + " not yet placed." : "") +
         (h ? " " + h + (h === 1 ? " row hidden." : " rows hidden.") : "");
     }
     state();
