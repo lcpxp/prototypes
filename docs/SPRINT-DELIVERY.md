@@ -105,11 +105,40 @@ and an item that needs five stories is two items.
 - No durations, no capacity figures, no internal shorthand (Part C,
   Durations).
 
+## Checking before anyone reads them
+
+The session checks its own drafts before the owner is asked anything, so
+the owner reviews what the check could not settle, not every line. Over
+every row, with each fix recorded in a `decision` note that is its undo:
+
+1. **Trace.** Each criterion traces to a sentence in the row's own
+   fields, an answered note or an owner direction. One that traces to
+   nothing is cut.
+2. **Open questions.** No criterion answers one; an OPEN line in
+   `details` becomes a `question` note first.
+3. **Glossary.** Words mean what `domain_terms` says: a lead is not yet
+   an application, and an agent is the human selling agent.
+4. **Scope.** A story claims only its own row's work, never a
+   neighbour's.
+5. **Stated dependencies.** A dependency a row states in its own text
+   has a `blocks` link, and the slots honour Part C rules 3 and 6.
+6. **Owner directions win.** A placement or order the allocation's note
+   records as the owner's direction is never moved; where a row's text
+   disagrees with it, the text is stale and gets a dated line.
+7. **Dead links and capabilities.** No live `blocks` link points at a
+   closed row, and what a story says about today's system matches
+   `product_capabilities`.
+
 ## Confirming and freezing
 
-- Stories stay `drafted` until the owner confirms them in as many words,
-  one stream at a time. Confirmed stories change only at the owner's
-  request.
+- Stories are written as `drafted` once the check passes, and the owner
+  reads them where they live: the drawer on the Sprint Roadmap. They stay
+  `drafted` until the owner confirms them in as many words, one stream at
+  a time. Confirmed stories change only at the owner's request.
+- A question to the owner carries only what the check could not settle,
+  with a recommendation - never a whole stream to read.
+- A row the check changes after the owner saw it goes back to `drafted`,
+  even when the rest of its stream is confirmed.
 - Overwriting a story set records the previous JSON in that run's
   `decision` note: it is the undo.
 - Once `external_ref` holds the DevOps id, the stories are frozen. A

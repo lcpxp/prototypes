@@ -6,8 +6,9 @@
 // and the company roadmap, and a session runs it with no memory of the
 // last run. So the things that must not drift are checked here: the
 // order is fixed before anything is drafted, only Now work is written
-// for, nothing is confirmed on a session's own judgement, and the
-// database pieces the command leans on exist with the grants it assumes.
+// for, drafts are checked before the owner is asked anything, nothing is
+// confirmed on a session's own judgement, and the database pieces the
+// command leans on exist with the grants it assumes.
 // How much to write lives in docs/SPRINT-DELIVERY.md alone - the
 // one-home gate holds that.
 // ------------------------------------------------------------------
@@ -46,6 +47,24 @@ test("stories are written for Now work only", () => {
   assert.match(cmd, /v_sprint_plan_items/);
   assert.match(cmd, /Now work/);
   assert.match(cmd, /Decline anything\s+else/);
+});
+
+test("the session checks its own drafts before the owner is asked anything", () => {
+  // The first run put whole streams to the owner as text, and the owner
+  // called that homework in one big block. The check does that reading
+  // first, so a question only ever carries what the check could not
+  // settle and the stories themselves are read live, in the drawer.
+  const cmd = read(CMD);
+  const draft = cmd.indexOf("**Draft**");
+  const check = cmd.indexOf("**Check**");
+  const write = cmd.indexOf("**Write**");
+  assert.ok(check > draft && check < write, "the check sits between drafting and writing");
+  assert.ok(cmd.indexOf("AskUserQuestion") > check, "no question is asked before the check");
+  assert.match(cmd, /Checking before anyone reads them/, "the command cites the check's one home");
+  const doc = read(DOC);
+  assert.match(doc, /^## Checking before anyone reads them$/m);
+  assert.match(doc, /Owner directions win/, "a check never moves a placement the owner directed");
+  assert.match(doc, /never a whole stream to read/);
 });
 
 test("nothing is confirmed on a session's own judgement", () => {

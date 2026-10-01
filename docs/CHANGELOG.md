@@ -20,8 +20,10 @@ is the git history; what is unfinished is docs/STATE.md.
   brief and the sprint page say how far the stories have got, and the JSON
   export carries them.
 - /sprint-stories: prepares a sprint in one run - the order and readiness
-  checks, stories drafted and confirmed one workstream at a time, and the
-  packs for Azure DevOps and the company roadmap printed to copy.
+  checks, stories drafted and checked against their sources before anyone
+  reads them, then written for review in the drawer, and the packs for
+  Azure DevOps and the company roadmap printed to copy. It asks only what
+  its check cannot settle; a stream is confirmed on the owner's word.
 
 ### Changed
 - Roadmap: the Now column lists work in the order the Sprint Roadmap runs

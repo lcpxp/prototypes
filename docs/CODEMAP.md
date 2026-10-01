@@ -381,7 +381,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | security.test.js | 205 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 152 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
-| sprint-stories.test.js | 94 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
+| sprint-stories.test.js | 113 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -457,7 +457,7 @@ Shared fixtures and the budgets the gates read.
 | lib/roadmap.js | 92 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
 | page-weight-budget.json | 110 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
-| size-budget.json | 104 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
+| size-budget.json | 107 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
 | surface-baseline.json | 874 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
@@ -510,7 +510,7 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 373 | Architecture How the portal fits together. |
-| CHANGELOG.md | 242 | Changelog All notable user-facing changes to LPIO, newest first. |
+| CHANGELOG.md | 244 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
@@ -526,9 +526,9 @@ Architecture, security, design, and the operating protocols.
 | ROADMAP.md | 282 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINT-DELIVERY.md | 399 | Sprint delivery |
+| SPRINT-DELIVERY.md | 428 | Sprint delivery |
 | SPRINTS.md | 123 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 40 | Current state Updated: 2026-10-01 (the sprint belt is live; the first stories run is next) # In progress Seven workstreams sit in Now: 39 items across slots 0-4, in the order `v_sprint_plan_order` holds (synced 1 Oct). |
+| STATE.md | 40 | Current state Updated: 2026-10-01 (first stories run written; the owner's live review is next) # In progress Seven workstreams in Now: 39 items across Sprints 1-5, synced to `v_sprint_plan_order`, UNANCHORED on purpose. |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
@@ -543,7 +543,7 @@ Slash commands and the permission settings a session runs under.
 | commands/prototype-idea.md | 43 | Capture a prototype idea in one line, or run the review pass that prioritises and plans them |
 | commands/roadmap-add.md | 56 | Quick-capture or update roadmap work from a one-line request, applied straight to Supabase |
 | commands/roadmap.md | 39 | Run the roadmap review ritual - a quick, clickable pass over Now/Next, promotions, new work and decisions |
-| commands/sprint-stories.md | 62 | Prepare the Sprint Roadmap for its sprint - order and readiness checks, user stories and acceptance criteria drafted and confirmed per workstream, then the packs for Azure DevOps and the company roadmap |
+| commands/sprint-stories.md | 69 | Prepare the Sprint Roadmap for its sprint - order and readiness checks, user stories and acceptance criteria drafted and confirmed per workstream, then the packs for Azure DevOps and the company roadmap |
 | settings.json | 50 | Committed, shared permissions for a session in this repo: an allow list covering the routine commands (npm/node, read-only and write git, the search tools, a local http server, file reads and edits) and a deny list that blocks the hard rules mechanically - reading config.js or .env, force-pushing, git add -f, rm -rf. .claude/settings.local.json is per-developer and gitignored. |
 
 ### .github/

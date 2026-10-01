@@ -1,37 +1,37 @@
 # Current state
 
-Updated: 2026-10-01 (the sprint belt is live; the first stories run is next)
+Updated: 2026-10-01 (first stories run written; the owner's live review is next)
 
 ## In progress
-Seven workstreams sit in Now: 39 items across slots 0-4, in the order
-`v_sprint_plan_order` holds (synced 1 Oct). UNANCHORED on purpose
-(`sprint_plan.anchor_sprint` is null), so the board reads Sprint 1..N.
-`v_sprint_plan_checks` shows one `placement` and 46 `stories_missing` rows.
+Seven workstreams in Now: 39 items across Sprints 1-5, synced to
+`v_sprint_plan_order`, UNANCHORED on purpose. All 46 plan rows hold
+stories, 19 confirmed and 27 drafted; `v_sprint_plan_checks` shows only
+the 27 `stories_drafted` rows and 1 `placement`.
 
 ## Next steps
-1. **Write the first stories** with `/sprint-stories all`: seven epics,
-   one owner review per stream, both packs pasted into DevOps and the
-   company roadmap, then the DevOps ids written back to `external_ref`.
-2. **Confirm or move the one provisional placement**: Payment Service
-   fee configuration, placed automatically at slot 1.
-3. **Anchor the plan** once the start date and resource are known: set
+1. **The owner's live review on the Sprint Roadmap**, as asked:
+   - drafted stories: Unity, Risk, Pricing, Contract and the Inbound epic
+     (corrected after review); confirm each with `/sprint-stories confirm`;
+   - the fee configuration placement, provisional at Sprint 2;
+   - EIT's two Sprint 1 rows are both exclusive though they run side by
+     side by the owner's direction: `parallel` would describe them;
+   - two new questions: fee types in scope, and the cutover order.
+2. **Paste the packs**: confirmed streams now, drafted ones after review.
+   A DevOps id written back to `external_ref` freezes that row.
+3. **Push the tag** `v0.1.0` - this session's git access cannot: `git push
+   origin v0.1.0`, or a GitHub release at `ab0e78b`.
+4. **Anchor the plan** when the start date is known: set
    `sprint_plan.anchor_sprint`, then `select sprint_plan_project();`.
-4. **Owner confirmations**: 7 drafted benefits on the plan (the six
-   Unity steps and the fee configuration), and 47 proposed links.
-5. **Open questions**: 11 on plan rows, four of them raised 23 Sep on
-   the thinnest rows (Quote tool, historic pricing data, retiring the
-   spreadsheet, per-MCC addenda).
-6. **Size seams**: `views-sprint.js` and `roadmap-detail.css` are at 549
-   of 550, so take the hide-mode split and the `.rmd-exec*` move before
-   adding anything. `SPRINT-DELIVERY.md` is at 398 of 400.
+5. **Owner confirmations**: 7 drafted benefits on the plan, 46 proposed
+   links, and 13 open questions on plan rows.
+6. **Size seams**: `views-sprint.js` and `roadmap-detail.css` sit at 549
+   of 550 - take the hide-mode split and the `.rmd-exec*` move first.
 7. **Promise chains**: 17 have no visible handler (`npm run audit`).
 
 ## Verification the repo cannot do for itself
-- Signed in on the live site: the drawer's stories section and its Copy
-  buttons, the provisional outline on the board, and seven cards laid
-  out as four and three.
-- The first DevOps paste: whether the pack's plain-text lists survive
-  the Description and Acceptance Criteria fields.
+- Signed in on the live site: the stories section and its Copy buttons,
+  the provisional outline, and seven cards laid out as four and three.
+- The first DevOps paste: whether the plain-text lists survive the fields.
 
 ## Open decisions
 - SECURITY: leaked-password protection is still disabled in Supabase Auth.
