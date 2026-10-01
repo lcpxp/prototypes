@@ -29,9 +29,12 @@
   .rmv-sp-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 /* Projector width: five streams read as three and two rather than as
-   three rows of two with an orphan. */
+   three rows of two with an orphan, and seven or more - marked by the
+   builder - as rows of four, so seven read as four and three rather
+   than leaving the last card alone. */
 @media (min-width: 90rem) {
   .rmv-sp-notes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .rmv-sp-notes--many { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 .rmv-sp-note-card {

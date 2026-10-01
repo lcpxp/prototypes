@@ -24,6 +24,8 @@ is the git history; what is unfinished is docs/STATE.md.
 - Roadmap: the Now column lists work in the order the Sprint Roadmap runs
   it - priority now leads span length in the Now band, and is kept equal
   to the sprint order.
+- Sprint roadmap: seven or more workstream cards lay out in rows of four
+  at projector width, so seven read as four and three.
 
 ## [0.1.0] - 2026-10-01
 

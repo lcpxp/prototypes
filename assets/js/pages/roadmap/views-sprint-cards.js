@@ -248,8 +248,12 @@
         "</div>" + head + valueList(st) +
         metricTiles(ctx.metrics[id]) + scaleTags(st) + prose + "</div>";
     }).join("");
-    return notes ? '<div class="rmv-sp-notes">' + notes + "</div>" : "";
+    // Seven streams or more lay out in rows of four at projector width
+    // (sprint-cards.css): seven in rows of three leaves one card alone.
+    return notes ? '<div class="rmv-sp-notes' +
+      (ordered.length >= MANY ? " rmv-sp-notes--many" : "") + '">' + notes + "</div>" : "";
   }
+  var MANY = 7;
 
   App.roadmapSprintCards = {
     streamNotes: streamNotes,

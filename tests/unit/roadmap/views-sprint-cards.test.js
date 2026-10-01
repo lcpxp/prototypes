@@ -342,3 +342,23 @@ test("a card names what it unlocks and emphasises the cap and the amount", () =>
     /Keying by hand <strong class="rm-em">caps fulfilment at 15-20 orders a day<\/strong>; carrying them on the order <strong class="rm-em">removes the ceiling<\/strong>\./);
   assert.doesNotMatch(html, /\*\*|<script>|<b>x/, "markers are consumed and markup is escaped first");
 });
+
+test("seven streams or more are marked to lay out in rows of four", () => {
+  // At projector width the cards run three to a row, so a seventh
+  // stream would sit alone; the builder marks the grid and the stylesheet
+  // gives it four columns, reading as four and three.
+  const V = loadView();
+  const withStreams = (n) => {
+    const data = sample();
+    const base = data.sprintStreams[0];
+    data.sprintStreams = [];
+    for (let k = 0; k < n; k += 1) {
+      data.sprintStreams.push(Object.assign({}, base, {
+        workstream_id: "s" + k, workstream_title: "Stream " + k, priority: (k + 1) * 10 }));
+    }
+    return data;
+  };
+  assert.match(V.sprintStreams(withStreams(7)), /class="rmv-sp-notes rmv-sp-notes--many"/);
+  assert.doesNotMatch(V.sprintStreams(withStreams(6)), /rmv-sp-notes--many/,
+    "six read as two rows of three");
+});

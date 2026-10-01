@@ -65,7 +65,7 @@ Everything one file can call in another. A surface in
 | `App.roadmapDrawer` | assets/js/pages/roadmap/drawer.js:19 |
 | `App.roadmapExport` | assets/js/pages/roadmap/export.js:99 |
 | `App.roadmapPrefs` | assets/js/pages/roadmap/prefs.js:52 |
-| `App.roadmapSprintCards` | assets/js/pages/roadmap/views-sprint-cards.js:254 |
+| `App.roadmapSprintCards` | assets/js/pages/roadmap/views-sprint-cards.js:258 |
 | `App.roadmapView` | assets/js/pages/roadmap/views-breakdown.js:58 (+7 more) |
 | `App.roadmapViewsShared` | assets/js/pages/roadmap/views.js:405 |
 | `App.root` | assets/js/core/guard.js:29 (+7 more) |
@@ -160,7 +160,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | roadmap/views-breakdown.js | 60 | roadmap/views-breakdown.js - The Detailed breakdown for the roadmap home: the Category -> Area -> item drill-down shown under the Work Items and Backlog levels when Detailed is on. |
 | roadmap/views-cascade.js | 206 | roadmap/views-cascade.js - The Cascade layout for the roadmap home: the same work as stacked stage bands (Now/Next/Later, plus Parked for Backlog). |
 | roadmap/views-exec.js | 102 | roadmap/views-exec.js - The Executive (Categories) board for the roadmap home: a department-first rollup of active work - each department, the categories it owns and their item counts, expanding to item rows when Detailed is on. |
-| roadmap/views-sprint-cards.js | 266 | roadmap/views-sprint-cards.js - What each workstream buys, as the cards that sit below the sprint board. |
+| roadmap/views-sprint-cards.js | 270 | roadmap/views-sprint-cards.js - What each workstream buys, as the cards that sit below the sprint board. |
 | roadmap/views-sprint.js | 550 | roadmap/views-sprint.js - The Sprint Roadmap: the same Now work the product board bands by horizon, placed instead against sprints. |
 | roadmap/views-timeline.js | 217 | roadmap/views-timeline.js - The Timeline layout for the roadmap home: the continuous Delivered\|Now\|Next\|Later\|Parked axis where a bar SPANS the columns it runs across. |
 | roadmap/views.js | 433 | roadmap/views.js - Pure HTML builders for the roadmap home (modules/roadmap/). |
@@ -198,7 +198,7 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | roadmap-views.css | 534 | roadmap-views.css - The roadmap home's level views (Executive theme rollup, Team, Backlog) in Timeline and Cascade layouts, plus the level switcher. |
 | roadmap.css | 364 | roadmap.css - The roadmap board (modules/roadmap/). |
 | skeleton.css | 57 | skeleton.css - The loading placeholder for a region whose content arrives after first paint. |
-| sprint-cards.css | 339 | sprint-cards.css - What each workstream buys, as the cards below the sprint board. |
+| sprint-cards.css | 342 | sprint-cards.css - What each workstream buys, as the cards below the sprint board. |
 | sprints.css | 505 | sprints.css - The Sprint Roadmap BOARD, and only that. |
 | tokens.css | 462 | tokens.css - Design tokens for the LPIO hub. |
 
@@ -422,7 +422,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | roadmap/export.test.js | 124 | tests/unit/roadmap/export.test.js - The roadmap's export dropdown wiring (App.roadmapExport.wire). |
 | roadmap/views-custom.test.js | 258 | tests/unit/roadmap/views-custom.test.js - Benchmarks for the roadmap |
 | roadmap/views-exec.test.js | 49 | tests/unit/roadmap/views-exec.test.js - Benchmarks for the Executive (Categories) board, split from roadmap-views.test.js per its size-budget exit plan. |
-| roadmap/views-sprint-cards.test.js | 345 | tests/unit/roadmap/views-sprint-cards.test.js - Benchmarks for the workstream cards below the Sprint Roadmap (App.roadmapSprintCards), rendered into both boards by sprintStreams and sprintItems alike. |
+| roadmap/views-sprint-cards.test.js | 365 | tests/unit/roadmap/views-sprint-cards.test.js - Benchmarks for the workstream cards below the Sprint Roadmap (App.roadmapSprintCards), rendered into both boards by sprintStreams and sprintItems alike. |
 | roadmap/views-sprint.test.js | 449 | tests/unit/roadmap/views-sprint.test.js - Benchmarks for the Sprint Roadmap BOARD (App.roadmapView.sprintStreams / sprintItems): the axis, the spans, the external marking and hide mode. |
 | roadmap/views.test.js | 502 | tests/unit/roadmap/views.test.js - Benchmarks for the roadmap home's pure builders (App.roadmapView in roadmap-views.js + the exec board in roadmap-views-exec.js + the cascade half in roadmap-views-cascade.js). |
 | route-extract.test.js | 108 | tests/unit/route-extract.test.js - Benchmarks for the route extractor (scripts/extract-routes.js), inventory A of docs/plan/20-API-REFERENCE.md. |
@@ -509,7 +509,7 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 373 | Architecture How the portal fits together. |
-| CHANGELOG.md | 237 | Changelog All notable user-facing changes to LPIO, newest first. |
+| CHANGELOG.md | 239 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
