@@ -33,6 +33,7 @@ function load() {
     "assets/js/pages/roadmap/views.js",
     "assets/js/pages/roadmap/detail-values.js",
     "assets/js/pages/roadmap/detail-brief.js",
+    "assets/js/pages/roadmap/detail-prose.js",
     "assets/js/pages/roadmap/detail.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App;

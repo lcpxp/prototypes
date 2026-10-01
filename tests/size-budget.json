@@ -57,7 +57,7 @@
       "seam": "Do not split. Tokens plus the dark-theme overrides: inherently long, no logic, and every value in the design system resolves here. A tokens-dark.css would add a request to all 24 pages for no reading gain."
     },
     "assets/js/pages/roadmap/detail.js": {
-      "seam": "Not yet, at 563 - one line over the 562 it stood at. The value helpers already left for detail-values.js, and on 23 Sep 2026 the current-state brief was built as its own file (detail-brief.js) rather than here, with the sprint-slot row collapsing onto the shared sprintWhen helper to pay for the wiring. The details and notes parsers are the next seam and the next addition to this file must take it."
+      "seam": "Not yet, at 463. On 1 Oct 2026 it took the seam this entry named: the details and notes builders, the drawer's two late-arriving sections, left for detail-prose.js, and the stories section joins them there rather than here. What is left is the drawer's own layout and its fact grid. The next seam is that fact-field table - factFields, FACTS_HIDDEN and FACTS_MARKUP - leaving for detail-facts.js; revisit at 550."
     },
     "assets/js/pages/roadmap/roadmap.js": {
       "seam": "Not yet. The roadmap page already loads twelve modules and is the heaviest page in the site; a roadmap-fetch.js would make it thirteen. The page-load fetch and the phase/link enrichment in onAuthed are the seam when it passes 550."

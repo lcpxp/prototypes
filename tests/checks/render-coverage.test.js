@@ -89,7 +89,7 @@ const COVERAGE = {
   "work_items.prd_status": { file: "assets/js/pages/roadmap/detail-values.js" },
   "work_items.project_status": { file: "assets/js/pages/roadmap/detail-values.js" },
   "work_item_phases.phase": { file: "assets/js/pages/roadmap/detail-values.js" },
-  "work_notes.kind": { file: "assets/js/pages/roadmap/detail.js" },
+  "work_notes.kind": { file: "assets/js/pages/roadmap/detail-prose.js" },
   "work_items.horizon": { file: "assets/js/pages/roadmap/views.js" },
   "work_items.end_horizon": { file: "assets/js/pages/roadmap/views.js" },
   "work_items.presentation": { file: "assets/js/pages/roadmap/views.js" },

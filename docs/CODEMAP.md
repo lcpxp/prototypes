@@ -60,6 +60,7 @@ Everything one file can call in another. A surface in
 | `App.requireAuth` | assets/js/core/guard.js:31 |
 | `App.roadmapDetail` | assets/js/pages/roadmap/detail-export.js:223 (+5 more) |
 | `App.roadmapDetailBrief` | assets/js/pages/roadmap/detail-brief.js:194 |
+| `App.roadmapDetailProse` | assets/js/pages/roadmap/detail-prose.js:133 |
 | `App.roadmapDetailValues` | assets/js/pages/roadmap/detail-values.js:217 |
 | `App.roadmapDrawer` | assets/js/pages/roadmap/drawer.js:19 |
 | `App.roadmapExport` | assets/js/pages/roadmap/export.js:99 |
@@ -149,8 +150,9 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | reference/topics.js | 48 | reference/topics.js - Pure HTML builders for api_topics rows: the narrative sections of a spec (overview, conventions, runbooks, accepted values, gap registers). |
 | roadmap/detail-brief.js | 200 | roadmap/detail-brief.js - "Where it stands": the current state of a piece of planned work, at the top of its drawer. |
 | roadmap/detail-export.js | 228 | roadmap/detail-export.js - The AI-optimised JSON and the flat CSV exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap / toCsvRoadmap). |
+| roadmap/detail-prose.js | 143 | roadmap/detail-prose.js - The drawer's late-arriving sections: an item's written detail and the notes recorded against it. |
 | roadmap/detail-values.js | 255 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
-| roadmap/detail.js | 564 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
+| roadmap/detail.js | 464 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
 | roadmap/drawer.js | 97 | roadmap/drawer.js - The item detail drawer surface for the roadmap home: open/close, the ?item=<id> deep-link URL sync, and in-drawer navigation (a related-item link or a nested step row swaps the drawer to that item). |
 | roadmap/export.js | 101 | roadmap/export.js - The roadmap home's export dropdown wiring and the small download helpers it shares with the detail drawer (App.roadmapExport). |
 | roadmap/prefs.js | 106 | roadmap/prefs.js - The roadmap board's remembered view state (App.roadmapPrefs): which level and layout, and the eight view-only preferences that are NOT part of the shareable hash. |
@@ -228,8 +230,8 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 | prototypes/pci/reports.html | 72 | Compliance reporting - Acquirer replica - LPIO |
 | prototypes/website-screening/index.html | 45 | Website screening prototype - LPIO |
 | reference/index.html | 71 | API reference - LPIO |
-| roadmap/index.html | 136 | Roadmap - LPIO |
-| sprints/index.html | 111 | Sprint roadmap - LPIO |
+| roadmap/index.html | 137 | Roadmap - LPIO |
+| sprints/index.html | 112 | Sprint roadmap - LPIO |
 | users/index.html | 51 | Users - LPIO |
 
 ### supabase/migrations/
@@ -407,8 +409,10 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, the single source of truth for navigation, dashboard cards and access-control keys. |
 | render-fallbacks.test.js | 163 | tests/unit/render-fallbacks.test.js - Two renderers that handled the values they were written for and quietly mishandled the rest. |
 | roadmap/child-order.test.js | 84 | tests/unit/roadmap/child-order.test.js - Benchmarks for how a workstream's nested work items stack and colour. |
-| roadmap/detail-export.test.js | 212 | tests/unit/roadmap/detail-export.test.js - Benchmarks for the AI-optimised JSON export and the CSV builders (toKpiItem, toKpiRoadmap, toCsvRoadmap, csvFromRows). |
-| roadmap/detail.test.js | 524 | tests/unit/roadmap/detail.test.js - Benchmarks for the item detail drawer (App.roadmapDetail.drawerHtml). |
+| roadmap/detail-brief.test.js | 202 | tests/unit/roadmap/detail-brief.test.js - Benchmarks for "Where it |
+| roadmap/detail-export.test.js | 213 | tests/unit/roadmap/detail-export.test.js - Benchmarks for the AI-optimised JSON export and the CSV builders (toKpiItem, toKpiRoadmap, toCsvRoadmap, csvFromRows). |
+| roadmap/detail-prose.test.js | 88 | tests/unit/roadmap/detail-prose.test.js - Benchmarks for the drawer's late-arriving sections (App.roadmapDetailProse): the written detail and the notes. |
+| roadmap/detail.test.js | 525 | tests/unit/roadmap/detail.test.js - Benchmarks for the item detail drawer (App.roadmapDetail.drawerHtml). |
 | roadmap/export.test.js | 119 | tests/unit/roadmap/export.test.js - The roadmap's export dropdown wiring (App.roadmapExport.wire). |
 | roadmap/views-custom.test.js | 258 | tests/unit/roadmap/views-custom.test.js - Benchmarks for the roadmap |
 | roadmap/views-exec.test.js | 49 | tests/unit/roadmap/views-exec.test.js - Benchmarks for the Executive (Categories) board, split from roadmap-views.test.js per its size-budget exit plan. |
@@ -446,8 +450,8 @@ Shared fixtures and the budgets the gates read.
 | lib/roadmap.js | 92 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
 | page-weight-budget.json | 110 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
-| size-budget.json | 117 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
-| surface-baseline.json | 869 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
+| size-budget.json | 104 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
+| surface-baseline.json | 874 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
 
@@ -472,13 +476,13 @@ Workstream records. Each keeps the account of where its plan was wrong, which is
 |---|---:|---|
 | 00-PROGRAMME.md | 300 | Alignment programme |
 | 10-CODE-REVIEW.md | 272 | Reviewing the LP codebase How to work through the two supplied repositories so that what comes out is usable as fact rather than as impression. |
-| 20-API-REFERENCE.md | 412 | Aligning API reference 2.0 with the code The reference is the most consequential thing in the portal, because it is the surface people act on. |
+| 20-API-REFERENCE.md | 176 | Aligning API reference 2.0 with the code *Closed 2026-08-14. |
 | 30-KNOWLEDGE.md | 320 | Writing verified findings into the system |
 | 40-SURFACING.md | 339 | Nothing buried, anywhere in the portal The system stores more than it shows. |
 | 50-DASHBOARD.md | 278 | Rebuilding the dashboard *BUILT 2026-08-13.** What follows is the plan as written, with corrections where the build found the figures or the shape wrong. |
 | 60-PORTAL-REVIEW.md | 339 | Portal review, as a feature *BUILT 2026-08-13.** Schema, area map, pages, protocol and command all landed. |
 | 70-PROTOTYPE-IDEAS.md | 237 | Prototype ideas and plans *BUILT 2026-08-13.** Schema, board, gallery strip, protocol and command all landed. |
-| 80-LOAD-SPEED.md | 451 | 80 - Stop loading item detail text on first paint The last workstream in the programme, and deliberately the narrowest. |
+| 80-LOAD-SPEED.md | 92 | 80 - Stop loading item detail text on first paint *Closed 2026-08-16. |
 | 90-REFACTOR.md | 313 | 90 - Refactor, optimise and re-navigate The ninth workstream, opened 2026-08-27. |
 
 ### docs/sessions-archive/
@@ -499,7 +503,7 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 350 | Architecture How the portal fits together. |
-| CHANGELOG.md | 643 | Changelog All notable user-facing changes to LPIO, newest first. |
+| CHANGELOG.md | 223 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
@@ -517,7 +521,7 @@ Architecture, security, design, and the operating protocols.
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINT-DELIVERY.md | 287 | Sprint delivery What happens to a work item once it reaches the Now column: how it becomes a DevOps package a developer can pick up, how a sprint is summarised at each end, and how the whole Now column is mapped across sprints. |
 | SPRINTS.md | 123 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 38 | Current state Updated: 2026-09-23 (drawer opens on the current plan; review changes) # In progress Nothing blocking. |
+| STATE.md | 35 | Current state Updated: 2026-10-01 (release 0.1.0 cut; sprint stories work in progress) # In progress Nothing blocking. |
 | VALUE-CAPTURE.md | 214 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 

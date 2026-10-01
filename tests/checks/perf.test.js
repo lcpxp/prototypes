@@ -167,8 +167,8 @@ test("every lazily loaded region tells the reader which of three states it is in
   // a blank gap reads as a fact about the item rather than a moment in
   // the load.
   const surfaces = [
-    ["assets/js/pages/roadmap/detail.js", /function notesHtml\(item, state\)/],
-    ["assets/js/pages/roadmap/detail.js", /function detailsHtml\(item, state\)/],
+    ["assets/js/pages/roadmap/detail-prose.js", /function notesHtml\(item, state\)/],
+    ["assets/js/pages/roadmap/detail-prose.js", /function detailsHtml\(item, state\)/],
     ["assets/js/pages/backlog/backlog.js", /function itemFactsHtml\(item, names, state\)/],
   ];
   for (const [file, signature] of surfaces) {
