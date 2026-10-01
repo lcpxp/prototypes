@@ -1,15 +1,13 @@
 -- ------------------------------------------------------------------
--- 37_sprint_delivery.sql - The flow from the Now column into a sprint
--- and out to delivery: how work joins and leaves the Sprint Roadmap,
--- how the two roadmaps are kept in one order, what the plan still needs
--- before a sprint, and the stories and acceptance criteria that travel
--- to the company roadmap and Azure DevOps.
+-- 37_sprint_delivery.sql - The behaviour that runs over the Sprint
+-- Roadmap: the shape of the stories and acceptance criteria a row
+-- carries, how work joins and leaves the plan, and how the two roadmaps
+-- are kept in one order.
 --
 -- 35_sprints.sql holds the plan itself - the calendar, the anchor, the
--- allocation table and the views the board reads. This file holds the
--- behaviour that runs over it, so the allocation model stays one
--- readable file and the delivery flow another. docs/SPRINT-DELIVERY.md
--- is the process both serve.
+-- allocation table and the views the board reads. 38_sprint_handoff.sql
+-- holds what is read before a sprint: what the plan still needs.
+-- docs/SPRINT-DELIVERY.md is the process all three serve.
 -- ------------------------------------------------------------------
 
 -- ---------------------------------------------------------------
@@ -160,3 +158,79 @@ drop trigger if exists work_items_sprint_intake on public.work_items;
 create trigger work_items_sprint_intake
   after insert or update of horizon, status, parent_id, level on public.work_items
   for each row execute function public.work_items_sprint_intake();
+
+-- ---------------------------------------------------------------
+-- One order for both roadmaps.
+--
+-- The Sprint Roadmap orders streams by the sprint they start in, and a
+-- stream's items by sprint then sequence. The Product Roadmap's Now
+-- column orders by priority. Left alone the two drift - a stream
+-- re-mapped to a later sprint keeps the priority it had - so the board
+-- a stakeholder sees and the column the owner plans from list the same
+-- work in different orders.
+--
+-- The sprint order is the master (docs/SPRINT-DELIVERY.md Part D).
+-- v_sprint_plan_order states it once, as a rank in gaps of 10 the way
+-- priorities are written; sprint_plan_sync_order() writes that rank to
+-- priority and sort_order, and v_sprint_plan_checks reports any row
+-- where the two differ. Nothing off the plan is ranked, so nothing off
+-- the plan is touched.
+-- ---------------------------------------------------------------
+
+-- The checks in 38_sprint_handoff.sql read the order, so they are
+-- dropped first and rebuilt there; both are views, holding no data.
+drop view if exists public.v_sprint_plan_checks;
+drop view if exists public.v_sprint_plan_order;
+create view public.v_sprint_plan_order with (security_invoker = on) as
+  select s.workstream_id as work_item_id, 'workstream'::text as level,
+         s.workstream_id, s.workstream_title as title,
+         w.priority, w.sort_order,
+         (row_number() over (order by s.first_slot, s.priority,
+            s.workstream_title, s.workstream_id) * 10)::integer as sprint_rank
+    from public.v_sprint_plan_streams s
+    join public.work_items w on w.id = s.workstream_id
+  union all
+  select v.work_item_id, 'item'::text,
+         v.workstream_id, v.title,
+         w.priority, w.sort_order,
+         (row_number() over (partition by v.workstream_id
+            order by v.effective_slot, v.sequence_position nulls last,
+                     v.priority, v.title, v.work_item_id) * 10)::integer
+    from public.v_sprint_plan_items v
+    join public.work_items w on w.id = v.work_item_id;
+
+revoke all on public.v_sprint_plan_order from public, anon;
+grant select on public.v_sprint_plan_order to authenticated;
+
+comment on view public.v_sprint_plan_order is
+  'The sprint order, stated once: each stream on the plan ranked by first sprint then priority, each item within its stream by sprint then sequence. sprint_rank is in gaps of 10. sprint_plan_sync_order() writes it; v_sprint_plan_checks reports drift from it.';
+
+-- Writes the sprint order onto priority and sort_order. security
+-- definer and revoked from every caller (supabase/policies.sql): it
+-- rewrites rows across the plan, so it is run deliberately from an
+-- admin session, like sprint_plan_project(). It touches only rows whose
+-- values change, and priority is outside the intake trigger's column
+-- list, so it cannot move anything on or off the plan. Returns the
+-- number of rows changed; the caller records the before and after order
+-- in a decision note, which is the undo.
+create or replace function public.sprint_plan_sync_order()
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  touched integer;
+begin
+  update public.work_items w
+     set priority = o.sprint_rank, sort_order = o.sprint_rank
+    from public.v_sprint_plan_order o
+   where w.id = o.work_item_id
+     and (w.priority is distinct from o.sprint_rank
+          or w.sort_order is distinct from o.sprint_rank);
+  get diagnostics touched = row_count;
+  return touched;
+end $$;
+
+comment on function public.sprint_plan_sync_order() is
+  'Writes the sprint order (v_sprint_plan_order) onto priority and sort_order for every row on the Sprint Roadmap, so the Now column lists the work in the order the sprints run it. Rows off the plan are never touched. Returns rows changed.';

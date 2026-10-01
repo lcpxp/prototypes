@@ -271,6 +271,10 @@ page's own (assets/css/sprints.css).
   the end of its stream; one leaving has its allocation retired with a
   resolution. Done keeps its allocation as the record of delivery. It
   lives in supabase/schema/37_sprint_delivery.sql.
+- sprint_plan_sync_order(): writes the sprint order
+  (`v_sprint_plan_order`) onto `priority` and `sort_order`, so the Now
+  column lists the work in the order the sprints run it. Run from an
+  admin session after any re-map; revoked from every caller.
 - work_item_metrics: the countable half of a benefit (docs/VALUE-CAPTURE.md).
 - work_items.user_stories / stories_status: the user stories and
   acceptance criteria written for sprint work, and whether the owner has
@@ -285,9 +289,12 @@ only touches rows holding a live allocation, so a sprint code recorded
 by hand against unallocated work is left alone.
 
 Views: `v_sprint_plan_items` (the board reads this), plus
-`v_sprint_plan_streams`, `v_work_item_metric_rollup` and
-`v_sprint_plan_load` as read-and-operate surfaces in the spirit of
-`roadmap_current`. All security_invoker, granted to authenticated only.
+`v_sprint_plan_streams`, `v_work_item_metric_rollup`,
+`v_sprint_plan_load` and `v_sprint_plan_order` as read-and-operate
+surfaces in the spirit of `roadmap_current`, and `v_sprint_plan_checks`
+(supabase/schema/38_sprint_handoff.sql) - what the plan still needs
+before a sprint, one row per finding. All security_invoker, granted to
+authenticated only.
 
 Process: docs/SPRINT-DELIVERY.md.
 

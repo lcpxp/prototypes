@@ -140,12 +140,39 @@ test("timeline (team) renders a workstream's nested work items as indented child
   assert.match(html, /rmv-tl-bar--ws[\s\S]*?Merchant Portal integration/, "the workstream bar is marked");
 });
 
-test("timeline (team) orders by start band, then span length, then priority", () => {
+test("timeline (team) orders by start band, then priority in Now", () => {
   const V = loadView();
   const html = V.timeline(sampleData(), "team");
   const order = ["Core onboarding", "Merchant Portal integration", "Portal overhaul", "Growth bet"];
   const positions = order.map((t) => html.indexOf(t));
-  assert.deepEqual(positions, [...positions].sort((a, b) => a - b), "rows are in band+span order");
+  assert.deepEqual(positions, [...positions].sort((a, b) => a - b), "rows are in band then priority order");
+});
+
+test("the Now band follows priority - the sprint order - whatever each row spans", () => {
+  // Priority on Now work is kept equal to the Sprint Roadmap's order
+  // (docs/SPRINT-DELIVERY.md Part D). A now-to-next stream that runs
+  // first in the sprints must lead a now-only one that runs later, or
+  // the two roadmaps list the same work in different orders.
+  const V = loadView();
+  const data = sampleData();
+  data.items.find((i) => i.id === "i3").priority = 5; // Portal overhaul, now -> next
+  const html = V.timeline(data, "team");
+  assert.ok(html.indexOf("Portal overhaul") < html.indexOf("Merchant Portal integration"),
+    "the better priority leads the Now band although it runs longer");
+});
+
+test("outside Now a shorter run leads its band, whatever the priority", () => {
+  const V = loadView();
+  const data = sampleData();
+  const row = (id, title, end, priority) => ({
+    id, area_id: "a1", category_id: "c1", title, status: "planned", horizon: "next",
+    end_horizon: end, presentation: "sequenced", department: "product_technology",
+    priority, sort_order: priority, updated_at: "2026-07-15T09:00:00Z",
+  });
+  data.items.push(row("n1", "Long next run", "later", 5), row("n2", "Short next run", null, 50));
+  const html = V.timeline(data, "team");
+  assert.ok(html.indexOf("Short next run") < html.indexOf("Long next run"),
+    "span outranks priority outside the Now band");
 });
 
 // The Executive (Categories) board benchmarks live in

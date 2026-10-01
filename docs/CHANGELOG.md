@@ -16,6 +16,11 @@ is the git history; what is unfinished is docs/STATE.md.
   end of its workstream, marked "Not yet placed" on both tabs and in its
   drawer until a planning pass confirms it; an item leaving Now drops off.
 
+### Changed
+- Roadmap: the Now column lists work in the order the Sprint Roadmap runs
+  it - priority now leads span length in the Now band, and is kept equal
+  to the sprint order.
+
 ## [0.1.0] - 2026-10-01
 
 ### Added

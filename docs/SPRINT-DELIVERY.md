@@ -2,8 +2,8 @@
 
 What happens to a work item once it reaches the Now column: how it
 becomes a DevOps package a developer can pick up, how a sprint is
-summarised at each end, and how the whole Now column is mapped across
-sprints.
+summarised at each end, how the whole Now column is mapped across
+sprints, and how the two roadmaps are kept in one order.
 
 Public repo, so this file is **process only** - no item titles, no
 benefit text, no sprint contents, no names, no addresses. The material
@@ -259,7 +259,10 @@ surface.
    fortnight of work into a quarter of plan, which is a drafting error,
    not a fact about the work.
 5. **Concurrency**: streams in flight per slot stay between
-   `min_concurrent_streams` and `max_concurrent_streams`.
+   `min_concurrent_streams` and `max_concurrent_streams`. The bound is the
+   owner's to set: lifting it is a decision, recorded as a `work_notes`
+   `decision` with the owner's reason, never a way to make a mapping
+   pass.
 
    Concurrency belongs to STREAMS, not to items. Two or three streams
    running side by side is the shape being aimed at; a stream's own items
@@ -293,9 +296,12 @@ surface.
 ## Checking the result
 
     select * from v_sprint_plan_load;
+    select * from v_sprint_plan_checks;
 
 `over_capacity` or `over_concurrency` true on any row means the mapping
-is wrong, not that the bound is. Fix the mapping.
+is wrong, not that the bound is. Fix the mapping. The checks view lists
+everything else the plan still needs (Part D); after a mapping pass it
+should hold no `fix` rows.
 
 ## Re-mapping when the belt shifts
 
@@ -306,6 +312,7 @@ is wrong, not that the bound is. Fix the mapping.
 2. Re-run the rules above.
 3. Record the delta as a `work_notes` `decision`. A re-map is a decision,
    not a refresh.
+4. Bring the Now column into the new order (Part D).
 
 ## Slippage
 
@@ -320,3 +327,54 @@ Sprint spans are the only unit that appears anywhere a person reads:
 developer-days, no velocity - not on a bar, not in a tooltip, not in a
 drawer, not in an export, not in a sprint summary. The planning constants
 exist to produce the mapping, not to be published with it.
+
+---
+
+# Part D - Keeping the two roadmaps in one order
+
+The Sprint Roadmap orders streams by the sprint they start in, and a
+stream's items by sprint, then sequence. That order is the master. The
+Product Roadmap's Now column follows it, so the board a stakeholder sees
+and the column the owner plans from never list the same work in two
+orders.
+
+- `v_sprint_plan_order` states the order once, as a rank in gaps of 10.
+- `select sprint_plan_sync_order();` writes that rank onto `priority`
+  and `sort_order` for every row on the plan and returns how many rows
+  changed. Rows off the plan are never touched. Run it after any re-map,
+  and whenever the checks below show an `order` row.
+- Before running it, read the order as it stands:
+
+      select level, title, priority, sort_order, sprint_rank
+        from v_sprint_plan_order order by workstream_id, sprint_rank;
+
+  and record the before and after in one `work_notes` `decision`. That
+  note is the undo.
+- Do not hand-edit `priority` on a row that is on the plan. Change the
+  plan - its slot or sequence - and sync. The sprint decides the order.
+
+What the roadmap page shows after a sync: the Timeline's Now band orders
+by priority, so it reads in sprint order, and a workstream's own Now
+items follow its sprints the same way. Every other band still orders by
+span, then priority. A bug sinks below other work in its band
+everywhere. Cascade groups each band by theme first, on purpose; inside
+a theme the sprint order holds.
+
+## Before a sprint
+
+    select * from v_sprint_plan_checks;
+
+One row per finding, worst first. The severity says who answers it:
+
+- **fix** - a session corrects it before anything is drafted: the order
+  (`order`), a row in Now that is off the plan or should not be on it
+  (`unplaced`, `stream_empty`, `stream_not_now`, `not_an_item`), a
+  blocker that is not done or ends after the work it blocks starts
+  (`dependency`), a row with no summary or no details (`thin`), a slot
+  over its bounds (`load`). Raise them; never patch one silently.
+- **confirm** - the owner says so, in as many words: a slot the intake
+  trigger chose (`placement`), stories drafted and not yet confirmed
+  (`stories_drafted`).
+- **write** - stories not yet written (`stories_missing`).
+
+A plan ready for its sprint shows no `fix` and no `confirm` rows.

@@ -105,14 +105,19 @@ Layouts:
 - **Timeline** (default) - a continuous **Delivered | Now | Next | Later |
   Parked** axis. Each item's bar spans from `horizon` (its start band)
   through `end_horizon` (the band it runs through), so a long activity
-  visibly spills across columns. Rows order by start band, then priority
-  (bugs sink first; workstreams win priority ties, so at default
-  priorities they and their items lead the band unless a loose item is
-  deliberately promoted), then span length (longer runs sink lower).
+  visibly spills across columns. Rows order by start band, then bugs
+  sink below everything else in the band. In the **Now** band priority
+  comes next, and priority there is kept equal to the Sprint Roadmap's
+  order (docs/SPRINT-DELIVERY.md Part D), so the Now column lists the
+  work as the sprints run it; span only breaks ties. Every other band
+  orders by span length (longer runs sink lower), then priority.
+  Workstreams win the remaining ties, so at default priorities they and
+  their items lead the band unless a loose item is deliberately promoted.
   Team and Executive show up to Later; Backlog adds the Parked
   column, so the whole list from idea to delivered sits on one axis.
 - **Cascade** - the same work as stacked stage bands; an item that spans
-  Now -> Next appears under both the Now and the Next band.
+  Now -> Next appears under both the Now and the Next band. Each band is
+  grouped by theme first; inside a theme, Now follows the sprint order.
 
 The Now column is drawn a second time on its own page, modules/sprints/,
 against sprint columns rather than horizon bands - by workstream for

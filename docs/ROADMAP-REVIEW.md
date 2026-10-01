@@ -64,12 +64,16 @@ Joining and leaving are automatic (docs/SPRINT-DELIVERY.md Part C,
   Part C and record the delta as a decision. A re-map is a decision, not
   a refresh.
 
-Then check the result rather than eyeballing it:
+Then bring the Now column into the sprint's order and check the result
+rather than eyeballing it (docs/SPRINT-DELIVERY.md Part D):
 
+    select sprint_plan_sync_order();
     select * from v_sprint_plan_load;
+    select * from v_sprint_plan_checks;
 
 `over_capacity` or `over_concurrency` true on any row means the mapping
-is wrong, not that the bound is.
+is wrong, not that the bound is. Record the sync's before and after order
+in the re-map's decision note.
 
 ## Wave 3 - New capture
 

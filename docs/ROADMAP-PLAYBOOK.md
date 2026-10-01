@@ -105,7 +105,8 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `end_horizon` | now, next, later, someday | null | spans to this band |
 | `status` | idea, planned, in_progress, blocked, done, dropped | idea | done=Delivered |
 | `presentation` | sequenced, current, ongoing, wind, bridge | sequenced | Now card label |
-| `priority` | integer, gaps of 10 | 100 | row order |
+| `priority` | integer, gaps of 10 | 100 | row order. On the Sprint Roadmap it is the sprint order, written by `sprint_plan_sync_order()` - change the plan, not the number (docs/SPRINT-DELIVERY.md Part D) |
+| `sort_order` | integer | 100 | the tiebreak after `priority`; kept equal to it for Sprint Roadmap rows by the same sync |
 | `progress` | 0-100 (coarse) | 0 | subtle bar |
 | `type` | consideration, feature, functionality, bug, improvement, task | null | bug hidden from shareholders |
 | `area_id` | a `work_areas` id (filing) | null | scope, Detailed grouping |

@@ -505,6 +505,10 @@ revoke execute on function public.sprint_code_for_slot(integer) from public, ano
 -- writes allocations as their owner, so like sprint_plan_project_trigger
 -- it must never be callable over REST; a trigger fires without a grant.
 revoke execute on function public.work_items_sprint_intake() from public, anon, authenticated;
+-- sprint_plan_sync_order() rewrites priority and sort_order across the
+-- whole Sprint Roadmap as its owner. It is run deliberately from an
+-- admin session, like sprint_plan_project(), and is callable by nobody.
+revoke execute on function public.sprint_plan_sync_order() from public, anon, authenticated;
 
 -- work_item_stories_valid() is the shape check behind work_items.user_stories
 -- (supabase/schema/37_sprint_delivery.sql). A check constraint runs as the

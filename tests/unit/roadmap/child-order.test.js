@@ -1,8 +1,10 @@
 // ------------------------------------------------------------------
 // tests/unit/roadmap/child-order.test.js - Benchmarks for how a
 // workstream's nested work items stack and colour. Ordering: children
-// render in stage order (Now above Next above Later); within the same
-// start band a span that finishes sooner sits above one running longer.
+// render in stage order (Now above Next above Later). Within the Now band
+// priority leads, because it is kept equal to the sprint order
+// (docs/SPRINT-DELIVERY.md Part D); within any other band a span that
+// finishes sooner sits above one running longer.
 // Colouring: a child bar/card inherits its PARENT's theme; a child whose
 // own theme disagrees carries a faint .rmv-theme-dot in its own theme.
 // Shares the loader and dataset with roadmap-views.test.js.
@@ -44,22 +46,38 @@ function order(html, titles) {
   return at;
 }
 
-test("timeline stacks children in stage order, shorter spans first", () => {
+test("timeline stacks children in stage order, the sprint order in Now", () => {
   const html = V.timeline(familyData(), "team");
-  // Now-only, then now-to-next, then now-to-later, then next, then later -
-  // stage and span outrank the scrambled priorities.
-  const at = order(html, ["Echo step", "Delta step", "Bravo step", "Charlie step", "Alpha step"]);
+  // The three now-starters by priority whatever they span - the order
+  // their sprints run them - then next, then later.
+  const at = order(html, ["Bravo step", "Delta step", "Echo step", "Charlie step", "Alpha step"]);
   for (let k = 1; k < at.length; k++) {
     assert.ok(at[k - 1] < at[k], "position " + k + " in stage order");
   }
 });
 
-test("cascade orders in-band children by stage and span", () => {
+test("cascade orders the Now band's children by priority", () => {
   const html = V.cascade(familyData(), "team");
-  // All three now-starters carry a full card in the Now band, stacked
-  // shortest span first.
-  const at = order(html, ["Echo step", "Delta step", "Bravo step"]);
-  assert.ok(at[0] < at[1] && at[1] < at[2], "Now band stacks by span");
+  // All three now-starters carry a full card in the Now band, in the
+  // order the Sprint Roadmap runs them.
+  const at = order(html, ["Bravo step", "Delta step", "Echo step"]);
+  assert.ok(at[0] < at[1] && at[1] < at[2], "Now band stacks by priority");
+});
+
+test("outside Now a shorter run still leads its band, whatever the priority", () => {
+  // Only the Now band follows the sprint; nothing later is on the plan,
+  // so the span rule still reads best there.
+  const data = familyData();
+  data.items.push({
+    id: "k6", parent_id: "i2", area_id: "a3", category_id: "c2", title: "Foxtrot step",
+    level: "item", status: "planned", horizon: "next", end_horizon: "later",
+    presentation: "sequenced", department: "product_technology", priority: 25,
+    sort_order: 25, updated_at: "2026-07-15T09:00:00Z",
+  });
+  for (const html of [V.timeline(data, "team"), V.cascade(data, "team")]) {
+    const at = order(html, ["Charlie step", "Foxtrot step"]);
+    assert.ok(at[0] < at[1], "next-only sits above next-to-later despite a worse priority");
+  }
 });
 
 test("child bars inherit the workstream theme; a mismatch shows a dot", () => {

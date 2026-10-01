@@ -49,6 +49,7 @@
     { key: "later", label: "Later" },
     { key: "parked", label: "Parked" },
   ];
+  var NOW = 2;
   var ACTIVE_MAX = 4;
   var PARKED = 5;
   var RECENT_DAYS = 90;
@@ -74,7 +75,7 @@
 
   // Column index for a horizon; someday folds into the Parked band.
   function hzIdx(h) {
-    return h === "now" ? 2 : h === "next" ? 3 : h === "later" ? 4 : PARKED;
+    return h === "now" ? NOW : h === "next" ? 3 : h === "later" ? 4 : PARKED;
   }
   // The delivered column an item lands in: recent (1) vs historic (0).
   function doneCol(i) { return i._recentDone ? 1 : 0; }
@@ -220,11 +221,17 @@
   }
 
   // Nested bars under a workstream stack in stage order: start band first
-  // (Now above Next above Later), then end band (a run finishing sooner
-  // sits above one running longer, so now-to-next beats now-to-later),
-  // then byOrder for the remaining ties.
+  // (Now above Next above Later). In the Now band byOrder comes next,
+  // because priority there is kept equal to the sprint order
+  // (docs/SPRINT-DELIVERY.md Part D) and a stream's Now work must read
+  // in the order its sprints run it; the end band only breaks ties.
+  // Elsewhere the end band leads - a run finishing sooner sits above one
+  // running longer, so next-only beats next-to-later - then byOrder.
   function childOrder(a, b) {
-    return (colStart(a) - colStart(b)) || (colEnd(a) - colEnd(b)) || byOrder(a, b);
+    var start = colStart(a) - colStart(b);
+    if (start) return start;
+    var end = colEnd(a) - colEnd(b);
+    return colStart(a) === NOW ? (byOrder(a, b) || end) : (end || byOrder(a, b));
   }
 
   function context(data) {
@@ -396,7 +403,7 @@
   // roadmap-views-cascade.js) and the Executive board
   // (roadmap-views-exec.js, which attaches execBoard onto this namespace).
   App.roadmapViewsShared = {
-    BANDS: BANDS, ACTIVE_MAX: ACTIVE_MAX, PARKED: PARKED,
+    BANDS: BANDS, NOW: NOW, ACTIVE_MAX: ACTIVE_MAX, PARKED: PARKED,
     presentationLabel: presentationLabel, colStart: colStart, colEnd: colEnd,
     productItems: productItems, isFix: isFix, byOrder: byOrder,
     childOrder: childOrder, bugRank: bugRank, context: context,

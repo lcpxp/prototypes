@@ -12,17 +12,20 @@
   window.App = window.App || {};
   var R = App.roadmapViewsShared;
 
-  // Order: start band, then bugs sink below everything else in the band,
-  // then span length - a run that extends into the next band sinks below
-  // work that finishes in this one - then priority, with workstreams
-  // winning ties so at default priorities they naturally lead their band
-  // unless an item is deliberately promoted. Remaining ties: theme lane
-  // so the Parked stack reads grouped, not scattered. Current work
-  // floats to the top; long tasks spill right.
+  // Order: start band, then bugs sink below everything else in the band.
+  // In the Now band priority comes next: it is kept equal to the Sprint
+  // Roadmap's order (docs/SPRINT-DELIVERY.md Part D), so the Now column
+  // lists the work as the sprints run it, and span only breaks ties.
+  // Every other band takes span length first - a run that extends into
+  // the next band sinks below work that finishes in this one - then
+  // priority. Workstreams win the remaining ties, so at default
+  // priorities they lead their band unless an item is deliberately
+  // promoted; then theme lane, so the Parked stack reads grouped.
   function timelineOrder(a, b) {
+    var span = (a._e - a._s) - (b._e - b._s);
+    var pri = a._pri - b._pri;
     return (a._s - b._s) || (a._bug - b._bug) ||
-      ((a._e - a._s) - (b._e - b._s)) ||
-      (a._pri - b._pri) ||
+      (a._s === R.NOW ? (pri || span) : (span || pri)) ||
       ((a._ws ? 0 : 1) - (b._ws ? 0 : 1)) ||
       (a._catSo - b._catSo) || (a._so - b._so);
   }
@@ -134,7 +137,8 @@
 
   // Pre-order rows for a bars-with-children view: sort top-level rows by
   // timelineOrder, then drop each workstream's nested work items (indented,
-  // in childOrder: Now above Next above Later, shorter spans first)
+  // in childOrder: Now above Next above Later; the sprint order in Now,
+  // shorter spans first elsewhere)
   // immediately after it so a child groups under its parent. keepChild
   // (optional) filters children to the level's membership.
   function placedWithChildren(tops, ctx, keepChild) {

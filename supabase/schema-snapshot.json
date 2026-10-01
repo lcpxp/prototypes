@@ -67,6 +67,7 @@
     "sprint_code_for_slot(p_slot integer)",
     "sprint_plan_project()",
     "sprint_plan_project_trigger()",
+    "sprint_plan_sync_order()",
     "work_item_delete_guard()",
     "work_item_embed_text(p_title text, p_summary text, p_details text, p_resolution text)",
     "work_item_stories_valid(p jsonb)",
@@ -393,6 +394,10 @@
     {
       "name": "sprint_intake_and_placement",
       "version": "20261001085340"
+    },
+    {
+      "name": "sprint_order_sync_and_checks",
+      "version": "20261001090941"
     }
   ],
   "policies": [
@@ -1584,6 +1589,14 @@
       "replaces_id",
       "replaces_note"
     ],
+    "v_sprint_plan_checks": [
+      "check_key",
+      "detail",
+      "severity",
+      "title",
+      "work_item_id",
+      "workstream_title"
+    ],
     "v_sprint_plan_items": [
       "allocation_note",
       "anchored",
@@ -1628,6 +1641,15 @@
       "pxp_items",
       "slot",
       "streams_in_flight"
+    ],
+    "v_sprint_plan_order": [
+      "level",
+      "priority",
+      "sort_order",
+      "sprint_rank",
+      "title",
+      "work_item_id",
+      "workstream_id"
     ],
     "v_sprint_plan_streams": [
       "associated_departments",

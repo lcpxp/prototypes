@@ -67,7 +67,7 @@ create table if not exists public.sprint_plan (
 );
 
 comment on column public.sprint_plan.anchor_sprint is
-  'The real sprint that slot 0 maps to. Null means unanchored: slots render as Sprint +N and no sprint code is projected onto any item.';
+  'The real sprint that slot 0 maps to. Null means unanchored: columns read Sprint 1, Sprint 2 and on, counted from the plan''s first sprint, and no sprint code is projected onto any item.';
 
 drop trigger if exists sprint_plan_updated_at on public.sprint_plan;
 create trigger sprint_plan_updated_at
@@ -78,7 +78,8 @@ create trigger sprint_plan_updated_at
 -- work_item_sprints: the allocation. One live row per item; span
 -- covers multi-sprint work, so there is no row-per-sprint fanout.
 --
--- slot is always RELATIVE (0 = Sprint +0). A real code only exists
+-- slot is always RELATIVE and zero-indexed: slot 0 is the plan's first
+-- sprint, which every surface labels Sprint 1. A real code only exists
 -- once the plan is anchored, so nothing here can invent one.
 --
 -- overlap is a first-class property, not a comment:
