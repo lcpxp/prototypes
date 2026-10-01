@@ -1,6 +1,6 @@
 # Current state
 
-Updated: 2026-09-23 (drawer opens on the current plan; review changes)
+Updated: 2026-10-01 (release 0.1.0 cut; sprint stories work in progress)
 
 ## In progress
 Nothing blocking. Six workstreams sit in Now, 30 items allocated across
@@ -19,10 +19,7 @@ zero-indexed.
 3. **Answer the four technical questions** raised 23 Sep on the thinnest
    rows (Quote tool, historic pricing data, spreadsheet retirement,
    per-MCC addenda). They show under "Still open" in each drawer.
-4. **Cut a release.** docs/CHANGELOG.md is near its 700 holding cap
-   (tests/size-budget.json). Roll Unreleased into a dated heading, tag
-   it, put the cap back to 600.
-5. detail.js is at 563 past its 550 trigger: the next addition must
+4. detail.js is at 563 past its 550 trigger: the next addition must
    move the details and notes parsers out first.
 
 ## Verification the repo cannot do for itself

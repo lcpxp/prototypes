@@ -41,10 +41,6 @@
     "docs/STATE.md": {
       "hard": 40,
       "note": "TIGHTER than its extension, not looser. A fixed-size current state, overwritten each checkpoint and never grown. The 40-line cap is the point of the file."
-    },
-    "docs/CHANGELOG.md": {
-      "hard": 700,
-      "note": "RAISED 2026-09-17 from the 600 default, as a HOLDING MEASURE and not a fix. The file had reached exactly 600 and could not take the one line the definition of done requires, so no user-facing change could be recorded at all. Its own seam is right: this file shrinks by RELEASE, not by split - Unreleased rolls into a dated heading and the file resets - and only the owner can cut one. Put it back to 600 at that point. Until then the ceiling buys room for roughly a dozen entries, which is a backlog of unreleased work, not a healthy file."
     }
   },
   "acknowledged": {
@@ -69,17 +65,8 @@
     "assets/js/pages/roadmap/views.js": {
       "seam": "Not yet. The four layout families are already separate files; what is left is the shared placement model they all read. Splitting it further means another request on the heaviest page. The context and placement helpers are the seam at 550."
     },
-    "docs/CHANGELOG.md": {
-      "seam": "Do not split: it would put 'what changed' in two places. It shrinks by RELEASE, not by split - Unreleased becomes a dated heading and the file resets. Read newest-first, so length costs a reader nothing."
-    },
     "docs/ROADMAP-INTAKE.md": {
       "seam": "Never split. It is the ONE home for the confidence bands, and one-home.test.js fails if they are restated elsewhere. The last attempt to split this file is what put them in three places."
-    },
-    "docs/plan/20-API-REFERENCE.md": {
-      "seam": "Closed workstream record. Folds into a short outcome at the next release, keeping the corrections table."
-    },
-    "docs/plan/80-LOAD-SPEED.md": {
-      "seam": "Closed workstream record. Most of the length is the account of where the plan was wrong, which is the part a later wave needs. Folds into a short outcome at the next release, not before."
     },
     "supabase/policies.sql": {
       "seam": "Never split. This is the security boundary and 'which tables can be written, and by whom' must stay a single-pass question. It grows with every new table, so it is the one file here likely to reach the cap - when it does, raise the cap and say why, do not fragment the answer."

@@ -1,642 +1,222 @@
 # Changelog
 
 All notable user-facing changes to LPIO, newest first. The format
-follows Keep a Changelog (https://keepachangelog.com/). The project is
-pre-1.0 and unversioned until the owner cuts a release: at that point the
-Unreleased section rolls into a dated version heading and is tagged.
+follows Keep a Changelog (https://keepachangelog.com/). The owner cuts a
+release: Unreleased rolls into a dated version heading, each entry is
+condensed to the change itself, and the release is tagged. 0.1.0 was the
+first.
 
 Scope: this file records what changed for users. What changed in the code
 is the git history; what is unfinished is docs/STATE.md.
 
 ## [Unreleased]
 
-- Work item drawer: opens on "Where it stands" - the current plan, not
-  the history. Status, sprint, step in the stream and its neighbours,
-  who builds it, stakeholders, and every open question, risk and
-  action; a workstream lists its planned steps with their summaries.
-  The fact grid folds under "All recorded fields", and a sprint reads
-  "Sprint 4" as the board does, never "Sprint +3".
-- Sprint roadmap: the caps a stream removes and their amounts are bold
-  and underlined, under a "What it unlocks" label on the card and in
-  the drawer.
-- Sprint roadmap: a workstream card now says whether the stream ever
-  ends. "Finite scope - this one ends", "Staged scope - each stage is a
-  stopping point" and "Ongoing - maintained and improved"
-  answer a question a bar's length cannot, and the ongoing case is
-  dashed as well as worded so it survives a projector.
-- Sprint roadmap: cards carry the ceilings a stream lifts, as short
-  sentences under the figures - a daily cap that stops existing, where a
-  metric tile can only say how much changes per unit. A limit like
-  "8-10 merchants a day" is not a quantity to be summed across a sprint,
-  so it is written rather than counted.
-- Sprint roadmap: a "Priority scale" toggle relabels the column headings
-  as a scale running from highest to lowest priority instead of Sprint 1
-  onward. The columns, the order and every bar are unchanged - work is
-  already allocated by workstream priority, so this says what the
-  ordering means for a discussion that has not fixed a start date.
-- Sprint roadmap: each workstream card now carries one value line, not
-  three - what the acquirer stops doing by hand - under the label
-  "Business benefit (Acquirer/us)", so it is unambiguous whose benefit is
-  being claimed. What a partner's staff and a merchant get is detail the
-  work item holds, and it stays in the drawer, where the same three
-  readings are now labelled "Business benefit (Acquirer/us)", "Partner
-  benefit" and "Merchant benefit".
-- Sprint roadmap: rebuilt to be read from a projector in a meeting
-  rather than from a desk. A real label column carries full workstream
-  titles; sprint columns touch, show their rules, and are named "Sprint 1"
-  onward rather than "Sprint +0", so a bar plainly starts and ends where
-  it says. Work built elsewhere is hatched and named on the exact sprints
-  it occupies. Each stream carries a number shared by its bar and its
-  card. Cards lead with the name, state their span and item count, align
-  the audience lines and show each measured value as a figure with its
-  basis in plain English. The status pills became a labelled key - they
-  never filtered - and the icon buttons now read "Wider columns" and
-  "Hide rows". Both themes were designed, and the page takes the full
-  width of the screen.
-- Roadmap and sprint roadmap: the detail drawer is laid out to be glanced
-  at - the one-line summary, then what the work buys as labelled bullets
-  with its tags, then the facts, then what the item is made of. The
-  written case and the background moved below all of that and fold away.
-  Two fixes came out of it: an allocated item could read "Sprint +0" when
-  allocated elsewhere, and its allocation was dumped raw under the facts.
-- Sprint roadmap: a new page alongside the roadmap. Two views -
-  workstreams for what each stream spans and what it is worth, and work
-  items for how the work rolls out - drawn across sprint columns, each
-  stream in its own colour, each bar showing whether the work is planned,
-  in flight, delivered or blocked. A bar opens that item's full detail in
-  place. Externally-gated work is drawn as an outline and named, so it is
-  clear which bars are not PXP's to move. While the start date is unknown
-  the columns read Sprint +0, +1, +2 rather than inventing dates; setting
-  the anchor later fills in real sprint codes everywhere at once.
-- Sprint roadmap: the summaries below the board are built to be talked
-  about rather than read - one bold line saying what the thing is, a
-  bullet per audience, then the benefit tags, with the longer written
-  case folded away. The five Now workstreams had their summaries
-  tightened to match; the detail they carried moved into the item's own
-  detail rather than away.
-- Sprint roadmap: rows can be hidden for the conversation you are having.
-  The toolbar eye puts an eye on every row; a row's eye drops it, and a
-  workstream takes its items with it. Marked rows dim until you leave,
-  the sprint columns never move, and the line above the board says how
-  many are hidden. A view preference; the plan does not change.
-- Roadmap: the Now column is populated again, with five priority
-  workstreams - Payment Service, EIT fulfilment, the inbound lead API,
-  screening consolidation and the pricing engine. Payment Service is now
-  its own workstream rather than sitting inside Integrations.
-- Roadmap: work items can carry structured impact metrics - time saved,
-  touches removed, providers removed - each with the basis it is measured
-  per and how sure it is. They roll up onto a workstream and show as
-  chips, so a stream's value is read off the board, not inferred.
-- Roadmap drawer: an allocated item now shows the sprints it spans, how
-  overlappable it is, and who is building it when that is not PXP.
-
-- Platform: the page is now three navigable views - what it does, how it is
-  built, and reference - instead of one column. Capability cards are closed
-  by default and carry title, maturity, who attests them and when they were
-  last checked; the detail opens on a click. There is a sidebar index of
-  areas, a filter by text, maturity and attestation, and expand and collapse
-  all. The 27 rows describing how the Partner Portal is built have their own
-  view rather than sitting at the bottom of a page about what the product
-  does.
-- Platform: 18 new capabilities across seven areas that previously had none,
-  each derived from delivered work, each naming every source item behind it,
-  and each marked "derived" rather than owner-attested so a claim the owner
-  has checked stays distinguishable from one worked out for them.
-- Platform: capabilities now say which API endpoints serve them, and which
-  delivered work changed them. 439 endpoint links and 18 "affects" links
-  where there were none, so "how does this work now" is answerable by
-  following links rather than by asking.
-- Platform: a card shows when its claim was last checked, and says so
-  plainly when work has been delivered in its area since. The page notices
-  its own staleness rather than waiting for a reader to.
-- Roadmap: quick capture now checks what the platform already does before
-  searching for duplicate work, so a request for something already built is
-  recognised as such instead of becoming a new row.
-- Sign-in: the login page is now a single minimal LPIO card - "Please sign
-  in" and the credential fields only. The brand headline, blurb, feature
-  points and marketing copy are gone, and every page title and the nav
-  wordmark read "LPIO" alone.
-- Naming: brand names have been removed from the public site copy, labels,
-  identifiers and file names. The EU-acquirer prototype and the shared
-  prototype styling were renamed accordingly.
-- Roadmap: two work items added from the Product and Technology objective
-  review - Merchant Portal-triggered marketplace actions with merchant self-service,
-  under the Self-Service and Merchant-In Life API, and perpetual merchant
-  monitoring under Risk as a Service. T+1 settlement configuration parked.
-- Roadmap: every workstream and every Now/Next item now carries a business
-  benefit, its type, and who feels it - drafted until confirmed, and marked
-  as such in the drawer. The drawer shows it above the fact grid.
-- Roadmap: department attribution reworked across the board. Contract work
-  sits with Legal and Compliance, insights with Operations, acquiring and
-  the pricing engine with Product and Technology. Every workstream now
-  carries at least one associated department, so a department filter
-  returns the work that relates to it and not only the work it owns.
-- Roadmap: pricing lines and service fees, and PFAC enablement, now sit
-  under Sales and Commercial; KPI data under Product and Technology with
-  Operations associated. The pricing engine stays with Product and its
-  front-end row is renamed to say what it does.
-
-### Fixed
-- The **Splunk button in the toolbar no longer opens Splunk's error
-  page**. Going straight to the saved search gave Splunk nothing to
-  establish a session with when the browser arrived cold, so it answered
-  with its error page instead of the results, and the fix was always to
-  load Splunk's home page first by hand. The button now does that for
-  you: it opens the front door, waits a second and a half for the
-  session to settle, then opens the search in a tab of its own and
-  closes the front door behind it. If the browser refuses that second
-  tab - it often will, having spent the press on the first - the tab
-  already open is taken to the search instead, so the search arrives
-  either way. Middle-click and cmd-click are untouched and still open
-  the search directly. Only the Splunk button does this; every other
-  tool link is still a plain link.
-- The **roadmap's board-wide JSON export carries every item's notes
-  again**. Moving notes off the page load left that export writing them
-  only for items whose drawer had been opened, and the missing ones
-  vanished from the file rather than appearing empty. All three
-  board-wide exports - roadmap JSON, roadmap CSV, backlog CSV - now
-  fetch the full text for the rows they are about to write, at the
-  moment export is pressed. If that fetch fails the download is
-  cancelled and the button says so, rather than writing a file that
-  looks complete and is not.
+## [0.1.0] - 2026-10-01
 
 ### Added
-- **Semantic search alongside the keyword one** when placing new work.
-  Every work item now carries a meaning vector, so a request worded
-  differently from the row it duplicates can still find it: "customer
-  birthday displaying a day earlier than entered" now returns "Date of
-  birth output off by one day" as its top hit, which keyword scoring
-  missed entirely. The two channels are combined by taking the better of
-  the pair, so nothing that already scored well scores worse, and both
-  are shown separately so you can see which one spoke. Honest limit:
-  this improves what gets *found*, and only slightly improves how
-  confidently a match is *graded* - the reasoning and the measurements
-  are in docs/KNOWLEDGE-MODEL.md.
+- Work item drawer: opens on "Where it stands" - status, sprint, step in
+  the stream, who builds it, stakeholders and everything still open; the
+  fact grid folds under "All recorded fields".
+- Sprint roadmap: each card says whether its stream ends - finite, staged
+  or ongoing - and the ongoing case is dashed as well as worded.
+- Sprint roadmap: cards carry the ceilings a stream lifts ("8-10 merchants
+  a day") as sentences under the figures, because a cap is not summed.
+- Sprint roadmap: a "Priority scale" toggle relabels the columns from
+  highest to lowest priority; the columns, order and bars are unchanged.
+- Sprint roadmap: a new page drawing the Now column across sprints, by
+  workstream and by work item, with work state, externally built work
+  outlined and named, and each bar opening its detail in place. Real
+  sprint codes appear once the plan is anchored; nothing invents a date.
+- Sprint roadmap: rows can be hidden for the conversation at hand; a
+  workstream takes its items with it and the board says how many are hidden.
+- Roadmap: work items carry impact metrics - time saved, touches and
+  providers removed - with a basis and a confidence, rolled up per stream.
+- Roadmap drawer: an allocated item shows the sprints it spans, its overlap
+  and who builds it when that is not PXP.
+- Platform: 18 capabilities derived from delivered work in seven areas that
+  had none, each naming its sources and marked "derived".
+- Platform: capabilities name the API endpoints that serve them (439 links)
+  and the delivered work that changed them (18 "affects" links).
+- Platform: a card shows when its claim was last checked, and flags work
+  delivered in its area since.
+- Roadmap: marketplace actions with merchant self-service, and perpetual
+  merchant monitoring, added from the objective review; T+1 settlement
+  configuration parked.
+- Roadmap: every workstream and Now/Next item carries a business benefit,
+  its type and who feels it, marked as a draft until confirmed.
+- Semantic search beside the keyword search when placing new work, so a
+  differently worded duplicate is still found; both scores are shown.
+- The repository measures what it was told - unanchored notes, unsourced
+  terms, unconfirmed links and more - as ratchets a gate holds.
+- Glossary: the application event log - its seventeen typed events, and
+  how they differ from the thirteen journey stages.
+- Platform "How it is built": ten rows on the LP architecture, read from
+  the code.
+- Global search reaches notes, documents, glossary terms, journey stages,
+  API topics and specs, ideas and findings, and lands on the row itself.
+- Prototypes: an ideas and plans board - what each idea would prove, its
+  priority, effort, area and plan - captured with `/prototype-idea`.
+- A prototype plan records what it is built from, so a changed source
+  names every prototype it has put out of date.
+- Portal review as a feature: open, walk, answer, verify, triage and close
+  a wave over a 39-area map, written by `/portal-review`.
+- Dashboard "Reviews" covers both review kinds, each in its own units.
+- Platform "Look and feel": fifteen rows on how the LP front end is styled,
+  read from the code, including three places rules and code disagree.
+- Three list and table roadmap items carry notes from the code review.
+- The roadmap drawer shows everything stored against an item; anything
+  without a designed row appears under "Also recorded against this item".
+- The same guarantee covers capability cards, backlog detail, the user
+  register and the review drawer, surfacing four previously hidden values.
+- A roadmap item shows the milestone it targets, with its date.
+- Integrations detail shows everything recorded against an integration.
+- A link shows a "proposed" badge until confirmed, on the roadmap drawer and
+  the platform card.
+- An EU Acquirer admin icon opens two copyable console snippets: create a
+  reviewer-role user, and list who holds the role.
+- A send icon opens a copyable console snippet that fires an application's
+  document push and onboarding record, with a handover prompt.
+- A bug icon opens the Splunk error sweep with its saved search applied.
+- Timeline "Expand board" widens every column and scrolls sideways;
+  delivered bars keep their theme as a dot.
+- Any roadmap column collapses from its header to a labelled seam, and a
+  fully collapsed board keeps its headers.
+- Platform shows the whole knowledge base - journey, glossary, facts and
+  source documents - and where each capability came from.
+- Platform Coverage panel names areas with no capability, capabilities
+  with no source and unverified terms.
+- Roadmap drawer shows typed relationships - "Part of", "Related to",
+  "Distinct from" - with the recorded reason on hover; exports carry them.
+- App Review: waves of merchant application triage reconciling the LP list
+  against the mail trail, with a standing watch list across open waves.
+- Roadmap intake places new work against the board first and recommends
+  improving, merging, promoting, reviving, associating or splitting.
+- Roadmap drawer shows the assignee, any supporting owner and the owner's
+  queue rank; bars carry the owner and notes are badged by kind.
+- EU Acquirer replica simulates a run: the signature envelope, then the
+  automated CRM, SFTP and notification handoff.
+- EU Acquirer guidance says review happens in the acquirer's own systems;
+  the portal only records the decision.
+- EU Acquirer user-role prototype: guidance, a sequence diagram and a
+  replica showing both roles side by side, all data invented.
+- Nested work items stack in stage order under their workstream, inherit
+  its theme and carry a dot when their own theme differs.
+- Now, Next and Later headers are clickable and take that stage off the
+  board on every layout and level, as a view preference only.
+- Work items and deliverables are distinct: deliverables are drawer-only
+  detail and never appear on the board.
+- Business area associations: departments with visibility but not
+  ownership; the department filter matches owner or association.
+- Prototypes gallery: a Future prototypes table of ideas held for later.
+- Workstreams level, the default: a strategic gantt of workstreams only.
+- Hide fixes toggle drops standalone maintenance items from Work Items and
+  Backlog.
+- Workstreams read as containers that collapse their sub-items to a
+  checklist when Detailed is off.
+- Custom view: pick exactly which rows a PDF, CSV or JSON export carries.
+- PCI compliance prototype: a replica onboarding wizard with a PCI
+  interstitial, a PCI fee row and a Compliance Reports view.
+- Executive view leads with departments, their categories and item counts.
+- Work items break into ordered sub-steps, shown as a checklist.
+- Export CSV on the roadmap and the backlog, covering every field.
+- Global search deep-links each result, grouped with badges, counts and
+  match highlighting.
+- Search is a full keyboard combobox.
+- Shareable deep links open the target item across modules.
+- Search covers users and integrations.
 
 ### Changed
-- The **roadmap and the backlog load 33% less data on every visit**.
-  Both pages were downloading the full write-up of all 268 work items to
-  show one at a time, and the roadmap was downloading every note as
-  well. Neither list shows either: the prose now arrives when a drawer or
-  a modal opens, and 164,936 of the 498,075 bytes a visit fetched are
-  gone. A first-ever visit is 18.8% lighter - lower, because the loading
-  mechanism itself is 14KB of script and styling, which is then cached
-  forever. The drawer still opens instantly and fully populated; the
-  write-up fills a moment later and says it is loading rather than
-  looking as though the item has none.
-- The **roadmap loads faster**. It was downloading every note anchored
-  to a work item - 116 of them - to show a handful in one drawer at a
-  time. Notes now arrive when a drawer opens, taking 63KB and a whole
-  request off the first paint. The drawer still opens instantly and fully
-  populated; only the notes section fills a moment later, and it says
-  it is loading rather than looking empty. Nothing flashes: a fast
-  fetch shows no placeholder at all.
-- The **API reference** now covers the LP API completely: all
-  552 routes, none missing, none invented. The 121 routes nothing in
-  the portal calls are documented too, each marked as having no
-  front-end consumer and each saying what is actually known about who
-  uses it - which for the analytics and draft-cart surfaces is an open
-  question rather than an assumption, and for the four webhook
-  receivers is Adobe Sign, ID-Pal and WebShield.
-- The **API reference** now documents every route the LP portal
-  actually calls. Sixteen rows were added and three more scope
-  collapses declared, taking the undocumented-but-live count from 69
-  to zero and coverage against the code to 78.1%. What remains
-  undocumented is routes nothing calls.
-- The **API reference** documents the v1 merchant surface once rather
-  than three times. Twenty operations are served under an unscoped, an
-  admin and a partner prefix with identical shapes; each now has one
-  row naming all three, so the addresses are still findable by search
-  but the list is no longer three copies of itself. Coverage against
-  the code rose from 60.5% to 72.5% as a result, without a single row
-  being written.
-- The **API reference** now says when a documented route has no
-  front-end consumer, rather than presenting every route as equally
-  current. Four routes carry the badge today, each with a note saying
-  what was checked. The split is measured from the LP portal's
-  own call sites on every run, so a route the portal starts calling
-  loses the badge instead of keeping a label nobody revisited.
-- The **dashboard** is rebuilt around what is happening rather than
-  what exists. It now opens with the workstreams at now and next -
-  each with its theme, progress, open-item count and a click straight
-  through to its detail - then the API specs with how much of each is
-  actually verified against the code, any open review wave and the
-  single next thing it needs, the platform knowledge figures with the
-  gaps in them, and a card per external tool saying what it is for.
-  Module cards and recent activity are still there, below the
-  substance. Recent activity now says what changed, not only that
-  something did, and links to the row rather than the module.
-
-### Added
-- The repository now measures and defends **what it was told**, not
-  only how it is built. Twelve figures - notes with no anchor, terms
-  with no source, items with no summary, ideas with no value note,
-  links nobody confirmed and seven more - are measured against the
-  database and held by a gate. Five are already at zero and their
-  ceilings are pinned there, so every glossary term keeps its source
-  and every document keeps its digest, or the build fails. The rest
-  are the honest backlog and can only ever go down. `npm run audit`
-  shows all of it on one screen.
-- The glossary explains the **application event log**: the seventeen
-  typed events the API timestamps against an application, and how they
-  differ from the thirteen journey stages. The two do not map one to
-  one, and until now nothing said so.
-- The platform page's **How it is built** section now has ten rows
-  describing the LP architecture, read from the code: the API's
-  four layers and where a shape gets converted, its Result type, its
-  URL versioning, its 210 migrations and its three test projects; and
-  the front end's Angular 20 with no state library, its eight route
-  guards, its single error interceptor and its absent unit suite.
-  Enough to answer "how is this built" without opening either
-  repository.
-- **Global search now reaches the narrative content**, which it never
-  did: notes and decisions, source documents, glossary terms, journey
-  stages, API topics and specs, prototype ideas and review findings
-  all join the six things it already found. A result shows the part of
-  the text that matched rather than a first line, so searching 180
-  notes tells you why each one came back, and every result lands on
-  the row itself rather than on a module index - a note opens whatever
-  it is about, a finding opens inside its wave.
-- The prototypes module now has an **ideas and plans board**. The
-  fourteen-name "Future prototypes" table becomes a list you can
-  actually work: each idea can carry what it would prove, a priority
-  band, an effort, the area it belongs to, and a plan written against
-  it. An idea is never deleted - it closes with a reason, or becomes a
-  prototype and links to it. The gallery keeps a short strip of the
-  top few, linking through. Capture one in a Claude session with
-  `/prototype-idea`; it takes a single line.
-- A plan records what a prototype would be **built from** - the
-  capability rows, styling rows and endpoints it draws on. So a reader
-  can see whether to trust a prototype, and when one of those sources
-  changes, the links name every prototype now out of date.
-- **Portal review** is now a feature rather than a one-off HTML file.
-  A wave can be opened, walked area by area, answered, verified,
-  triaged and closed - the whole method from the wave 4 review board,
-  with its 39-area map loaded as data. Findings carry what the
-  developers said, what you verified, and what the review decided,
-  which are three different statements and stay three. Anything the
-  review produced that is not future work is archived with a reason
-  rather than thrown away. Three pages: the wave list with the
-  standing asks and the area map, the board itself with its coverage
-  rail and walker, and the triage view. Like application review, the
-  pages read and a Claude session writes (`/portal-review`).
-- The dashboard's **Reviews** section now covers both reviews, each
-  measured in its own units: an application wave counts applications
-  to classify, a portal wave counts areas still to walk.
-- The platform page now has a **Look and feel** section: fifteen rows
-  describing how the LP front end is actually styled - the
-  layer model, the eight layout compositions, spacing, buttons,
-  dialogs, tables, typography, colour, icons, UI tone and the test
-  locator contract. Every one is read from the code rather than from
-  a description of it, and three of them record where the written
-  rules and the code disagree. Enough to build something that looks
-  like the real thing without guessing.
-- Three roadmap items about lists and tables now carry notes from that
-  code review, including the one that changes the estimate: the
-  styling for sortable table headers already exists, written and
-  commented out, and cannot simply be uncommented.
-- Opening a **roadmap item or workstream** now shows everything stored
-  against it, including values no part of the page was written for.
-  Anything the drawer does not have a designed row for appears under
-  "Also recorded against this item", so new information added to an
-  item in future is visible the day it is added rather than the day
-  someone edits the page for it.
-- The same guarantee now covers the **platform capability cards**, both
-  **backlog** detail views, the **user register** and the **review
-  board** drawer. Four things that were recorded but shown nowhere are
-  now visible: a capability's tags, which earlier document a document
-  replaced, and on an application, whether it was carried forward from
-  an earlier wave and when it was resolved, recorded and last updated.
-- A roadmap item now shows the **milestone** it is targeted at, with its
-  date. The column was stored and fetched but rendered nowhere, so the
-  first milestone anybody set would have been invisible.
-- The **integrations detail** now shows everything recorded against an
-  integration, not just the six fields the view was written around.
-  Anything else on the record appears under "Also recorded against
-  this", so a new fact is a database edit rather than a code change -
-  and nothing can be stored against an integration and stay invisible.
-- A link between two things now shows when it is **proposed** rather
-  than confirmed. Links an assistant records stay proposed until you
-  confirm them, and until now that distinction was stored but never
-  shown, so a suggestion read exactly like a decision. Proposed links
-  carry a badge on the roadmap drawer and the platform card; confirmed
-  ones show nothing, because confirmed is the ordinary case.
+- Sprint roadmap: the caps a stream removes are bold and underlined under
+  "What it unlocks", on the card and in the drawer.
+- Sprint roadmap: one value line per card, "Business benefit (Acquirer/us)";
+  the drawer labels all three audiences.
+- Sprint roadmap: rebuilt to read from a projector - full titles, "Sprint 1"
+  onward, numbered streams, plain figures, a labelled key, full width.
+- Roadmap and sprint roadmap: the drawer leads with summary, value, facts
+  and contents, with the long case folded below.
+- Sprint roadmap: the cards under the board are built to be talked
+  through - one bold line, a bullet per audience, the long case folded.
+- Roadmap: the Now column carries five priority workstreams again, and
+  Payment Service is its own workstream.
+- Platform: three navigable views - what it does, how it is built and
+  reference - with closed cards, a sidebar index and filters.
+- Roadmap: quick capture checks what the platform already does before
+  searching for duplicate work.
+- Sign-in: a single minimal LPIO card; page titles and the wordmark read
+  "LPIO".
+- Naming: brand names removed from public copy, labels, identifiers and
+  file names.
+- Roadmap: department attribution reworked; every workstream carries at
+  least one associated department.
+- Roadmap: pricing lines, service fees and PFAC enablement sit under Sales
+  and Commercial; KPI data under Product and Technology.
+- The roadmap and backlog load 33% less data: prose arrives when a drawer
+  opens.
+- Roadmap notes arrive when a drawer opens, taking 63KB and a request off
+  the first paint, with no flash.
+- API reference covers all 552 LP routes; the 121 nothing in the portal
+  calls are marked as such.
+- API reference documents every route the portal calls; undocumented live
+  routes went from 69 to zero.
+- API reference documents the v1 merchant surface once, naming all three
+  prefixes on each row.
+- API reference marks a route with no front-end consumer, measured from the
+  portal's own call sites.
+- Dashboard rebuilt around what is happening: Now and Next workstreams, API
+  coverage, open review waves, knowledge gaps and tool cards.
+- API reference reconciled against the LP source: wrong paths corrected,
+  dead rows retired, real service-fee endpoints in place of templates.
+- Knowledge links render between any two kinds of thing.
+- LP API reference rebuilt from the Partner Portal source: 212 endpoints in
+  16 areas, confirmed against code, gaps flagged inline.
+- EU Acquirer intro page matches the guidance on where review happens.
+- EU Acquirer replica contract tables start empty and fill as contracts are
+  generated; sending is blocked until one is.
+- EU Acquirer replica: role switch in the header, two statuses for the
+  reviewer, one row per contract, both send controls together.
+- Roadmap page intro trimmed so the board sits higher.
+- Top-level roadmap rows sort by span length before priority.
+- Roadmap drawer shows everything stored against an item, and the exports
+  carry the same.
+- Roadmap board is bars only; loose items interleave by priority, with
+  workstreams winning ties.
+- Timeline: nested work items sit inset on the bar.
+- Department filter keeps a workstream visible when a nested item matches.
+- Custom view: deselecting a workstream drops its children from exports.
+- Export as PDF prints whichever view is on screen.
+- Delivered work splits into Recently completed (90 days) and Previously
+  completed, with a latch to pin a closeout.
+- Bugs sink below other work in their band; parked rows group and tint by
+  theme.
+- A single Export menu replaces three buttons.
+- Hide fixes is an icon-only toggle.
+- Prototypes gallery groups entries under Live and Drafts.
+- Timeline reads better on screen and in the PDF: shaded lanes, stronger
+  bars, exact print colours.
+- Backlog level mirrors the full backlog list, every scope.
+- Timeline: workstreams sort above standalone items within a band.
+- View switch reads Workstreams / Categories / Work Items / Backlog, with a
+  Department filter.
+- Lane colours are keyed to the owning department.
+- Detailed view expands the Team and Backlog levels into a Category to Area
+  breakdown.
+- Board-level completeness percentages give way to a bar and a sub-step
+  count.
+- Scripts load deferred from the head.
+- Search failure and empty states say what happened and what to try.
 
 ### Fixed
-- The **users page** showed "member" against any role that was not
-  admin. With only two roles in use nothing looked wrong, but the label
-  was asserted rather than read, so a third role would have been
-  mislabelled on every row. It now shows whatever role the row carries.
-- An application blocked at **record scope** carried no blocker flag on
-  the review board, reading as though nothing were blocking it. Partner
-  and merchant scope were flagged; record was never given a branch. Any
-  scope now shows.
-
-### Added
-- A **EU Acquirer admin** icon in the top-right nav opens a modal with two
-  copyable browser-console snippets: one that creates a portal user
-  holding the EU Acquirer reviewer role, and one that lists who currently
-  holds it. A stopgap until the portal grows a UI for that role; the
-  snippets read the portal's host and scope from its own config at run
-  time and carry placeholder arguments the operator replaces.
-
-### Changed
-- The **API reference** has been reconciled against the LP
-  source: twelve rows that documented paths the API does not serve are
-  corrected, three that documented commented-out endpoints are retired
-  into the gap register, and the four templated `service-fees` rows are
-  replaced by the sixteen real endpoints they were hiding. It now
-  documents 256 endpoints and accounts for 60.5% of the 552 routes in
-  the code, up from 56.3%, with the remainder tracked rather than
-  guessed at.
-- **Knowledge links** now render between any two kinds of thing. A work
-  item's link to a capability, a glossary term or a journey stage used
-  to show nothing at all; only work-item-to-work-item and
-  capability-to-capability were visible. Targets with their own page
-  are links, the rest name what they are.
-- The LP API reference has been rebuilt from the Partner Portal
-  source code (v2.0). It now documents 212 endpoints across 16 areas,
-  the merchant-first onboarding model (create a merchant, then start an
-  application against it), the three-tenant scoping scheme, and the
-  management, order, provisioning and fulfilment surfaces - with the
-  outdated draft-era endpoints removed so nothing stale lingers. Paths,
-  payload shapes, enums and business rules are now confirmed against
-  code rather than observed traffic, and every gap or assumption is
-  flagged inline (endpoint badges plus an "Open questions & context
-  gaps" section) for the next context-accumulation pass. The old
-  placeholder "Merchant Onboarding API" sample is now a clearly
-  design-stage "LP Inbound Onboarding API".
-
-### Added
-- A **send icon** in the top navigation opens a panel with two copyable
-  blocks: a browser-console snippet that fires an open application's
-  document push and onboarding record from the partner portal, and a
-  collapsed handover prompt for reading back what happened. The snippet
-  holds no host or scope - it reads both from the portal's own config at
-  run time - so nothing internal enters the site. The nav's right-hand
-  icons now read as one toolbar.
-- A **bug icon** in the top navigation opens the Splunk error sweep in a new
-  tab, with the saved search already applied and its results laid out on the
-  statistics tab. The search is held as a row rather than in the site, so
-  retuning it takes effect everywhere without a deploy.
-- The roadmap Timeline gains an **Expand board** control: it widens every
-  column and scrolls the board sideways instead of compressing it to fit, so
-  long titles and dense spans read in full. Delivered bars and cards now keep
-  their theme colour as a solid dot (their fill is dropped for the
-  settled-history look), so the completed columns stay colour-coded.
-- Any roadmap column can now be **collapsed** by clicking its header: it
-  drops that band's work and shrinks the column to a thin labelled seam so
-  the other columns reclaim the width (the Cascade collapses it to a struck
-  heading). Every column collapses this way now - Previously and Recently
-  completed and Parked, not just Now/Next/Later - and a fully collapsed board
-  keeps its headers so a column can always be brought back.
-- The Platform page now shows the whole knowledge base, not just the
-  capability catalogue. It previously rendered 18 capability rows while
-  63 more sat in the database unseen: the 13-stage lead-to-live journey,
-  the 16-term glossary, 29 recorded facts and the 5 source documents
-  everything was distilled from. Each capability now also shows where it
-  came from and what the roadmap is doing to it.
-- A Coverage panel near the top of the Platform page names what is
-  missing - areas with no capability recorded, capabilities with no
-  substance or no source, unverified glossary terms - so a gap is
-  something to fill rather than something to discover. On today's data
-  it finds 10 product areas with nothing written against them.
-- The roadmap drawer now shows typed relationships instead of a single
-  "Related to" line: an item reads "Part of", "Related to" or "Distinct
-  from" against each of its neighbours, each clickable through to that
-  item, and hovering a link shows why the two were judged apart where a
-  reason was recorded. An item can now carry as many relationships as it
-  actually has, rather than one. JSON export carries the kind and reason
-  per link; CSV keeps its single column, now reading "kind: title".
-- App Review: a new area holding waves of merchant application triage. A
-  wave reconciles the LP list against the mail trail, because
-  LP status alone does not say what needs doing - a record showing
-  "Awaiting Contract Send" may already be mid-underwriting, and one
-  showing "Cancelled" may have been approved days earlier. The board reads
-  in LP order, colours rows by what they need, and marks each with a
-  state glyph so the fastest read is scanning one edge. An assumed
-  "nothing to do here" is kept visibly apart from a confirmed one and stays
-  on the work list until a person confirms it. The wave list carries a
-  standing watch list across every open wave, each item showing what it is
-  waiting on - a date or a named dependency - which is what a wave exists
-  to produce.
-- Roadmap intake now places new work against what is already on the board
-  before writing it, and leads with a recommendation - improve the existing
-  row, merge, promote, revive, associate or split - instead of always
-  creating something new. Adjacent-but-different work is applied silently as
-  before, so the extra step only speaks when it has something to say.
-- The roadmap item drawer now shows the assignee (with any support owner as
-  "Tim (Red supporting)") and the owner's rank in their queue ("Xavier -
-  1st of 5"), high in the field list. The board bars carry the owner too,
-  so ownership scans at a glance. New fields also surface when set: the
-  item's level, presentation, source document, created date, a clickable
-  link to the related work item, and the long-form details parsed into
-  titled sections (What / Relates to / Business benefits ...). Notes are
-  now badged by kind (decision, fact, question, risk ...) and marked when
-  resolved or superseded. The JSON and CSV exports carry the new columns.
-
-### Fixed
-- The roadmap item drawer no longer prints raw internal values: priority
-  shows as a band (P1) rather than a sort integer, progress shows a bar and
-  a percentage (so a value of 1 reads "1% complete", not "Not started"),
-  and the internal attribute keys that used to leak as "Assignee rank" and
-  "Priority band" rows are folded into the assignee and priority lines.
-
-### Fixed
-- The roadmap's Workstreams, Timeline, Work Items and Executive views now
-  show work that has no filing area, instead of silently dropping it. The
-  product board previously kept only items whose area was explicitly
-  product-scoped, so a workstream or item scheduled without an area never
-  appeared. It now hides only work explicitly filed as the portal's own
-  internal development; everything else on the roadmap is visible.
-
-### Changed
-- The EU Acquirer prototype intro page now matches the guidance document: its
-  overview no longer implies the review happens in the portal (it happens
-  in EU Acquirer's own CRM and file storage; the portal is only for recording
-  the decision), the screening step no longer over-lists checks, and the
-  embedded diagram is the current involvement flow with the three-outcome
-  branch at step 10.
-- The EU Acquirer replica's contract tables now start empty. A Acquirer user
-  generates each contract, which adds its row; the generated state is
-  kept for the tab, so switching to the EU Acquirer view finds the contracts
-  there to send. Sending is blocked, with a prompt, if nothing has been
-  generated. Opening the Applications list starts a fresh run.
-- The EU Acquirer replica's role switch moved into the black header bar and the
-  blue prototype banner over the content is gone, so the page below the
-  chrome is the portal and nothing else. A EU Acquirer user is now offered only
-  the two statuses they can set, Rejected and Pending Further Information;
-  the pending note sits in an amber panel that closes to show what was
-  sent. Contracts show one row each and screening is limited to Mastercard
-  MATCH and Webshield. Both send controls - the merchant contract and the
-  KYC approval - sit with the EU Acquirer view so the whole run demonstrates
-  without a role switch, and the status between full signature and a
-  decision reads Application Signed.
-- The roadmap page intro is trimmed to a few lines so the board sits higher
-  on the page: it no longer enumerates each view tab, keeping only the
-  altitude note, the click-for-detail hint and where the data lives.
-- Top-level roadmap rows now sort by span length before priority: work
-  that finishes in its starting stage sits above work that runs on into
-  the next stage.
-
-### Added
-- The EU Acquirer replica now simulates a run rather than describing one.
-  Sending a contract asks for the merchant's email, then an Adobe Sign
-  panel shows the envelope going out and the three signatures landing in
-  order - merchant, then Oliver, then Michael - each with a spinner and a
-  tick. Full signature kicks off the automated handoff, which reports the
-  CRM upload, the SFTP file transfer and the EU Acquirer notification as they
-  happen. Success messages now stack down the top right and stay long
-  enough to read, replacing the single black pill at the foot of the page.
-- The EU Acquirer guidance now says where the review actually happens: on full
-  signature the merchant and application data transfers into EU Acquirer's CRM
-  and the contract files and screening PDFs go across by SFTP, so the
-  notification is a cue to check their own systems. They open the portal
-  only to record the decision.
-- New EU Acquirer user-role prototype under Prototypes: a guidance overview of
-  how the EU Acquirer compliance team will approve EU merchant applications, a
-  sequence diagram of the flow, and a replica of the partner portal that
-  renders the same application as a Acquirer user and as a EU Acquirer user so the
-  reduced control set is visible side by side. All data in it is invented.
-- Nested work items now stack in stage order under their workstream (Now
-  above Next above Later; within a stage, spans finishing sooner sit
-  higher), inherit the workstream's theme colour, and carry a small faint
-  dot in their own theme when it differs - an at-a-glance flag for
-  misaligned tagging.
-- The Now, Next and Later stage headers on the roadmap are now clickable.
-  Clicking one strikes the label through and takes that stage off the
-  board - the work that begins in it disappears - so you can, say, hide
-  everything happening now and read only what is Next and Later. Clicking
-  the struck header again brings the stage back. It works on the Timeline
-  column headers and the Cascade band headings, across every level
-  (Workstreams, Work Items, Backlog). The choice is a view-only preference
-  held in the browser; it changes nothing in the data and touches nothing
-  else.
-- The roadmap now distinguishes work items from deliverables. A
-  deliverable is drawer-only detail beneath a workstream or a work item -
-  the things that piece of work produces - and never appears on the board.
-  A workstream's drawer lists its nested work items and its deliverables in
-  separate sections; a work item's drawer lists its deliverables.
-- Roadmap items can now carry business area associations: departments
-  that want visibility of an item without owning it. Filtering the
-  roadmap by a department now surfaces both the work it owns and the work
-  it is associated with, so (for example) an Operations view covers
-  everything Operations cares about whatever the item's primary theme.
-  The associations show in the item drawer and in CSV/JSON exports.
-- The prototypes gallery now shows a Future prototypes table below the
-  Live and Drafts grids: a pre-draft shortlist of ideas held for future
-  reference, backed by a new future_prototypes table.
-
-### Changed
-- The roadmap item drawer now shows everything stored against an item:
-  long-form details, type, effort, impact, priority, its workstream and
-  related items by name, requested-by, external reference, tags, the
-  closing resolution with its date, recorded decisions and notes, and
-  any extra attribute fields - and the JSON/CSV exports carry the same
-  context, so nothing captured in the database stays invisible.
-- The roadmap board is now bars only. Work Items and Backlog show
-  workstreams (bold) with their nested work items indented beneath them,
-  plus standalone items - deliverables no longer clutter the board, they
-  live in the drawer. Loose items interleave with workstreams by priority -
-  workstreams win ties, so they lead their band unless an item is
-  deliberately promoted.
-- On the Timeline board, a workstream's nested work items now sit slightly
-  inset on the bar itself, so the nesting reads on the bars rather than only
-  in the left theme-label gutter. The theme label stays flush.
-- The department filter now keeps a workstream visible when a nested item
-  under it matches the chosen department, showing just the matching
-  children so the association reads at a glance.
-- In Custom view, deselecting a workstream now also drops its nested work
-  items and deliverables from the PDF, JSON and CSV exports, so an export
-  never carries a child whose parent was removed.
-- Export as PDF now prints whichever view is on screen (Categories remains
-  the recommended C-suite one-pager); the printed board is bars only.
-- The roadmap's Delivered work now splits into two columns: Recently
-  completed (shipped within a rolling 90-day window) and Previously
-  completed (the older, historic record), so recent wins stand apart from
-  the long tail. A closeout can be pinned straight to Previously completed
-  regardless of age (the previously_completed_at latch, its undo a single
-  clear), and the item drawer shows when a delivery was moved there.
-- The roadmap stack now sinks bugs below other work in their band, groups
-  equal-priority parked rows by theme lane, and tints parked bars with
-  their lane hue so backlog items no longer read as detached.
-- The roadmap toolbar now has a single Export button that opens a menu of
-  JSON, CSV and PDF, replacing three separate export/download buttons.
-- The roadmap's Hide fixes control is now an icon-only bug toggle (selected
-  means fixes are shown; press it to hide them), replacing the text button.
-- The prototypes gallery now groups entries under two headings: the PCI
-  compliance prototype sits on its own row under "Live", and every other
-  prototype groups under "Drafts", slightly greyed but still clickable.
-- The roadmap timeline reads better on screen and in the PDF export: each
-  row now sits on a light shaded lane, bars carry a slightly stronger fill,
-  and the bar and lane colours print exact instead of dropping to white -
-  so the export no longer looks washed out with barely visible bars.
-- The roadmap's Backlog level now mirrors the full backlog list: it shows
-  every work item regardless of scope, so nothing captured is invisible in
-  the roadmap tool. The Workstreams/Exec and Team views stay product-scoped.
-- On the timeline, workstreams now sort above standalone items within a
-  band: a standalone item always sits below the workstreams in its band,
-  even when it spans the same duration.
-
-- The roadmap view switch is now Workstreams / Categories / Work Items /
-  Backlog (was Executive / Team / Backlog), with the Department dropdown as
-  a filter across all of them.
-- Roadmap lane colours are now keyed to the owning department: Product
-  themes read as blues, Operations as greens, Finance as violets, Sales as
-  magentas, Risk as orange, so a lane's hue signals who owns it. Workstream
-  bars render as a stronger shade of their lane than standalone items.
-
-### Added
-- A Workstreams level on the roadmap (now the default view): a strategic
-  gantt of workstreams only, with standalone items hidden, so the top-level
-  narrative reads cleanly for stakeholders.
-- A Hide fixes toggle on the roadmap: drops standalone maintenance items
-  (bugs, tasks, small improvements) from the Work Items and Backlog levels
-  so you can focus on strategic work, without touching the data.
-- Roadmap workstreams: a high-level item ("Self Service API", "Merchant Portal
-  integration") reads as a presentable container that collapses its
-  sub-items to a checklist when Detailed is off, so a workstream can be
-  shown without its granular detail.
-- A Custom view toggle on the roadmap: a checkbox on each row lets you
-  hand-pick exactly which items a one-off PDF or CSV/JSON export carries,
-  pruned in real time with no change to the underlying data.
-- A PCI compliance prototype in the prototype gallery: a standalone, faithful
-  replica of the Acquirer Partner Portal onboarding wizard (application, operating
-  sites, products and pricing) with a PCI compliance interstitial on proceed -
-  confirm compliant, or enrol the merchant with the data already collected -
-  after which a highlighted PCI Compliance Fee row appears on the Products &
-  Pricing screen and in the Quote Tool. A Compliance Reports view (its own nav
-  item) shows engagement, status, webhooks outstanding and chases performed by
-  IXOPAY. Placeholder gallery entries for website screening and GDPR were
-  added alongside it.
-- The Executive roadmap view now leads with departments: each owning
-  department, the categories it owns and their item counts, drilling to
-  the items in Detailed view.
-- Work items can break into ordered sub-steps as first-class child items,
-  shown as a checklist on the parent in Detailed view and the drawer.
-- Export CSV on the roadmap and the backlog, beside Export JSON and
-  Download PDF; the columns cover every field, new attributes included.
-- Global header search deep-links each result to the item itself, grouped
-  by area with method/status badges, per-group counts and a "view all"
-  link, and match highlighting.
-- Search is a full keyboard combobox: arrow keys, Home/End, Enter to open,
-  Escape to close.
-- Shareable deep links open the target item across modules - the roadmap
-  and backlog detail views, a specific reference endpoint, and a
-  highlighted platform, user or integration row.
-- Search now also covers users and integrations.
-
-### Changed
-- Detailed view now also expands the Team and Backlog roadmap levels into
-  a Category to Area to item breakdown, not just Executive.
-- Completeness percentages are no longer shown at board level; progress
-  reads as a subtle bar and a sub-step count instead.
-- Pages load their scripts deferred from the head, so the first paint is
-  no longer blocked on JavaScript.
-- Search failure and empty states now say what happened and what to try.
-
-### Fixed
-- The Compact/Detailed toggle now changes the Team and Backlog views; it
-  was a no-op on those levels before.
-- The copy-to-clipboard button reports "Copy failed" when the browser
-  denies clipboard access, instead of doing nothing.
+- The Splunk toolbar button opens Splunk's home first, then the search in
+  its own tab, so a cold browser no longer lands on an error page.
+- The board-wide exports fetch the full text before writing, and cancel
+  rather than write a file missing notes.
+- An allocated item no longer reads "Sprint +0", and its allocation is not
+  dumped raw under the facts.
+- The users page shows the role a row carries, not "member" for anything
+  but admin.
+- An application blocked at record scope shows its blocker flag.
+- The roadmap drawer no longer prints raw internal values: priority reads as
+  a band, progress as a percentage.
+- Roadmap views show work with no filing area instead of dropping it.
+- The Compact/Detailed toggle changes the Team and Backlog views.
+- Copy-to-clipboard reports "Copy failed" when access is denied.
