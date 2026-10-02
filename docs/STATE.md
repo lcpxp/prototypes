@@ -18,8 +18,8 @@ the 27 `stories_drafted` rows and 1 `placement`.
    - two new questions: fee types in scope, and the cutover order.
 2. **Paste the packs**: confirmed streams now, drafted ones after review.
    A DevOps id written back to `external_ref` freezes that row.
-3. **Push the tag** `v0.1.0` - this session's git access cannot: `git push
-   origin v0.1.0`, or a GitHub release at `ab0e78b`.
+3. **Create the tag** `v0.1.0` - sessions cannot push tags: `git tag -a
+   v0.1.0 ab0e78b -m "0.1.0"` then `git push origin v0.1.0`, or a release.
 4. **Anchor the plan** when the start date is known: set
    `sprint_plan.anchor_sprint`, then `select sprint_plan_project();`.
 5. **Owner confirmations**: 7 drafted benefits on the plan, 46 proposed
