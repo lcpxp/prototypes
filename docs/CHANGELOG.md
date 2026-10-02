@@ -188,6 +188,8 @@ is the git history; what is unfinished is docs/STATE.md.
 - API reference reconciled against the LP source: wrong paths corrected,
   dead rows retired, real service-fee endpoints in place of templates.
 - Knowledge links render between any two kinds of thing.
+- Inbound Onboarding API (design stage) grown from a seven-endpoint sketch
+  to 29 endpoints in 9 groups, each traced to a portal route or a gap.
 - LP API reference rebuilt from the Partner Portal source: 212 endpoints in
   16 areas, confirmed against code, gaps flagged inline.
 - EU Acquirer intro page matches the guidance on where review happens.
