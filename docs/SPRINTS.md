@@ -84,9 +84,13 @@ columns (e.g. Now -> Next).
 
 For Now work this is now derived rather than typed: an allocation in
 `work_item_sprints` carries the slot and span, and a trigger projects
-`start_sprint` / `end_sprint` from it once the plan is anchored. The
-translation ruleset below still applies to everything else, and to a
-sprint code recorded by hand against work that has no allocation.
+`start_sprint` / `end_sprint` from it once the plan is anchored. It never
+touches a band. However many sprints its allocation spans, Now work stays
+at `horizon = 'now'`; a sprint conversation about it changes the
+allocation (docs/SPRINT-DELIVERY.md Part C), never `horizon` or
+`end_horizon` (docs/ROADMAP.md, Run-on into Next). The translation ruleset
+below still applies to everything else, and to a sprint code recorded by
+hand against work that has no allocation.
 
 ## Talking in sprints (translation ruleset)
 
