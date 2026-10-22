@@ -12,6 +12,11 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Roadmap: a Now workstream that ends in Now but sits below one that runs
+  into Next shows a hatched run-on across Next, and on Work Items and
+  Backlog a dashed "Likely to extend into later sprints" row; re-ordering
+  the sprint plan moves or clears it. A Now item can no longer run into
+  Later.
 - Sprint roadmap: an item moving into Now joins the plan by itself, at the
   end of its workstream, marked "Not yet placed" on both tabs and in its
   drawer until a planning pass confirms it; an item leaving Now drops off.

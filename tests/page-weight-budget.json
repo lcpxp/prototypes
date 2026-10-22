@@ -92,7 +92,7 @@
     },
     "modules/roadmap/index.html": {
       "maxRequests": 40,
-      "maxBytes": 373000
+      "maxBytes": 380000
     },
     "modules/sprints/index.html": {
       "maxRequests": 33,

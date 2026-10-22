@@ -12,6 +12,44 @@
   window.App = window.App || {};
   var R = App.roadmapViewsShared;
 
+  // Run-on into Next (docs/ROADMAP.md, "Run-on into Next"). A Now
+  // workstream whose own span ends in Now is LIKELY to slip into Next when
+  // a Now workstream ranked above it already runs there: the work ahead of
+  // it in the sprint order is not finishing in Now, so it probably will not
+  // either. Ranked above is byOrder, whose priority sprint_plan_sync_order()
+  // keeps equal to the Sprint Roadmap's order, so re-ordering the sprint
+  // plan moves or removes a run-on on the next load. Derived, never stored.
+  // It lives here rather than in views.js because the sprint page loads
+  // views.js and never draws a Next column; the Cascade reads it from R.
+  // Returns { workstream id: [titles of the streams above it that run on] }.
+  var NEXT = R.NOW + 1;
+  var RUN_ON_LABEL = "Likely to extend into later sprints";
+  function runOnMap(data) {
+    var scopeByArea = {};
+    (data.areas || []).forEach(function (a) { scopeByArea[a.id] = a.scope; });
+    var out = {}, ahead = [];
+    R.productItems(data.items || [], scopeByArea).filter(function (i) {
+      return !i.parent_id && i.level === "workstream" && R.colStart(i) === R.NOW;
+    }).sort(R.byOrder).forEach(function (w) {
+      if (R.colEnd(w) > R.NOW) ahead.push(w.title);
+      else if (ahead.length) out[w.id] = ahead.slice();
+    });
+    return out;
+  }
+  // The tooltip wherever a run-on is drawn. It names the nearest stream
+  // above that runs on and counts the rest; ranking this stream above all
+  // of them is what clears it.
+  function runOnTip(titles) {
+    var more = titles.length - 1;
+    return RUN_ON_LABEL + ": " + titles[more] + ", above it in the Now order, already runs " +
+      "into Next" + (more ? " (as " + (more === 1 ? "does 1 more stream" : "do " + more +
+      " more streams") + " above it)" : "") + ".";
+  }
+  R.NEXT = NEXT;
+  R.RUN_ON_LABEL = RUN_ON_LABEL;
+  R.runOnMap = runOnMap;
+  R.runOnTip = runOnTip;
+
   // Order: start band, then bugs sink below everything else in the band.
   // In the Now band priority comes next: it is kept equal to the Sprint
   // Roadmap's order (docs/SPRINT-DELIVERY.md Part D), so the Now column
@@ -87,14 +125,25 @@
       // the board itself (standups) without opening each item.
       var who = p._assignee
         ? '<span class="rmv-tl-who" title="Assignee">' + App.escape(p._assignee) + "</span>" : "";
+      var tip = p._runOn ? ' title="' + App.escape(R.runOnTip(p._runOn)) + '"' : "";
       var bar = '<span class="rmv-tl-bar' + (p.done ? " rmv-tl-bar--done" : "") +
         (p._s === R.PARKED ? " rmv-tl-bar--parked" : "") + (p._ws ? " rmv-tl-bar--ws" : "") +
-        R.catClass(p._cat) + progCls +
-        '"' + idAttr + ' style="' + colStyle + '"><span class="rmv-tl-title">' +
-        App.escape(p.label) + "</span>" + who + dot + "</span>";
+        (p._placeholder ? " rmv-tl-bar--runon" : "") + R.catClass(p._cat) + progCls +
+        '"' + idAttr + (p._placeholder ? tip : "") + ' style="' + colStyle +
+        '"><span class="rmv-tl-title">' + App.escape(p.label) + "</span>" + who + dot + "</span>";
+      // A workstream's run-on is its own element over the Next column, so
+      // the committed bar keeps its exact span and the likely one reads as
+      // a separate, hatched thing (docs/ROADMAP.md, Run-on into Next).
+      var nextLine = R.NEXT - first + 2;
+      var spill = p._runOn && !p._placeholder && R.NEXT <= maxBand
+        ? '<span class="rmv-tl-spill' + R.catClass(p._cat) + '"' + idAttr + tip +
+          ' style="grid-column:' + nextLine + " / " + (nextLine + 1) + '">' +
+          (p._runOnNote ? '<span class="rmv-tl-title">' + App.escape(R.RUN_ON_LABEL) + "</span>" : "") +
+          "</span>" : "";
       var rowCls = "rmv-tl-row" + (p._child ? " rmv-tl-row--child" : "") + R.pickCls(p._id, pick);
       return '<div class="' + rowCls + '"><span class="rmv-tl-label">' +
-        App.escape(p._catLabel) + "</span>" + bar + R.pickBox(p._id, pick) + "</div>";
+        App.escape(p._catLabel) + "</span>" + bar + spill +
+        (p._placeholder ? "" : R.pickBox(p._id, pick)) + "</div>";
     }).join("");
     if (!visible.length) {
       body = '<p class="notice rmv-tl-allhidden">Every column is hidden. ' +
@@ -132,7 +181,20 @@
       _catLabel: cat ? cat.label : "General", _pri: i.priority, _so: i.sort_order,
       _bug: R.bugRank(i), _catSo: cat ? cat.sort_order : 1e9,
       label: i.title, done: i.status === "done", _id: i.id, _prog: R.progressOf(i),
-      _ws: i.level === "workstream", _child: !!child, _assignee: i.assignee || "" };
+      _ws: i.level === "workstream", _child: !!child, _assignee: i.assignee || "",
+      _runOn: (!child && ctx.runOn && ctx.runOn[i.id]) || null };
+  }
+
+  // The dashed row a run-on workstream carries in Next on the Work Items
+  // and Backlog levels: not a work item, the likelihood its Now work slips
+  // there. It opens the workstream's drawer and takes no pick box - the
+  // workstream's own box decides it.
+  function runOnRow(wsPlaced) {
+    return { _s: R.NEXT, _e: R.NEXT, _cat: wsPlaced._cat, _dot: null,
+      _catLabel: wsPlaced._catLabel, _pri: wsPlaced._pri, _so: wsPlaced._so, _bug: 0,
+      _catSo: wsPlaced._catSo, label: R.RUN_ON_LABEL, done: false, _id: wsPlaced._id,
+      _prog: null, _ws: false, _child: true, _assignee: "", _runOn: wsPlaced._runOn,
+      _placeholder: true };
   }
 
   // Pre-order rows for a bars-with-children view: sort top-level rows by
@@ -147,11 +209,16 @@
     var out = [];
     placedTops.forEach(function (entry) {
       out.push(entry.p);
+      // A run-on row sits after the workstream's Now work and ahead of
+      // anything it already has queued in Next, which is where it reads.
+      var pending = entry.p._runOn ? runOnRow(entry.p) : null;
       R.barKids(entry.item, ctx).filter(function (k) {
         return !keepChild || keepChild(k);
       }).sort(R.childOrder).forEach(function (k) {
+        if (pending && R.colStart(k) > R.NOW) { out.push(pending); pending = null; }
         out.push(placeItem(k, ctx, true, entry.item));
       });
+      if (pending) out.push(pending);
     });
     return out;
   }
@@ -164,6 +231,10 @@
     var pick = opts && opts.custom
       ? { custom: true, unpicked: opts.unpicked || {}, excluded: opts.excluded || {} } : null;
     var ctx = R.context(data);
+    // The run-on is judged over the whole board (roadmap.js passes it in
+    // before a department filter narrows the data), and leaves with the
+    // Next column when that column is collapsed.
+    ctx.runOn = hidden && hidden.next ? {} : (opts && opts.runOn) || R.runOnMap(data);
     // The Backlog level is the master list: it mirrors the backlog module
     // and carries every work_item (all scopes, including portal and unfiled
     // work), so nothing captured is ever invisible in the roadmap tool.
@@ -185,7 +256,12 @@
       // The strategic gantt: workstreams only, standalone items hidden,
       // nested items collapsed until the Detailed breakdown.
       var wsList = R.teamList(tops).filter(function (i) { return i.level === "workstream"; });
-      var wsGrid = timelineGrid(wsList.map(function (i) { return placeItem(i, ctx); }),
+      // No work items are drawn here, so the run-on names itself.
+      var wsGrid = timelineGrid(wsList.map(function (i) {
+        var p = placeItem(i, ctx);
+        p._runOnNote = !!p._runOn;
+        return p;
+      }),
         R.ACTIVE_MAX, show,
         '<p class="notice">No active workstreams. Mark a top-level item as a ' +
         "workstream to show it here.</p>", pick, false, hidden, wide);
@@ -213,4 +289,5 @@
   }
 
   App.roadmapView.timeline = timeline;
+  App.roadmapView.runOn = runOnMap;
 })();

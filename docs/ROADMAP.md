@@ -119,6 +119,33 @@ Layouts:
   Now -> Next appears under both the Now and the Next band. Each band is
   grouped by theme first; inside a theme, Now follows the sprint order.
 
+### Run-on into Next
+
+Now is the sprint conveyor belt; Next is a theoretical distance, not "the
+sprints after these". Work is moved into Now on purpose and spread across
+sprints on the Sprint Roadmap, and re-ordering that plan moves rows up and
+down inside Now - it never by itself stretches anything into Next.
+
+- **A Now row ends by Next.** `horizon = 'now'` with `end_horizon` later or
+  someday is refused by the `work_items_now_ends_by_next` constraint.
+- **A Now workstream's solid span follows its work items**, not its
+  deliverables (drawer-only, so they never stretch a bar), and runs into
+  Next only where real work is queued there.
+- **The run-on is derived, never stored.** A Now workstream that ends in Now
+  but is ranked below a Now workstream that runs into Next is likely to slip
+  as well, so the board draws a hatched, dashed run-on across Next; on Work
+  Items and Backlog a dashed "Likely to extend into later sprints" row also
+  sits in Next after its Now work. Both open the workstream's drawer, and
+  the tooltip names the stream above that runs on. "Ranked below" is
+  `priority` (then `sort_order`), which `sprint_plan_sync_order()` keeps
+  equal to the Sprint Roadmap's order, so ranking a stream above every
+  stream that runs on clears it on the next load. It is judged over the
+  whole board, so a department filter never hides one, and it leaves with
+  the Next column when that column is collapsed. The Cascade draws the same
+  thing in its Next band. The rule lives in views-timeline.js
+  (`runOnMap`), outside the shared views.js, because the sprint page loads
+  views.js and has no Next column to draw it in.
+
 The Now column is drawn a second time on its own page, modules/sprints/,
 against sprint columns rather than horizon bands - by workstream for
 stakeholders and by work item for delivery. It renders with this page's

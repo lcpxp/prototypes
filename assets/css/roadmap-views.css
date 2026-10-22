@@ -414,6 +414,31 @@
 }
 .rm-card--cont h3 { font-size: var(--text-sm); margin: 0; }
 
+/* Run-on into Next (docs/ROADMAP.md): Now work ranked below a stream that
+   already runs into Next is likely to slip there too. Hatched AND dashed,
+   so it never reads as a committed span, in colour or in greyscale print. */
+.rmv-tl-spill,
+.rmv-tl-bar--runon,
+.rm-card--runon {
+  --rmv-runon: color-mix(in srgb, var(--rm-a, var(--line-strong)) 22%, transparent);
+  background: repeating-linear-gradient(45deg, var(--rmv-runon) 0 3px,
+    transparent 3px 9px) var(--surface);
+  border: 1px dashed var(--rm-a, var(--line-strong));
+  color: var(--muted);
+  font-weight: var(--weight-normal);
+  cursor: pointer;
+}
+.rmv-tl-spill {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  padding-inline: var(--s-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 /* A nested work item: its BAR is slightly inset from its workstream's bar
    so the child reads as owned by the workstream above it (matching the
    cascade card's .rm-card--child inset). The inset sits inside the bar's

@@ -403,6 +403,10 @@
     {
       "name": "sprint_story_pack",
       "version": "20261001094457"
+    },
+    {
+      "name": "work_items_now_ends_by_next",
+      "version": "20261022112559"
     }
   ],
   "policies": [

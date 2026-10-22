@@ -407,7 +407,9 @@ orders.
   plan - its slot or sequence - and sync. The sprint decides the order.
 
 The roadmap page's Now band orders by priority (docs/ROADMAP.md,
-Layouts), so after a sync it reads in sprint order.
+Layouts), so after a sync it reads in sprint order, and the run-on into
+Next follows the same order (docs/ROADMAP.md, Run-on into Next). A sync
+never stretches a row into Next.
 
 ## Before a sprint
 

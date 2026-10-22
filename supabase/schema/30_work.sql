@@ -367,6 +367,11 @@ create table if not exists public.work_items (
   updated_at timestamptz not null default now(),
   constraint work_items_parent_not_self check (parent_id is null or parent_id <> id),
   constraint work_items_workstream_top_level check (level <> 'workstream' or parent_id is null),
+  -- A Now row ends in Now or Next, never Later or Someday: Now is the
+  -- sprint conveyor belt and Next a theoretical distance (docs/ROADMAP.md,
+  -- Run-on into Next; migration 20261022112559).
+  constraint work_items_now_ends_by_next
+    check (horizon <> 'now' or end_horizon is null or end_horizon in ('now', 'next')),
   -- A stored benefit always carries its checked state, or the point of
   -- benefit_status is lost the first time somebody forgets to set it.
   constraint work_items_benefit_status_present

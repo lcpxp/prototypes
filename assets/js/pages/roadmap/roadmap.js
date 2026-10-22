@@ -97,9 +97,11 @@
       var drop = App.roadmapView.expandUnpicked(unpicked, ctx);
       Object.keys(drop).forEach(function (id) { if (!unpicked[id]) excluded[id] = true; });
     }
+    // The run-on into Next is judged over the whole board, not the
+    // department slice, so filtering never makes a likely slip disappear.
     var opts = { showDelivered: showDelivered, expanded: expanded, custom: customOn,
       unpicked: unpicked, excluded: excluded, hideFixes: hideFixes, hiddenBands: hiddenBands,
-      wide: wide };
+      wide: wide, runOn: App.roadmapView.runOn(data) };
     var vd = viewData();
     host.innerHTML = layout === "cascade"
       ? App.roadmapView.cascade(vd, current, opts)

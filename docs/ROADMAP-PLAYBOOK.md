@@ -102,7 +102,7 @@ The columns you operate. Set only what you know; the rest have safe defaults.
 | `associated_departments` | text[] of the same department keys | `{}` | business area associations: extra departments that want visibility without owning; the department filter matches owner OR association |
 | `assignee` / `support_assignee` | text | null | named delivery owner and an optional second; drawer and timeline bar |
 | `horizon` | now, next, later, someday | someday | start band |
-| `end_horizon` | now, next, later, someday | null | spans to this band |
+| `end_horizon` | now, next, later, someday | null | spans to this band; from Now, next at most (docs/ROADMAP.md, Run-on into Next) |
 | `status` | idea, planned, in_progress, blocked, done, dropped | idea | done=Delivered |
 | `presentation` | sequenced, current, ongoing, wind, bridge | sequenced | Now card label |
 | `priority` | integer, gaps of 10 | 100 | row order. On the Sprint Roadmap it is the sprint order, written by `sprint_plan_sync_order()` - change the plan, not the number (docs/SPRINT-DELIVERY.md Part D) |

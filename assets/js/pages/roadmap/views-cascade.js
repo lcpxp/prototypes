@@ -28,6 +28,23 @@
       "<h3>" + App.escape(item.title) + "</h3>" + (dot || "") + "</li>";
   }
 
+  // A run-on in the Next band (docs/ROADMAP.md, Run-on into Next): the
+  // workstream's hatched strip, named when nothing follows it (the
+  // Workstreams level), or the dashed card that stands for its Now work
+  // likely slipping there (Work Items and Backlog). Both open the
+  // workstream's drawer.
+  function runOnCard(ws, titles, cat, asChild, named) {
+    var eyebrow = asChild ? '<p class="rmv-part-of">Part of ' + App.escape(ws.title) + "</p>"
+      : '<p class="rmv-ws-tag">Workstream</p>';
+    var note = !asChild && named
+      ? '<p class="rmv-part-of">' + App.escape(R.RUN_ON_LABEL) + "</p>" : "";
+    return '<li class="rm-card rm-card--cont rm-card--runon' +
+      (asChild ? " rm-card--child" : " rm-card--ws") + R.catClass(cat) +
+      '" data-item-id="' + App.escape(ws.id) + '" title="' +
+      App.escape(R.runOnTip(titles)) + '">' + eyebrow +
+      "<h3>" + App.escape(asChild ? R.RUN_ON_LABEL : ws.title) + "</h3>" + note + "</li>";
+  }
+
   // The full card in its start band. isChild insets it and adds a
   // "Part of <workstream>" eyebrow so a nested work item reads as owned.
   function fullCard(item, cat, pick, isChild, parentTitle, dot) {
@@ -109,17 +126,24 @@
     for (var idx = 0; idx <= maxBand; idx++) {
       if (idx <= 1 && !show) continue;
       if (hidden && hidden[R.BANDS[idx].key]) { html += offBand(idx); continue; }
-      var inBand = list.filter(inBandFn(idx));
+      var i2 = idx, spans = inBandFn(idx);
+      var inBand = list.filter(function (i) {
+        return spans(i) || (i2 === R.NEXT && !!ctx.runOn[i.id]);
+      });
       if (!inBand.length) continue;
       var byCat = R.groupBy(inBand, function (i) { return R.themeIdOf(i, ctx); });
-      var i2 = idx;
+      // A run-on is drawn only in Next, named, since no work items follow it.
+      var card = function (i) {
+        return i2 === R.NEXT && ctx.runOn[i.id]
+          ? runOnCard(i, ctx.runOn[i.id], ctx.catById[R.themeIdOf(i, ctx)] || null, false, true)
+          : cardIn(i, ctx, pick, i2);
+      };
       var blocks = ctx.catSorted.filter(function (c) { return byCat[c.id]; })
         .map(function (c) {
-          return themeSection(c, byCat[c.id].slice().sort(R.byOrder)
-            .map(function (i) { return cardIn(i, ctx, pick, i2); }).join(""));
+          return themeSection(c, byCat[c.id].slice().sort(R.byOrder).map(card).join(""));
         });
       if (byCat.none) blocks.push(themeSection(null, byCat.none.slice().sort(R.byOrder)
-        .map(function (i) { return cardIn(i, ctx, pick, i2); }).join("")));
+        .map(card).join("")));
       html += '<section class="rmv-band">' + bandHead(R.BANDS[idx].label, R.BANDS[idx].key) +
         '<div class="rmv-themes">' + blocks.join("") + "</div></section>";
     }
@@ -141,10 +165,17 @@
         var kids = R.barKids(top, ctx).filter(function (k) { return !keepChild || keepChild(k); });
         var topIn = inBand(top);
         var kidsIn = kids.filter(inBand).sort(R.childOrder);
-        if (!topIn && !kidsIn.length) return;
+        var runOn = idx === R.NEXT ? ctx.runOn[top.id] : null;
+        if (!topIn && !kidsIn.length && !runOn) return;
         var key = R.themeIdOf(top, ctx) || "none";
         var bucket = perTheme[key] = perTheme[key] || [];
         if (topIn) bucket.push({ item: top });
+        // The workstream's hatched strip, then the dashed card for its Now
+        // work, ahead of anything it already has queued in Next.
+        if (runOn) {
+          bucket.push({ item: top, runOn: runOn });
+          bucket.push({ item: top, runOn: runOn, child: true });
+        }
         kidsIn.forEach(function (k) {
           bucket.push({ item: k, child: true, parentTitle: top.title, parent: top });
         });
@@ -154,7 +185,8 @@
       var i2 = idx;
       function block(cat, entries) {
         return themeSection(cat, entries.map(function (e) {
-          return cardIn(e.item, ctx, pick, i2, e.child, e.parentTitle, e.parent);
+          return e.runOn ? runOnCard(e.item, e.runOn, cat, !!e.child, false)
+            : cardIn(e.item, ctx, pick, i2, e.child, e.parentTitle, e.parent);
         }).join(""));
       }
       var blocks = ctx.catSorted.filter(function (c) { return perTheme[c.id]; })
@@ -173,6 +205,9 @@
     var pick = opts && opts.custom
       ? { custom: true, unpicked: opts.unpicked || {}, excluded: opts.excluded || {} } : null;
     var ctx = R.context(data);
+    // Judged over the whole board, and gone with a collapsed Next band
+    // (see timeline() in views-timeline.js).
+    ctx.runOn = hidden && hidden.next ? {} : (opts && opts.runOn) || R.runOnMap(data);
     // Backlog mirrors the master list (all scopes); Exec/Team stay
     // product-scoped. See timeline() in roadmap-views.js.
     var all = level === "backlog" ? (data.items || [])
