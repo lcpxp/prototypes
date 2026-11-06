@@ -33,6 +33,7 @@ const read = (f) => fs.readFileSync(path.join(ROOT, f), "utf8");
 const AREAS = [
   ["assets/js/core/", "Shared runtime. Loaded on every protected page in the order set by assets/js/core/includes.json."],
   ["assets/js/pages/", "Page modules, one directory per module, mirroring modules/. A file here attaches App.<camelCase(directory)>..."],
+  ["assets/snippets/", "Console snippets and prompts the nav's console tools fetch on first open and show byte for byte. Never loaded as page scripts."],
   ["assets/css/", "Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, then page sheets. Every value comes from tokens.css."],
   ["modules/", "One folder per module, named for its registry key. Pages are shells; the logic is in assets/js/pages/."],
   ["supabase/migrations/", "Applied migrations. Immutable once run - never edited, never reflowed."],

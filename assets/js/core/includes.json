@@ -52,7 +52,7 @@
     },
     {
       "file": "assets/js/core/console-tools.js",
-      "purpose": "App.sendTool and App.euAcquirerAdminTool: the nav's two console-snippet tools. One file because they were built the same way twice."
+      "purpose": "App.sendTool, App.euAcquirerAdminTool and App.partnerSetupTool: the nav's console-snippet tools. One file because the first two were built the same way twice; long snippets are fetched from assets/snippets/ on first open, not loaded here."
     }
   ],
   "optional": [

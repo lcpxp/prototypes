@@ -34,7 +34,7 @@ Everything one file can call in another. A surface in
 | `App.download` | assets/js/core/ui.js:75 (+3 more) |
 | `App.drawer` | assets/js/core/drawer.js:35 |
 | `App.escape` | assets/js/core/ui.js:17 |
-| `App.euAcquirerAdminTool` | assets/js/core/console-tools.js:289<br>assets/js/core/console-tools.js:290 |
+| `App.euAcquirerAdminTool` | assets/js/core/console-tools.js:313<br>assets/js/core/console-tools.js:314 |
 | `App.flashLabel` | assets/js/core/ui.js:44 (+2 more) |
 | `App.futurePrototypesTable` | assets/js/pages/gallery.js:18 |
 | `App.ideasView` | assets/js/pages/ideas/render.js:37 (+7 more) |
@@ -46,7 +46,8 @@ Everything one file can call in another. A surface in
 | `App.moduleHref` | assets/js/core/registry.js:266 |
 | `App.notice` | assets/js/core/ui.js:65 |
 | `App.onAuthed` | assets/js/core/guard.js:116 (+3 more) |
-| `App.onThemeChange` | assets/js/core/ui.js:365 |
+| `App.onThemeChange` | assets/js/core/ui.js:372 |
+| `App.partnerSetupTool` | assets/js/core/console-tools.js:350<br>assets/js/core/console-tools.js:351 |
 | `App.pciInterstitial` | assets/js/pages/pci/interstitial.js:21 |
 | `App.pciIxopay` | assets/js/pages/pci/ixopay.js:130 |
 | `App.platformCards` | assets/js/pages/platform/cards.js:201 |
@@ -70,7 +71,7 @@ Everything one file can call in another. A surface in
 | `App.roadmapViewsShared` | assets/js/pages/roadmap/views.js:405 |
 | `App.root` | assets/js/core/guard.js:29 (+7 more) |
 | `App.search` | assets/js/core/search.js:347 |
-| `App.sendTool` | assets/js/core/console-tools.js:209<br>assets/js/core/console-tools.js:210 |
+| `App.sendTool` | assets/js/core/console-tools.js:233<br>assets/js/core/console-tools.js:234 |
 | `App.session` | assets/js/core/guard.js:39 |
 | `App.sprints` | assets/js/core/sprints.js:103 |
 | `App.statusBadge` | assets/js/core/ui.js:35 |
@@ -91,7 +92,7 @@ Shared runtime. Loaded on every protected page in the order set by assets/js/cor
 | auth.js | 54 | auth.js - Login page logic for index.html. |
 | blocks.js | 139 | blocks.js - The typed-block renderer, in one place. |
 | config.example.js | 18 | config.example.js - OPTIONAL local override. |
-| console-tools.js | 311 | console-tools.js - The nav's console-snippet tools: Acquirer send (App.sendTool) and EU Acquirer admin (App.euAcquirerAdminTool). |
+| console-tools.js | 377 | console-tools.js - The nav's console-snippet tools: Acquirer send (App.sendTool), EU Acquirer admin (App.euAcquirerAdminTool) and High risk partner setup (App.partnerSetupTool). |
 | detail.js | 142 | detail.js - The completeness contract for rendering a row. |
 | drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
 | guard.js | 145 | guard.js - Blocks unauthenticated access to protected pages and enforces per-module access. |
@@ -103,7 +104,7 @@ Shared runtime. Loaded on every protected page in the order set by assets/js/cor
 | supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
 | theme.js | 84 | theme.js - Light/dark theme control. |
 | tools.js | 217 | tools.js - The nav's outbound links to external tools, rendered as icon buttons beside the theme switch. |
-| ui.js | 390 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy, downloads and the guarded localStorage helper (App.store). |
+| ui.js | 397 | ui.js - Shared UI: top navigation, HTML escaping, badges, copy, downloads and the guarded localStorage helper (App.store). |
 
 ### assets/js/pages/
 
@@ -183,7 +184,7 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | console-tool.css | 71 | console-tool.css - The modal shared by the nav's console-snippet tools (send-tool.js and eu-acquirer-admin-tool.js): a wide dialog with a header bar, a scrolling code block per snippet and a collapsed details section. |
 | dashboard.css | 218 | dashboard.css - The rebuilt landing page (docs/plan/50-DASHBOARD.md). |
 | ideas.css | 92 | ideas.css - The prototype ideas board and the gallery strip that points at it (docs/plan/70-PROTOTYPE-IDEAS.md). |
-| layout.css | 409 | layout.css - Navigation, page scaffold and grids. |
+| layout.css | 411 | layout.css - Navigation, page scaffold and grids. |
 | login.css | 70 | login.css - Sign-in page only. |
 | pages.css | 227 | pages.css - The reference viewer ("swagger") page. |
 | platform.css | 283 | platform.css - The platform knowledge page (modules/platform/). |
@@ -460,7 +461,7 @@ Shared fixtures and the budgets the gates read.
 | page-weight-budget.json | 110 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
 | size-budget.json | 107 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
-| surface-baseline.json | 874 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
+| surface-baseline.json | 877 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
 
@@ -471,7 +472,7 @@ Generators: the codemap, the schema snapshot, coverage, knowledge, the audit.
 | audit.js | 222 | scripts/audit.js - One-screen repo health report. |
 | extract-calls.js | 336 | scripts/extract-calls.js - Reads a LP front-end checkout and emits the routes it actually calls: one entry per this.http.<verb> call site, with the URL expression resolved to a route key. |
 | extract-routes.js | 165 | scripts/extract-routes.js - Reads a LP API checkout and emits its route inventory as JSON: one entry per [Http*] action attribute, composed onto its controller [Route], with the version resolved. |
-| gen-codemap.js | 208 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
+| gen-codemap.js | 209 | scripts/gen-codemap.js - Generates docs/CODEMAP.md and llms.txt. |
 | gen-coverage.js | 387 | scripts/gen-coverage.js - Generates supabase/reference-coverage.json, the repo's committed account of how far the API reference matches the code it documents. |
 | gen-knowledge.js | 237 | scripts/gen-knowledge.js - Generates supabase/knowledge-coverage.json, the repo's committed account of whether what the system was told is still anchored, sourced and reachable. |
 | gen-snapshot.js | 148 | scripts/gen-snapshot.js - Generates supabase/schema-snapshot.json, |
@@ -512,7 +513,7 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 373 | Architecture How the portal fits together. |
-| CHANGELOG.md | 251 | Changelog All notable user-facing changes to LPIO, newest first. |
+| CHANGELOG.md | 254 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
@@ -529,7 +530,7 @@ Architecture, security, design, and the operating protocols.
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINT-DELIVERY.md | 430 | Sprint delivery |
-| SPRINTS.md | 123 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
+| SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
 | STATE.md | 40 | Current state Updated: 2026-10-22 (run-on into Next shipped; three Unity items brought into Now) # In progress Seven workstreams in Now: 43 items across Sprints 1-5, synced to `v_sprint_plan_order`, UNANCHORED on purpose. |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |

@@ -28,7 +28,7 @@
     },
     "modules/platform/index.html": {
       "maxRequests": 26,
-      "maxBytes": 212000
+      "maxBytes": 214000
     },
     "modules/portal-review/index.html": {
       "maxRequests": 24,
@@ -92,11 +92,11 @@
     },
     "modules/roadmap/index.html": {
       "maxRequests": 40,
-      "maxBytes": 380000
+      "maxBytes": 382000
     },
     "modules/sprints/index.html": {
       "maxRequests": 33,
-      "maxBytes": 366000
+      "maxBytes": 368000
     },
     "modules/users/index.html": {
       "maxRequests": 20,

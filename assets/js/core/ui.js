@@ -286,6 +286,12 @@
       html += '<span class="nav-eu-acquirer-admin" id="nav-eu-acquirer-admin"></span>';
     }
 
+    // High risk partner setup tool: an empty slot filled by
+    // console-tools.js, on the same contract as the two slots above.
+    if (App.partnerSetupTool) {
+      html += '<span class="nav-partner-setup" id="nav-partner-setup"></span>';
+    }
+
     // Theme switch: a moon/sun icon button seated next to the profile
     // icon. It shows a sun in dark mode (press to go light) and a moon
     // in light mode (press to go dark); keeps id "theme-toggle".
@@ -321,6 +327,7 @@
     if (App.tools) App.tools.attach();
     if (App.sendTool) App.sendTool.attach();
     if (App.euAcquirerAdminTool) App.euAcquirerAdminTool.attach();
+    if (App.partnerSetupTool) App.partnerSetupTool.attach();
 
     // Account dropdown: toggle on the profile icon, close on an outside
     // click or Escape. Clicks inside the menu (the theme switch) keep it

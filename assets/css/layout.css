@@ -133,12 +133,14 @@
 
 .nav-tools:empty,
 .nav-send:empty,
-.nav-eu-acquirer-admin:empty {
+.nav-eu-acquirer-admin:empty,
+.nav-partner-setup:empty {
   display: none;
 }
 
 .nav-send,
-.nav-eu-acquirer-admin {
+.nav-eu-acquirer-admin,
+.nav-partner-setup {
   display: inline-flex;
 }
 

@@ -103,6 +103,9 @@
     "onThemeChange": [
       "assets/js/core/ui.js"
     ],
+    "partnerSetupTool": [
+      "assets/js/core/console-tools.js"
+    ],
     "pciInterstitial": [
       "assets/js/pages/pci/interstitial.js"
     ],

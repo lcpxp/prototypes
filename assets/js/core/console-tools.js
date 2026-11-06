@@ -1,17 +1,23 @@
 // ------------------------------------------------------------------
 // console-tools.js - The nav's console-snippet tools: Acquirer send
-// (App.sendTool) and EU Acquirer admin (App.euAcquirerAdminTool).
+// (App.sendTool), EU Acquirer admin (App.euAcquirerAdminTool) and High
+// risk partner setup (App.partnerSetupTool).
 //
-// Both are stopgaps for actions the partner portal has no button for
+// All are stopgaps for actions the partner portal has no button for
 // yet. Each is a nav icon that opens a dialog holding a script to paste
 // into the portal's own browser console.
+//
+// A short snippet is a string here. A long one lives as its own file in
+// assets/snippets/, byte for byte what the dialog shows and copies, and
+// is fetched on first open - so it costs no page a request or a byte at
+// load, and this file stays under its size budget.
 //
 // No snippet carries a host or an auth scope. Each reads those at run
 // time from the portal's own config.json, in the portal's own tab, so
 // this repo - which is public - holds only route names and the shape of
 // the call. See docs/SECURITY.md.
 //
-// ONE file for two tools because they were built the same way twice:
+// ONE file for the tools because the first two were built the same way twice:
 // identical copy-with-fallback helpers byte for byte, and dialogs with
 // the same head/lede/block/details shape assembled by hand in each. The
 // duplication is gone, and the pages that load them make one request
@@ -54,9 +60,9 @@
     document.body.removeChild(area);
   }
 
-  // Both dialogs have the same shape: a head, a lede, one primary block,
+  // Every dialog has the same shape: a head, a lede, one primary block,
   // and a collapsed extra. Described rather than assembled by hand, so
-  // adding a third tool is a data change.
+  // adding a tool is a data change.
   function bar(eyebrow, key) {
     return '<div class="console-tool-bar">' +
       '<span class="eyebrow">' + App.escape(eyebrow) + "</span>" +
@@ -91,9 +97,27 @@
       "</details>";
 
     // textContent, not innerHTML: the snippets are code and must never
-    // be parsed as markup.
-    dialog.querySelector('[data-slot="primary"]').textContent = spec.primary.text;
-    dialog.querySelector('[data-slot="extra"]').textContent = spec.extra.text;
+    // be parsed as markup. A block carries its text, or a src path under
+    // the site root that is fetched now, on first open. Copy does nothing
+    // until the text has arrived.
+    var texts = {};
+    ["primary", "extra"].forEach(function (key) {
+      var slot = dialog.querySelector('[data-slot="' + key + '"]');
+      var block = spec[key];
+      if (!block.src) {
+        texts[key] = slot.textContent = block.text;
+        return;
+      }
+      slot.textContent = "Loading...";
+      fetch((App.root || ".") + "/" + block.src).then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.text();
+      }).then(function (text) {
+        texts[key] = slot.textContent = text;
+      }, function () {
+        slot.textContent = "Could not load this snippet. Reload the page and open it again.";
+      });
+    });
 
     dialog.addEventListener("click", function (event) {
       var target = event.target;
@@ -102,7 +126,7 @@
         return;
       }
       var which = target.getAttribute && target.getAttribute("data-copy");
-      if (which) copy(which === "primary" ? spec.primary.text : spec.extra.text, target);
+      if (which && texts[which] !== undefined) copy(texts[which], target);
       // Backdrop click: the dialog element itself is the click target
       // only when the press landed outside the panel.
       if (target === dialog) dialog.close();
@@ -113,7 +137,7 @@
   }
 
   // The dialog is built on first press, not at load: most visits never
-  // open either tool.
+  // open any tool.
   function mount(slotId, triggerId, label, icon, spec) {
     var host = document.getElementById(slotId);
     if (!host) return;
@@ -304,6 +328,48 @@
         summary: "List current EU Acquirer admins",
         eyebrow: "Console snippet",
         text: LIST_SNIPPET,
+      },
+    });
+  };
+
+  // --- High risk partner setup ----------------------------------------
+  // Run on a new high risk partner's dashboard once the partner and its
+  // branding are added: removes every product but the high risk one, then
+  // creates the sales organisation and the sales team in it. Both texts
+  // are files in assets/snippets/.
+
+  var GROUP_ICON =
+    '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" ' +
+    'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+    'stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>' +
+    '<circle cx="9" cy="7" r="4"></circle>' +
+    '<path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>' +
+    '<path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
+
+  App.partnerSetupTool = {};
+  App.partnerSetupTool.attach = function () {
+    mount("nav-partner-setup", "partner-setup-trigger", "High risk partner setup", GROUP_ICON, {
+      id: "partner-setup-modal",
+      title: "High risk partner setup",
+      lede: "Sets up a new high risk partner: removes every product except " +
+        "ECOM - Integrated / Gateway (High Risk), then creates the sales " +
+        "organisation \"Sales Organisation\" and the sales team \"Sales Team\" " +
+        "in it. Open the new partner's dashboard in the partner portal, paste " +
+        "this into the browser console and run it.",
+      primary: {
+        eyebrow: "Console snippet",
+        note: "Run after the partner and its branding are added. It shows the " +
+          "plan and asks before changing anything, and is safe to re-run. " +
+          "Product removal cannot be undone - the partner's own price-sheet " +
+          "copies are deleted.",
+        src: "assets/snippets/partner-setup.js",
+      },
+      extra: {
+        summary: "Handover prompt",
+        note: "Paste this with the console output to get a read on what happened.",
+        eyebrow: "Prompt",
+        src: "assets/snippets/partner-setup-prompt.txt",
       },
     });
   };

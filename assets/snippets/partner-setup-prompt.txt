@@ -1,0 +1,23 @@
+I ran the high risk partner setup snippet from the partner portal console.
+Console output below.
+
+Tell me:
+
+1. Whether the partner is fully set up - only the high risk product left,
+   "Sales Organisation" created, "Sales Team" created in it. Say yes or
+   no plainly, before anything else.
+2. If it stopped, which step it stopped at and why, in one line.
+3. What to do next: re-run the snippet, fix something in the portal, or
+   something needing a developer.
+
+How the snippet behaves: it stops before creating the sales org and team
+if any product failed to remove, because a new sales team copies every
+product the partner has. Re-running is safe - finished steps are skipped.
+A new sales team shows as inactive until it has a manager and an agent;
+that is expected, not a fault.
+
+Be brief. Lead with what happened. No preamble.
+
+---
+
+[paste console output here]

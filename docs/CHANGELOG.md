@@ -12,6 +12,9 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- A group icon in the nav, after EU Acquirer admin, opens a copyable console
+  snippet for setting up a new high risk partner in the partner portal, with
+  a handover prompt for reading its output.
 - Roadmap: a Now workstream that ends in Now but sits below one that runs
   into Next shows a hatched run-on across Next, and on Work Items and
   Backlog a dashed "Likely to extend into later sprints" row; re-ordering
