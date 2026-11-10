@@ -1,0 +1,87 @@
+/* ------------------------------------------------------------------
+   roadmap-exec.css - The Executive board: the department-first rollup
+   on the roadmap page.
+
+   Split from roadmap-detail.css on the seam tests/size-budget.json
+   named. The sprint page loads roadmap-detail.css for the drawer alone
+   and was paying for board rules it never draws, so this sheet is
+   loaded by modules/roadmap/ only. Values come from tokens.css.
+   ------------------------------------------------------------------ */
+
+.rmv-exec-item { cursor: pointer; }
+.rmv-exec-item:hover .rmv-exec-item-title { color: var(--accent); }
+
+/* --- Executive: department-first board --- */
+.rmv-exec { display: grid; gap: var(--s-4); }
+@media (min-width: 48rem) {
+  .rmv-exec { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
+}
+.rmv-exec-dept {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s-4);
+  background: var(--surface);
+}
+.rmv-exec-dept-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-3);
+}
+.rmv-exec-dept-count,
+.rmv-exec-cat-count,
+.rmv-exec-item-steps {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.rmv-exec-cats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.rmv-exec-cat {
+  border-inline-start: 3px solid var(--rm-a, var(--line-strong));
+  padding-inline-start: var(--s-3);
+}
+.rmv-exec-cat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.rmv-exec-cat-name { color: var(--ink); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+
+/* Child item rows under an expanded category (also reused elsewhere). */
+.rmv-exec-items { list-style: none; margin: var(--s-2) 0 0; padding: 0; }
+.rmv-exec-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) 0;
+  border-top: 1px solid var(--line);
+}
+.rmv-exec-item:first-child { border-top: 0; }
+.rmv-exec-item-title { flex: 1; color: var(--ink); font-size: var(--text-sm); }
+.rmv-exec-item-band {
+  color: var(--faint);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Print: the Executive board is the C-suite one-pager. */
+@media print {
+  .rmv-exec { gap: 6pt; }
+  .rmv-exec-dept {
+    break-inside: avoid;
+    padding: 6pt 8pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

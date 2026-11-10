@@ -67,6 +67,7 @@ Everything one file can call in another. A surface in
 | `App.roadmapExport` | assets/js/pages/roadmap/export.js:99 |
 | `App.roadmapPrefs` | assets/js/pages/roadmap/prefs.js:52 |
 | `App.roadmapSprintCards` | assets/js/pages/roadmap/views-sprint-cards.js:258 |
+| `App.roadmapSprintHide` | assets/js/pages/roadmap/views-sprint-hide.js:76 |
 | `App.roadmapView` | assets/js/pages/roadmap/views-breakdown.js:58 (+8 more) |
 | `App.roadmapViewsShared` | assets/js/pages/roadmap/views.js:405 |
 | `App.root` | assets/js/core/guard.js:29 (+7 more) |
@@ -162,7 +163,8 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | roadmap/views-cascade.js | 241 | roadmap/views-cascade.js - The Cascade layout for the roadmap home: the same work as stacked stage bands (Now/Next/Later, plus Parked for Backlog). |
 | roadmap/views-exec.js | 102 | roadmap/views-exec.js - The Executive (Categories) board for the roadmap home: a department-first rollup of active work - each department, the categories it owns and their item counts, expanding to item rows when Detailed is on. |
 | roadmap/views-sprint-cards.js | 270 | roadmap/views-sprint-cards.js - What each workstream buys, as the cards that sit below the sprint board. |
-| roadmap/views-sprint.js | 550 | roadmap/views-sprint.js - The Sprint Roadmap: the same Now work the product board bands by horizon, placed instead against sprints. |
+| roadmap/views-sprint-hide.js | 78 | roadmap/views-sprint-hide.js - Hide mode on the Sprint Roadmap: the view state that lets a reader drop rows from the board they are looking at. |
+| roadmap/views-sprint.js | 501 | roadmap/views-sprint.js - The Sprint Roadmap: the same Now work the product board bands by horizon, placed instead against sprints. |
 | roadmap/views-timeline.js | 294 | roadmap/views-timeline.js - The Timeline layout for the roadmap home: the continuous Delivered\|Now\|Next\|Later\|Parked axis where a bar SPANS the columns it runs across. |
 | roadmap/views.js | 433 | roadmap/views.js - Pure HTML builders for the roadmap home (modules/roadmap/). |
 | shared/lazy-detail.js | 111 | shared/lazy-detail.js - Fetching a row's heavy fields when the detail surface opens, instead of carrying them for every row on page load. |
@@ -170,6 +172,15 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | shared/work-items-data.js | 198 | shared/work-items-data.js - The reads over work_items and work_notes that the list pages deliberately no longer carry. |
 | sprints/sprints.js | 353 | sprints/sprints.js - The Sprint Roadmap page shell. |
 | users.js | 207 | users.js - User and access management for modules/users/. |
+
+### assets/snippets/
+
+Console snippets and prompts the nav's console tools fetch on first open and show byte for byte. Never loaded as page scripts.
+
+| File | Lines | Purpose |
+|---|---:|---|
+| partner-setup-prompt.txt | 23 |  |
+| partner-setup.js | 152 | High risk partner set-up - paste into the partner portal's browser console while the new partner's dashboard is open (address contains /app/<partnerId>/). |
 
 ### assets/css/
 
@@ -194,7 +205,8 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | ps-pci.css | 124 | ps-pci.css - The PCI feature layered on the Acquirer replica: the wizard |
 | ps-sim.css | 191 | ps-sim.css - The simulation layer for the EU Acquirer replica: the toast stack, the modal shell used by the email prompt and the stepped progress runs, and the spinner/tick each step cycles through. |
 | ps.css | 218 | ps.css - Acquirer Partner Portal replica shell for the PCI prototype (modules/prototypes/pci/demo.html). |
-| roadmap-detail.css | 550 | roadmap-detail.css - Coarse progress bars, the expanded Executive child lists, and the right-hand item detail drawer. |
+| roadmap-detail.css | 482 | roadmap-detail.css - Coarse progress bars, the expanded Executive child lists, and the right-hand item detail drawer. |
+| roadmap-exec.css | 88 | roadmap-exec.css - The Executive board: the department-first rollup on the roadmap page. |
 | roadmap-themes.css | 30 | roadmap-themes.css - The theme accent map: one rule per roadmap_categories.key, each setting the accent and soft tint that a lane label, card border, dot or rail reads. |
 | roadmap-views.css | 559 | roadmap-views.css - The roadmap home's level views (Executive theme rollup, Team, Backlog) in Timeline and Cascade layouts, plus the level switcher. |
 | roadmap.css | 364 | roadmap.css - The roadmap board (modules/roadmap/). |
@@ -231,8 +243,8 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 | prototypes/pci/reports.html | 72 | Compliance reporting - Acquirer replica - LPIO |
 | prototypes/website-screening/index.html | 45 | Website screening prototype - LPIO |
 | reference/index.html | 71 | API reference - LPIO |
-| roadmap/index.html | 137 | Roadmap - LPIO |
-| sprints/index.html | 112 | Sprint roadmap - LPIO |
+| roadmap/index.html | 138 | Roadmap - LPIO |
+| sprints/index.html | 113 | Sprint roadmap - LPIO |
 | users/index.html | 51 | Users - LPIO |
 
 ### supabase/migrations/
@@ -401,6 +413,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | backlog/export.test.js | 155 | tests/unit/backlog/export.test.js - The backlog CSV export (App.backlogExport), split out of backlog.js with the builder. |
 | blocks.test.js | 123 | tests/unit/blocks.test.js - The typed-block renderer. |
 | call-extract.test.js | 156 | tests/unit/call-extract.test.js - Benchmarks for the call-site extractor (scripts/extract-calls.js), inventory C of docs/plan/20-API-REFERENCE.md. |
+| console-tools.test.js | 89 | tests/unit/console-tools.test.js - Benchmarks for the High risk partner setup tool in assets/js/core/console-tools.js. |
 | coverage-reconcile.test.js | 278 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage arithmetic in scripts/gen-coverage.js. |
 | dashboard/cards.test.js | 270 | tests/unit/dashboard/cards.test.js - The dashboard's four card sections (docs/plan/50-DASHBOARD.md). |
 | dashboard/strip.test.js | 164 | tests/unit/dashboard/strip.test.js - The dashboard's headline strip (docs/plan/50-DASHBOARD.md). |
@@ -457,11 +470,11 @@ Shared fixtures and the budgets the gates read.
 | fixtures/services/shapes.service.ts | 112 |  |
 | knowledge-budget.json | 52 | Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them. |
 | lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
-| lib/roadmap.js | 92 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
+| lib/roadmap.js | 93 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
 | page-weight-budget.json | 110 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
 | size-budget.json | 107 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
-| surface-baseline.json | 877 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
+| surface-baseline.json | 882 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
 
