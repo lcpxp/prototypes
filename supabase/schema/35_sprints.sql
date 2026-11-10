@@ -44,19 +44,24 @@ comment on table public.sprints is
 -- assumed. Anchoring is one write plus one call to
 -- sprint_plan_project(); docs/SPRINT-DELIVERY.md carries the step.
 --
--- capacity_dev_equivalents and the concurrency bounds are PLANNING
--- constants and live here because they must live in exactly one place.
--- They are never a column on an item, never a label on a bar, and
--- nothing in the front end reads them - only the allocation rules in
--- docs/SPRINT-DELIVERY.md do.
+-- capacity_points, its per-sprint overrides and the concurrency bounds
+-- are PLANNING constants and live here because they must live in
+-- exactly one place. Capacity is story points a sprint holds
+-- (docs/ESTIMATION.md); it replaced capacity_dev_equivalents, a count
+-- of exclusive builds, on 10 Nov 2026. Only owner surfaces show points;
+-- everyone else is shown sprints. code_snapshot is the date of the
+-- newest LaunchPad code snapshot the platform picture was synced to.
 -- ---------------------------------------------------------------
 
 create table if not exists public.sprint_plan (
   key text primary key default 'default' check (key = 'default'),
   anchor_sprint text
     references public.sprints (code) on delete restrict,
-  capacity_dev_equivalents numeric(3,1) not null default 3.0
-    check (capacity_dev_equivalents > 0),
+  capacity_points numeric(4,1) not null default 24
+    check (capacity_points > 0),
+  capacity_overrides jsonb not null default '{}'::jsonb
+    check (jsonb_typeof(capacity_overrides) = 'object'),
+  code_snapshot date,
   min_concurrent_streams smallint not null default 2
     check (min_concurrent_streams >= 1),
   max_concurrent_streams smallint not null default 3
@@ -258,8 +263,28 @@ on conflict (idx) do nothing;
 
 insert into public.sprint_plan (key, note)
 values ('default',
-  'Unanchored: the sprint delivery starts in is not yet known. Capacity is held at three developer-equivalents and concurrency at two to three streams in flight; both are planning constants used only by the allocation rules in docs/SPRINT-DELIVERY.md.')
+  'Unanchored: the sprint delivery starts in is not yet known. Capacity and the concurrency bounds are planning constants used only by the allocation rules in docs/SPRINT-DELIVERY.md.')
 on conflict (key) do nothing;
+
+-- An item's points are the sum of its stories' points. The shape of a
+-- story is 37_sprint_delivery.sql's; the sum is taken here because the
+-- views below carry it.
+create or replace function public.work_item_points(p jsonb)
+returns numeric
+language sql
+immutable
+set search_path = public
+as $$
+  select case
+    when p is null or jsonb_typeof(p) <> 'array' then null
+    else (select sum((s.story->>'points')::numeric)
+            from jsonb_array_elements(p) as s(story)
+           where jsonb_typeof(s.story->'points') = 'number')
+  end;
+$$;
+
+comment on function public.work_item_points(jsonb) is
+  'An item''s points: the sum of its stories'' points, null while none is sized. The one place that sum is taken.';
 
 -- ---------------------------------------------------------------
 -- The read surfaces.
@@ -296,7 +321,12 @@ create view public.v_sprint_plan_items with (security_invoker = on) as
     (select sp.anchor_sprint is not null from public.sprint_plan sp
       where sp.key = 'default') as anchored,
     w.business_benefit, w.benefit_type, w.benefit_status,
-    a.placement, w.stories_status
+    a.placement, w.stories_status,
+    -- What the item is sized at, and whether it is developer work: an
+    -- allocation that is neither external nor parallel. Only that work
+    -- consumes points and is handed to DevOps (docs/DEVOPS.md).
+    public.work_item_points(w.user_stories) as points,
+    (a.external_party_id is null and a.overlap <> 'parallel') as is_build
   from public.work_item_sprints a
   join public.work_items w on w.id = a.work_item_id
   left join public.work_items p on p.id = w.parent_id
@@ -310,7 +340,7 @@ revoke all on public.v_sprint_plan_items from public, anon;
 grant select on public.v_sprint_plan_items to authenticated;
 
 comment on view public.v_sprint_plan_items is
-  'The Sprint Roadmap delivery view: one row per live allocation of a Now work item. The board reads this. See docs/SPRINT-DELIVERY.md.';
+  'The Sprint Roadmap delivery view: one row per live allocation of a Now work item, with its points and whether it is developer work (is_build). The board reads this. See docs/SPRINT-DELIVERY.md.';
 
 drop view if exists public.v_sprint_plan_streams;
 create view public.v_sprint_plan_streams with (security_invoker = on) as
@@ -356,42 +386,5 @@ grant select on public.v_sprint_plan_streams to authenticated;
 comment on view public.v_sprint_plan_streams is
   'The Sprint Roadmap stakeholder view: one row per workstream with its span, contents, what it is (summary), its scope and the ceilings it lifts (scale_notes), who owns it and who else has a claim on it (department, associated_departments), who stops doing what (the audience-value fields) and the benefit prose behind them. A read entry point, not a board dependency.';
 
--- Load per slot: the one place the capacity and concurrency arithmetic
--- happens, so a re-map is checked rather than eyeballed. An allocation
--- with an external party consumes no PXP capacity, so it is counted
--- separately and excluded from pxp_items.
-
-drop view if exists public.v_sprint_plan_load;
-create view public.v_sprint_plan_load with (security_invoker = on) as
-  with occupancy as (
-    select v.*, gs.slot_n
-    from public.v_sprint_plan_items v
-    cross join lateral generate_series(v.effective_slot, v.effective_end_slot) as gs(slot_n)
-  )
-  select
-    o.slot_n as slot,
-    public.sprint_code_for_slot(o.slot_n) as code,
-    count(distinct o.workstream_id) as streams_in_flight,
-    count(*) filter (where not o.is_external) as pxp_items,
-    count(*) filter (where o.is_external) as external_items,
-    count(*) filter (where not o.is_external and o.overlap = 'exclusive') as exclusive_items,
-    (select sp.capacity_dev_equivalents from public.sprint_plan sp where sp.key = 'default') as capacity,
-    -- Capacity is SUBSTANTIAL BUILDS running at once, not items per
-    -- sprint. A roadmap item is not a sprint of work for one person, so
-    -- counting every item against the cap padded the plan by a factor
-    -- and made a fortnight's work read as a quarter's. Parallel and
-    -- overlappable work rides alongside; docs/SPRINT-DELIVERY.md Part C
-    -- rule 4 is the one home for the reasoning.
-    (count(*) filter (where not o.is_external and o.overlap = 'exclusive'))
-      > (select sp.capacity_dev_equivalents from public.sprint_plan sp where sp.key = 'default') as over_capacity,
-    count(distinct o.workstream_id)
-      > (select sp.max_concurrent_streams from public.sprint_plan sp where sp.key = 'default') as over_concurrency
-  from occupancy o
-  group by o.slot_n
-  order by o.slot_n;
-
-revoke all on public.v_sprint_plan_load from public, anon;
-grant select on public.v_sprint_plan_load to authenticated;
-
-comment on view public.v_sprint_plan_load is
-  'Per-slot load: streams in flight, PXP-consuming items, external items, and whether the slot breaches capacity (exclusive builds against capacity_dev_equivalents) or the concurrency bound.';
+-- v_sprint_plan_load, the per-sprint arithmetic, is in
+-- 37_sprint_delivery.sql beside the rules it checks.

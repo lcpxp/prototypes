@@ -128,6 +128,8 @@ alter table public.sprints                 enable row level security;
 alter table public.sprint_plan             enable row level security;
 alter table public.work_item_sprints       enable row level security;
 alter table public.work_item_metrics       enable row level security;
+alter table public.ado_profile             enable row level security;
+alter table public.screenshots             enable row level security;
 
 do $$
 declare
@@ -185,7 +187,13 @@ begin
       ('work_item_sprints',      '(select public.has_module_access(''roadmap''))'),
       -- Metrics are per-item value data shown in the drawer, so they read
       -- behind the same pair of grants work_items does.
-      ('work_item_metrics',      '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))')
+      ('work_item_metrics',      '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      -- The owner's alone, so the READ is admin-only too: the Azure
+      -- DevOps target (names and ids that never enter the repo) and the
+      -- screenshot register. The views over them are security_invoker,
+      -- so anyone else sees no profile and no images.
+      ('ado_profile',            '(select public.is_admin())'),
+      ('screenshots',            '(select public.is_admin())')
     ) as v(tbl, read_expr)
   loop
     execute format('drop policy if exists "%s: members read" on public.%I',
@@ -514,6 +522,22 @@ revoke execute on function public.sprint_plan_sync_order() from public, anon, au
 -- from the drawer's copy buttons; anon has no business with it.
 revoke execute on function public.sprint_story_pack(uuid, text) from public, anon;
 grant execute on function public.sprint_story_pack(uuid, text) to authenticated;
+-- The pack's renderer and the Azure DevOps payload read the same way:
+-- security invoker, signed-in callers only. The payload needs the
+-- admin-only ado_profile, so it builds for an admin and nobody else.
+-- ado_receipt_apply() writes associations as its owner and is run from
+-- an admin session, so no REST caller may reach it.
+revoke execute on function public.sprint_story_fields(uuid) from public, anon;
+grant execute on function public.sprint_story_fields(uuid) to authenticated;
+revoke execute on function public.ado_push_payload(uuid) from public, anon;
+grant execute on function public.ado_push_payload(uuid) to authenticated;
+revoke execute on function public.ado_html(text, text[]) from public, anon;
+grant execute on function public.ado_html(text, text[]) to authenticated;
+revoke execute on function public.ado_notes_html(text, date) from public, anon;
+grant execute on function public.ado_notes_html(text, date) to authenticated;
+revoke execute on function public.ado_receipt_apply(jsonb) from public, anon, authenticated;
+revoke execute on function public.work_item_points(jsonb) from public, anon;
+grant execute on function public.work_item_points(jsonb) to authenticated;
 
 -- work_item_stories_valid() is the shape check behind work_items.user_stories
 -- (supabase/schema/37_sprint_delivery.sql). A check constraint runs as the
@@ -559,6 +583,22 @@ revoke all on function public.roadmap_embed_query(text) from public, anon, authe
 
 revoke execute on function public.roadmap_find(text, int, numeric, uuid, extensions.vector) from public, anon;
 grant execute on function public.roadmap_find(text, int, numeric, uuid, extensions.vector) to authenticated;
+
+-- The screenshots bucket is private and the owner's: every operation
+-- on its objects is admin-only, and a page shows an image through a
+-- signed URL (docs/SCREENSHOTS.md).
+drop policy if exists "screenshots bucket: admins read" on storage.objects;
+create policy "screenshots bucket: admins read" on storage.objects for select
+  to authenticated using (bucket_id = 'screenshots' and (select public.is_admin()));
+drop policy if exists "screenshots bucket: admins insert" on storage.objects;
+create policy "screenshots bucket: admins insert" on storage.objects for insert
+  to authenticated with check (bucket_id = 'screenshots' and (select public.is_admin()));
+drop policy if exists "screenshots bucket: admins update" on storage.objects;
+create policy "screenshots bucket: admins update" on storage.objects for update
+  to authenticated using (bucket_id = 'screenshots' and (select public.is_admin()));
+drop policy if exists "screenshots bucket: admins delete" on storage.objects;
+create policy "screenshots bucket: admins delete" on storage.objects for delete
+  to authenticated using (bucket_id = 'screenshots' and (select public.is_admin()));
 
 -- ---------------------------------------------------------------
 -- After running this file, promote your own account to admin:

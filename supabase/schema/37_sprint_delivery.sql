@@ -6,16 +6,21 @@
 --
 -- 35_sprints.sql holds the plan itself - the calendar, the anchor, the
 -- allocation table and the views the board reads. 38_sprint_handoff.sql
--- holds what is read before a sprint: what the plan still needs, and the
--- pack that carries the stories out.
--- docs/SPRINT-DELIVERY.md is the process all three serve.
+-- derives the fields a story carries out and the pack built from them,
+-- 39_ado_push.sql the Azure DevOps payload, and 39_sprint_checks.sql
+-- what the plan still needs and the ledger of each sprint.
+-- docs/SPRINT-DELIVERY.md is the process they all serve.
 -- ------------------------------------------------------------------
 
 -- ---------------------------------------------------------------
 -- The shape of work_items.user_stories, and the guard against bloat.
 --
 -- An array of 1 to 5 stories, each an object with a non-empty title,
--- a non-empty story sentence and 1 to 8 non-empty criteria. These are
+-- a non-empty story sentence and 1 to 8 non-empty criteria. A story may
+-- also carry its estimate (points, with points_low and points_high as
+-- the range behind it), its own technical_notes where the item's do not
+-- fit it, and ado - the association written back after a push
+-- (docs/DEVOPS.md). These are
 -- the HARD ceilings only. How much to write - one epic on a workstream,
 -- a few stories on an item, a handful of criteria each - is judgement,
 -- and it is stated once, in docs/SPRINT-DELIVERY.md. The database is
@@ -32,9 +37,6 @@ language sql
 immutable
 set search_path = public
 as $$
-  -- CASE rather than AND/OR: SQL does not promise to evaluate a boolean
-  -- chain left to right, and jsonb_array_length or jsonb_array_elements
-  -- on a value that is not an array raises rather than returning false.
   select case
     when p is null then true
     when jsonb_typeof(p) <> 'array' then false
@@ -47,6 +49,12 @@ as $$
         when coalesce(btrim(s.story->>'story'), '') = '' then true
         when jsonb_typeof(s.story->'criteria') is distinct from 'array' then true
         when jsonb_array_length(s.story->'criteria') not between 1 and 8 then true
+        when exists (
+          select 1 from (values ('points'), ('points_low'), ('points_high')) as k(name)
+          where s.story ? k.name and jsonb_typeof(s.story->k.name) <> 'number') then true
+        when s.story ? 'technical_notes'
+          and jsonb_typeof(s.story->'technical_notes') <> 'string' then true
+        when s.story ? 'ado' and jsonb_typeof(s.story->'ado') <> 'object' then true
         else exists (
           select 1 from jsonb_array_elements(s.story->'criteria') as c(criterion)
           where jsonb_typeof(c.criterion) <> 'string'
@@ -56,11 +64,36 @@ as $$
 $$;
 
 comment on function public.work_item_stories_valid(jsonb) is
-  'The shape of work_items.user_stories: 1-5 stories, each {title, story, criteria[1-8]}, nothing empty. Hard ceilings only; docs/SPRINT-DELIVERY.md holds how much to write.';
+  'The shape of work_items.user_stories: 1-5 stories, each {title, story, criteria[1-8]}, nothing empty; optionally points, points_low, points_high (numbers), technical_notes (text) and ado (the DevOps association). Hard ceilings only; docs/SPRINT-DELIVERY.md holds how much to write.';
 
 alter table public.work_items drop constraint if exists work_items_user_stories_shape;
 alter table public.work_items add constraint work_items_user_stories_shape
   check (public.work_item_stories_valid(user_stories));
+
+-- ---------------------------------------------------------------
+-- What the code review leaves on an item: the technical notes a
+-- developer starts from, dated by the code snapshot they were verified
+-- against, and the drivers behind the estimate. Declared here rather
+-- than in 30_work.sql because they belong to delivery, not to the
+-- roadmap, and only the hand-off reads them.
+-- ---------------------------------------------------------------
+
+alter table public.work_items
+  add column if not exists estimate_drivers jsonb
+    check (estimate_drivers is null or jsonb_typeof(estimate_drivers) = 'object'),
+  add column if not exists technical_notes text,
+  add column if not exists technical_notes_snapshot date;
+
+alter table public.work_items drop constraint if exists work_items_technical_notes_dated;
+alter table public.work_items add constraint work_items_technical_notes_dated
+  check ((technical_notes is null) = (technical_notes_snapshot is null));
+
+comment on column public.work_items.estimate_drivers is
+  'Why the item is sized as it is: the drivers and the low/likely/high range behind its stories'' points. Owner surfaces only (docs/ESTIMATION.md).';
+comment on column public.work_items.technical_notes is
+  'The code review behind the item: current behaviour, shortcoming, suggested change, risks, how to test. A story may carry its own override (docs/SPRINT-DELIVERY.md Part A).';
+comment on column public.work_items.technical_notes_snapshot is
+  'The code snapshot date the technical notes were verified against.';
 
 -- ---------------------------------------------------------------
 -- Joining and leaving the Sprint Roadmap, automatically.
@@ -178,7 +211,7 @@ create trigger work_items_sprint_intake
 -- the plan is touched.
 -- ---------------------------------------------------------------
 
--- The checks in 38_sprint_handoff.sql read the order, so they are
+-- The checks in 39_sprint_checks.sql read the order, so they are
 -- dropped first and rebuilt there; both are views, holding no data.
 drop view if exists public.v_sprint_plan_checks;
 drop view if exists public.v_sprint_plan_order;
@@ -235,3 +268,53 @@ end $$;
 
 comment on function public.sprint_plan_sync_order() is
   'Writes the sprint order (v_sprint_plan_order) onto priority and sort_order for every row on the Sprint Roadmap, so the Now column lists the work in the order the sprints run it. Rows off the plan are never touched. Returns rows changed.';
+
+-- ---------------------------------------------------------------
+-- Load per sprint: the one place the capacity and concurrency
+-- arithmetic happens, so a re-map is checked rather than eyeballed.
+--
+-- Capacity is story points (docs/ESTIMATION.md). Only developer work
+-- consumes them - an external or parallel allocation rides alongside -
+-- and an item spanning several sprints spreads its points evenly. A
+-- sprint that is not a full one reads its capacity from
+-- sprint_plan.capacity_overrides. The concurrency bound counts streams
+-- with developer work in flight.
+-- ---------------------------------------------------------------
+
+drop view if exists public.v_sprint_plan_load;
+create view public.v_sprint_plan_load with (security_invoker = on) as
+  with occupancy as (
+    select v.*, gs.slot_n
+    from public.v_sprint_plan_items v
+    cross join lateral generate_series(v.effective_slot, v.effective_end_slot) as gs(slot_n)
+  ),
+  per_slot as (
+    select
+      o.slot_n as slot,
+      public.sprint_code_for_slot(o.slot_n) as code,
+      count(distinct o.workstream_id) as streams_in_flight,
+      count(distinct o.workstream_id) filter (where o.is_build) as build_streams,
+      count(*) filter (where o.is_build) as build_items,
+      count(*) filter (where o.is_external) as external_items,
+      count(*) filter (where o.is_build and o.points is null) as unsized_items,
+      coalesce(round(sum(o.points / o.span) filter (where o.is_build), 1), 0) as planned_points
+    from occupancy o
+    group by o.slot_n
+  )
+  select
+    s.slot, s.code, s.streams_in_flight, s.build_streams, s.build_items,
+    s.external_items, s.unsized_items, s.planned_points,
+    coalesce((sp.capacity_overrides ->> s.code)::numeric, sp.capacity_points) as capacity_points,
+    s.planned_points
+      > coalesce((sp.capacity_overrides ->> s.code)::numeric, sp.capacity_points) as over_capacity,
+    s.build_streams > sp.max_concurrent_streams as over_concurrency
+  from per_slot s
+  cross join public.sprint_plan sp
+  where sp.key = 'default'
+  order by s.slot;
+
+revoke all on public.v_sprint_plan_load from public, anon;
+grant select on public.v_sprint_plan_load to authenticated;
+
+comment on view public.v_sprint_plan_load is
+  'Per-sprint load: planned points of developer work against the sprint''s capacity (capacity_points, or its override), unsized items, and streams in flight against the concurrency bound. External and parallel allocations consume no points.';

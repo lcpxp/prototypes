@@ -41,6 +41,10 @@
     "docs/STATE.md": {
       "hard": 40,
       "note": "TIGHTER than its extension, not looser. A fixed-size current state, overwritten each checkpoint and never grown. The 40-line cap is the point of the file."
+    },
+    "supabase/policies.sql": {
+      "hard": 700,
+      "note": "LOOSER than its extension, and the one file allowed to be. Raised from 600 on 10 Nov 2026 when it reached 608 with the Azure DevOps profile, the screenshot register and the private screenshots bucket. Its acknowledgement said what to do at the cap - raise it and say why, never fragment the answer - because 'which tables can be written, and by whom' must stay a single-pass question. It grows by a few lines per table and nothing else. The next ceiling is a decision too, not a default."
     }
   },
   "acknowledged": {
