@@ -155,11 +155,15 @@
     // This page carries no export machinery, so the drawer must not
     // offer a button that would do nothing.
     ctx.canExport = false;
+    // The estimate, the technical notes and the images are the owner's
+    // (docs/ESTIMATION.md): the drawer draws them for an admin only.
+    ctx.owner = !!(App.access && App.access.admin);
 
     var open = App.roadmapDrawer({
       lookup: function (id) { return byId[id]; },
       getCtx: function () { return ctx; },
-      lazyKeys: ["details", "user_stories", "notes"],
+      lazyKeys: ["details", "user_stories", "notes", "technical_notes",
+        "technical_notes_snapshot", "estimate_drivers", "screenshots"],
       load: App.workItemsData.loadDrawer,
       download: function () {},
     });
@@ -342,6 +346,18 @@
         (h ? " " + h + (h === 1 ? " row hidden." : " rows hidden.") : "");
     }
     state();
+
+    // Points against capacity, per sprint - the owner's line. Everyone
+    // else is shown sprints and nothing about how full they are.
+    var loadLine = document.getElementById("sprints-load");
+    if (loadLine && App.access && App.access.admin) {
+      App.db.from(App.registry.tables.sprintPlanLoad).select("*")
+        .order("slot", { ascending: true }).then(function (res) {
+          var text = res.error ? "" : App.roadmapView.sprintLoad(res.data || []);
+          loadLine.textContent = text;
+          loadLine.hidden = !text;
+        }, function () { loadLine.hidden = true; });
+    }
 
     render(host);
     window.addEventListener("hashchange", function () {

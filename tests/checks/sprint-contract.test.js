@@ -64,6 +64,11 @@ const CONTRACT = {
     // here, so the cards never print it.
     "associated_departments",
   ],
+  // The owner's points line above the board (docs/ESTIMATION.md).
+  v_sprint_plan_load: [
+    "slot", "code", "build_items", "planned_points", "capacity_points",
+    "over_capacity", "unsized_items",
+  ],
   v_work_item_metric_rollup: [
     "workstream_id", "metric_kind", "unit", "basis", "total",
     "weakest_confidence",

@@ -245,6 +245,24 @@
   margin-block-start: var(--s-3);
 }
 
+/* The owner's delivery detail: estimate, technical notes, images. It
+   borrows the story block's type so the section reads as one hand-off. */
+.rmd-delivery h4 {
+  margin: var(--s-3) 0 var(--s-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+.rmd-delivery > p { margin: 0; font-size: var(--text-sm); }
+.rmd-shot { margin: var(--s-2) 0 var(--s-3); }
+.rmd-shot img {
+  display: block;
+  max-inline-size: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.rmd-shot figcaption { margin-block-start: var(--s-1); font-size: var(--text-xs); color: var(--muted); }
+.rmd-shot figcaption span { color: var(--faint); }
+
 /* Reading material, folded. The written case and a mature item's
    background both stay in full; they just stop sitting above everything
    scannable in the drawer. */

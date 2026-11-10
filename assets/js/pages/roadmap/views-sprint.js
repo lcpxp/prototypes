@@ -494,6 +494,24 @@
       }), ctx);
   }
 
+  // What each sprint holds against what it can: the OWNER's line, and
+  // the one place points reach a page (docs/ESTIMATION.md). The board
+  // itself still says sprints and nothing else, so the page draws this
+  // for an admin and for nobody else. Text out, so it is set as text.
+  function sprintLoad(rows) {
+    var parts = (rows || []).filter(function (r) {
+      return Number(r.build_items) > 0;
+    }).map(function (r) {
+      var unsized = Number(r.unsized_items) || 0;
+      return (r.code || "Sprint " + (Number(r.slot) + 1)) + ": " +
+        Number(r.planned_points) + " of " + Number(r.capacity_points) +
+        (r.over_capacity ? " (over)" : "") +
+        (unsized ? ", " + unsized + " unsized" : "");
+    });
+    return parts.length ? "Points planned: " + parts.join("; ") + "." : "";
+  }
+
+  App.roadmapView.sprintLoad = sprintLoad;
   App.roadmapView.sprintStreams = sprintStreams;
   App.roadmapView.sprintItems = sprintItems;
   App.roadmapView.sprintLegend = legend;

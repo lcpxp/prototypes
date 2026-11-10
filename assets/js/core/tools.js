@@ -210,7 +210,7 @@
     App.onAuthed(function () {
       App.tools.load().then(function (rows) {
         if (rows.length) host.innerHTML = App.tools.render(rows);
-      });
+      }, function () { /* no tools read: the nav stays as it was */ });
     });
   };
 })();

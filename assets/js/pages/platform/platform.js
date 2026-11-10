@@ -306,6 +306,6 @@
       if (!added.length) return;
       added.forEach(function (k) { ctx.linkTitles[k] = titles[k]; });
       render(page);
-    });
+    }, function () { /* names are optional: a link still shows without one */ });
   });
 })();

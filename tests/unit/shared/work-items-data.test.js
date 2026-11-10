@@ -190,7 +190,11 @@ test("a drawer asks for the prose, the stories and the notes together", async ()
     [tables.workItems, tables.workNotes].sort());
   const row = sent.find((q) => q.table === tables.workItems);
   assert.equal(row.filters.id, "a");
-  assert.equal(row.select, "details, user_stories", "one read for both long columns");
+  assert.equal(row.select,
+    "details, user_stories, technical_notes, technical_notes_snapshot, estimate_drivers",
+    "one read for every long column the drawer shows");
+  assert.deepEqual(plain(out.screenshots), [],
+    "the image register is the owner's: nobody else asks for it");
   assert.equal(out.details, "the write-up");
   assert.deepEqual(plain(out.user_stories), stories);
   assert.deepEqual(plain(out.notes).map((n) => n.body), ["n"]);

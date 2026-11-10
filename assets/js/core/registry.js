@@ -129,6 +129,8 @@
       // same policies as the rows behind them. docs/SPRINT-DELIVERY.md.
       sprintPlanItems: "v_sprint_plan_items",
       sprintPlanStreams: "v_sprint_plan_streams",
+      sprintPlanLoad: "v_sprint_plan_load",
+      screenshots: "screenshots",
       workItemMetricRollup: "v_work_item_metric_rollup",
       // The calendar, so an anchored plan can label every column rather
       // than only the ones a bar starts or ends in.

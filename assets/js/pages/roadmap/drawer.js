@@ -50,7 +50,8 @@
         // must not write a file with the notes missing.
         if (itemExport) {
           itemExport.addEventListener("click", function () {
-            inFlight.then(function () { deps.download(item); });
+            inFlight.then(function () { deps.download(item); },
+              function () { App.flashLabel(itemExport, "Export failed"); });
           });
         }
         // The stories leave as the database lays them out

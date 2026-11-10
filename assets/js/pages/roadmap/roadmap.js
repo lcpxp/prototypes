@@ -277,7 +277,8 @@
     var openDrawer = App.roadmapDrawer({
       lookup: function (id) { return itemsById[id]; },
       getCtx: function () { return ctx; },
-      lazyKeys: ["details", "user_stories", "notes"],
+      lazyKeys: ["details", "user_stories", "notes", "technical_notes",
+        "technical_notes_snapshot", "estimate_drivers", "screenshots"],
       load: App.workItemsData.loadDrawer,
       download: function (item) {
         App.roadmapExport.downloadJson(
@@ -424,6 +425,8 @@
     // each done item against the current clock, once, before any render.
     App.roadmapView.markRecency(data.items);
     ctx = App.roadmapView.context(data);
+    // Owner-only drawer sections (docs/ESTIMATION.md) are drawn for an admin.
+    ctx.owner = !!(App.access && App.access.admin);
     // Enrich the shared context with lookups the drawer needs: a document
     // title map for the source-document link, and a per-assignee item count
     // so the ownership line can read "Xavier - 1st of 5".
@@ -462,7 +465,7 @@
       Object.keys(titles).forEach(function (key) {
         if (!ctx.linkTitles[key]) ctx.linkTitles[key] = titles[key];
       });
-    });
+    }, function () { /* names are optional: a link still shows without one */ });
 
     // Deep link: ?item=<id> opens that work item's drawer on load.
     var requestedItem = new URLSearchParams(window.location.search).get("item");

@@ -188,8 +188,55 @@
       "</h3>" + body + (onPlan ? copyButtons(item, ws) : "") + "</section>";
   }
 
+  // The owner's delivery detail (docs/ESTIMATION.md, docs/SCREENSHOTS.md):
+  // what the work is sized at and why, the technical notes a developer
+  // starts from with the code snapshot they were checked against, and
+  // the images registered about the row. Drawn for an admin only - a
+  // stakeholder is shown sprints, never points - and only once the lazy
+  // columns have arrived, like the stories it sits under.
+  function estimateHtml(item) {
+    var stories = Array.isArray(item.user_stories) ? item.user_stories : [];
+    var sized = stories.filter(function (s) { return typeof s.points === "number"; });
+    if (!sized.length) return "";
+    var total = sized.reduce(function (sum, s) { return sum + s.points; }, 0);
+    var d = item.estimate_drivers || {};
+    var drivers = Array.isArray(d.drivers) ? d.drivers : [];
+    return "<h4>Estimate</h4><p>" + esc(total) + (total === 1 ? " point" : " points") +
+      (sized.length < stories.length ? ", " + (stories.length - sized.length) + " unsized" : "") +
+      (d.low != null && d.high != null
+        ? ", from a range of " + esc(d.low) + " to " + esc(d.high) : "") + ".</p>" +
+      '<ul class="rmd-points">' + sized.map(function (s) {
+        return "<li>" + esc(s.title) + ": " + esc(s.points) + "</li>";
+      }).concat(drivers.map(function (t) { return "<li>" + esc(t) + "</li>"; }))
+        .join("") + "</ul>";
+  }
+  function screenshotsHtml(item) {
+    var shots = item.screenshots || [];
+    if (!shots.length) return "";
+    return "<h4>Images</h4>" + shots.map(function (s) {
+      var label = esc(cap(String(s.kind || "").replace(/-/g, " "))) + ", " +
+        esc(s.environment) + (s.captured_on ? ", " + esc(day(s.captured_on)) : "");
+      return '<figure class="rmd-shot">' +
+        (s.url ? '<img src="' + esc(s.url) + '" alt="' + esc(s.caption) + '" loading="lazy">'
+          : '<p class="rmd-story-none">Registered, but the image is not in the bucket.</p>') +
+        "<figcaption>" + esc(s.caption) + " <span>" + label + "</span></figcaption></figure>";
+    }).join("");
+  }
+  function deliveryHtml(item, ctx, state) {
+    if (!ctx || !ctx.owner || (state && state !== "ready")) return "";
+    var notes = item.technical_notes
+      ? "<h4>Technical notes" + (item.technical_notes_snapshot
+          ? ' <span class="rmd-benefit-draft">code snapshot ' +
+            esc(day(item.technical_notes_snapshot)) + "</span>" : "") +
+        '</h4><p class="rmd-details">' + esc(item.technical_notes) + "</p>" : "";
+    var body = estimateHtml(item) + notes + screenshotsHtml(item);
+    return body ? '<section class="rmd-section rmd-delivery"><h3>Delivery detail</h3>' +
+      body + "</section>" : "";
+  }
+
   App.roadmapDetailProse = {
     detailsHtml: detailsHtml,
+    deliveryHtml: deliveryHtml,
     storiesHtml: storiesHtml,
     notesHtml: notesHtml,
     parseDetails: parseDetails,

@@ -107,7 +107,7 @@
   function renderTools() {
     App.tools.load().then(function (rows) {
       fill("ds-tools", App.dashboardCards.tools(rows));
-    });
+    }, function () { fill("ds-tools", App.dashboardCards.tools([])); });
   }
 
   // --- modules grid ------------------------------------------------

@@ -390,7 +390,9 @@
   document.addEventListener("DOMContentLoaded", function () {
     // Wait for the grant map so hidden modules never flash into the
     // nav; without a guard (login page) render immediately.
-    if (App.accessReady) App.accessReady.then(renderNav);
+    // It draws either way: without a grant map the nav shows what the
+    // safe default allows, never nothing.
+    if (App.accessReady) App.accessReady.then(renderNav, renderNav);
     else renderNav();
   });
 })();

@@ -68,6 +68,12 @@
     demo.toast("KYC contract generated", "Ready for EU Acquirer to send on approval.");
   }
 
+  // A dialog or a run of steps that did not finish. The demo holds no
+  // real state, so the honest answer is to say so and stop.
+  function stepFailed() {
+    demo.toast("That step did not finish", "Reload the page and try again.", "warn");
+  }
+
   // ---------------- The merchant contract ----------------
   // Sent to the merchant, who signs first; the two EU Acquirer countersigners
   // follow on their own. The delays are what make the order legible.
@@ -102,8 +108,8 @@
         save();
         render();
         return handoff();
-      });
-    });
+      }, stepFailed);
+    }, stepFailed);
   }
 
   // ---------------- The automated handoff ----------------
@@ -119,7 +125,7 @@
       app.stage = "Application Signed";
       save();
       render();
-    });
+    }, stepFailed);
   }
 
   // ---------------- Approve: send the KYC ----------------
@@ -149,8 +155,8 @@
         app.kycContracts[0].updated = stamp();
         save();
         render();
-      });
-    });
+      }, stepFailed);
+    }, stepFailed);
   }
 
   // ---------------- Reject and pend ----------------

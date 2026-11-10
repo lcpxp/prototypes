@@ -198,8 +198,10 @@ test("the item export waits for the fetch it depends on", () => {
   // Exporting a drawer opened a moment ago must not write a file with
   // the notes missing. A silently empty field in an export is data loss.
   const src = read("assets/js/pages/roadmap/drawer.js");
-  assert.match(src, /inFlight\.then\(function \(\) \{ deps\.download\(item\); \}\)/,
+  assert.match(src, /inFlight\.then\(function \(\) \{ deps\.download\(item\); \},/,
     "the export must be chained onto the in-flight load, not fired beside it");
+  assert.match(src, /App\.flashLabel\(itemExport, "Export failed"\)/,
+    "and a load that failed says so on the button instead of writing a short file");
 });
 
 test("the skeleton stands down for anyone who asked for less motion", () => {

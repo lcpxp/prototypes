@@ -108,6 +108,10 @@
         .in("id", byType[type])
         .then(function (result) {
           return { type: type, entity: entity, result: result };
+        }, function () {
+          // One table failing to answer must not lose the names the
+          // others returned: it reads as "no rows", as a refusal does.
+          return { type: type, entity: entity, result: { data: null } };
         });
     })).then(function (loaded) {
       var titles = {};

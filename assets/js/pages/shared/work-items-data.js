@@ -88,12 +88,51 @@
   // rather than three times, and one failed read fails the set - the
   // drawer says so instead of showing part of it as though it were all
   // of it.
+  var DRAWER_COLUMNS = ["details", "user_stories", "technical_notes",
+    "technical_notes_snapshot", "estimate_drivers"];
   function loadDrawer(item) {
-    return Promise.all([loadColumns(item, ["details", "user_stories"]), loadNotes(item)])
+    return Promise.all([loadColumns(item, DRAWER_COLUMNS), loadNotes(item),
+      loadScreenshots(item)])
       .then(function (parts) {
-        return { details: parts[0].details, user_stories: parts[0].user_stories,
-          notes: parts[1].notes };
+        var out = { notes: parts[1].notes, screenshots: parts[2] };
+        DRAWER_COLUMNS.forEach(function (c) { out[c] = parts[0][c]; });
+        return out;
+      }, function (problem) {
+        // Passed on deliberately: one failed read fails the set, and the
+        // drawer says so rather than showing part of it as all of it.
+        throw problem;
       });
+  }
+
+  // The images registered about a row (docs/SCREENSHOTS.md). The
+  // register and its bucket are the owner's, so nobody else asks; each
+  // image is shown through a short-lived signed URL. A failure here
+  // answers "no images" rather than failing the drawer: the prose and
+  // the stories must not go missing because a picture did.
+  var SIGNED_FOR = 600;
+  function loadScreenshots(item) {
+    if (!App.access || !App.access.admin || !App.db.storage) return Promise.resolve([]);
+    var bucket = App.db.storage.from(App.registry.tables.screenshots);
+    return App.db.from(App.registry.tables.knowledgeLinks).select("from_id")
+      .eq("to_type", "work_item").eq("to_id", item.id)
+      .eq("from_type", "screenshot").eq("kind", "about").is("valid_to", null)
+      .then(function (links) {
+        var ids = (links.data || []).map(function (l) { return l.from_id; });
+        if (links.error || !ids.length) return [];
+        return App.db.from(App.registry.tables.screenshots)
+          .select("id, storage_path, kind, environment, captured_on, caption")
+          .in("id", ids).order("captured_on", { ascending: true })
+          .then(function (res) {
+            if (res.error) return [];
+            return Promise.all((res.data || []).map(function (row) {
+              return bucket.createSignedUrl(row.storage_path, SIGNED_FOR)
+                .then(function (signed) {
+                  row.url = signed.data ? signed.data.signedUrl : null;
+                  return row;
+                }, function () { row.url = null; return row; });
+            }));
+          });
+      }).then(null, function () { return []; });
   }
 
   // The backlog modal shows the prose but not the notes or the stories,
@@ -181,7 +220,10 @@
   function loadForExport(items, keys) {
     return Promise.all((keys || []).map(function (k) {
       return LOADERS[k](items || []);
-    })).then(function () { return items; });
+    })).then(function () { return items; }, function (problem) {
+      // Passed on deliberately: the caller cancels the download.
+      throw problem;
+    });
   }
 
   App.workItemsData = {

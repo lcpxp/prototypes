@@ -111,11 +111,21 @@
       return cached;
     }
     return refreshed;
+  }, function () {
+    // The session check itself failed. Fall back to the safe default -
+    // no admin, nothing denied - so the pages waiting on this still
+    // start; RLS gates the data whatever this object says.
+    App.access = { admin: false, denied: {} };
+    return App.access;
   });
 
   App.onAuthed = function (fn) {
     App.accessReady.then(function () {
-      if (App.session) fn(App.session);
+      if (App.session) return fn(App.session);
+    }).catch(function (problem) {
+      // A page's start-up threw. Report it once, by name, rather than
+      // leaving an anonymous unhandled rejection behind a blank page.
+      if (window.console) window.console.error("Page start-up failed:", problem);
     });
   };
 
@@ -130,7 +140,9 @@
       );
     }
   }
-  App.accessReady.then(enforceModule);
+  // accessReady settles with the safe default when the check fails, so
+  // the second handler only guards the promise itself.
+  App.accessReady.then(enforceModule, function () {});
 
   // If the session ends in another tab, drop back to login.
   if (App.db) {
