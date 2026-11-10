@@ -93,10 +93,13 @@ test("every live view is created by a schema file", () => {
 const NARROWING_VIEWS = {
   work_items_board: {
     base: "work_items",
-    omits: ["details", "user_stories"],
+    omits: ["details", "user_stories", "technical_notes", "technical_notes_snapshot",
+      "estimate_drivers"],
     why: "long text - the prose is 46.6% of the table by size, and the " +
       "stories are the same kind of text - shown one drawer at a time and " +
-      "fetched lazily when it opens (docs/plan/80-LOAD-SPEED.md)",
+      "fetched lazily when it opens (docs/plan/80-LOAD-SPEED.md). The " +
+      "technical notes, their snapshot date and the estimate drivers are " +
+      "delivery detail read with the stories, in the drawer only",
   },
 };
 

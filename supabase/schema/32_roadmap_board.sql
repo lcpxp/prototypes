@@ -123,7 +123,10 @@ comment on function public.roadmap_move_workstream(uuid, text) is
 -- board can say which rows have stories without fetching them. The roadmap and the backlog both
 -- select("*") from here instead; App.workItemsData fetches details when
 -- a drawer opens and in bulk when an export is pressed.
--- docs/plan/80-LOAD-SPEED.md.
+-- docs/plan/80-LOAD-SPEED.md. The delivery detail an item gained on
+-- 10 Nov 2026 - technical_notes, technical_notes_snapshot and
+-- estimate_drivers (37_sprint_delivery.sql) - is left out the same way:
+-- it is read with the stories, in the drawer only.
 --
 -- The column list lives in SQL rather than in the page, because the
 -- place a column is added is a migration, not a fetch line - so the

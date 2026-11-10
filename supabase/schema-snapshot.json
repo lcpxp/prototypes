@@ -42,6 +42,10 @@
     }
   ],
   "functions": [
+    "ado_html(p_kind text, p_lines text[])",
+    "ado_notes_html(p_notes text, p_snapshot date)",
+    "ado_push_payload(p_id uuid)",
+    "ado_receipt_apply(p_receipt jsonb)",
     "dashboard_counts()",
     "dashboard_summary()",
     "embed_texts(p_texts text[], p_timeout_ms integer)",
@@ -68,9 +72,11 @@
     "sprint_plan_project()",
     "sprint_plan_project_trigger()",
     "sprint_plan_sync_order()",
+    "sprint_story_fields(p_id uuid)",
     "sprint_story_pack(p_id uuid, p_part text)",
     "work_item_delete_guard()",
     "work_item_embed_text(p_title text, p_summary text, p_details text, p_resolution text)",
+    "work_item_points(p jsonb)",
     "work_item_stories_valid(p jsonb)",
     "work_items_sprint_intake()"
   ],
@@ -407,9 +413,45 @@
     {
       "name": "work_items_now_ends_by_next",
       "version": "20261022112559"
+    },
+    {
+      "name": "sprint_points_and_technical_notes",
+      "version": "20261110202729"
+    },
+    {
+      "name": "sprint_story_fields_and_pack",
+      "version": "20261110221233"
+    },
+    {
+      "name": "screenshots_register",
+      "version": "20261110221259"
+    },
+    {
+      "name": "ado_profile_and_push_payload",
+      "version": "20261110221341"
+    },
+    {
+      "name": "sprint_checks_and_ledger",
+      "version": "20261110221427"
     }
   ],
   "policies": [
+    {
+      "name": "ado_profile: admins delete",
+      "table": "ado_profile"
+    },
+    {
+      "name": "ado_profile: admins insert",
+      "table": "ado_profile"
+    },
+    {
+      "name": "ado_profile: admins update",
+      "table": "ado_profile"
+    },
+    {
+      "name": "ado_profile: members read",
+      "table": "ado_profile"
+    },
     {
       "name": "api_endpoints: admins delete",
       "table": "api_endpoints"
@@ -767,6 +809,22 @@
       "table": "roadmap_milestones"
     },
     {
+      "name": "screenshots: admins delete",
+      "table": "screenshots"
+    },
+    {
+      "name": "screenshots: admins insert",
+      "table": "screenshots"
+    },
+    {
+      "name": "screenshots: admins update",
+      "table": "screenshots"
+    },
+    {
+      "name": "screenshots: members read",
+      "table": "screenshots"
+    },
+    {
       "name": "sprint_plan: admins delete",
       "table": "sprint_plan"
     },
@@ -933,6 +991,26 @@
   ],
   "rls_disabled": [],
   "tables": {
+    "ado_profile": [
+      "area_path",
+      "checklist_control_id",
+      "created_at",
+      "epic_ids",
+      "fields",
+      "forbidden_types",
+      "iteration_root",
+      "key",
+      "lpio_base_url",
+      "note",
+      "organisation",
+      "project",
+      "required_defaults",
+      "source_extract_date",
+      "team",
+      "team_sprints",
+      "types",
+      "updated_at"
+    ],
     "api_endpoints": [
       "auth_required",
       "badges",
@@ -1324,9 +1402,25 @@
       "title",
       "updated_at"
     ],
+    "screenshots": [
+      "caption",
+      "captured_on",
+      "code_snapshot",
+      "created_at",
+      "environment",
+      "id",
+      "kind",
+      "masked",
+      "review_area_id",
+      "route",
+      "storage_path",
+      "updated_at"
+    ],
     "sprint_plan": [
       "anchor_sprint",
-      "capacity_dev_equivalents",
+      "capacity_overrides",
+      "capacity_points",
+      "code_snapshot",
       "created_at",
       "key",
       "max_concurrent_streams",
@@ -1443,6 +1537,7 @@
       "end_horizon",
       "end_sprint",
       "ends_on",
+      "estimate_drivers",
       "external_ref",
       "horizon",
       "id",
@@ -1474,6 +1569,8 @@
       "summary",
       "support_assignee",
       "tags",
+      "technical_notes",
+      "technical_notes_snapshot",
       "title",
       "type",
       "updated_at",
@@ -1598,10 +1695,30 @@
       "replaces_id",
       "replaces_note"
     ],
+    "v_sprint_ledger": [
+      "actual_points",
+      "ado_ids",
+      "ends_on",
+      "is_build",
+      "outcome",
+      "placement",
+      "planned_points",
+      "progress",
+      "slip_slots",
+      "sprint_code",
+      "sprint_state",
+      "starts_on",
+      "status",
+      "title",
+      "work_item_id",
+      "workstream_id",
+      "workstream_title"
+    ],
     "v_sprint_plan_checks": [
       "check_key",
       "detail",
       "severity",
+      "slot",
       "title",
       "work_item_id",
       "workstream_title"
@@ -1620,10 +1737,12 @@
       "end_code",
       "external_party",
       "external_status",
+      "is_build",
       "is_external",
       "level",
       "overlap",
       "placement",
+      "points",
       "priority",
       "progress",
       "sequence_position",
@@ -1641,15 +1760,17 @@
       "workstream_title"
     ],
     "v_sprint_plan_load": [
-      "capacity",
+      "build_items",
+      "build_streams",
+      "capacity_points",
       "code",
-      "exclusive_items",
       "external_items",
       "over_capacity",
       "over_concurrency",
-      "pxp_items",
+      "planned_points",
       "slot",
-      "streams_in_flight"
+      "streams_in_flight",
+      "unsized_items"
     ],
     "v_sprint_plan_order": [
       "level",
