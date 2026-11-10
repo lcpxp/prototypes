@@ -336,6 +336,11 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20261001110000_sprint_order_sync_and_checks.sql | 255 | The Now column follows the sprint, and the plan says what it still needs. |
 | 20261001120000_sprint_story_pack.sql | 236 | The stories leave as text someone can paste. |
 | 20261022112559_work_items_now_ends_by_next.sql | 15 | A Now row ends by Next at the latest (the owner's rule, 22 Oct 2026). |
+| 20261110100000_sprint_points_and_technical_notes.sql | 169 | Capacity in story points, estimates on stories, technical notes on items. |
+| 20261110110000_sprint_story_fields_and_pack.sql | 275 | The one story renderer (sprint_story_fields) and the text pack rebuilt on it, with the Azure DevOps mapping of 10 Nov 2026: a category is an Epic, a workstream a Feature, a story a backlog item. |
+| 20261110120000_screenshots_register.sql | 62 | The screenshot register and its private bucket. |
+| 20261110130000_ado_profile_and_push_payload.sql | 293 | The Azure DevOps target (ado_profile), the rendering, the push payload and the receipt write-back. |
+| 20261110140000_sprint_checks_and_ledger.sql | 271 | The readiness checks rebuilt with the hand-off checks, and the sprint ledger. |
 
 ### supabase/schema/
 
@@ -351,16 +356,19 @@ Schema, one file per domain, run in lexical order.
 | 32_roadmap_board.sql | 163 | ---------------------------------------------------------------- 32_roadmap_board.sql - The roadmap's read-and-operate surface: the human-readable board view and the one operation that moves a whole workstream. |
 | 33_links.sql | 361 | ---------------------------------------------------------------- 33_links.sql - The knowledge graph: typed, dated, owner-confirmed links between anything the system knows. |
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
-| 35_sprints.sql | 398 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
+| 35_sprints.sql | 391 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
 | 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
-| 37_sprint_delivery.sql | 238 | ------------------------------------------------------------------ |
-| 38_sprint_handoff.sql | 400 | ------------------------------------------------------------------ |
+| 37_sprint_delivery.sql | 321 | ------------------------------------------------------------------ |
+| 38_sprint_handoff.sql | 327 | ------------------------------------------------------------------ |
+| 39_ado_push.sql | 350 | ------------------------------------------------------------------ |
+| 39_sprint_checks.sql | 319 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
 | 50_review.sql | 317 | ---------------------------------------------------------------- 50_review.sql - Application review: waves of merchant application triage against LP records (see docs/APP-REVIEW.md). |
 | 51_review_guards.sql | 104 | ---------------------------------------------------------------- 51_review_guards.sql - The application-review guards, split out of 50_review.sql when that file reached its size-budget exception. |
 | 52_portal_review.sql | 249 | ------------------------------------------------------------------ |
+| 55_screenshots.sql | 69 | ---------------------------------------------------------------- 55_screenshots.sql - The screenshot register: every image LPio holds of a LaunchPad screen, where it came from and what it shows. |
 | 90_dashboard.sql | 176 | ---------------------------------------------------------------- 90_dashboard.sql - Cross-domain functions. |
 
 ### supabase/
@@ -371,7 +379,7 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
 | knowledge-coverage.json | 129 |  |
-| policies.sql | 569 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
+| policies.sql | 609 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
 | schema-snapshot.json | 1757 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
@@ -389,13 +397,13 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | one-home.test.js | 157 | tests/checks/one-home.test.js - One concept, one home. |
 | perf.test.js | 272 | tests/checks/perf.test.js - Performance gates. |
 | reference-drift.test.js | 191 | tests/checks/reference-drift.test.js - Keeps the API reference from drifting further from the code it documents. |
-| render-coverage.test.js | 417 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
+| render-coverage.test.js | 419 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | schema-drift.test.js | 194 | tests/checks/schema-drift.test.js - The repo must describe the database. |
 | security.test.js | 205 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 152 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
-| sprint-stories.test.js | 113 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
+| sprint-stories.test.js | 118 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -406,6 +414,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 
 | File | Lines | Purpose |
 |---|---:|---|
+| ado-engine.test.js | 280 | tests/unit/ado-engine.test.js - Benchmarks for tools/ado/engine.js, driven against a mocked Azure DevOps. |
 | app-review/detail.test.js | 130 | tests/unit/app-review/detail.test.js - The application drawer's Record block, on the completeness contract (docs/plan/40-SURFACING.md). |
 | app-review/findings.test.js | 136 | tests/unit/app-review/findings.test.js - Benchmarks for the |
 | app-review/model.test.js | 318 | tests/unit/app-review/model.test.js - Benchmarks for the application review derivations (App.appReview in appreview-model.js), loaded in a Node vm. |
@@ -473,7 +482,7 @@ Shared fixtures and the budgets the gates read.
 | lib/roadmap.js | 93 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
 | page-weight-budget.json | 110 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
-| size-budget.json | 107 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
+| size-budget.json | 114 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
 | surface-baseline.json | 882 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
@@ -529,6 +538,8 @@ Architecture, security, design, and the operating protocols.
 | CHANGELOG.md | 254 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
+| DEVOPS.md | 206 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
+| ESTIMATION.md | 99 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
 | KNOWLEDGE-MODEL.md | 230 | The knowledge model Why the roadmap and platform knowledge are shaped the way they are. |
@@ -540,11 +551,12 @@ Architecture, security, design, and the operating protocols.
 | ROADMAP-PLAYBOOK.md | 306 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
 | ROADMAP-REVIEW.md | 172 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
 | ROADMAP.md | 309 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
+| SCREENSHOTS.md | 84 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
 | SECURITY.md | 110 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINT-DELIVERY.md | 430 | Sprint delivery |
 | SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 40 | Current state Updated: 2026-10-22 (run-on into Next shipped; three Unity items brought into Now) # In progress Seven workstreams in Now: 43 items across Sprints 1-5, synced to `v_sprint_plan_order`, UNANCHORED on purpose. |
+| STATE.md | 38 | Current state Updated: 2026-11-10 (developer-readiness run in flight, phase 1 of 7) # In progress The developer-readiness run: a new developer starts Mon 16 Nov 2026 and Sprint 1 is 26-25. |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
@@ -584,6 +596,7 @@ Repository root.
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |
 | package.json | 17 | LPIO - static shell of a login-gated project hub. Content lives in Supabase. |
+| tools/ado/engine.js | 546 | tools/ado/engine.js - Carries a push payload from LPio into Azure DevOps, and reads Azure DevOps back. |
 
 ## Conventions for agents
 

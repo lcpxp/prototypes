@@ -138,6 +138,8 @@ const COVERAGE = {
   "work_notes.status": { generic: "active is the default and unlabelled; the drawer names the rest" },
   "work_documents.kind": { generic: "the backlog table prints the raw kind" },
   "work_documents.status": { generic: "App.statusBadge renders any status" },
+  "screenshots.environment": { generic: "the drawer sentence-cases the raw value" },
+  "screenshots.kind": { generic: "the drawer sentence-cases the raw value" },
   "api_specs.status": { generic: "App.statusBadge renders any status" },
   "api_endpoints.method": { generic: "App.methodBadge renders any method, unknown ones unstyled" },
   "prototypes.status": { generic: "App.statusBadge renders any status" },

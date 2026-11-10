@@ -81,8 +81,13 @@ test("the belt, the order and the pack exist in SQL with the grants assumed", ()
     "an item joins and leaves the plan by itself");
   assert.match(delivery, /create view public\.v_sprint_plan_order/,
     "the order is stated once, in a view");
+  assert.match(read("supabase/schema/39_sprint_checks.sql"),
+    /create view public\.v_sprint_plan_checks/);
   const handoff = read("supabase/schema/38_sprint_handoff.sql");
-  assert.match(handoff, /create view public\.v_sprint_plan_checks/);
+  assert.match(handoff, /create or replace function public\.sprint_story_fields/,
+    "one renderer derives a story's fields, for the pack and the push payload alike");
+  assert.match(read("supabase/schema/39_ado_push.sql"), /from public\.sprint_story_fields\(p_id\)/,
+    "the push payload reads the same renderer the pack does");
   const pack = handoff.slice(handoff.indexOf("function public.sprint_story_pack"));
   assert.match(pack.slice(0, 400), /security invoker/,
     "the pack reads as the caller, so it shows only what they may see");

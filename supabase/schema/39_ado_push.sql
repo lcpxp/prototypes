@@ -141,7 +141,9 @@ end $$;
 -- A sprint the team has not selected is not guessed at: the item's
 -- iteration is the root and sprint_missing names the sprint. A
 -- dependency is written as '{{ado:<story key>}}', which the engine
--- replaces with the id once it knows it.
+-- replaces with the id once it knows it. Every object's link back
+-- carries the comment 'LPio <key>': that comment is how a second push
+-- finds what the first one made.
 --
 -- hash covers the epics, features and items, so a payload printed
 -- twice can be seen to be the same one. security invoker: without the
@@ -241,7 +243,7 @@ begin
           'target_date', (select sp.ends_on from public.sprints sp where sp.code = s.end_code))),
         'link', jsonb_build_object(
           'url', prof.lpio_base_url || '/modules/roadmap/index.html?item=' || w.id,
-          'comment', 'LPio ' || w.id)
+          'comment', 'LPio workstream:' || w.id)
       ) order by s.first_slot, w.title), '[]'::jsonb) as j
     from public.work_items w
     join public.v_sprint_plan_streams s on s.workstream_id = w.id
@@ -254,7 +256,10 @@ begin
         'ado_id', prof.epic_ids -> rc.key,
         'fields', jsonb_strip_nulls(jsonb_build_object(
           'title', rc.label,
-          'description', public.ado_html('div', array[rc.description])))
+          'description', public.ado_html('div', array[rc.description]))),
+        'link', jsonb_build_object(
+          'url', prof.lpio_base_url || '/modules/roadmap/index.html',
+          'comment', 'LPio category:' || rc.key)
       ) order by rc.sort_order), '[]'::jsonb) as j
     from public.roadmap_categories rc
     where rc.key in (select epic_key from ready)
