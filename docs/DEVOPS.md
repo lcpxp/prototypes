@@ -62,7 +62,7 @@ the form shows them; `ado_profile.fields` maps each to its reference.
 | --- | --- | --- |
 | Title | the story's title | Imperative, readable alone on a board card. |
 | Description | the story | Three lines: the role, "I want", "So that". A story that will not split is a check failure. |
-| Purpose | the first sentence of the item's benefit, else the story's outcome | Never a placeholder. |
+| Purpose | the story's own `purpose` line, else the first sentence of the item's benefit, else the story's outcome | Never a placeholder. |
 | Scope | the story's own `scope` line, else the item's `summary` | One bullet. `work_items.scope` is not read: it says whether a stream ends. |
 | Out of scope | `Out of scope:` lines in `details`, then each sibling story as "Covered separately" | Blank if none. |
 | Acceptance criteria | the story's criteria, verbatim | A checklist, one box per criterion. |

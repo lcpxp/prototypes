@@ -18,9 +18,9 @@
 -- An array of 1 to 5 stories, each an object with a non-empty title,
 -- a non-empty story sentence and 1 to 8 non-empty criteria. A story may
 -- also carry its estimate (points, with points_low and points_high as
--- the range behind it), its own technical_notes where the item's do not
--- fit it, and ado - the association written back after a push
--- (docs/DEVOPS.md). These are
+-- the range behind it), its own purpose and scope lines and its own
+-- technical_notes where the item's do not fit it, and ado - the
+-- association written back after a push (docs/DEVOPS.md). These are
 -- the HARD ceilings only. How much to write - one epic on a workstream,
 -- a few stories on an item, a handful of criteria each - is judgement,
 -- and it is stated once, in docs/SPRINT-DELIVERY.md. The database is

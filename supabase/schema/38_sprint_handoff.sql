@@ -22,8 +22,8 @@
 --
 --   story_key      '<item uuid>#<n>' - the association with DevOps
 --   shape_ok       the story splits at ', I want ' and ', so that '
---   purpose        the first sentence of the item's benefit, else the
---                  story's own outcome
+--   purpose        the story's own purpose line; else the first sentence
+--                  of the item's benefit; else the story's own outcome
 --   scope          the story's own scope line, else the item's summary.
 --                  work_items.scope is NOT read: it says whether a
 --                  stream ends (finite, staged, continuous)
@@ -91,6 +91,7 @@ as $$
     select x.*,
       btrim(x.story->>'title') as story_title,
       coalesce(
+        nullif(btrim(x.story->>'purpose'), ''),
         (regexp_match(btrim(x.business_benefit), '^(.+?[.!?])(\s|$)'))[1],
         nullif(btrim(x.business_benefit), ''),
         upper(left(x.m[3], 1)) || substr(x.m[3], 2)) as purpose,
@@ -152,7 +153,7 @@ as $$
 $$;
 
 comment on function public.sprint_story_fields(uuid) is
-  'One row per story on the Sprint Roadmap with every field a backlog item carries, derived once: the renderer sprint_story_pack and ado_push_payload both read. p_id null for the whole plan, a workstream, or an item. docs/DEVOPS.md holds the field standard.';
+  'One row per story on the Sprint Roadmap with every field a backlog item carries, derived once: the renderer sprint_story_pack and ado_push_payload both read. A story''s own purpose and scope win over the item''s. p_id null for the whole plan, a workstream, or an item. docs/DEVOPS.md holds the field standard.';
 
 -- ---------------------------------------------------------------
 -- The pack: the same fields as paste-ready text.
