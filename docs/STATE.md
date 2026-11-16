@@ -9,10 +9,9 @@ reconciled, and the Sprint Roadmap is mapped from the board the owner
 approved on 16 Nov 2026. The plan's first column is now the setup week
 (anchor 26-24); sprints 26-25, 26-26 and 27-01 follow.
 Phase 4: stories are written, sized and DRAFTED for every developer
-item in those four columns, on the light standard the owner set. They
-await his confirmation; nothing has been pushed to Azure DevOps.
-The owner's decisions and working rules from this run are `work_notes`
-rows tagged `developer-readiness`; read those before changing the plan.
+item in those columns, on the owner's light standard, awaiting his
+confirmation. Nothing is pushed to Azure DevOps. His decisions and rules
+are `work_notes` tagged `developer-readiness`: read them first.
 
 ## Next steps
 1. Owner confirms the drafted stories (setup week first), then set
@@ -25,13 +24,11 @@ rows tagged `developer-readiness`; read those before changing the plan.
 5. **Phase 7**: write the learned working rules into SPRINT-DELIVERY,
    ESTIMATION, DEVOPS and the commands; add `/sprint-ready`,
    `/sprint-close`, `/sprint-status`, `/ado-push`.
-6. Housekeeping: `npm run knowledge` (the one red gate) and regenerate
-   `supabase/schema-snapshot.json` (one migration newer than the file).
+6. Housekeeping: `npm run knowledge` (the red gate) and `npm run snapshot`.
 7. Last: the Inbound API deep review, then Sprint Roadmap snapshots.
 
 ## Blocked on the owner
-- Azure DevOps: do sprints 26-24 to 27-04 exist and are they selected
-  for the team? The push cannot set an iteration until they are.
+- Azure DevOps: sprints 26-24 to 27-04 must exist and be selected for the team.
 - Legal's choice of wording for the DaoPay approval clause.
 - This branch is not merged: the site deploys from main.
 - Enable leaked-password protection in Supabase Auth.
