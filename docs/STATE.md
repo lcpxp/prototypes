@@ -23,7 +23,7 @@ are `work_notes` tagged `developer-readiness`: read them first.
    developer pack; refresh the deck's plan slides.
 5. **Phase 7**: write the learned working rules into the delivery docs
    and add `/sprint-ready`, `/sprint-close`, `/sprint-status`, `/ado-push`.
-6. `npm run knowledge` (the red gate), `npm run snapshot`; last, the
+6. `npm run snapshot` (one migration newer than the file); last, the
    Inbound API deep review and Sprint Roadmap snapshots.
 
 ## Blocked on the owner
