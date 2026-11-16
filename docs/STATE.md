@@ -1,40 +1,44 @@
 # Current state
 
-Updated: 2026-11-10 (developer-readiness run: phase 1 done, phase 2 next)
+Updated: 2026-11-16 (developer-readiness run: phases 1 to 3 done, phase 4 under way)
 
 ## In progress
-The developer-readiness run: a new developer starts Mon 16 Nov 2026 and
-Sprint 1 is 26-25. Phase 1 (LPio foundation) is DONE and live: points on
-stories, capacity in points, technical notes, `ado_profile`, the
-screenshot register, the shared story renderer, `ado_push_payload`,
-`v_sprint_ledger`, the hand-off checks, the owner UI, the push engine
-(`tools/ado/engine.js`) and docs/DEVOPS.md, ESTIMATION.md, SCREENSHOTS.md.
-Both LaunchPad zips are the 5 Oct 2026 snapshot; the code map was
-re-verified line by line and is stored as a `work_documents` row.
+The developer-readiness run. The developer started on 16 Nov 2026.
+Phases 1 to 3 are DONE and live in the database: the roadmap is
+reconciled, and the Sprint Roadmap is mapped from the board the owner
+approved on 16 Nov 2026. The plan's first column is now the setup week
+(anchor 26-24); sprints 26-25, 26-26 and 27-01 follow.
+Phase 4: stories are written, sized and DRAFTED for every developer
+item in those four columns, on the light standard the owner set. They
+await his confirmation; nothing has been pushed to Azure DevOps.
+The owner's decisions and working rules from this run are `work_notes`
+rows tagged `developer-readiness`; read those before changing the plan.
 
 ## Next steps
-1. **Phase 2 - reconcile the roadmap**: intake sweep since 10 Aug,
-   Contract Adjustments overhaul, a "Fixes and front-end polish" Now
-   stream, PFAC to Now, Inbound API around MVP1, the known-issues record,
-   Multi-Tenancy at Later. Then `npm run knowledge` (the one red gate).
-2. **Phase 3**: anchor at 26-25, capacity 24 (17 for 27-01), set
-   `sprint_plan.code_snapshot`, re-map, `sprint_plan_sync_order()`.
-3. **Phase 4**: code review, stories, estimates and mockups for sprints
-   1-3; an independent re-check of every sprint 1 file and line.
-4. **Phase 5**: the stale-item reconciliation and the sprint 1 payload.
-5. **Phase 6**: the induction document and the developer pack.
-6. **Phase 7**: the `/sprint-ready`, `/sprint-close`, `/sprint-status`
-   and `/ado-push` commands; SPRINT-DELIVERY and SPRINTS updated to the
-   new mapping, removing the superseded hand-off text.
+1. Owner confirms the drafted stories (setup week first), then set
+   `stories_status` to confirmed.
+2. **Phase 5**: fill `ado_profile.team_sprints` once the sprints exist in
+   Azure DevOps, build the payload and the push package, reconcile stale items.
+3. Story review stage: check every story against the light standard.
+4. **Phase 6**: the owner's run-sheet, the induction document and the
+   developer pack; refresh the deck's plan slides.
+5. **Phase 7**: write the learned working rules into SPRINT-DELIVERY,
+   ESTIMATION, DEVOPS and the commands; add `/sprint-ready`,
+   `/sprint-close`, `/sprint-status`, `/ado-push`.
+6. Housekeeping: `npm run knowledge` (the one red gate) and regenerate
+   `supabase/schema-snapshot.json` (one migration newer than the file).
+7. Last: the Inbound API deep review, then Sprint Roadmap snapshots.
 
 ## Blocked on the owner
-- The Azure DevOps extract JSON never reached the session, so the stale
-  reconciliation can only cover items the brief names.
+- Azure DevOps: do sprints 26-24 to 27-04 exist and are they selected
+  for the team? The push cannot set an iteration until they are.
+- Legal's choice of wording for the DaoPay approval clause.
 - This branch is not merged: the site deploys from main.
 - Enable leaked-password protection in Supabase Auth.
 - Create the tag: `git tag -a v0.1.0 ab0e78b -m "0.1.0"` then
   `git push origin v0.1.0`.
 
 ## Open decisions
+- PFAC controls: is the third switch (workflow and risk questions) in v1?
 - Rename lcpxp/prototypes to lcpxp/lpio? Raised in 2026-07, still open.
 - work_item_phases stays dormant: the table is empty, but the drawer reads it.
