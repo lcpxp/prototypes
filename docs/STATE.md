@@ -21,19 +21,17 @@ are `work_notes` tagged `developer-readiness`: read them first.
 3. Story review stage: check every story against the light standard.
 4. **Phase 6**: the owner's run-sheet, the induction document and the
    developer pack; refresh the deck's plan slides.
-5. **Phase 7**: write the learned working rules into SPRINT-DELIVERY,
-   ESTIMATION, DEVOPS and the commands; add `/sprint-ready`,
-   `/sprint-close`, `/sprint-status`, `/ado-push`.
-6. Housekeeping: `npm run knowledge` (the red gate) and `npm run snapshot`.
-7. Last: the Inbound API deep review, then Sprint Roadmap snapshots.
+5. **Phase 7**: write the learned working rules into the delivery docs
+   and add `/sprint-ready`, `/sprint-close`, `/sprint-status`, `/ado-push`.
+6. `npm run knowledge` (the red gate), `npm run snapshot`; last, the
+   Inbound API deep review and Sprint Roadmap snapshots.
 
 ## Blocked on the owner
 - Azure DevOps: sprints 26-24 to 27-04 must exist and be selected for the team.
 - Legal's choice of wording for the DaoPay approval clause.
 - This branch is not merged: the site deploys from main.
 - Enable leaked-password protection in Supabase Auth.
-- Create the tag: `git tag -a v0.1.0 ab0e78b -m "0.1.0"` then
-  `git push origin v0.1.0`.
+- Tag: `git tag -a v0.1.0 ab0e78b -m "0.1.0"`, then `git push origin v0.1.0`.
 
 ## Open decisions
 - PFAC controls: is the third switch (workflow and risk questions) in v1?
