@@ -22,6 +22,15 @@ if echo "$STAGED" | grep -qE '\.(js|css|html|sql|md)$' && [ "$STAGED" != "docs/S
   fi
 fi
 
+# A checkpoint commit of STATE.md alone still has to fit its cap: that is
+# the one rule such a commit can break, and it once went through unchecked.
+if [ "$STAGED" = "docs/STATE.md" ]; then
+  if ! node --test tests/checks/structure.test.js tests/checks/size.test.js >/dev/null 2>&1; then
+    echo "BLOCKED: docs/STATE.md breaks its 40-line cap or a structure check. Run 'npm test'."
+    exit 1
+  fi
+fi
+
 if echo "$STAGED" | grep -qE '\.(js|css|html)$'; then
   node scripts/gen-codemap.js --quiet
   git add docs/CODEMAP.md llms.txt

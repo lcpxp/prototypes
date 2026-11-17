@@ -161,6 +161,20 @@ every row, with each fix recorded in a `decision` note that is its undo:
    documentation available". Run this before a story is written as
    `drafted`, and again before it is confirmed. `v_sprint_plan_checks`
    flags the gaps it can see, scaled by points (the `ctx_` findings).
+9. **Accuracy.** Every claim about today's system carries its source: a
+   file:line read in the current code snapshot, a cited outside source,
+   or an owner decision note. Each fails in a known way, so each has a
+   guard:
+   - an older note or document is re-read against the current code
+     before it is reused; a record never stands in for the code;
+   - a claim that two things are the same, or that X reuses Y, is read
+     in both places, never inferred from a name;
+   - a count comes from a query or a script, never from reading by eye;
+   - a test case names data the outside system is known to provide;
+   - a claim that cannot be sourced is a `question` note, not a sentence.
+   Before stories go to the owner, every claim without a file reference
+   and every count is re-checked, and the corrections go in one
+   `decision` note.
 
 ## Confirming and freezing
 

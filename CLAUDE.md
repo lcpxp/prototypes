@@ -126,7 +126,8 @@ docs/CHANGELOG.md is what changed for users; docs/STATE.md is only what
 is not yet finished. No overlap between the three.
 
 1. Session start: read CLAUDE.md, then docs/STATE.md, and continue from
-   its "Next steps".
+   its "Next steps". If `git config core.hooksPath` is empty, run
+   `npm run setup` first: without it the pre-commit gate does not run.
 2. During work: commit completed units as you go, in atomic commits with
    imperative messages, so an interrupted session loses nothing and git
    carries the history.
