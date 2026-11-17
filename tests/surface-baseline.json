@@ -37,8 +37,14 @@
     "csvFromRows": [
       "assets/js/core/ui.js"
     ],
+    "dashboardAreas": [
+      "assets/js/pages/dashboard/dashboard.js"
+    ],
     "dashboardCards": [
       "assets/js/pages/dashboard/cards.js"
+    ],
+    "dashboardLede": [
+      "assets/js/pages/dashboard/dashboard.js"
     ],
     "dashboardStrip": [
       "assets/js/pages/dashboard/strip.js"
@@ -72,6 +78,9 @@
     ],
     "futurePrototypesTable": [
       "assets/js/pages/gallery.js"
+    ],
+    "glossary": [
+      "assets/js/pages/glossary/glossary.js"
     ],
     "ideasView": [
       "assets/js/pages/ideas/render.js"
@@ -336,6 +345,29 @@
         "assets/js/pages/shared/work-items-data.js",
         "assets/js/pages/backlog/export.js",
         "assets/js/pages/backlog/backlog.js"
+      ]
+    },
+    "modules/glossary/index.html": {
+      "css": [
+        "assets/css/tokens.css",
+        "assets/css/base.css",
+        "assets/css/layout.css",
+        "assets/css/components.css",
+        "assets/css/pages.css",
+        "assets/css/console-tool.css",
+        "assets/css/glossary.css"
+      ],
+      "js": [
+        "assets/js/core/theme.js",
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3",
+        "assets/js/core/supabase.js",
+        "assets/js/core/registry.js",
+        "assets/js/core/guard.js",
+        "assets/js/core/ui.js",
+        "assets/js/core/search.js",
+        "assets/js/core/tools.js",
+        "assets/js/core/console-tools.js",
+        "assets/js/pages/glossary/glossary.js"
       ]
     },
     "modules/integrations/index.html": {

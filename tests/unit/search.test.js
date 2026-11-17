@@ -182,7 +182,7 @@ test("a typed row routes through the same anchor a knowledge link uses", () => {
   App.root = ".";
   const term = App.search.sources().find((s) => s.table === "domain_terms");
   assert.equal(App.linkHref(term.entity, "t1", "."),
-    "./modules/platform/index.html#term-t1");
+    "./modules/glossary/index.html#term-t1");
   const idea = App.search.sources().find((s) => s.table === "future_prototypes");
   assert.equal(App.linkHref(idea.entity, "i1", "."),
     "./modules/prototypes/ideas.html#idea-i1");

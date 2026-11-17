@@ -12,8 +12,15 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
-- Access: new accounts start restricted to Platform, Integrations and API
-  reference, and see none of the owner's working material - draft API
+- Glossary: a page of its own in the nav, holding card payments, PXP and
+  LaunchPad terms in plain words, grouped by subject and searchable as you
+  type. Term links and global search results now open it; the Platform
+  page points to it.
+- Dashboard: it names only the areas the viewer can open. Someone without
+  the roadmap sees their areas first, described, with Platform knowledge
+  next; tools and knowledge gaps show only to those who can act on them.
+- Access: new accounts start restricted to Platform, the Glossary,
+  Integrations and API reference, and see none of the owner's working material - draft API
   specs, planned capabilities, integration notes or the header tools.
   An admin grants more on the Users page, where the account shows as
   restricted.

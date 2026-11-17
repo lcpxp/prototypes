@@ -198,7 +198,9 @@ begin
       ('link_entity_types',      '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
       ('work_notes',             '(select public.has_module_access(''backlog''))'),
       ('product_capabilities', '(select public.has_module_access(''platform'')) and (maturity is distinct from ''planned'' or (select public.has_module_access(''internal'')))'),
-      ('domain_terms',         '(select public.has_module_access(''platform''))'),
+      -- The glossary page reads terms behind its own grant; the platform
+      -- page still reads them for link titles.
+      ('domain_terms',         '(select public.has_module_access(''platform'') or public.has_module_access(''glossary''))'),
       ('journey_stages',       '(select public.has_module_access(''platform''))'),
       -- The Sprint Roadmap reads behind the roadmap grant. sprint_plan is
       -- in here rather than admin-only because the sprint views are

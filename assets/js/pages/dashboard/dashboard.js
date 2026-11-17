@@ -101,23 +101,59 @@
     var mod = moduleByKey("platform");
     fill("ds-knowledge", App.dashboardCards.knowledge(summary.knowledge, {
       href: mod ? App.moduleHref(mod) : "#",
+      gaps: isAdmin(),
     }));
   }
 
+  // A tool row someone cannot open is not a tool to them, and the
+  // empty-state text names a table: useful to an admin who can add a
+  // row, noise to anyone else. So with nothing usable the section only
+  // shows to an admin.
   function renderTools() {
-    App.tools.load().then(function (rows) {
+    function draw(rows) {
+      var usable = (rows || []).filter(function (row) {
+        return row && row.label && App.tools && App.tools.href(row);
+      });
+      if (!usable.length && !isAdmin()) { hide("ds-tools"); return; }
       fill("ds-tools", App.dashboardCards.tools(rows));
-    }, function () { fill("ds-tools", App.dashboardCards.tools([])); });
+    }
+    App.tools.load().then(draw, function () { draw([]); });
   }
+
+  function isAdmin() {
+    return !!(App.access && App.access.admin);
+  }
+
+  // --- what this person can open ------------------------------------
+
+  // Pure: the modules this viewer can open, in registry order.
+  App.dashboardAreas = function (modules, canAccess) {
+    return (modules || []).filter(function (mod) {
+      return !canAccess || canAccess(mod.key);
+    });
+  };
+
+  // Pure: "Your areas: A, B and C." from the modules a viewer can open,
+  // so the page never names an area someone has no access to.
+  App.dashboardLede = function (modules) {
+    var titles = (modules || []).map(function (mod) { return mod.title; });
+    if (!titles.length) return "Nothing is open to you yet. Ask an admin for access.";
+    var list = titles.length === 1 ? titles[0]
+      : titles.slice(0, -1).join(", ") + " and " + titles[titles.length - 1];
+    return "Your areas: " + list + ".";
+  };
 
   // --- modules grid ------------------------------------------------
 
-  function cardHtml(mod, counts) {
+  // `describe` draws every card as a title and what the area is for,
+  // which is what someone needs on a first visit; the stat cards suit a
+  // regular who already knows what each area holds.
+  function cardHtml(mod, counts, describe) {
     var count = counts && mod.statTable ? counts[mod.statTable] : null;
     var html =
       '<a class="card" href="' + App.escape(App.moduleHref(mod)) + '">' +
-      '<span class="eyebrow">' + App.escape(mod.title) + "</span>";
-    if (mod.statTable) {
+      (describe ? "" : '<span class="eyebrow">' + App.escape(mod.title) + "</span>");
+    if (mod.statTable && !describe) {
       html += '<p class="stat">' +
         (count == null ? "-" : App.escape(count > 1000 ? "1000+" : count)) + "</p>" +
         '<p class="card-meta">' + App.escape(mod.statLabel) + "</p>";
@@ -128,13 +164,29 @@
     return html + "</a>";
   }
 
+  // Someone without the roadmap has no "now and next" to lead with, so
+  // their areas lead instead, described rather than counted.
   function renderModules(summary) {
-    var modules = App.registry.modules.filter(function (mod) {
-      return !App.canAccess || App.canAccess(mod.key);
-    });
+    var modules = App.dashboardAreas(App.registry.modules, App.canAccess);
+    var lede = el("ds-lede");
+    if (lede) lede.textContent = App.dashboardLede(modules);
+    var leads = !canReach(["roadmap", "backlog"]);
+    if (leads) {
+      promote("ds-modules", el("page-notice"));
+      // What LaunchPad is comes before the reference that documents it.
+      promote("ds-knowledge", el("ds-modules"));
+    }
     fill("ds-modules", '<div class="card-grid dashboard-cards">' +
-      modules.map(function (mod) { return cardHtml(mod, summary.counts); }).join("") +
+      modules.map(function (mod) { return cardHtml(mod, summary.counts, leads); }).join("") +
       "</div>");
+  }
+
+  // Moves a section to just after `after`, and out of the quiet style.
+  function promote(id, after) {
+    var section = el(id);
+    if (!section || !after || !after.parentNode) return;
+    section.classList.remove("ds-section--quiet");
+    after.parentNode.insertBefore(section, after.nextSibling);
   }
 
   // --- recent activity ---------------------------------------------

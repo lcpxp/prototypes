@@ -33,7 +33,7 @@ substance lives behind Supabase Row Level Security.
    modules/integrations/ (the integration overview and detail
    modals), modules/prototypes/ (the gallery plus the prototype
    pages themselves), modules/platform/ (what LP is and does
-   today), modules/roadmap/ (the roadmap view), modules/sprints/
+   today), modules/glossary/ (the searchable terms), modules/roadmap/ (the roadmap view), modules/sprints/
    (the same Now work placed against sprints), modules/backlog/
    (rolling work items and ingested source material) and
    modules/users/ (the user and access register).

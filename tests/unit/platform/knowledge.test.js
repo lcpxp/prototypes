@@ -152,13 +152,16 @@ test("lifecycleHtml renders stages in stage_no order with their actor", () => {
     "a link cannot address is not a destination");
 });
 
-test("glossaryHtml sorts alphabetically and flags unverified terms", () => {
+test("glossaryHtml points at the Glossary page instead of drawing the terms", () => {
+  // The terms have one home, modules/glossary/. Drawing them here too
+  // was two layouts for one store, so the section is a pointer.
   const App = load();
+  App.moduleHref = (mod) => "../../" + mod.path;
   const html = App.platformKnowledge.glossaryHtml(sample());
-  assert.ok(html.indexOf("ATV") < html.indexOf("Decisioned"));
-  assert.match(html, /Average Transaction Value/);
-  assert.match(html, /Decisioned[\s\S]{0,60}?tone-warn">unverified/,
-    "an unverified term must say so where it is read, not only in coverage");
+  assert.match(html, /modules\/glossary\//);
+  assert.match(html, /\d+ terms/);
+  assert.doesNotMatch(html, /Average Transaction Value/,
+    "no definition is drawn here; the Glossary page is the one place terms render");
 });
 
 test("factsHtml groups by area and falls back to General", () => {

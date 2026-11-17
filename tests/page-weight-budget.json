@@ -22,6 +22,10 @@
       "maxRequests": 24,
       "maxBytes": 194000
     },
+    "modules/glossary/index.html": {
+      "maxRequests": 18,
+      "maxBytes": 172000
+    },
     "modules/integrations/index.html": {
       "maxRequests": 20,
       "maxBytes": 162000

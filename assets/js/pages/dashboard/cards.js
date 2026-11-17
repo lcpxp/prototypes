@@ -196,7 +196,9 @@
       k.stages ? plural(k.stages, "journey stage", "journey stages") : "",
       k.documents ? plural(k.documents, "source document", "source documents") : "",
     ].filter(Boolean).join(" &middot; ");
-    var gaps = App.dashboardCards.knowledgeGaps(k);
+    // The gaps are housekeeping for whoever fills them; a reader who
+    // cannot add a row gets the figures without the to-do list.
+    var gaps = opts.gaps === false ? [] : App.dashboardCards.knowledgeGaps(k);
     var href = esc(opts.href || "#");
     if (!chips && !figures && !gaps.length) {
       return '<p class="notice">Nothing recorded yet. Platform knowledge lands in ' +

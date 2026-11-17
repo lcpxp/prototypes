@@ -30,11 +30,11 @@ begin
     new.email,
     coalesce(new.raw_user_meta_data ->> 'display_name', split_part(new.email, '@', 1))
   );
-  -- Every new account starts restricted: it sees Platform, Integrations
-  -- and the API reference and nothing else until an admin grants more
-  -- on the Users page. Written in the same statement as the profile, so
-  -- there is no moment when a new account can read everything.
-  -- has_module_access() in policies.sql reads these rows.
+  -- Every new account starts restricted: it sees Platform, the Glossary,
+  -- Integrations and the API reference and nothing else until an admin
+  -- grants more on the Users page. Written in the same statement as the
+  -- profile, so there is no moment when a new account can read
+  -- everything. has_module_access() in policies.sql reads these rows.
   -- The explicit denials repeat what the '*' row already says, for
   -- page code built before 2026-11-17, which reads denials only and
   -- would otherwise list those modules in the nav (the data stays
@@ -42,6 +42,7 @@ begin
   insert into public.module_access (user_id, module_key, allowed)
   values (new.id, '*', false),
          (new.id, 'platform', true),
+         (new.id, 'glossary', true),
          (new.id, 'integrations', true),
          (new.id, 'reference', true),
          (new.id, 'roadmap', false),

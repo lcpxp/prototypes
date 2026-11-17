@@ -88,8 +88,8 @@ error, when re-testing this).
   auth settings for this project.
 - **New accounts start restricted.** The trigger that creates the
   profile also writes the account's module_access rows: a `'*'` row
-  that denies everything, and grants for Platform, Integrations and API
-  reference. A restricted account is allow-list based: it sees only
+  that denies everything, and grants for Platform, the Glossary,
+  Integrations and API reference. A restricted account is allow-list based: it sees only
   modules a row grants, so a module added later stays hidden from it.
   An admin grants more with the toggles on the Users page, which marks
   the account "restricted". To make an account open instead, delete its

@@ -267,3 +267,11 @@ test("every card escapes its content", () => {
   assert.doesNotMatch(html, /<script>|<img src=x>/);
   assert.match(html, /&lt;script&gt;/);
 });
+
+test("knowledge gaps are left out when the viewer cannot fill them", () => {
+  const k = { terms: 3, by_maturity: { live: 1 }, areas_without_capability: 2, capabilities_without_source: 1 };
+  assert.match(cards.knowledge(k, {}), /no capability recorded/);
+  const reader = cards.knowledge(k, { gaps: false });
+  assert.doesNotMatch(reader, /no capability recorded|no source document/);
+  assert.match(reader, /3 glossary terms/);
+});

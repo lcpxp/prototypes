@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://zlmkofbkobmhnslfnqsf.supabase.co" crossorigin>
+  <title>Glossary - LPIO</title>
+  <script src="../../assets/js/core/theme.js"></script>
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/layout.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="../../assets/css/pages.css">
+  <link rel="stylesheet" href="../../assets/css/console-tool.css">
+  <link rel="stylesheet" href="../../assets/css/glossary.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.3"></script>
+  <script defer src="../../assets/js/core/supabase.js"></script>
+  <script defer src="../../assets/js/core/registry.js"></script>
+  <script defer src="../../assets/js/core/guard.js"></script>
+  <script defer src="../../assets/js/core/ui.js"></script>
+  <script defer src="../../assets/js/core/search.js"></script>
+  <script defer src="../../assets/js/core/tools.js"></script>
+  <script defer src="../../assets/js/core/console-tools.js"></script>
+  <script defer src="../../assets/js/pages/glossary/glossary.js"></script>
+</head>
+<body data-root="../.." data-module="glossary">
+  <header id="app-nav"></header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="eyebrow">Glossary</span>
+      <h1>The words we use</h1>
+      <p class="lede">Card payments, PXP and LaunchPad terms in plain words.
+        Search by name or by anything in a definition.</p>
+    </div>
+
+    <div id="page-notice"></div>
+
+    <div class="gl-toolbar">
+      <div class="field gl-search">
+        <label for="gl-search">Search the glossary</label>
+        <input type="search" id="gl-search" autocomplete="off"
+               placeholder="For example MID, rolling reserve or settlement">
+      </div>
+      <div class="gl-sections" id="gl-sections" role="group" aria-label="Show a section"></div>
+    </div>
+
+    <p class="gl-count" id="gl-count" aria-live="polite"></p>
+    <div id="gl-body">
+      <p class="notice">Loading</p>
+    </div>
+  </main>
+
+</body>
+</html>

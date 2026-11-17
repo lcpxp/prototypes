@@ -13,8 +13,8 @@ Everything one file can call in another. A surface in
 
 | Surface | Defined in |
 |---|---|
-| `App.access` | assets/js/core/guard.js:93 (+3 more) |
-| `App.accessReady` | assets/js/core/guard.js:92 |
+| `App.access` | assets/js/core/guard.js:104 (+3 more) |
+| `App.accessReady` | assets/js/core/guard.js:103 |
 | `App.appReview` | assets/js/pages/app-review/model.js:224 |
 | `App.appReviewDetail` | assets/js/pages/app-review/detail.js:175 |
 | `App.appReviewFindings` | assets/js/pages/app-review/findings.js:138 |
@@ -22,14 +22,16 @@ Everything one file can call in another. A surface in
 | `App.backlogExport` | assets/js/pages/backlog/export.js:80 |
 | `App.backlogView` | assets/js/pages/backlog/backlog.js:388 |
 | `App.blocks` | assets/js/core/blocks.js:104 (+4 more) |
-| `App.canAccess` | assets/js/core/guard.js:88 |
+| `App.canAccess` | assets/js/core/guard.js:96 |
 | `App.copyText` | assets/js/core/ui.js:51 |
 | `App.csvFromRows` | assets/js/core/ui.js:95 |
+| `App.dashboardAreas` | assets/js/pages/dashboard/dashboard.js:130 |
 | `App.dashboardCards` | assets/js/pages/dashboard/cards.js:25 (+9 more) |
+| `App.dashboardLede` | assets/js/pages/dashboard/dashboard.js:138 |
 | `App.dashboardStrip` | assets/js/pages/dashboard/strip.js:53 (+4 more) |
 | `App.db` | assets/js/core/supabase.js:31 (+2 more) |
 | `App.deepLinkScroll` | assets/js/core/ui.js:182 |
-| `App.departmentLabel` | assets/js/core/registry.js:357 |
+| `App.departmentLabel` | assets/js/core/registry.js:365 |
 | `App.detail` | assets/js/core/detail.js:37 (+5 more) |
 | `App.download` | assets/js/core/ui.js:75 (+3 more) |
 | `App.drawer` | assets/js/core/drawer.js:35 |
@@ -37,15 +39,16 @@ Everything one file can call in another. A surface in
 | `App.euAcquirerAdminTool` | assets/js/core/console-tools.js:313<br>assets/js/core/console-tools.js:314 |
 | `App.flashLabel` | assets/js/core/ui.js:44 (+2 more) |
 | `App.futurePrototypesTable` | assets/js/pages/gallery.js:18 |
+| `App.glossary` | assets/js/pages/glossary/glossary.js:15 (+3 more) |
 | `App.ideasView` | assets/js/pages/ideas/render.js:37 (+7 more) |
-| `App.itemHref` | assets/js/core/registry.js:278 |
+| `App.itemHref` | assets/js/core/registry.js:286 |
 | `App.lazyDetail` | assets/js/pages/shared/lazy-detail.js:46 |
-| `App.linkHref` | assets/js/core/registry.js:331 |
+| `App.linkHref` | assets/js/core/registry.js:339 |
 | `App.links` | assets/js/core/links.js:28 (+5 more) |
 | `App.methodBadge` | assets/js/core/ui.js:27 |
-| `App.moduleHref` | assets/js/core/registry.js:268 |
+| `App.moduleHref` | assets/js/core/registry.js:276<br>tests/unit/platform/knowledge.test.js:159 |
 | `App.notice` | assets/js/core/ui.js:65 |
-| `App.onAuthed` | assets/js/core/guard.js:122 (+3 more) |
+| `App.onAuthed` | assets/js/core/guard.js:133 (+3 more) |
 | `App.onThemeChange` | assets/js/core/ui.js:372 |
 | `App.partnerSetupTool` | assets/js/core/console-tools.js:350<br>assets/js/core/console-tools.js:351 |
 | `App.pciInterstitial` | assets/js/pages/pci/interstitial.js:21 |
@@ -79,7 +82,7 @@ Everything one file can call in another. A surface in
 | `App.store` | assets/js/core/ui.js:138 |
 | `App.theme` | assets/js/core/theme.js:65 |
 | `App.tools` | assets/js/core/tools.js:63 (+6 more) |
-| `App.usersView` | assets/js/pages/users.js:192 |
+| `App.usersView` | assets/js/pages/users.js:203 |
 | `App.workItemsData` | assets/js/pages/shared/work-items-data.js:229 (+3 more) |
 
 ## Files by area
@@ -96,10 +99,10 @@ Shared runtime. Loaded on every protected page in the order set by assets/js/cor
 | console-tools.js | 377 | console-tools.js - The nav's console-snippet tools: Acquirer send (App.sendTool), EU Acquirer admin (App.euAcquirerAdminTool) and High risk partner setup (App.partnerSetupTool). |
 | detail.js | 142 | detail.js - The completeness contract for rendering a row. |
 | drawer.js | 112 | drawer.js - A shared slide-over dialog surface. |
-| guard.js | 157 | guard.js - Blocks unauthenticated access to protected pages and enforces per-module access. |
+| guard.js | 168 | guard.js - Blocks unauthenticated access to protected pages and enforces per-module access. |
 | includes.json | 113 | The core script include order, in one place. Every protected page loads these in this sequence; tests/checks/structure.test.js enforces it, and CLAUDE.md and docs/ARCHITECTURE.md cite this file rather than restating it. It was stated in three places before, and all three were stale: none of them mentioned links.js, detail.js, blocks.js, drawer.js, sprints.js or send-tool.js, and the gate checked five of the fourteen. |
 | links.js | 163 | links.js - The typed knowledge graph, resolved for rendering. |
-| registry.js | 364 | registry.js - Single source of truth for the hub's modules, the Supabase tables they read, and role names. |
+| registry.js | 372 | registry.js - Single source of truth for the hub's modules, the Supabase tables they read, and role names. |
 | search.js | 356 | search.js - Global header search (App.search). |
 | sprints.js | 115 | sprints.js - The sprint + date engine (App.sprints). |
 | supabase.js | 36 | supabase.js - Initialises the Supabase client as App.db. |
@@ -121,8 +124,8 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | app-review/waves.js | 163 | app-review/waves.js - The wave list for modules/app-review/index.html, plus the standing watch list above it. |
 | backlog/backlog.js | 393 | backlog/backlog.js - The master work list for modules/backlog/. |
 | backlog/export.js | 87 | backlog/export.js - The backlog's CSV export: the column order, the flat record builder and the wiring. |
-| dashboard/cards.js | 240 | dashboard/cards.js - The dashboard's four card sections: API reference, reviews, knowledge and tools (docs/plan/50-DASHBOARD.md). |
-| dashboard/dashboard.js | 261 | dashboard/dashboard.js - Fetches and orchestrates the landing page (docs/plan/50-DASHBOARD.md). |
+| dashboard/cards.js | 242 | dashboard/cards.js - The dashboard's four card sections: API reference, reviews, knowledge and tools (docs/plan/50-DASHBOARD.md). |
+| dashboard/dashboard.js | 313 | dashboard/dashboard.js - Fetches and orchestrates the landing page (docs/plan/50-DASHBOARD.md). |
 | dashboard/strip.js | 131 | dashboard/strip.js - The now/next strip, the dashboard's headline (docs/plan/50-DASHBOARD.md). |
 | eu-acquirer/app.js | 281 | eu-acquirer/app.js - The application summary page in the EU Acquirer replica: composition, state and behaviour. |
 | eu-acquirer/data.js | 251 | eu-acquirer/data.js - Fixture data and the role switch for the EU Acquirer EU onboarding replica (modules/prototypes/eu-acquirer/). |
@@ -131,6 +134,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | eu-acquirer/shell.js | 96 | eu-acquirer/shell.js - Shared chrome for the EU Acquirer replica pages: the black portal header, the navigation sider, and the role switch that flips between the Acquirer and EU Acquirer views of the same page. |
 | eu-acquirer/sim.js | 169 | eu-acquirer/sim.js - The simulation layer for the EU Acquirer replica: the toast stack, the email prompt, and the stepped progress modal that stands in for e-signature and the automated handoff. |
 | gallery.js | 115 | gallery.js - Prototype registry for modules/prototypes/. |
+| glossary/glossary.js | 170 | glossary/glossary.js - The Glossary page, modules/glossary/. |
 | ideas/ideas.js | 71 | ideas/ideas.js - modules/prototypes/ideas.html. |
 | ideas/render.js | 177 | ideas/render.js - The prototype ideas board's builders (App.ideasView). |
 | integrations.js | 126 | integrations.js - Integration overview for modules/integrations/. |
@@ -171,7 +175,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | shared/proto-svg.js | 125 | shared/proto-svg.js - Inline SVG diagram viewer for a prototype overview page. |
 | shared/work-items-data.js | 240 | shared/work-items-data.js - The reads over work_items and work_notes that the list pages deliberately no longer carry. |
 | sprints/sprints.js | 369 | sprints/sprints.js - The Sprint Roadmap page shell. |
-| users.js | 207 | users.js - User and access management for modules/users/. |
+| users.js | 218 | users.js - User and access management for modules/users/. |
 
 ### assets/snippets/
 
@@ -194,6 +198,7 @@ Stylesheets, loaded as a fixed stack: tokens, base, layout, components, pages, t
 | components.css | 587 | components.css - Reusable interface components: cards, forms, buttons, notices, tables, badges and toggles. |
 | console-tool.css | 71 | console-tool.css - The modal shared by the nav's console-snippet tools (send-tool.js and eu-acquirer-admin-tool.js): a wide dialog with a header bar, a scrolling code block per snippet and a collapsed details section. |
 | dashboard.css | 218 | dashboard.css - The rebuilt landing page (docs/plan/50-DASHBOARD.md). |
+| glossary.css | 66 | glossary.css - The Glossary page, modules/glossary/. |
 | ideas.css | 92 | ideas.css - The prototype ideas board and the gallery strip that points at it (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | layout.css | 411 | layout.css - Navigation, page scaffold and grids. |
 | login.css | 70 | login.css - Sign-in page only. |
@@ -224,6 +229,7 @@ One folder per module, named for its registry key. Pages are shells; the logic i
 | app-review/index.html | 69 | Application review - LPIO |
 | app-review/wave.html | 94 | Wave - Application review - LPIO |
 | backlog/index.html | 93 | Backlog - LPIO |
+| glossary/index.html | 59 | Glossary - LPIO |
 | integrations/index.html | 58 | Integrations - LPIO |
 | platform/index.html | 59 | Platform - LPIO |
 | portal-review/index.html | 79 | Portal review - LPIO |
@@ -341,6 +347,10 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20261110120000_screenshots_register.sql | 62 | The screenshot register and its private bucket. |
 | 20261110130000_ado_profile_and_push_payload.sql | 293 | The Azure DevOps target (ado_profile), the rendering, the push payload and the receipt write-back. |
 | 20261110140000_sprint_checks_and_ledger.sql | 271 | The readiness checks rebuilt with the hand-off checks, and the sprint ledger. |
+| 20261111090000_sprint_story_purpose_override.sql | 25 | A story may carry its own purpose, as it may its own scope: where it does, that is the Purpose its backlog item gets, ahead of the first sentence of the item's benefit. |
+| 20261117090000_restricted_accounts.sql | 82 | Restricted accounts (2026-11-17). |
+| 20261117100000_restricted_accounts_explicit_denials.sql | 34 | Restricted accounts: explicit denials as well (2026-11-17). |
+| 20261117120000_glossary_module.sql | 53 | ------------------------------------------------------------- Glossary module (17 Nov 2026). |
 
 ### supabase/schema/
 
@@ -348,7 +358,7 @@ Schema, one file per domain, run in lexical order.
 
 | File | Lines | Purpose |
 |---|---:|---|
-| 00_core.sql | 79 | ---------------------------------------------------------------- 00_core.sql - Users, access grants and shared plumbing. |
+| 00_core.sql | 102 | ---------------------------------------------------------------- 00_core.sql - Users, access grants and shared plumbing. |
 | 10_reference.sql | 145 | ---------------------------------------------------------------- 10_reference.sql - The API reference domain: specs, endpoints, tag catalogue and narrative topics. |
 | 20_portal.sql | 325 | ---------------------------------------------------------------- 20_portal.sql - Portal content domains: the integrations overview, the prototype gallery registry and the nav's outbound tool links. |
 | 30_work.sql | 546 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
@@ -359,7 +369,7 @@ Schema, one file per domain, run in lexical order.
 | 35_sprints.sql | 391 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
 | 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
 | 37_sprint_delivery.sql | 321 | ------------------------------------------------------------------ |
-| 38_sprint_handoff.sql | 327 | ------------------------------------------------------------------ |
+| 38_sprint_handoff.sql | 328 | ------------------------------------------------------------------ |
 | 39_ado_push.sql | 350 | ------------------------------------------------------------------ |
 | 39_sprint_checks.sql | 319 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
@@ -379,9 +389,9 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
 | knowledge-coverage.json | 129 |  |
-| policies.sql | 609 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
+| policies.sql | 636 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1878 |  |
+| schema-snapshot.json | 1894 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -400,7 +410,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | render-coverage.test.js | 419 | tests/checks/render-coverage.test.js - Nothing stored-but-invisible. |
 | roadmap-intake.test.js | 102 | tests/checks/roadmap-intake.test.js - Contextualisation gates. |
 | schema-drift.test.js | 197 | tests/checks/schema-drift.test.js - The repo must describe the database. |
-| security.test.js | 205 | tests/checks/security.test.js - Security gates. |
+| security.test.js | 230 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 157 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
 | sprint-stories.test.js | 118 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
@@ -424,15 +434,16 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | call-extract.test.js | 156 | tests/unit/call-extract.test.js - Benchmarks for the call-site extractor (scripts/extract-calls.js), inventory C of docs/plan/20-API-REFERENCE.md. |
 | console-tools.test.js | 89 | tests/unit/console-tools.test.js - Benchmarks for the High risk partner setup tool in assets/js/core/console-tools.js. |
 | coverage-reconcile.test.js | 278 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage arithmetic in scripts/gen-coverage.js. |
-| dashboard/cards.test.js | 270 | tests/unit/dashboard/cards.test.js - The dashboard's four card sections (docs/plan/50-DASHBOARD.md). |
+| dashboard/cards.test.js | 278 | tests/unit/dashboard/cards.test.js - The dashboard's four card sections (docs/plan/50-DASHBOARD.md). |
 | dashboard/strip.test.js | 164 | tests/unit/dashboard/strip.test.js - The dashboard's headline strip (docs/plan/50-DASHBOARD.md). |
 | detail.test.js | 199 | tests/unit/detail.test.js - The completeness contract. |
 | eu-acquirer/role.test.js | 207 | tests/unit/eu-acquirer/role.test.js - Benchmarks for the EU Acquirer scoped role (assets/js/pages/eu-acquirer/data.js and eu-acquirer-app.js). |
 | gallery-future.test.js | 91 | tests/unit/gallery-future.test.js - Benchmarks for the prototype gallery's ideas strip (App.futurePrototypesTable in assets/js/pages/gallery.js, which now delegates to App.ideasView). |
+| glossary.test.js | 65 | tests/unit/glossary.test.js - The Glossary page, modules/glossary/. |
 | ideas/render.test.js | 166 | tests/unit/ideas/render.test.js - The prototype ideas board (docs/plan/70-PROTOTYPE-IDEAS.md). |
 | links.test.js | 203 | tests/unit/links.test.js - The typed knowledge graph, resolved. |
 | pci/ixopay.test.js | 81 | tests/unit/pci/ixopay.test.js - Benchmarks for the PCI prototype's mock IXOPAY client (assets/js/pages/pci/ixopay.js). |
-| platform/knowledge.test.js | 187 | tests/unit/platform/knowledge.test.js - The stores the capability catalogue could not show. |
+| platform/knowledge.test.js | 190 | tests/unit/platform/knowledge.test.js - The stores the capability catalogue could not show. |
 | platform/render.test.js | 191 | tests/unit/platform/render.test.js - Benchmarks for one capability as a card (App.platformCards in assets/js/pages/platform/cards.js). |
 | platform/views.test.js | 216 | tests/unit/platform/views.test.js - The three top-level views (App.platformViews in assets/js/pages/platform/views.js). |
 | portal-review/model.test.js | 286 | tests/unit/portal-review/model.test.js - The portal review board's model and its renderer (docs/plan/60-PORTAL-REVIEW.md). |
@@ -481,10 +492,10 @@ Shared fixtures and the budgets the gates read.
 | knowledge-budget.json | 52 | Declared allowances for knowledge decay, enforced by tests/checks/knowledge-drift.test.js against the generated supabase/knowledge-coverage.json. Same ratchet idiom as tests/reference-budget.json: each number is a CEILING, not a target, and a session that fixes rows lowers it in the same commit. The gates that came before this one check structure - that a vocabulary is documented, that a stored value renders, that the reference matches the code. This one checks CONTENT: whether what the system was told is still anchored, sourced and reachable. Four figures are already at 0 and are the interesting ones, because they are the promise being kept: every glossary term has a definition and a source, every journey stage has a source, every source document has a digest, and no finding claims a promotion with nothing behind it. Those must not rise. The rest are the honest backlog, and docs/HANDOVER-CONTEXT.md is the session that closes them. |
 | lib/repo.js | 33 | tests/lib/repo.js - Shared helpers for the benchmark suite. |
 | lib/roadmap.js | 93 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
-| page-weight-budget.json | 110 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
+| page-weight-budget.json | 114 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
 | size-budget.json | 114 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
-| surface-baseline.json | 882 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
+| surface-baseline.json | 914 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
 
@@ -536,7 +547,7 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 373 | Architecture How the portal fits together. |
-| CHANGELOG.md | 254 | Changelog All notable user-facing changes to LPIO, newest first. |
+| CHANGELOG.md | 266 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | DEVOPS.md | 206 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
@@ -553,11 +564,11 @@ Architecture, security, design, and the operating protocols.
 | ROADMAP-REVIEW.md | 172 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
 | ROADMAP.md | 309 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
 | SCREENSHOTS.md | 84 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
-| SECURITY.md | 110 | Security model This repository is public. |
+| SECURITY.md | 126 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
 | SPRINT-DELIVERY.md | 430 | Sprint delivery |
 | SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 38 | Current state Updated: 2026-11-10 (developer-readiness run in flight, phase 1 of 7) # In progress The developer-readiness run: a new developer starts Mon 16 Nov 2026 and Sprint 1 is 26-25. |
+| STATE.md | 40 | Current state Updated: 2026-11-17 (developer-readiness run: phases 1 to 3 done, phase 4 under way) # In progress The developer-readiness run. |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 

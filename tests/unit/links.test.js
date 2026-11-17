@@ -162,7 +162,7 @@ test("each anchored type addresses its own row, not its module's default", () =>
   // to #capability-<id>, because that is what the platform module does
   // for its primary entity.
   const cases = {
-    term: /modules\/platform\/index\.html#term-x$/,
+    term: /modules\/glossary\/index\.html#term-x$/,
     stage: /modules\/platform\/index\.html#stage-x$/,
     area: /modules\/platform\/index\.html#area-x$/,
     capability: /modules\/platform\/index\.html#capability-x$/,

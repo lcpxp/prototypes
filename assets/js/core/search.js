@@ -86,7 +86,7 @@
       { keys: ["platform"], mod: "platform", label: "Platform", table: t.productCapabilities,
         cols: ["title", "summary"], name: "title", sub: "summary",
         badge: "maturity", badgeType: "status", entity: "capability" },
-      { keys: ["platform"], mod: "platform", label: "Glossary", table: t.domainTerms,
+      { keys: ["glossary"], mod: "glossary", label: "Glossary", table: t.domainTerms,
         cols: ["term", "expansion", "definition"], name: "term", sub: "definition",
         snippet: true, entity: "term" },
       { keys: ["platform"], mod: "platform", label: "Journey stages", table: t.journeyStages,

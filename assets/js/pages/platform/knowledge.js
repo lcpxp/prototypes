@@ -173,20 +173,20 @@
   }
 
   // --- Glossary -----------------------------------------------------
+  // The terms have their own page, modules/glossary/, which is their one
+  // home: searchable, sectioned and the target of every term link. This
+  // section only points there, so a term is never drawn in two places.
   function glossaryHtml(data) {
-    var terms = (data.terms || []).slice().sort(function (a, b) {
-      return String(a.term).localeCompare(String(b.term));
-    });
-    if (!terms.length) return "";
-    var body = '<dl class="pk-glossary">' + terms.map(function (t) {
-      return '<div class="pk-term" id="term-' + esc(t.id) + '">' +
-        "<dt>" + esc(t.term) +
-        (t.expansion ? ' <span class="pk-expansion">' + esc(t.expansion) + "</span>" : "") +
-        (t.verified ? "" : ' <span class="badge tone-warn">unverified</span>') +
-        "</dt><dd>" + esc(t.definition) + "</dd></div>";
-    }).join("") + "</dl>";
+    var count = (data.terms || []).length;
+    if (!count) return "";
+    var mod = App.registry.modules.find(function (m) { return m.key === "glossary"; });
+    var reachable = mod && (!App.canAccess || App.canAccess(mod.key));
+    var body = reachable
+      ? '<p><a href="' + esc(App.moduleHref(mod)) + '">Open the glossary</a>: ' +
+        esc(String(count)) + " terms, searchable and grouped by subject.</p>"
+      : "<p>" + esc(String(count)) + " terms are kept on the Glossary page.</p>";
     return section("glossary", "Glossary",
-      "The LP and Merchant Portal terminology this material assumes.", body);
+      "The terminology this material assumes.", body);
   }
 
   // --- Facts --------------------------------------------------------
