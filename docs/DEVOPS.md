@@ -107,7 +107,8 @@ Tasks, and any state but the first.
 **Done** - when:
 
 - every criterion is ticked in Azure DevOps;
-- the owner has tested it on QA;
+- a small fix closes on the developer's evidence; anything bigger is
+  tested by the owner, largely on production once released;
 - the pull request is merged and linked;
 - the release version is set to the sprint code;
 - the risk assessment is completed for anything that reached production.

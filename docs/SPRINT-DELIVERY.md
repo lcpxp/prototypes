@@ -18,6 +18,11 @@ Three companions, one job each, cited rather than restated:
 - **docs/ROADMAP-PLAYBOOK.md** - the fields and the canonical operations;
   **docs/ROADMAP-INTAKE.md** for contextualising anything new.
 
+The routines that run this file, each a command in `.claude/commands/`:
+`/sprint-stories` (Part A), `/sprint-ready <code>` before a sprint,
+`/sprint-close <code>` at its end (Part B), `/sprint-status [question]`
+at any time, and `/ado-push` for the hand-off (docs/DEVOPS.md).
+
 ## The two roadmaps, in one paragraph
 
 The **Product Roadmap** bands work by horizon and answers what is being
@@ -104,6 +109,8 @@ and an item that needs five stories is two items.
 - An open question becomes a `work_notes` question, never a criterion.
 - No durations, no capacity figures, no internal shorthand (Part C,
   Durations).
+- Never in a story: the name of the owner's planning hub, internal
+  politics, partner commercials, or named external individuals.
 
 ## Checking before anyone reads them
 
@@ -230,6 +237,9 @@ Sections, in order:
 3. **Blocked** - what, and by whom.
 4. **Slipped** - which allocations moved, by how many slots, and why.
 5. **Changed about the plan** - anything that altered the mapping itself.
+
+A summary written for leadership leads with the big items and is worded
+for what will land, not for what might slip; the slip is in section 4.
 
 ## Turning a relayed summary into an optimised one
 
@@ -382,6 +392,10 @@ is wrong, not that the bound is. Fix the mapping. The checks view lists
 everything else the plan still needs (Part D); after a mapping pass it
 should hold no `fix` rows.
 
+Nothing is written to the plan until the owner has approved the board,
+shown as images. When a sprint has room, look beyond Now for small,
+ready items before leaving capacity unused.
+
 ## Re-mapping when the belt shifts
 
 1. Retire the affected allocations - set `retired_at` and a `resolution`.
@@ -431,6 +445,9 @@ orders.
   note is the undo.
 - Do not hand-edit `priority` on a row that is on the plan. Change the
   plan - its slot or sequence - and sync. The sprint decides the order.
+- When two streams or items compete for the same place, settle it by
+  pairwise comparison with the owner: one pair, one question, until the
+  order is total.
 
 The roadmap page's Now band orders by priority (docs/ROADMAP.md,
 Layouts), so after a sync it reads in sprint order, and the run-on into

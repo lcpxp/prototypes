@@ -351,6 +351,7 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20261117090000_restricted_accounts.sql | 82 | Restricted accounts (2026-11-17). |
 | 20261117100000_restricted_accounts_explicit_denials.sql | 34 | Restricted accounts: explicit denials as well (2026-11-17). |
 | 20261117120000_glossary_module.sql | 53 | ------------------------------------------------------------- Glossary module (17 Nov 2026). |
+| 20261117140000_context_completeness_checks.sql | 300 | ------------------------------------------------------------- Context completeness checks on the plan (17 Nov 2026). |
 
 ### supabase/schema/
 
@@ -371,7 +372,7 @@ Schema, one file per domain, run in lexical order.
 | 37_sprint_delivery.sql | 321 | ------------------------------------------------------------------ |
 | 38_sprint_handoff.sql | 328 | ------------------------------------------------------------------ |
 | 39_ado_push.sql | 350 | ------------------------------------------------------------------ |
-| 39_sprint_checks.sql | 319 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
+| 39_sprint_checks.sql | 381 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
@@ -391,7 +392,7 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 | knowledge-coverage.json | 129 |  |
 | policies.sql | 636 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1894 |  |
+| schema-snapshot.json | 1898 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -434,6 +435,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | call-extract.test.js | 156 | tests/unit/call-extract.test.js - Benchmarks for the call-site extractor (scripts/extract-calls.js), inventory C of docs/plan/20-API-REFERENCE.md. |
 | console-tools.test.js | 89 | tests/unit/console-tools.test.js - Benchmarks for the High risk partner setup tool in assets/js/core/console-tools.js. |
 | coverage-reconcile.test.js | 278 | tests/unit/coverage-reconcile.test.js - Benchmarks for the coverage arithmetic in scripts/gen-coverage.js. |
+| dashboard/access.test.js | 51 | tests/unit/dashboard/access.test.js - The dashboard names only what its viewer can open. |
 | dashboard/cards.test.js | 278 | tests/unit/dashboard/cards.test.js - The dashboard's four card sections (docs/plan/50-DASHBOARD.md). |
 | dashboard/strip.test.js | 164 | tests/unit/dashboard/strip.test.js - The dashboard's headline strip (docs/plan/50-DASHBOARD.md). |
 | detail.test.js | 199 | tests/unit/detail.test.js - The completeness contract. |
@@ -550,8 +552,8 @@ Architecture, security, design, and the operating protocols.
 | CHANGELOG.md | 266 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
-| DEVOPS.md | 206 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
-| ESTIMATION.md | 99 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
+| DEVOPS.md | 207 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
+| ESTIMATION.md | 106 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
 | KNOWLEDGE-MODEL.md | 230 | The knowledge model Why the roadmap and platform knowledge are shaped the way they are. |
@@ -563,12 +565,12 @@ Architecture, security, design, and the operating protocols.
 | ROADMAP-PLAYBOOK.md | 306 | Roadmap playbook The operating manual for the roadmap: the model, every field, the copy-paste operations and the quick-capture recipe. |
 | ROADMAP-REVIEW.md | 172 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
 | ROADMAP.md | 309 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
-| SCREENSHOTS.md | 84 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
+| SCREENSHOTS.md | 91 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
 | SECURITY.md | 126 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINT-DELIVERY.md | 430 | Sprint delivery |
+| SPRINT-DELIVERY.md | 473 | Sprint delivery |
 | SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 40 | Current state Updated: 2026-11-17 (developer-readiness run: phases 1 to 3 done, phase 4 under way) # In progress The developer-readiness run. |
+| STATE.md | 38 | Current state Updated: 2026-11-17 (developer-readiness run: story context review done) # In progress Developer-readiness run (developer started 16 Nov 2026); Sprint Roadmap live from 26-24. |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
@@ -603,7 +605,7 @@ Repository root.
 | .githooks/pre-commit | 29 | Pre-commit gate. Fast, zero dependencies. |
 | .gitignore | 24 | Local configuration containing Supabase keys. Never commit. |
 | .gitmessage | 12 | <type>: <imperative summary, max 60 chars> |
-| CLAUDE.md | 275 |  |
+| CLAUDE.md | 277 |  |
 | README.md | 29 | LPIO A login-gated project hub: dashboard, API reference material and prototypes, organised as modules around a central dashboard. |
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |

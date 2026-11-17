@@ -189,6 +189,8 @@ half-finished change.
   is what makes the Now column the conveyor belt between the Product
   Roadmap and the Sprint Roadmap. /sprint-stories prepares a sprint:
   readiness checks, stories confirmed per workstream, packs printed.
+  /sprint-ready, /sprint-close, /sprint-status and /ado-push run the
+  rest of the loop.
   Database writes only; the repo does not change.
 - New prototype: create the page under modules/prototypes/, follow
   the script include order above, then insert a registry row into the

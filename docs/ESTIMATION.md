@@ -96,3 +96,10 @@ After every sprint, at the close (docs/SPRINT-DELIVERY.md Part B):
 Each sprint also carries a short, ordered **pull-forward list**: the
 next ready stories beyond its capacity, so a sprint that goes faster
 than planned never stalls waiting for a plan.
+
+**Squeeze and spill.** Load each sprint full, past its figure if the
+work is ready, and never trim a plan to land on an exact number: what is
+left at the end opens the next sprint. A developer working through an AI
+assistant reads a story as about a third less complex than a hand-built
+estimate, and carries about one and a half times one developer's load;
+the capacity figure already assumes it, so it is not applied twice.

@@ -16,9 +16,16 @@ bucket, not in a document, not in a note. The table refuses a
 production row that is not marked masked, and the check below runs
 before anything is uploaded.
 
+## Who makes them
+
+The session makes every image a story needs: a mockup or a render it
+generates itself. The owner is never asked for a screenshot. Where an
+image cannot be generated, the story goes without one; a picture that
+cannot be made is unlikely to matter.
+
 ## Three ways an image is made
 
-1. **Capture from QA with demo data.** The default. A demo data kit on
+1. **Capture from QA with demo data,** when the session can reach QA. A demo data kit on
    QA - demo partners, merchants, people, test bank details and
    applications at each stage, with obviously fictional names - means a
    capture needs no masking.
