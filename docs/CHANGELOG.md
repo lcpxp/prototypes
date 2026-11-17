@@ -12,6 +12,11 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Access: new accounts start restricted to Platform, Integrations and API
+  reference, and see none of the owner's working material - draft API
+  specs, planned capabilities, integration notes or the header tools.
+  An admin grants more on the Users page, where the account shows as
+  restricted.
 - A group icon in the nav, after EU Acquirer admin, opens a copyable console
   snippet for setting up a new high risk partner in the partner portal, with
   a handover prompt for reading its output.

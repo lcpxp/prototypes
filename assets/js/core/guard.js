@@ -40,9 +40,11 @@
     return session;
   })();
 
-  // Load the signed-in user's role and module grants once. A module
-  // is allowed unless an explicit module_access row denies it, and
-  // admins are allowed everything - mirroring the database rules.
+  // Load the signed-in user's role and module grants once, mirroring
+  // has_module_access() in supabase/policies.sql: admins are allowed
+  // everything; an open account is allowed a module unless a row denies
+  // it; a restricted account (a '*' row denying everything) is allowed
+  // only the modules a row explicitly grants. docs/SECURITY.md.
   //
   // Grants are cached in sessionStorage so page-to-page navigation
   // renders without waiting on the network; every load revalidates
@@ -66,7 +68,7 @@
   }
 
   async function fetchAccess(session) {
-    var access = { admin: false, denied: {} };
+    var access = { admin: false, denied: {}, allowed: {}, restricted: false };
     var results = await Promise.all([
       App.db.from(App.registry.tables.profiles)
         .select("role")
@@ -80,17 +82,26 @@
       access.admin = results[0].data.role === App.registry.roles.admin;
     }
     (results[1].data || []).forEach(function (row) {
-      if (!row.allowed) access.denied[row.module_key] = true;
+      if (row.module_key === "*") {
+        if (!row.allowed) access.restricted = true;
+      } else if (row.allowed) {
+        access.allowed[row.module_key] = true;
+      } else {
+        access.denied[row.module_key] = true;
+      }
     });
     return access;
   }
 
   App.canAccess = function (key) {
-    return !App.access || App.access.admin || !App.access.denied[key];
+    var a = App.access;
+    if (!a || a.admin) return true;
+    if (a.denied[key]) return false;
+    return !a.restricted || !!(a.allowed && a.allowed[key]);
   };
 
   App.accessReady = App.requireAuth.then(function (session) {
-    App.access = { admin: false, denied: {} };
+    App.access = { admin: false, denied: {}, allowed: {}, restricted: false };
     if (!session) return App.access;
 
     var refreshed = fetchAccess(session).then(function (access) {
@@ -115,7 +126,7 @@
     // The session check itself failed. Fall back to the safe default -
     // no admin, nothing denied - so the pages waiting on this still
     // start; RLS gates the data whatever this object says.
-    App.access = { admin: false, denied: {} };
+    App.access = { admin: false, denied: {}, allowed: {}, restricted: false };
     return App.access;
   });
 

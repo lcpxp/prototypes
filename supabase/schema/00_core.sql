@@ -30,6 +30,17 @@ begin
     new.email,
     coalesce(new.raw_user_meta_data ->> 'display_name', split_part(new.email, '@', 1))
   );
+  -- Every new account starts restricted: it sees Platform, Integrations
+  -- and the API reference and nothing else until an admin grants more
+  -- on the Users page. Written in the same statement as the profile, so
+  -- there is no moment when a new account can read everything.
+  -- has_module_access() in policies.sql reads these rows.
+  insert into public.module_access (user_id, module_key, allowed)
+  values (new.id, '*', false),
+         (new.id, 'platform', true),
+         (new.id, 'integrations', true),
+         (new.id, 'reference', true)
+  on conflict (user_id, module_key) do nothing;
   return new;
 end;
 $$;

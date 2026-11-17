@@ -56,9 +56,20 @@ $$;
 revoke execute on function public.is_admin() from public, anon;
 grant execute on function public.is_admin() to authenticated;
 
--- Module grant check used by content-table policies. Absence of a
--- module_access row means allowed; admins always pass. SECURITY
--- DEFINER so the lookup does not recurse through RLS.
+-- Module grant check used by content-table policies. Admins always
+-- pass. Two modes, both held in module_access and written only by
+-- admins:
+--   * open (the default for accounts made before 2026-11-17): a module
+--     is allowed unless a row denies it;
+--   * restricted: a row ('*', allowed = false) denies everything, and
+--     only modules with an allowed = true row pass. New accounts start
+--     restricted (handle_new_user in 00_core.sql), so a module added
+--     later stays hidden from them until an admin grants it.
+-- 'internal' is a key with no page of its own: it covers the owner's
+-- working material on otherwise shared pages - draft API specs, planned
+-- capabilities, integration notes and the header tools. Restricted
+-- accounts do not have it. docs/SECURITY.md is the one home for this.
+-- SECURITY DEFINER so the lookup does not recurse through RLS.
 create or replace function public.has_module_access(key text)
 returns boolean
 language sql
@@ -66,9 +77,21 @@ stable
 security definer
 set search_path = public
 as $$
-  select public.is_admin() or not exists (
-    select 1 from public.module_access
-    where user_id = (select auth.uid()) and module_key = key and not allowed
+  select public.is_admin() or (
+    not exists (
+      select 1 from public.module_access
+      where user_id = (select auth.uid()) and module_key = key and not allowed
+    )
+    and (
+      not exists (
+        select 1 from public.module_access
+        where user_id = (select auth.uid()) and module_key = '*' and not allowed
+      )
+      or exists (
+        select 1 from public.module_access
+        where user_id = (select auth.uid()) and module_key = key and allowed
+      )
+    )
   );
 $$;
 
@@ -137,29 +160,31 @@ declare
 begin
   for entry in
     select * from (values
-      ('api_specs',            '(select public.has_module_access(''reference''))'),
-      ('api_endpoints',        '(select public.has_module_access(''reference''))'),
-      ('api_tags',             '(select public.has_module_access(''reference''))'),
-      ('api_topics',           '(select public.has_module_access(''reference''))'),
+      ('api_specs',            '(select public.has_module_access(''reference'')) and (status is distinct from ''draft'' or (select public.has_module_access(''internal'')))'),
+      ('api_endpoints',        '(select public.has_module_access(''reference'')) and exists (select 1 from public.api_specs s where s.id = api_endpoints.spec_id)'),
+      ('api_tags',             '(select public.has_module_access(''reference'')) and exists (select 1 from public.api_specs s where s.id = api_tags.spec_id)'),
+      ('api_topics',           '(select public.has_module_access(''reference'')) and exists (select 1 from public.api_specs s where s.id = api_topics.spec_id)'),
       ('integrations',         '(select public.has_module_access(''integrations''))'),
       -- The estate behind each integration: what it can do, and what is
       -- still unanswered about it. Same grant as the integrations row
       -- they hang off. Declared 2026-09-15; they were applied live on
       -- 2026-09-07 and never written back here.
       ('integration_capabilities', '(select public.has_module_access(''integrations''))'),
-      ('integration_notes',        '(select public.has_module_access(''integrations''))'),
-      -- portal_links is the one content table with no owning module:
-      -- it drives icon buttons in the top nav, which every signed-in
-      -- user sees on every page, so there is no grant to gate the read
-      -- on. Writes stay admin-only like everything else here.
-      ('portal_links',         'true'),
+      ('integration_notes',        '(select public.has_module_access(''integrations'')) and (select public.has_module_access(''internal''))'),
+      -- portal_links drives the owner's tool buttons in the top nav.
+      -- It has no page of its own, so it reads behind the 'internal'
+      -- key: open accounts see the tools, restricted ones do not.
+      -- API detail (endpoints, tags, topics) follows its spec, so a
+      -- draft spec hidden from a restricted account takes its detail
+      -- with it; work_areas also serves the Platform page's sections.
+      ('portal_links',         '(select public.has_module_access(''internal''))'),
       ('prototypes',           '(select public.has_module_access(''prototypes''))'),
       ('future_prototypes',    '(select public.has_module_access(''prototypes''))'),
       -- work_areas and work_items are shared: readable behind either
       -- the roadmap or the backlog grant, since both modules read them
       -- (the roadmap board and the backlog table are two views of the
       -- same work_items rows).
-      ('work_areas',             '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
+      ('work_areas',             '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog'') or public.has_module_access(''platform''))'),
       ('roadmap_categories',     '(select public.has_module_access(''roadmap''))'),
       ('roadmap_milestones',     '(select public.has_module_access(''roadmap''))'),
       ('work_documents',         '(select public.has_module_access(''backlog''))'),
@@ -172,7 +197,7 @@ begin
       ('link_kinds',             '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
       ('link_entity_types',      '(select public.has_module_access(''roadmap'') or public.has_module_access(''backlog''))'),
       ('work_notes',             '(select public.has_module_access(''backlog''))'),
-      ('product_capabilities', '(select public.has_module_access(''platform''))'),
+      ('product_capabilities', '(select public.has_module_access(''platform'')) and (maturity is distinct from ''planned'' or (select public.has_module_access(''internal'')))'),
       ('domain_terms',         '(select public.has_module_access(''platform''))'),
       ('journey_stages',       '(select public.has_module_access(''platform''))'),
       -- The Sprint Roadmap reads behind the roadmap grant. sprint_plan is

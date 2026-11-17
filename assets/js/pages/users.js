@@ -47,9 +47,14 @@
       options + "</select>";
   }
 
-  function toggleCell(profile, mod, deniedMap) {
+  // Mirrors has_module_access(): a restricted account ('*' denied) is
+  // allowed only what a row grants; an open one, whatever no row denies.
+  function toggleCell(profile, mod, grants) {
     var isAdmin = profile.role === App.registry.roles.admin;
-    var allowed = isAdmin || !deniedMap[profile.id + ":" + mod.key];
+    var key = profile.id + ":" + mod.key;
+    var allowed = isAdmin || (grants.restricted[profile.id]
+      ? !!grants.allowed[key]
+      : !grants.denied[key]);
     return '<label class="toggle"><input type="checkbox"' +
       (allowed ? " checked" : "") + (isAdmin ? " disabled" : "") +
       ' data-user="' + App.escape(profile.id) +
@@ -83,7 +88,7 @@
     }));
   }
 
-  function render(profiles, deniedMap) {
+  function render(profiles, grants) {
     var admin = App.access.admin;
     var modules = App.registry.modules;
     var trailing = trailingColumns(profiles);
@@ -101,10 +106,12 @@
       body += '<tr id="user-' + App.escape(profile.id) + '"><td>' +
         App.escape(profile.display_name || "") + "</td>" +
         '<td class="mono">' + App.escape(profile.email || "") + "</td>" +
-        "<td>" + (admin ? roleCell(profile) : roleBadge(profile.role)) + "</td>";
+        "<td>" + (admin ? roleCell(profile) : roleBadge(profile.role)) +
+        (admin && grants.restricted[profile.id] ? ' <span class="badge">restricted</span>' : "") +
+        "</td>";
       if (admin) {
         modules.forEach(function (mod) {
-          body += "<td>" + toggleCell(profile, mod, deniedMap) + "</td>";
+          body += "<td>" + toggleCell(profile, mod, grants) + "</td>";
         });
       }
       trailing.forEach(function (col) {
@@ -144,12 +151,16 @@
       return;
     }
 
-    var deniedMap = {};
+    var grants = { denied: {}, allowed: {}, restricted: {} };
     (results[1].data || []).forEach(function (row) {
-      if (!row.allowed) deniedMap[row.user_id + ":" + row.module_key] = true;
+      if (row.module_key === "*") {
+        if (!row.allowed) grants.restricted[row.user_id] = true;
+        return;
+      }
+      grants[row.allowed ? "allowed" : "denied"][row.user_id + ":" + row.module_key] = true;
     });
 
-    render(results[0].data, deniedMap);
+    render(results[0].data, grants);
     App.deepLinkScroll();
   }
 

@@ -202,3 +202,28 @@ test("every SECURITY DEFINER function is revoked, or is an accepted helper", () 
     "authenticated;` to policies.sql and apply it as a migration - or, if it " +
     `must be callable, add it to CALLABLE here with the reason.`);
 });
+
+test("new accounts start restricted, and the owner's working material reads behind 'internal'", () => {
+  // A restricted account sees only the modules it is granted, so a
+  // module added later cannot leak to it by default. The grant is
+  // written by the same trigger that creates the profile, so there is
+  // no window in which a new account reads everything. docs/SECURITY.md.
+  const core = read("supabase/schema/00_core.sql");
+  const fn = core.slice(core.indexOf("function public.handle_new_user()"));
+  assert.match(fn.slice(0, fn.indexOf("$$;")), /insert into public\.module_access[\s\S]*'\*', false/,
+    "handle_new_user must create every new account restricted (a '*' row with allowed = false).");
+  const policies = read("supabase/policies.sql");
+  const has = policies.slice(policies.indexOf("function public.has_module_access("));
+  assert.match(has.slice(0, has.indexOf("$$;")), /module_key = '\*' and not allowed/,
+    "has_module_access must honour the restricted ('*') row.");
+  const reads = {
+    portal_links: /'portal_links',\s*'\(select public\.has_module_access\(''internal''\)\)'/,
+    api_specs: /'api_specs',[^\n]*''draft''[^\n]*''internal''/,
+    product_capabilities: /'product_capabilities',[^\n]*''planned''[^\n]*''internal''/,
+    integration_notes: /'integration_notes',[^\n]*''internal''/,
+    api_endpoints: /'api_endpoints',[^\n]*public\.api_specs/,
+  };
+  for (const [table, re] of Object.entries(reads)) {
+    assert.match(policies, re, `${table} must read behind the restricted-account rule.`);
+  }
+});

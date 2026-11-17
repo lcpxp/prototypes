@@ -81,9 +81,24 @@ error, when re-testing this).
 ## Account and access practice
 
 - Accounts are created by an admin in the Supabase dashboard
-  (Authentication, then Users, then Add user). Self-service signup is
-  not offered by the portal and should remain disabled in the
-  Supabase auth settings for this project.
+  (Authentication, then Users, then Add user, then Create new user, with
+  a password and Auto Confirm ticked). The login page is password only,
+  so an emailed invite link has nowhere to land. Self-service signup is
+  not offered by the portal and should remain disabled in the Supabase
+  auth settings for this project.
+- **New accounts start restricted.** The trigger that creates the
+  profile also writes the account's module_access rows: a `'*'` row
+  that denies everything, and grants for Platform, Integrations and API
+  reference. A restricted account is allow-list based: it sees only
+  modules a row grants, so a module added later stays hidden from it.
+  An admin grants more with the toggles on the Users page, which marks
+  the account "restricted". To make an account open instead, delete its
+  `'*'` row.
+- **'internal' is the owner's working material** on otherwise shared
+  pages: draft API specs (and their endpoints, tags and topics),
+  planned capabilities, integration notes and the header tool buttons.
+  It has no page and no toggle; restricted accounts do not have it.
+  Accounts made before 2026-11-17 are open and keep everything.
 - Grant the admin role sparingly, via SQL:
   update public.profiles set role = 'admin' where email = '...';
 - Remove leavers in the Supabase dashboard; the profile row cascades.
@@ -94,7 +109,8 @@ error, when re-testing this).
 
 - Content is only as private as the weakest RLS policy. Review
   policies.sql whenever the schema changes.
-- Access is controlled per module, not per document: the
+- Access is controlled per module, not per document (the one
+  exception is the 'internal' key above): the
   module_access table and has_module_access() gate reads of specs,
   endpoints, integrations, prototypes, roadmap and backlog rows
   (including work-item delivery phases), ingested work documents and
