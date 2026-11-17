@@ -241,6 +241,12 @@ Sections, in order:
 A summary written for leadership leads with the big items and is worded
 for what will land, not for what might slip; the slip is in section 4.
 
+Each end is also a **snapshot**: `select sprint_plan_snapshot('<label>');`
+stores the plan as it stands - every allocation, its points and status,
+and the load - as a `work_documents` row tagged `snapshot`. Take one at
+sprint start, at close and after any re-map; read in order, they show
+how the plan moved.
+
 ## Turning a relayed summary into an optimised one
 
 The owner's account arrives as bullets with status sub-bullets, at mixed

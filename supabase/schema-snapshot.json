@@ -71,6 +71,7 @@
     "sprint_code_for_slot(p_slot integer)",
     "sprint_plan_project()",
     "sprint_plan_project_trigger()",
+    "sprint_plan_snapshot(p_label text)",
     "sprint_plan_sync_order()",
     "sprint_story_fields(p_id uuid)",
     "sprint_story_pack(p_id uuid, p_part text)",
@@ -457,6 +458,10 @@
     {
       "name": "planned_spec_status",
       "version": "20261117143819"
+    },
+    {
+      "name": "sprint_plan_snapshot",
+      "version": "20261117144032"
     }
   ],
   "policies": [

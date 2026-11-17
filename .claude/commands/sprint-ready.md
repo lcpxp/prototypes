@@ -22,7 +22,8 @@ run through the Supabase MCP.
 3. Points against capacity (`v_sprint_plan_load`): loaded full, with an
    ordered pull-forward list.
 4. Build the payload: `select ado_push_payload();`.
-5. Write the start-of-sprint summary as a `work_documents` row of kind
+5. Take a snapshot of the plan: `select sprint_plan_snapshot('<code> start');`.
+6. Write the start-of-sprint summary as a `work_documents` row of kind
    `sprint`, linked `about` each stream, ending with a one-line sprint
    goal for Azure DevOps.
 
