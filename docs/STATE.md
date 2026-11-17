@@ -22,7 +22,8 @@ live on main; the branch merges to main as work lands. Decisions:
    sprints exist and stories are confirmed.
 4. Answer the `ctx_` findings in v_sprint_plan_checks as each sprint
    comes within two sprints, in proportion to each story's size.
-5. Inbound API deep review, then Sprint Roadmap snapshots.
+5. Sprint Roadmap snapshots (the Inbound API review is done: MVP1 is two
+   routes, marked in the draft spec).
 6. Last: a visual review of the Sprint Roadmap as two images - this week
    with sprint 1, and sprint 2 with sprint 3.
 
