@@ -35,11 +35,22 @@ begin
   -- on the Users page. Written in the same statement as the profile, so
   -- there is no moment when a new account can read everything.
   -- has_module_access() in policies.sql reads these rows.
+  -- The explicit denials repeat what the '*' row already says, for
+  -- page code built before 2026-11-17, which reads denials only and
+  -- would otherwise list those modules in the nav (the data stays
+  -- hidden either way).
   insert into public.module_access (user_id, module_key, allowed)
   values (new.id, '*', false),
          (new.id, 'platform', true),
          (new.id, 'integrations', true),
-         (new.id, 'reference', true)
+         (new.id, 'reference', true),
+         (new.id, 'roadmap', false),
+         (new.id, 'sprints', false),
+         (new.id, 'backlog', false),
+         (new.id, 'app-review', false),
+         (new.id, 'portal-review', false),
+         (new.id, 'prototypes', false),
+         (new.id, 'users', false)
   on conflict (user_id, module_key) do nothing;
   return new;
 end;

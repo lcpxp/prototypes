@@ -441,6 +441,10 @@
     {
       "name": "restricted_accounts",
       "version": "20261117094850"
+    },
+    {
+      "name": "restricted_accounts_explicit_denials",
+      "version": "20261117095602"
     }
   ],
   "policies": [
