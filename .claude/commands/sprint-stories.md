@@ -31,12 +31,20 @@ Run it in this order:
 4. **Pull the sources** for each stream, as Part A lists them, including
    its open notes, its existing stories, `external_ref` and its
    allocation notes, which carry the owner's directions on placement.
+   Read the code too: if the owner has shared code newer than
+   `sprint_plan.code_snapshot`, re-read every claim against it and move
+   the snapshot on; if the only code to hand is older than the sprint
+   being drafted, ask the owner for the latest before drafting.
 5. **Draft** each stream to Part A. Re-check drafted stories against the
    current summary and details. Leave confirmed and frozen stories alone
    unless the owner asks.
 6. **Check** every draft as Part A, "Checking before anyone reads them",
-   sets out, and fix what it finds before anything is written. A
-   placement the owner directed is never moved by the check.
+   sets out, and fix what it finds before anything is written: the
+   context completeness check in proportion to each story's size (the
+   `ctx_` findings and `tech_notes_stale` in `v_sprint_plan_checks`), and
+   the accuracy re-check of every claim without a file reference and
+   every count. A placement the owner directed is never moved by the
+   check.
 7. **Write** through the MCP as `drafted`: `user_stories` and
    `stories_status` together, then one `decision` note per stream naming
    what was written. Where a set is overwritten, the previous JSON goes in
