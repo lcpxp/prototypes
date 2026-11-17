@@ -128,6 +128,27 @@ every row, with each fix recorded in a `decision` note that is its undo:
 7. **Dead links and capabilities.** No live `blocks` link points at a
    closed row, and what a story says about today's system matches
    `product_capabilities`.
+8. **Context completeness.** Could the developer's AI build and test the
+   story from it, its notes and its linked resources alone, without
+   guessing and without coming back? Light means few words, not missing
+   facts. Check eight gaps, and fix or ask about each:
+   - a set ("all", "every", "missing", "as agreed") is listed, or defined
+     against a named source with the gap worked out;
+   - every value is given (wording, threshold, default, label, address),
+     or is a `question` note, never a criterion;
+   - what the story says the system does today is confirmed in the
+     current code, file:line in the developer note;
+   - downstream effects are named (contract, KYC form, DaoPay payload and
+     SFTP file, screening, CRM, EIT, Unity), and what must not change;
+   - outside rules (schemes, ISO, partner APIs) are fetched and cited;
+   - a UI or layout change has a picture: a mockup or render the session
+     generates itself, never a screenshot asked of the owner;
+   - there is a concrete test case: a named country, a value, a payload;
+   - where a developer might go too far, the story says what not to touch.
+   Long material (a full list, a sample payload, a patch) goes in a linked
+   document, and only then does the note say "Additional resources and
+   documentation available". Run this before a story is written as
+   `drafted`, and again before it is confirmed.
 
 ## Confirming and freezing
 
