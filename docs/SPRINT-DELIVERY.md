@@ -145,10 +145,15 @@ every row, with each fix recorded in a `decision` note that is its undo:
      generates itself, never a screenshot asked of the owner;
    - there is a concrete test case: a named country, a value, a payload;
    - where a developer might go too far, the story says what not to touch.
-   Long material (a full list, a sample payload, a patch) goes in a linked
+   Depth follows risk, not the template: a one-place fix needs what is
+   wrong, where, the fix and one case to test, and nothing more; the full
+   eight apply as a story touches data, contracts, payloads, partners or
+   outside rules. Writing more than a story needs is a gap too. Long
+   material (a full list, a sample payload, a patch) goes in a linked
    document, and only then does the note say "Additional resources and
    documentation available". Run this before a story is written as
-   `drafted`, and again before it is confirmed.
+   `drafted`, and again before it is confirmed. `v_sprint_plan_checks`
+   flags the gaps it can see, scaled by points (the `ctx_` findings).
 
 ## Confirming and freezing
 

@@ -52,6 +52,13 @@ written as (
 sf as (
   select * from public.sprint_story_fields() where is_build
 ),
+-- Items with a linked document: a full list or a sample travels there,
+-- so a story that points at one need not enumerate in its criteria.
+linked as (
+  select distinct k.to_id as id
+    from public.knowledge_links k
+   where k.from_type = 'document' and k.to_type = 'work_item' and k.valid_to is null
+),
 found as (
   -- The Now column would list this row in a different place from the
   -- sprint board.
@@ -243,6 +250,61 @@ found as (
      and (ws.user_stories is null
           or (select count(*) from jsonb_array_elements(ws.user_stories) as e(story)
                cross join lateral jsonb_array_elements(e.story->'criteria')) not between 3 and 5)
+  union all
+  -- Context completeness (docs/SPRINT-DELIVERY.md Part A, step 8),
+  -- proportionate to the story's size: depth follows risk, so a 1-point
+  -- fix is held only to the two checks that apply at any size, and the
+  -- rest switch on as the points rise. Advisory: each names a gap a
+  -- session fills, never content to add for its own sake.
+  select 'ctx_set_unlisted', 'write', s.work_item_id, s.workstream_title, s.item_title,
+         'Story ' || string_agg(s.n::text, ', ' order by s.n) ||
+         ' names a set ("all", "every", "missing", "as agreed") that no criterion lists and no linked document holds.'
+    from sf s
+   where s.work_item_id not in (select id from linked)
+     and exists (select 1 from unnest(s.criteria) c
+                  where c ~* '\m(all|every|each type|missing|the full list|as agreed|the relevant)\M')
+     and not exists (select 1 from unnest(s.criteria) c
+                      where c ~ ':' or c ~ ',[^,]+,' or c ~* '\m(two|three|four|five|six|seven|eight|nine|ten)\M')
+   group by s.work_item_id, s.workstream_title, s.item_title
+  union all
+  select 'ctx_value_open', 'write', s.work_item_id, s.workstream_title, s.item_title,
+         'Story ' || string_agg(s.n::text, ', ' order by s.n) ||
+         ' leaves a value to be agreed in a criterion; give the value, or make it a question note.'
+    from sf s
+   where exists (select 1 from unnest(s.criteria) c where c ~* 'to be (agreed|confirmed|decided)|\mTBC\M')
+   group by s.work_item_id, s.workstream_title, s.item_title
+  union all
+  select 'ctx_no_example', 'write', s.work_item_id, s.workstream_title, s.item_title,
+         'Story ' || string_agg(s.n::text, ', ' order by s.n) ||
+         ' (2 points or more) has no concrete case to test with: a value, a named example or a test.'
+    from sf s
+   where s.points >= 2
+     and not exists (select 1 from unnest(s.criteria) c where c ~* '\mtest|for example|e\.g\.|\d|"')
+   group by s.work_item_id, s.workstream_title, s.item_title
+  union all
+  select 'ctx_no_code_ref', 'write', s.work_item_id, s.workstream_title, s.item_title,
+         'Story ' || string_agg(s.n::text, ', ' order by s.n) ||
+         ' (3 points or more) cites no file for today''s behaviour and points to no linked resource.'
+    from sf s
+   where s.points >= 3
+     and coalesce(s.technical_notes, '') !~* '\.(cs|ts|html|sql)\M|additional resources and documentation available'
+   group by s.work_item_id, s.workstream_title, s.item_title
+  union all
+  select 'ctx_no_out_of_scope', 'write', s.work_item_id, s.workstream_title, s.item_title,
+         'Story ' || string_agg(s.n::text, ', ' order by s.n) ||
+         ' (5 points or more) says nothing about what must not change.'
+    from sf s
+   where s.points >= 5 and cardinality(coalesce(s.out_of_scope, '{}')) = 0
+     and coalesce(s.technical_notes, '') !~* 'out of scope|leave [^.]* alone|not in scope|unchanged'
+     and not exists (select 1 from unnest(s.criteria) c where c ~* 'unchanged|as (it does )?today|stay')
+   group by s.work_item_id, s.workstream_title, s.item_title
+  union all
+  select 'ctx_over_written', 'fix', s.work_item_id, s.workstream_title, s.item_title,
+         'Story ' || string_agg(s.n::text, ', ' order by s.n) ||
+         ' carries a developer note over 900 characters; long material belongs in a linked document.'
+    from sf s
+   where length(coalesce(s.technical_notes, '')) > 900
+   group by s.work_item_id, s.workstream_title, s.item_title
 )
 select f.check_key, f.severity, f.work_item_id, f.workstream_title, f.title, f.detail,
        -- The sprint the finding belongs to (zero-indexed, as slots are),
@@ -257,7 +319,7 @@ revoke all on public.v_sprint_plan_checks from public, anon;
 grant select on public.v_sprint_plan_checks to authenticated;
 
 comment on view public.v_sprint_plan_checks is
-  'What the Sprint Roadmap still needs, one row per finding. The plan: order, placement, unplaced, stream_empty, stream_not_now, not_an_item, dependency, thin, stories_missing, stories_drafted, load. The hand-off: ado_story_shape, ado_criteria_count, ado_no_purpose, ado_no_category, ado_sprint_missing, ado_changed, estimate_missing, tech_notes_stale, ado_not_pushed, ado_open_clarifications, ado_no_stream_feature. Severity fix, confirm or write; slot is the sprint the finding belongs to. Read at the start of every mapping pass and stories run (docs/SPRINT-DELIVERY.md, docs/DEVOPS.md).';
+  'What the Sprint Roadmap still needs, one row per finding. The plan: order, placement, unplaced, stream_empty, stream_not_now, not_an_item, dependency, thin, stories_missing, stories_drafted, load. The hand-off: ado_story_shape, ado_criteria_count, ado_no_purpose, ado_no_category, ado_sprint_missing, ado_changed, estimate_missing, tech_notes_stale, ado_not_pushed, ado_open_clarifications, ado_no_stream_feature. Context completeness, by story size: ctx_set_unlisted, ctx_value_open, ctx_no_example (2 points or more), ctx_no_code_ref (3 or more), ctx_no_out_of_scope (5 or more), ctx_over_written. Severity fix, confirm or write; slot is the sprint the finding belongs to. Read at the start of every mapping pass and stories run (docs/SPRINT-DELIVERY.md, docs/DEVOPS.md).';
 
 -- ---------------------------------------------------------------
 -- v_sprint_ledger: one row per item per sprint, for every sprint the
