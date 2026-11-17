@@ -138,7 +138,13 @@
       App.statusBadge(spec.status) +
       (family ? ' <span class="badge">' + App.escape(family.label) + "</span>" : "") +
       ' <span class="card-meta">' +
-      App.escape(spec.description || "") + "</span>";
+      App.escape(spec.description || "") + "</span>" +
+      // A planned spec is a design being built, not a working API: say so
+      // where it is read, and point at the badges that mark what comes first.
+      (spec.status === "planned"
+        ? '<p class="notice">Planned: the agreed design, not built yet. Each endpoint\'s ' +
+          "badge says whether it is in the first release or comes later.</p>"
+        : "");
     overview.innerHTML = App.referenceRender.specOverview(spec);
     current.servers = spec.servers || [];
 

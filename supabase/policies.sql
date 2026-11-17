@@ -66,7 +66,8 @@ grant execute on function public.is_admin() to authenticated;
 --     restricted (handle_new_user in 00_core.sql), so a module added
 --     later stays hidden from them until an admin grants it.
 -- 'internal' is a key with no page of its own: it covers the owner's
--- working material on otherwise shared pages - draft API specs, planned
+-- working material on otherwise shared pages - draft API specs (a
+-- planned spec, the agreed design being built, is not one), planned
 -- capabilities, integration notes and the header tools. Restricted
 -- accounts do not have it. docs/SECURITY.md is the one home for this.
 -- SECURITY DEFINER so the lookup does not recurse through RLS.

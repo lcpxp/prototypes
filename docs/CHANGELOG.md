@@ -12,6 +12,9 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- API reference: a spec can be planned - the agreed design being built -
+  and reads for anyone with the API reference, with a notice that it is
+  not built yet; drafts stay internal.
 - Glossary: a page of its own in the nav, holding card payments, PXP and
   LaunchPad terms in plain words, grouped by subject and searchable as you
   type. Term links and global search results now open it; the Platform

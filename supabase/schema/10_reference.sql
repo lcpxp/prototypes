@@ -16,7 +16,10 @@ create table if not exists public.api_specs (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   version text not null default '0.1.0',
-  status text not null default 'draft' check (status in ('draft', 'live', 'deprecated')),
+  -- draft: the owner's working material, behind 'internal'. planned: an
+  -- agreed design being built, readable with the API reference grant.
+  status text not null default 'draft'
+    constraint api_specs_status_check check (status in ('draft', 'planned', 'live', 'deprecated')),
   family text not null default 'other'
     check (family in ('launchpad', 'unity', 'integration', 'other')),
   description text,

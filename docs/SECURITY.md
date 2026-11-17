@@ -98,6 +98,9 @@ error, when re-testing this).
   pages: draft API specs (and their endpoints, tags and topics),
   planned capabilities, integration notes and the header tool buttons.
   It has no page and no toggle; restricted accounts do not have it.
+  A spec the team is building is set to `planned`, not `draft`: an agreed
+  design reads with the API reference grant, so the developer sees it
+  while the owner's drafts stay internal.
   Accounts made before 2026-11-17 are open and keep everything.
 - Grant the admin role sparingly, via SQL:
   update public.profiles set role = 'admin' where email = '...';

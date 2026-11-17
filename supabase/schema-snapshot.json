@@ -453,6 +453,10 @@
     {
       "name": "context_completeness_checks",
       "version": "20261117142141"
+    },
+    {
+      "name": "planned_spec_status",
+      "version": "20261117143819"
     }
   ],
   "policies": [
