@@ -168,6 +168,9 @@ as $$
 declare
   prof public.ado_profile%rowtype;
   body jsonb;
+  -- The code a story's notes were checked against when it names none
+  -- of its own: the plan's snapshot (docs/SPRINT-DELIVERY.md, step 9).
+  v_snap date := (select sp.code_snapshot from public.sprint_plan sp where sp.key = 'default');
 begin
   select * into prof from public.ado_profile where key = 'default';
   if not found then
@@ -217,7 +220,7 @@ begin
             coalesce('<p><strong>Dependencies</strong></p>' || public.ado_html('list', array(
               select 'Needs: ' || (d->>'title') || coalesce(' (' || (d->>'outside') || ')', '')
                 from jsonb_array_elements(r.needs) as d)), '') ||
-            coalesce(public.ado_notes_html(r.technical_notes, r.notes_snapshot), '') end,
+            coalesce(public.ado_notes_html(r.technical_notes, coalesce(r.notes_snapshot, v_snap)), '') end,
           'purpose', case when r.kind = 'story' then
             public.ado_html('div', array[r.purpose]) end,
           'scope', case when r.kind = 'story' then
@@ -233,7 +236,7 @@ begin
                             ' ({{ado:' || (d->>'key') || '}})', '')
               from jsonb_array_elements(r.needs) as d)) end,
           'technical_notes', case when r.kind = 'story' then
-            public.ado_notes_html(r.technical_notes, r.notes_snapshot) end,
+            public.ado_notes_html(r.technical_notes, coalesce(r.notes_snapshot, v_snap)) end,
           'effort', coalesce(r.points, 0))),
         'needs', (select coalesce(jsonb_agg(d->>'key'), '[]'::jsonb)
                     from jsonb_array_elements(r.needs) as d

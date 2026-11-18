@@ -478,6 +478,10 @@
     {
       "name": "bug_notes_in_repro_steps",
       "version": "20261118184034"
+    },
+    {
+      "name": "notes_dated_by_plan_snapshot",
+      "version": "20261118184528"
     }
   ],
   "policies": [
