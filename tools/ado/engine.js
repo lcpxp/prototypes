@@ -282,8 +282,9 @@
           });
         }, Promise.resolve());
       }).then(function () {
-        var team = base(p) + "/" + encodeURIComponent(p.team) + "/_apis/work/teamsettings/";
-        return Promise.all([get(team + "iterations?" + API), get(team + "teamfieldvalues?" + API)]);
+        var team = base(p) + "/" + encodeURIComponent(p.team) + "/_apis/work/teamsettings";
+        return Promise.all([get(team + "/iterations?" + API), get(team + "/teamfieldvalues?" + API),
+          get(team + "?" + API)]);
       }).then(function (r) {
         var paths = (r[0].value || []).map(function (i) { return i.path; });
         var wanted = {}, absent = {};
@@ -298,6 +299,21 @@
             ": these items go to the root iteration" : "", true);
         var areas = (r[1].values || []).map(function (v) { return v.value; });
         note("area " + p.area_path, areas.indexOf(p.area_path) > -1, "the team's areas: " + areas.join(", "));
+        // A bug is pushed as a backlog item in its own right, so the team
+        // must work bugs as requirements, or it lands on no backlog.
+        var settings = r[2] || {};
+        if (used.bug) {
+          note("bugs sit on the backlog beside backlog items", settings.bugsBehavior === "asRequirements",
+            "the team's setting is " + (settings.bugsBehavior || "unknown") +
+            ": set Working with bugs to Bugs are managed with requirements");
+        }
+        var shown = settings.backlogVisibilities || {};
+        ["Epic", "Feature"].forEach(function (level) {
+          if (used[level.toLowerCase()]) {
+            note(level + "s backlog is shown for the team", shown["Microsoft." + level + "Category"] !== false,
+              "turn on the " + level + "s backlog in the team's settings", true);
+          }
+        });
         return checklist(p).then(function (found) {
           note("criteria are drawn by the checklist control", found === true,
             found === true ? "" : String(found), true);

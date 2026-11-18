@@ -170,7 +170,7 @@ so every call below is one the owner runs after seeing the plan.
 
 | Call | What it does |
 | --- | --- |
-| `preflight` | Read-only. Checks the payload against its profile; the types and every field reference; that no forbidden type is used; that the criteria field is drawn by the checklist control; that the target sprints exist and are selected for the team; the team's area; parent types; and what LPio has already created - a matching link back becomes "skip (exists)". |
+| `preflight` | Read-only. Checks the payload against its profile; the types and every field reference; that no forbidden type is used; that the criteria field is drawn by the checklist control; that the target sprints exist and are selected for the team; the team's area; that the team works bugs as requirements, so a bug lands on the backlog beside backlog items, and shows the Epics and Features backlogs; parent types; and what LPio has already created - a matching link back becomes "skip (exists)". |
 | `push` | Prints the plan and asks once. Validates every create first, then creates in order: missing Epics, Features, backlog items in delivery order (sprint, then `sequence_position`, docs/SPRINT-DELIVERY.md Part D) with parent, link back and attachments, then Predecessor links for `blocks`. Adds only, never bypassing a rule. Stops at the first failure; a re-run skips what exists. |
 | `verify` | Read-only. Re-reads every written field - whitespace normalised, tick markup stripped, so a ticked criterion is not a difference - and checks the parent and the link back. Must show zero differences straight after a push. |
 | `cleanup` | Applies a reconciliation the owner has signed off. Each change applies only if the item is still at the revision the plan was made against. |
@@ -199,7 +199,7 @@ items still in their first state whose revision has not moved.
 
 ## Before the first push
 
-Three one-off steps, each the owner's to run or request:
+Four one-off steps, each the owner's to run or request:
 
 1. **Sprints.** `tools/ado/sprints.js` creates each sprint the plan
    uses as "Sprint <code>" under `iteration_root`, with the dates in
@@ -221,3 +221,7 @@ Three one-off steps, each the owner's to run or request:
    re-push), or close. Changes run only through `cleanup`.
 3. **Ready and Done** go to the team's wiki and the board's column
    definitions, from the section above.
+4. **The form carries every field.** Each field the profile names exists
+   on each type that carries it: Technical Implementation Details sits
+   on Bug as well as on Product Backlog Item, added in the process as an
+   existing field. Preflight names any that is missing.

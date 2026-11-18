@@ -92,6 +92,10 @@ function mock(options) {
       return json(200, { value: refs.filter((r) => r !== opts.dropField)
         .map((referenceName) => ({ referenceName, alwaysRequired: false })) });
     }
+    if (/\/_apis\/work\/teamsettings\?/.test(url)) {
+      return json(200, { bugsBehavior: opts.bugsBehavior || "asRequirements",
+        backlogVisibilities: { "Microsoft.EpicCategory": !opts.hideEpics, "Microsoft.FeatureCategory": true } });
+    }
     if (/teamsettings\/iterations/.test(url)) return json(200, { value: TEAM_SPRINTS.map((path) => ({ path })) });
     if (/teamsettings\/teamfieldvalues/.test(url)) return json(200, { values: [{ value: ROOT + "\\Demo Team" }] });
     if (/\/wiql\?/.test(url)) {
@@ -285,4 +289,17 @@ test("the engine holds no target of its own", () => {
   const src = require("node:fs").readFileSync(require.resolve("../../tools/ado/engine.js"), "utf8");
   assert.doesNotMatch(src, /dev\.azure\.com|Custom\.[A-Z]/,
     "organisation, project and custom field references arrive in the payload");
+});
+
+test("bugs must sit on the backlog, and a hidden Epics backlog is named", async () => {
+  const bug = story("b1#1", "workstream:w1", { type: "bug" });
+  bug.fields = Object.assign({}, bug.fields, { repro_steps: "<div>Open the merchant.</div>" });
+  const asTasks = await mock({ bugsBehavior: "asTasks" }).api.preflight(payload([bug]));
+  assert.equal(asTasks.ok, false, "bugs worked as tasks would land on no backlog");
+  assert.ok(asTasks.checks.some((c) => /^bugs sit on the backlog/.test(c.check) && c.result === "FAIL"));
+  const fine = await mock().api.preflight(payload([bug]));
+  assert.ok(fine.checks.some((c) => /^bugs sit on the backlog/.test(c.check) && c.result === "ok"));
+  const hidden = await mock({ hideEpics: true }).api.preflight(payload());
+  assert.equal(hidden.ok, true, "a hidden backlog level warns, it does not fail");
+  assert.ok(hidden.checks.some((c) => c.check === "Epics backlog is shown for the team" && c.result === "warn"));
 });
