@@ -308,15 +308,17 @@
         // must work bugs as requirements, or it lands on no backlog.
         var settings = r[2] || {};
         if (used.bug) {
-          note("bugs sit on the backlog beside backlog items", settings.bugsBehavior === "asRequirements",
+          var asReqs = settings.bugsBehavior === "asRequirements";
+          note("bugs sit on the backlog beside backlog items", asReqs, asReqs ? "" :
             "the team's setting is " + (settings.bugsBehavior || "unknown") +
             ": set Working with bugs to Bugs are managed with requirements");
         }
         var shown = settings.backlogVisibilities || {};
         ["Epic", "Feature"].forEach(function (level) {
           if (used[level.toLowerCase()]) {
-            note(level + "s backlog is shown for the team", shown["Microsoft." + level + "Category"] !== false,
-              "turn on the " + level + "s backlog in the team's settings", true);
+            var on = shown["Microsoft." + level + "Category"] !== false;
+            note(level + "s backlog is shown for the team", on,
+              on ? "" : "turn on the " + level + "s backlog in the team's settings", true);
           }
         });
         return checklist(p).then(function (found) {

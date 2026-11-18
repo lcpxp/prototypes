@@ -358,6 +358,7 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20261118160000_push_through_sprint_and_preview.sql | 161 | The push can stop at a sprint, and can be previewed before the owner confirms. |
 | 20261118200000_bug_repro_steps_lead_with_the_fault.sql | 159 | A bug's repro steps open with what happens. |
 | 20261118210000_bug_notes_in_repro_steps.sql | 169 | A bug is written the way the team's bugs already are: title, criteria and effort as fields, everything else in the repro steps. |
+| 20261118220000_notes_dated_by_plan_snapshot.sql | 168 | Technical notes that carry no snapshot date of their own are dated by the plan's code snapshot, the code they were checked against, rather than printed as "undated". |
 
 ### supabase/schema/
 
@@ -377,7 +378,7 @@ Schema, one file per domain, run in lexical order.
 | 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
 | 37_sprint_delivery.sql | 365 | ------------------------------------------------------------------ |
 | 38_sprint_handoff.sql | 353 | ------------------------------------------------------------------ |
-| 39_ado_push.sql | 381 | ------------------------------------------------------------------ |
+| 39_ado_push.sql | 384 | ------------------------------------------------------------------ |
 | 39_sprint_checks.sql | 381 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
@@ -398,7 +399,7 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 | knowledge-coverage.json | 129 |  |
 | policies.sql | 637 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1923 |  |
+| schema-snapshot.json | 1927 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -622,7 +623,7 @@ Repository root.
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |
 | package.json | 17 | LPIO - static shell of a login-gated project hub. Content lives in Supabase. |
-| tools/ado/engine.js | 573 | tools/ado/engine.js - Carries a push payload from LPio into Azure DevOps, and reads Azure DevOps back. |
+| tools/ado/engine.js | 575 | tools/ado/engine.js - Carries a push payload from LPio into Azure DevOps, and reads Azure DevOps back. |
 | tools/ado/sprints.js | 303 | tools/ado/sprints.js - Creates the sprints the Sprint Roadmap uses in Azure DevOps and selects them for the team, so the push can file each backlog item in its sprint (docs/DEVOPS.md, Before the first push). |
 | tools/ado/survey.js | 221 | tools/ado/survey.js - Reads how a project's existing work is written, |
 
