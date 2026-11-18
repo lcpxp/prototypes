@@ -134,8 +134,10 @@ test("Azure DevOps carries development only, in the order it is delivered", () =
   assert.match(push, /p_through is null or x\.sprint_code <= p_through/,
     "a push can stop at a sprint, so later confirmed stories wait for their own");
   assert.match(push, /jsonb_build_object\('preview', true\)/, "a preview says it is one");
-  assert.match(push, /'repro_steps', case when r\.kind = 'bug' then\s+public\.ado_html\('div', array\[r\.item_summary,/,
+  assert.match(push, /'repro_steps', case when r\.kind = 'bug' then\s+coalesce\(public\.ado_html\('div', array\[r\.item_summary,/,
     "a bug's repro steps open with what happens: the item's summary");
+  assert.match(push, /'technical_notes', case when r\.kind = 'story' then/,
+    "a bug keeps its suggested approach in the repro steps, as the team's bugs do");
   assert.match(read("tools/ado/engine.js"), /if \(payload\.preview\)/, "and the engine will not push it");
   assert.match(push, /coalesce\(' \(' \|\| \(d->>'outside'\) \|\| '\)'/,
     "an outside dependency is written as text, never a pending link");

@@ -205,12 +205,19 @@ begin
           'title', r.title,
           'description', case when r.kind = 'story' then
             public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]) end,
-          -- A bug says what happens first (the item's summary), then where
-          -- (the story's scope, when it has its own), then the story.
+          -- A bug is written the way the team's bugs are: everything in
+          -- the repro steps. What happens first (the item's summary), then
+          -- where (the story's scope, when it has its own), the story, and
+          -- any open questions, dependencies and the suggested approach.
           'repro_steps', case when r.kind = 'bug' then
-            public.ado_html('div', array[r.item_summary,
-              case when r.scope is distinct from r.item_summary then r.scope end]) ||
-            public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]) end,
+            coalesce(public.ado_html('div', array[r.item_summary,
+              case when r.scope is distinct from r.item_summary then r.scope end]), '') ||
+            coalesce(public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]), '') ||
+            coalesce('<p><strong>Open questions</strong></p>' || public.ado_html('list', r.clarifications), '') ||
+            coalesce('<p><strong>Dependencies</strong></p>' || public.ado_html('list', array(
+              select 'Needs: ' || (d->>'title') || coalesce(' (' || (d->>'outside') || ')', '')
+                from jsonb_array_elements(r.needs) as d)), '') ||
+            coalesce(public.ado_notes_html(r.technical_notes, r.notes_snapshot), '') end,
           'purpose', case when r.kind = 'story' then
             public.ado_html('div', array[r.purpose]) end,
           'scope', case when r.kind = 'story' then
@@ -218,13 +225,15 @@ begin
           'out_of_scope', case when r.kind = 'story' then
             public.ado_html('list', r.out_of_scope) end,
           'criteria', public.ado_html('checklist', r.criteria),
-          'clarifications', public.ado_html('checklist', r.clarifications),
-          'dependencies', public.ado_html('list', array(
+          'clarifications', case when r.kind = 'story' then
+            public.ado_html('checklist', r.clarifications) end,
+          'dependencies', case when r.kind = 'story' then public.ado_html('list', array(
             select 'Needs: ' || (d->>'title') ||
                    coalesce(' (' || (d->>'outside') || ')',
                             ' ({{ado:' || (d->>'key') || '}})', '')
-              from jsonb_array_elements(r.needs) as d)),
-          'technical_notes', public.ado_notes_html(r.technical_notes, r.notes_snapshot),
+              from jsonb_array_elements(r.needs) as d)) end,
+          'technical_notes', case when r.kind = 'story' then
+            public.ado_notes_html(r.technical_notes, r.notes_snapshot) end,
           'effort', coalesce(r.points, 0))),
         'needs', (select coalesce(jsonb_agg(d->>'key'), '[]'::jsonb)
                     from jsonb_array_elements(r.needs) as d
