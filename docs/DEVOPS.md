@@ -205,8 +205,14 @@ Three one-off steps, each the owner's to run or request:
    uses as "Sprint <code>" under `iteration_root`, with the dates in
    docs/SPRINTS.md, and selects it for the team: `plan` is read-only,
    `apply` asks once and adds only. A sprint that already exists with
-   other dates is reported and left alone. Its result names the codes;
-   the session lists them in `ado_profile.team_sprints`.
+   other dates, or a sprint whose dates overlap one, is reported and
+   left alone. `plan` first lists every iteration the project holds and
+   which one Azure DevOps counts today in, so the calendar is checked
+   against the project before anything is added. A sprint made by
+   mistake is turned into the right one with `fix`: moved into
+   `iteration_root`, renamed and dated, keeping the work items in it.
+   The result of `apply` names the codes; the session lists them in
+   `ado_profile.team_sprints`.
    `tests/unit/ado-sprints.test.js` holds it to that.
 2. **Reconcile what is stale.** Open items left in finished sprints,
    unscheduled or without a parent are grouped in short tables, each

@@ -25,11 +25,28 @@ const LIST = [
 ];
 
 function ado(seed) {
-  const state = { nodes: (seed && seed.nodes) || [], team: (seed && seed.team) || [], calls: [], logs: [], failOn: seed && seed.failOn };
+  const root = { name: "Demo", children: (seed && seed.nodes) || [] };
+  const state = { root, team: (seed && seed.team) || [], calls: [], logs: [], failOn: seed && seed.failOn };
   let next = 1;
   function reply(status, body) {
     return Promise.resolve({ ok: status < 300, status, headers: { get: () => null },
       text: () => Promise.resolve(body === undefined ? "" : JSON.stringify(body)) });
+  }
+  function at(segments) {
+    let node = root;
+    for (const seg of segments) {
+      node.children = node.children || [];
+      node = node.children.find((c) => c.name === seg);
+      if (!node) return null;
+    }
+    return node;
+  }
+  function detach(id, node) {
+    node = node || root;
+    const i = (node.children || []).findIndex((c) => c.id === id);
+    if (i > -1) return node.children.splice(i, 1)[0];
+    for (const c of node.children || []) { const hit = detach(id, c); if (hit) return hit; }
+    return null;
   }
   const env = {
     origin: "https://ado.example",
@@ -42,12 +59,28 @@ function ado(seed) {
       const path = url.replace("https://ado.example", "").split("?")[0];
       const body = opts.body ? JSON.parse(opts.body) : undefined;
       state.calls.push({ method: opts.method, path, body });
-      if (/\/_apis\/wit\/classificationnodes\/iterations/.test(path)) {
-        if (opts.method === "GET") return reply(200, { name: "Demo", children: state.nodes });
+      const m = path.match(/\/_apis\/wit\/classificationnodes\/iterations(\/.*)?$/);
+      if (m) {
+        const segs = (m[1] || "").split("/").filter(Boolean).map(decodeURIComponent);
+        if (opts.method === "GET") return reply(200, root);
+        if (opts.method === "PATCH") {
+          const node = at(segs);
+          if (!node) return reply(404, { message: "no node" });
+          Object.assign(node, body);
+          return reply(200, node);
+        }
+        const parent = at(segs);
+        if (!parent) return reply(404, { message: "no folder" });
+        parent.children = parent.children || [];
+        if (body.id !== undefined) {
+          const moved = detach(body.id);
+          parent.children.push(moved);
+          return reply(200, moved);
+        }
         if (state.failOn && body.name === state.failOn) return reply(400, { message: "refused" });
         const node = { id: next, identifier: "guid-" + next, name: body.name, attributes: body.attributes };
         next += 1;
-        state.nodes.push(node);
+        parent.children.push(node);
         return reply(201, node);
       }
       if (/\/_apis\/work\/teamsettings\/iterations$/.test(path)) {
@@ -60,7 +93,7 @@ function ado(seed) {
   };
   return { env, state, run: sprints.create(env) };
 }
-const writes = (state) => state.calls.filter((c) => c.method === "POST");
+const writes = (state) => state.calls.filter((c) => c.method !== "GET");
 
 test("a bad list or profile is refused before anything is sent", () => {
   assert.deepEqual(sprints.validate(LIST, PROFILE), []);
@@ -124,9 +157,13 @@ test("nothing changes when the owner says no, or after the first failure", async
 });
 
 test("a root below the project creates the sprints in that folder", async () => {
-  const { state, run } = ado();
+  const missing = ado();
+  await assert.rejects(missing.run.plan(LIST, Object.assign({}, PROFILE, { iteration_root: "Demo\\Delivery Sprints" })),
+    /folder Demo\\Delivery Sprints does not exist/);
+  const { state, run } = ado({ nodes: [{ id: 9, identifier: "guid-9", name: "Delivery Sprints", children: [] }] });
   await run.apply(LIST.slice(0, 1), Object.assign({}, PROFILE, { iteration_root: "Demo\\Delivery Sprints" }));
   assert.equal(writes(state)[0].path, "/demo-org/Demo/_apis/wit/classificationnodes/iterations/Delivery%20Sprints");
+  assert.equal(writes(missing.state).length, 0);
 });
 
 test("it says which sprint today is in, and will not add one over a sprint the team already runs", async () => {
@@ -135,7 +172,38 @@ test("it says which sprint today is in, and will not add one over a sprint the t
       attributes: { startDate: "2030-01-06T00:00:00Z", finishDate: "2030-01-17T00:00:00Z" } },
   ] });
   const out = await run.apply(LIST, PROFILE);
-  assert.ok(state.logs.some((l) => /Azure DevOps is in: Iteration 41\. LPio's calendar puts today in Sprint 30-01/.test(l)));
+  assert.ok(state.logs.some((l) => /Azure DevOps is in: Demo\\Iteration 41\. LPio's calendar puts today in Sprint 30-01/.test(l)));
   assert.deepEqual(out.left, ["Sprint 30-01"], "nothing is created over the team's own sprint");
   assert.deepEqual(out.created, ["Sprint 30-02"], "a sprint clear of it still goes ahead");
+});
+
+test("a sprint made by mistake is moved, renamed and dated, and then counts as existing", async () => {
+  const { state, run } = ado({ today: "2030-01-09", nodes: [
+    { id: 4, identifier: "guid-4", name: "Archive", children: [
+      { id: 5, identifier: "guid-5", name: "25-30",
+        attributes: { startDate: "2030-01-08T00:00:00Z", finishDate: "2030-01-21T00:00:00Z" } },
+    ] },
+  ] });
+  const out = await run.fix(LIST, PROFILE, "25-30", "30-01");
+  assert.deepEqual(out, { from: "Demo\\Archive\\25-30", to: "Demo\\Sprint 30-01", moved: true, identifier: "guid-5" });
+  const moved = state.root.children.find((c) => c.id === 5);
+  assert.equal(moved.name, "Sprint 30-01");
+  assert.deepEqual(moved.attributes, { startDate: "2030-01-07T00:00:00Z", finishDate: "2030-01-18T00:00:00Z" });
+  const after = await run.apply(LIST, PROFILE);
+  assert.deepEqual(after.created, ["Sprint 30-02"], "the fixed sprint is not created again");
+  assert.deepEqual(after.team_sprints, ["30-01", "30-02"]);
+});
+
+test("a fix that would collide or cannot tell which iteration is meant changes nothing", async () => {
+  const twin = ado({ nodes: [
+    { id: 1, identifier: "guid-1", name: "Sprint 30-01", attributes: {} },
+    { id: 2, identifier: "guid-2", name: "25-30", attributes: {} },
+  ] });
+  await assert.rejects(twin.run.fix(LIST, PROFILE, "25-30", "30-01"), /already exists/);
+  const vague = ado({ nodes: [
+    { id: 1, identifier: "guid-1", name: "25-30 a", attributes: {} },
+    { id: 2, identifier: "guid-2", name: "25-30 b", attributes: {} },
+  ] });
+  await assert.rejects(vague.run.fix(LIST, PROFILE, "25-30", "30-01"), /2 iterations match/);
+  assert.equal(writes(twin.state).length + writes(vague.state).length, 0);
 });

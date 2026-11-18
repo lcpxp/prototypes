@@ -10,6 +10,9 @@
 // signed-in user. Paste this file, then:
 //
 //   await LPioSprints.plan(SPRINTS, PROFILE)     read-only
+//   await LPioSprints.fix(SPRINTS, PROFILE, "25-30", "26-24")
+//                                                one existing iteration
+//                                                becomes a listed sprint
 //   await LPioSprints.apply(SPRINTS, PROFILE)    plan, one confirm, create
 //
 //   SPRINTS  [{ code: "26-25", start: "2026-11-23", end: "2026-12-04" }]
@@ -108,6 +111,34 @@
       return once();
     }
 
+    // The whole iteration tree, flattened: every node with the folders
+    // above it, so a sprint filed in the wrong folder is still found.
+    function flatten(rootNode, p) {
+      var out = [];
+      (function walk(node, rel) {
+        (node.children || []).forEach(function (n) {
+          var path = rel.concat(n.name);
+          out.push({ node: n, rel: path, shown: [p.project].concat(path).join("\\") });
+          walk(n, path);
+        });
+      })(rootNode || {}, []);
+      return out;
+    }
+    function folderRel(p) { return String(p.iteration_root).split("\\").slice(1); }
+    function same(a, b) { return a.join("/") === b.join("/"); }
+
+    function read(p) {
+      return Promise.all([
+        call("GET", base(p) + "/_apis/wit/classificationnodes/iterations?$depth=10&" + API),
+        call("GET", teamIterations(p) + "?" + API),
+      ]).then(function (r) {
+        var all = flatten(r[0], p);
+        var selected = {};
+        ((r[1] && r[1].value) || []).forEach(function (t) { selected[t.id] = true; });
+        return { all: all, selected: selected, folder: folderRel(p) };
+      });
+    }
+
     // What exists, and what each sprint in the list needs.
     function plan(sprints, p) {
       var problems = validate(sprints, p);
@@ -115,29 +146,27 @@
         problems.forEach(env.log);
         return Promise.reject(new Error("The sprint list or profile is not valid: " + problems.length + " problem(s) above."));
       }
-      return Promise.all([
-        call("GET", nodes(p) + "?$depth=1&" + API),
-        call("GET", teamIterations(p) + "?" + API),
-      ]).then(function (r) {
-        var children = (r[0] && r[0].children) || [];
+      return read(p).then(function (t) {
+        if (t.folder.length && !t.all.some(function (x) { return same(x.rel, t.folder); })) {
+          throw new Error("The folder " + p.iteration_root + " does not exist: create it, or set iteration_root to the project.");
+        }
+        var inFolder = t.all.filter(function (x) { return same(x.rel.slice(0, -1), t.folder); });
         var byName = {};
-        children.forEach(function (n) { byName[n.name] = n; });
-        var selected = {};
-        ((r[1] && r[1].value) || []).forEach(function (t) { selected[t.id] = true; });
+        inFolder.forEach(function (x) { byName[x.node.name] = x.node; });
         // What Azure DevOps already holds, and which sprint it counts today
         // in, so the calendar is checked against the project before
         // anything is added beside it.
         var today = env.today();
         var current = [];
-        var existing = children.map(function (n) {
-          var a = n.attributes || {};
+        var existing = t.all.map(function (x) {
+          var a = x.node.attributes || {};
           var start = day(a.startDate), end = day(a.finishDate);
           var now = start && end && start <= today && today <= end;
-          if (now) current.push(n.name);
-          return { sprint: n.name, start: start || "-", end: end || "-",
-            team: selected[n.identifier] ? "selected" : "", today: now ? "today" : "" };
+          if (now) current.push(x.shown);
+          return { path: x.shown, start: start || "-", end: end || "-",
+            team: t.selected[x.node.identifier] ? "selected" : "", today: now ? "today" : "" };
         });
-        env.log("Already in Azure DevOps under " + p.iteration_root + ": " + existing.length + " sprint(s).");
+        env.log("Already in Azure DevOps: " + existing.length + " iteration(s).");
         if (existing.length) env.table(existing);
         env.log("Today, " + today + ", Azure DevOps is in: " + (current.join(", ") || "no sprint") +
           ". LPio's calendar puts today in " + (sprints.filter(function (s) {
@@ -145,27 +174,68 @@
         var rows = sprints.map(function (s) {
           var node = byName[name(s.code)];
           var row = { sprint: name(s.code), start: s.start, end: s.end, action: "", node: node || null };
-          var clash = children.filter(function (n) {
-            var a = n.attributes || {};
-            return n.name !== row.sprint && day(a.startDate) && day(a.finishDate) &&
+          var clash = t.all.filter(function (x) {
+            var a = x.node.attributes || {};
+            return x.node !== node && day(a.startDate) && day(a.finishDate) &&
               day(a.startDate) <= s.end && s.start <= day(a.finishDate);
           })[0];
           if (!node && clash) {
-            row.action = "leave: its dates overlap " + clash.name + " (" + day(clash.attributes.startDate) +
-              " to " + day(clash.attributes.finishDate) + "); settle which naming the team uses first";
+            row.action = "leave: its dates overlap " + clash.shown + " (" + day(clash.node.attributes.startDate) +
+              " to " + day(clash.node.attributes.finishDate) + "); fix or settle that one first";
           } else if (!node) row.action = "create and select";
           else {
             var a = node.attributes || {};
             if (day(a.startDate) !== s.start || day(a.finishDate) !== s.end) {
               row.action = "leave: Azure DevOps has " + (day(a.startDate) || "no start") +
                 " to " + (day(a.finishDate) || "no end") + "; correct it there, then run again";
-            } else if (!selected[node.identifier]) row.action = "select for the team";
+            } else if (!t.selected[node.identifier]) row.action = "select for the team";
             else row.action = "skip (exists and selected)";
           }
           return row;
         });
         env.table(rows.map(function (x) { return { sprint: x.sprint, start: x.start, end: x.end, action: x.action }; }));
         return rows;
+      });
+    }
+
+    // Turns one existing iteration - a sprint created by mistake, in the
+    // wrong folder or under the wrong name - into the listed sprint:
+    // moved into iteration_root, renamed "Sprint <code>" and given that
+    // sprint's dates. Work items already in it move with it. "from" is a
+    // path as plan prints it, or a part of the name that matches one
+    // iteration only. Asks once; changes nothing else.
+    function fix(sprints, p, from, code) {
+      var s = (sprints || []).filter(function (x) { return x.code === code; })[0];
+      if (!s) return Promise.reject(new Error("Sprint " + code + " is not in the sprint list."));
+      return read(p).then(function (t) {
+        var hits = t.all.filter(function (x) { return x.shown === from; });
+        if (!hits.length) hits = t.all.filter(function (x) { return x.node.name.indexOf(from) > -1; });
+        if (hits.length !== 1) {
+          throw new Error((hits.length ? hits.length + " iterations match" : "No iteration matches") +
+            " \"" + from + "\": give the path exactly as plan prints it.");
+        }
+        var hit = hits[0];
+        var target = t.all.filter(function (x) {
+          return same(x.rel.slice(0, -1), t.folder) && x.node.name === name(code);
+        })[0];
+        if (target && target.node !== hit.node) {
+          throw new Error(target.shown + " already exists: nothing was changed.");
+        }
+        var move = !same(hit.rel.slice(0, -1), t.folder);
+        var line = hit.shown + " becomes " + [p.iteration_root, name(code)].join("\\") +
+          ", " + s.start + " to " + s.end + (move ? ", moved into " + p.iteration_root : "");
+        env.log(line);
+        if (!env.confirm(line + "?")) { env.log("Nothing was changed."); return null; }
+        var moved = move ? call("POST", nodes(p) + "?" + API, { id: hit.node.id }) : Promise.resolve(hit.node);
+        return moved.then(function () {
+          return call("PATCH", nodes(p) + "/" + encodeURIComponent(hit.node.name) + "?" + API, {
+            name: name(code),
+            attributes: { startDate: s.start + "T00:00:00Z", finishDate: s.end + "T00:00:00Z" },
+          });
+        }).then(function (n) {
+          env.log("Done. Run plan again: " + name(code) + " should now show as existing.");
+          return { from: hit.shown, to: [p.iteration_root, name(code)].join("\\"), moved: move, identifier: n && n.identifier };
+        });
       });
     }
 
@@ -213,7 +283,7 @@
       });
     }
 
-    return { plan: plan, apply: apply };
+    return { plan: plan, apply: apply, fix: fix };
   }
 
   if (typeof module !== "undefined" && module.exports) {
