@@ -148,5 +148,7 @@ test("Azure DevOps carries development only, in the order it is delivered", () =
   assert.match(doc, /Only development is a story for Azure DevOps/);
   assert.match(doc, /\*\*Proportion\.\*\* A story fixes what was reported, where it is broken/,
     "a story fixes what was reported and nothing beside it");
+  assert.match(doc, /MVP first: a story delivers the outcome its item exists for/);
+  assert.match(doc, /criteria state behaviour\. Test set-up/);
   assert.match(doc, /Order within a sprint/);
 });

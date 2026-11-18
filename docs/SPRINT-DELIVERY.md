@@ -203,7 +203,19 @@ every row, with each fix recorded in a `decision` note that is its undo:
      stays as it is;
    - a format is given as its rule with an example each way;
    - a fault found next to the reported one goes to the owner as a
-     question, never into the story.
+     question, never into the story;
+   - MVP first: a story delivers the outcome its item exists for, built
+     on what the code already has. Anything beyond it - fuller tracking,
+     extra events, a second endpoint, a tidy-up - is de-scoped and kept
+     in the item's details for later, never left in a criterion;
+   - guidance grows with the work: a large item (an integration, a new
+     flow, screening) names each place the build touches, file:line,
+     and any fact the developer would otherwise trip on;
+   - criteria state behaviour. Test set-up (sandboxes, data to seed)
+     goes in the technical notes; a test line stays a criterion only
+     when it is the behaviour it proves, said as that behaviour;
+   - out of scope names only what a developer might otherwise do, never
+     what anyone would assume.
 
 ## Confirming and freezing
 

@@ -482,6 +482,14 @@
     {
       "name": "notes_dated_by_plan_snapshot",
       "version": "20261118184528"
+    },
+    {
+      "name": "ado_carries_development_only",
+      "version": "20261118213254"
+    },
+    {
+      "name": "ado_carries_development_only_payload",
+      "version": "20261118213319"
     }
   ],
   "policies": [
