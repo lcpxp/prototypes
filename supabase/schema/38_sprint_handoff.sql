@@ -29,9 +29,19 @@
 --                  stream ends (finite, staged, continuous)
 --   out_of_scope   'Out of scope:' lines in details, then each sibling
 --                  story as 'Covered separately: <title>'
---   clarifications open question notes on the item or its deliverables
+--   clarifications open question notes on the item or its deliverables,
+--                  then 'Decision: ' and each open question tagged
+--                  decision on whatever blocks the item. A decision is
+--                  held once, on the parallel or external item that owns
+--                  it, and shows on every build story it gates - so the
+--                  developer sees it and Azure DevOps never carries the
+--                  decision as a work item of its own
 --   needs          what blocks the item, by title and by the story_key
---                  of the blocker's last story
+--                  of the blocker's last story. A blocker outside
+--                  development carries no key, only who holds it:
+--                  'outside' is the external party, 'the product
+--                  manager' for parallel work, or 'not yet on the
+--                  sprint plan'. Done and dropped blockers drop out
 --   content_hash   over what is written to DevOps and then frozen:
 --                  title, story, purpose, scope, out of scope, criteria,
 --                  technical notes and points. Clarifications and
@@ -119,26 +129,40 @@ as $$
     d.story_title,
     d.m[1], 'I want ' || d.m[2], 'So that ' || d.m[3], d.m is not null,
     d.purpose, d.scope, d.out_of_scope, d.criteria,
-    array(select split_part(btrim(q.body), chr(10), 1)
-            from public.work_notes q
-           where q.kind = 'question' and q.status = 'active'
-             and (q.work_item_id = d.work_item_id
-                  or q.work_item_id in (select c.id from public.work_items c
-                                         where c.parent_id = d.work_item_id
-                                           and c.level = 'deliverable'))
-           order by q.created_at),
+    array(select cl.line from (
+            select split_part(btrim(q.body), chr(10), 1) as line, 1 as grp, q.created_at
+              from public.work_notes q
+             where q.kind = 'question' and q.status = 'active'
+               and (q.work_item_id = d.work_item_id
+                    or q.work_item_id in (select c.id from public.work_items c
+                                           where c.parent_id = d.work_item_id
+                                             and c.level = 'deliverable'))
+            union all
+            select 'Decision: ' || split_part(btrim(q.body), chr(10), 1), 2, q.created_at
+              from public.knowledge_links l
+              join public.work_items b on b.id = l.from_id
+              join public.work_notes q on q.work_item_id = b.id
+             where l.kind = 'blocks' and l.valid_to is null
+               and l.from_type = 'work_item' and l.to_type = 'work_item'
+               and l.to_id = d.work_item_id and b.status not in ('done', 'dropped')
+               and q.kind = 'question' and q.status = 'active' and 'decision' = any (q.tags)
+          ) cl order by cl.grp, cl.created_at),
     (select coalesce(jsonb_agg(jsonb_build_object(
               'title', f.title,
-              'key', case when bi.user_stories is not null
-                       then bi.id || '#' || jsonb_array_length(bi.user_stories) end)
+              'key', case when bv.is_build and bi.user_stories is not null
+                       then bi.id || '#' || jsonb_array_length(bi.user_stories) end,
+              'outside', case
+                when bv.work_item_id is null then 'not yet on the sprint plan'
+                when not bv.is_build then coalesce(bv.external_party, 'the product manager') end)
               order by f.title), '[]'::jsonb)
        from public.knowledge_links l
        join public.work_items f on f.id = l.from_id
        join public.work_items bi
          on bi.id = case when f.level = 'deliverable' then f.parent_id else f.id end
+       left join public.v_sprint_plan_items bv on bv.work_item_id = bi.id
       where l.kind = 'blocks' and l.valid_to is null
         and l.from_type = 'work_item' and l.to_type = 'work_item'
-        and l.to_id = d.work_item_id and f.status <> 'done'),
+        and l.to_id = d.work_item_id and f.status not in ('done', 'dropped')),
     d.notes, d.technical_notes_snapshot, d.points,
     d.start_code,
     case when d.effective_slot = d.effective_end_slot
@@ -281,7 +305,8 @@ begin
         case when cardinality(f.clarifications) > 0 then 'Needs clarification:' || nl || '- ' ||
           array_to_string(f.clarifications, nl || '- ') || nl else '' end ||
         coalesce((select 'Dependencies:' || nl ||
-                         string_agg('- Needs: ' || (d->>'title'), nl) || nl
+                         string_agg('- Needs: ' || (d->>'title') ||
+                           coalesce(' (' || (d->>'outside') || ')', ''), nl) || nl
                     from jsonb_array_elements(f.needs) as d
                   having count(*) > 0), '') ||
         coalesce('Technical notes (code snapshot ' || f.notes_snapshot || '):' || nl ||

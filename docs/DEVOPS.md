@@ -66,8 +66,8 @@ the form shows them; `ado_profile.fields` maps each to its reference.
 | Scope | the story's own `scope` line, else the item's `summary` | One bullet. `work_items.scope` is not read: it says whether a stream ends. |
 | Out of scope | `Out of scope:` lines in `details`, then each sibling story as "Covered separately" | Blank if none. |
 | Acceptance criteria | the story's criteria, verbatim | A checklist, one box per criterion. |
-| Clarifications | open `question` notes on the item | A checklist, one unticked line each. Only the checklist is written, never the plain box beside it. |
-| Dependencies | `blocks` links into the item | "Needs: title (#id)". |
+| Clarifications | open `question` notes on the item, then each open question tagged `decision` on whatever blocks it, as "Decision: ..." | A checklist, one unticked line each. Only the checklist is written, never the plain box beside it. |
+| Dependencies | `blocks` links into the item | "Needs: title (#id)". A blocker outside development has no id and never will: "Needs: title (EIT)", "(the product manager)" or "(not yet on the sprint plan)". |
 | Technical implementation details | the story's own technical notes, else the item's | Under the heading "Suggested approach (code snapshot date): confirm or challenge in refinement". |
 | Effort | the story's points | docs/ESTIMATION.md. |
 | Area | `ado_profile` | The team's area. |
@@ -164,7 +164,7 @@ so every call below is one the owner runs after seeing the plan.
 | Call | What it does |
 | --- | --- |
 | `preflight` | Read-only. Checks the payload against its profile; the types and every field reference; that no forbidden type is used; that the criteria field is drawn by the checklist control; that the target sprints exist and are selected for the team; the team's area; parent types; and what LPio has already created - a matching link back becomes "skip (exists)". |
-| `push` | Prints the plan and asks once. Validates every create first, then creates in order: missing Epics, Features, backlog items in Sprint Roadmap order with parent, link back and attachments, then Predecessor links for `blocks`. Adds only, never bypassing a rule. Stops at the first failure; a re-run skips what exists. |
+| `push` | Prints the plan and asks once. Validates every create first, then creates in order: missing Epics, Features, backlog items in delivery order (sprint, then `sequence_position`, docs/SPRINT-DELIVERY.md Part D) with parent, link back and attachments, then Predecessor links for `blocks`. Adds only, never bypassing a rule. Stops at the first failure; a re-run skips what exists. |
 | `verify` | Read-only. Re-reads every written field - whitespace normalised, tick markup stripped, so a ticked criterion is not a difference - and checks the parent and the link back. Must show zero differences straight after a push. |
 | `cleanup` | Applies a reconciliation the owner has signed off. Each change applies only if the item is still at the revision the plan was made against. |
 | `update` | The one-off correction: as `cleanup`, and only for items still in their first state. |

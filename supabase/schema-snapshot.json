@@ -462,6 +462,10 @@
     {
       "name": "sprint_plan_snapshot",
       "version": "20261117144032"
+    },
+    {
+      "name": "decisions_and_delivery_order",
+      "version": "20261118133939"
     }
   ],
   "policies": [

@@ -107,6 +107,17 @@ and an item that needs five stories is two items.
   row carries dated criteria someone agreed, re-deriving them loses the
   agreement, which was the valuable part.
 - An open question becomes a `work_notes` question, never a criterion.
+- **Only development is a story for Azure DevOps.** A row whose job is
+  to decide, agree, map, list or specify is `parallel`, or carries an
+  `external_party_id` when another party builds it, so it never reaches
+  Azure DevOps. Its decision is held once, as a `work_notes` question
+  tagged `decision` on that row, with a `blocks` link to each build row
+  it gates. The build story then shows it under Clarifications as
+  "Decision: ...", and its dependency says who holds it. Write the story
+  for the development that follows the decision, never for the decision.
+- **Stories in priority order.** Within an item the most important story
+  comes first and the least important last, so the last is the one that
+  spills.
 - No durations, no capacity figures, no internal shorthand (Part C,
   Durations).
 - Never in a story: the name of the owner's planning hub, internal
@@ -468,6 +479,12 @@ orders.
 - When two streams or items compete for the same place, settle it by
   pairwise comparison with the owner: one pair, one question, until the
   order is total.
+- **Order within a sprint.** `sequence_position` orders a sprint's
+  items across streams: work outside development first, then the
+  developer's items in the order the owner wants them delivered. The
+  push creates backlog items in that order (docs/DEVOPS.md, Push), so
+  the backlog opens the way the developer works it, and the story packs
+  print in it.
 
 The roadmap page's Now band orders by priority (docs/ROADMAP.md,
 Layouts), so after a sync it reads in sprint order, and the run-on into

@@ -1,0 +1,431 @@
+-- Decisions surface on the stories they gate, dependencies outside
+-- development say who holds them, and the push follows delivery order.
+--
+-- sprint_story_fields: clarifications add each open question tagged
+-- decision on a blocker, as 'Decision: ...'; needs carry 'outside' (the
+-- external party, the product manager, or not yet on the sprint plan)
+-- and no Azure DevOps key for a blocker that is not developer work;
+-- done and dropped blockers drop out.
+-- sprint_story_pack: a dependency outside development says who holds it.
+-- ado_push_payload: items and held-back stories in delivery order -
+-- sprint, then sequence_position, then the board's numbering - and a
+-- dependency outside development is never written as a pending link.
+-- Signatures unchanged, so grants and v_sprint_plan_checks stand.
+
+create or replace function public.sprint_story_fields(p_id uuid default null)
+returns table (
+  story_key text, work_item_id uuid, n integer, item_title text,
+  workstream_id uuid, workstream_title text, stream_no integer, item_no integer,
+  epic_key text, epic_label text, kind text, title text,
+  role_line text, want_line text, outcome_line text, shape_ok boolean,
+  purpose text, scope text, out_of_scope text[], criteria text[],
+  clarifications text[], needs jsonb,
+  technical_notes text, notes_snapshot date, points numeric,
+  sprint_code text, sprint_label text, stories_status text,
+  is_build boolean, built_by text, ado jsonb, content_hash text
+)
+language sql
+stable
+security invoker
+set search_path = public
+as $$
+  with base as (
+    select v.work_item_id, v.title as item_title, v.workstream_id, v.workstream_title,
+           v.type, v.is_build, v.external_party, v.start_code, v.end_code,
+           v.effective_slot, v.effective_end_slot,
+           rc.key as epic_key, rc.label as epic_label,
+           w.summary, w.details, w.business_benefit, w.user_stories, w.stories_status,
+           w.technical_notes as item_notes, w.technical_notes_snapshot,
+           o.sprint_rank / 10 as item_no, so.sprint_rank / 10 as stream_no
+      from public.v_sprint_plan_items v
+      join public.work_items w on w.id = v.work_item_id
+      join public.work_items ws on ws.id = v.workstream_id
+      left join public.roadmap_categories rc on rc.id = ws.category_id
+      join public.v_sprint_plan_order o
+        on o.level = 'item' and o.work_item_id = v.work_item_id
+      join public.v_sprint_plan_order so
+        on so.level = 'workstream' and so.work_item_id = v.workstream_id
+     where w.user_stories is not null
+       and (p_id is null or v.work_item_id = p_id or v.workstream_id = p_id)
+  ),
+  split as (
+    select b.*, s.story, s.n::integer as n,
+           regexp_match(btrim(s.story->>'story'),
+             '^(As an? .+?), I want (.+), so that (.+)$') as m
+      from base b
+      cross join lateral jsonb_array_elements(b.user_stories)
+        with ordinality as s(story, n)
+  ),
+  derived as (
+    select x.*,
+      btrim(x.story->>'title') as story_title,
+      coalesce(
+        nullif(btrim(x.story->>'purpose'), ''),
+        (regexp_match(btrim(x.business_benefit), '^(.+?[.!?])(\s|$)'))[1],
+        nullif(btrim(x.business_benefit), ''),
+        upper(left(x.m[3], 1)) || substr(x.m[3], 2)) as purpose,
+      coalesce(nullif(btrim(x.story->>'scope'), ''), nullif(btrim(x.summary), '')) as scope,
+      array(select btrim(r.hit[1])
+              from regexp_matches(coalesce(x.details, ''),
+                     '^\s*Out of scope:\s*(.+)$', 'gin') as r(hit))
+        || array(select 'Covered separately: ' || btrim(o.story->>'title')
+                   from jsonb_array_elements(x.user_stories)
+                     with ordinality as o(story, k)
+                  where o.k <> x.n order by o.k) as out_of_scope,
+      array(select btrim(c.criterion #>> '{}')
+              from jsonb_array_elements(x.story->'criteria')
+                with ordinality as c(criterion, k) order by c.k) as criteria,
+      coalesce(nullif(btrim(x.story->>'technical_notes'), ''), x.item_notes) as notes,
+      case when jsonb_typeof(x.story->'points') = 'number'
+        then (x.story->>'points')::numeric end as points
+    from split x
+  )
+  select
+    d.work_item_id || '#' || d.n, d.work_item_id, d.n, d.item_title,
+    d.workstream_id, d.workstream_title, d.stream_no, d.item_no,
+    d.epic_key, d.epic_label,
+    case when d.type = 'bug' then 'bug' else 'story' end,
+    d.story_title,
+    d.m[1], 'I want ' || d.m[2], 'So that ' || d.m[3], d.m is not null,
+    d.purpose, d.scope, d.out_of_scope, d.criteria,
+    array(select cl.line from (
+            select split_part(btrim(q.body), chr(10), 1) as line, 1 as grp, q.created_at
+              from public.work_notes q
+             where q.kind = 'question' and q.status = 'active'
+               and (q.work_item_id = d.work_item_id
+                    or q.work_item_id in (select c.id from public.work_items c
+                                           where c.parent_id = d.work_item_id
+                                             and c.level = 'deliverable'))
+            union all
+            select 'Decision: ' || split_part(btrim(q.body), chr(10), 1), 2, q.created_at
+              from public.knowledge_links l
+              join public.work_items b on b.id = l.from_id
+              join public.work_notes q on q.work_item_id = b.id
+             where l.kind = 'blocks' and l.valid_to is null
+               and l.from_type = 'work_item' and l.to_type = 'work_item'
+               and l.to_id = d.work_item_id and b.status not in ('done', 'dropped')
+               and q.kind = 'question' and q.status = 'active' and 'decision' = any (q.tags)
+          ) cl order by cl.grp, cl.created_at),
+    (select coalesce(jsonb_agg(jsonb_build_object(
+              'title', f.title,
+              'key', case when bv.is_build and bi.user_stories is not null
+                       then bi.id || '#' || jsonb_array_length(bi.user_stories) end,
+              'outside', case
+                when bv.work_item_id is null then 'not yet on the sprint plan'
+                when not bv.is_build then coalesce(bv.external_party, 'the product manager') end)
+              order by f.title), '[]'::jsonb)
+       from public.knowledge_links l
+       join public.work_items f on f.id = l.from_id
+       join public.work_items bi
+         on bi.id = case when f.level = 'deliverable' then f.parent_id else f.id end
+       left join public.v_sprint_plan_items bv on bv.work_item_id = bi.id
+      where l.kind = 'blocks' and l.valid_to is null
+        and l.from_type = 'work_item' and l.to_type = 'work_item'
+        and l.to_id = d.work_item_id and f.status not in ('done', 'dropped')),
+    d.notes, d.technical_notes_snapshot, d.points,
+    d.start_code,
+    case when d.effective_slot = d.effective_end_slot
+      then 'Sprint ' || coalesce(d.start_code, (d.effective_slot + 1)::text)
+      else 'Sprints ' || coalesce(d.start_code, (d.effective_slot + 1)::text) ||
+           ' to ' || coalesce(d.end_code, (d.effective_end_slot + 1)::text) end,
+    d.stories_status, d.is_build, d.external_party, d.story->'ado',
+    md5(concat_ws(chr(31), d.story_title, btrim(d.story->>'story'), d.purpose, d.scope,
+      array_to_string(d.out_of_scope, chr(30)), array_to_string(d.criteria, chr(30)),
+      d.notes, d.points::text))
+  from derived d;
+$$;
+
+create or replace function public.sprint_story_pack(p_id uuid default null, p_part text default 'devops')
+returns text
+language plpgsql
+stable
+security invoker
+set search_path = public
+as $$
+declare
+  nl constant text := chr(10);
+  draft constant text := 'Draft - not yet confirmed by the owner.';
+  v_stream uuid;
+  v_item uuid;
+  st record;
+  f record;
+  body text := '';
+  n_streams integer := 0;
+begin
+  if p_part is null or p_part not in ('devops', 'roadmap') then
+    raise exception 'sprint_story_pack: p_part is devops or roadmap, not %',
+      coalesce(p_part, 'null');
+  end if;
+
+  if p_id is not null then
+    if exists (select 1 from public.v_sprint_plan_streams
+                where workstream_id = p_id) then
+      v_stream := p_id;
+    else
+      select v.workstream_id into v_stream
+        from public.v_sprint_plan_items v where v.work_item_id = p_id;
+      if v_stream is null then
+        return 'Not on the sprint plan: stories are written only for Now work.';
+      end if;
+      if p_part = 'devops' then v_item := p_id; end if;
+    end if;
+  end if;
+
+  for st in
+    select o.workstream_id as id, o.sprint_rank / 10 as no,
+           s.workstream_title as title, s.summary,
+           w.user_stories, w.stories_status, rc.label as epic,
+           case when s.first_slot = s.last_slot
+             then 'Sprint ' || coalesce(s.start_code, (s.first_slot + 1)::text)
+             else 'Sprints ' || coalesce(s.start_code, (s.first_slot + 1)::text) ||
+                  ' to ' || coalesce(s.end_code, (s.last_slot + 1)::text)
+           end as span
+      from public.v_sprint_plan_order o
+      join public.v_sprint_plan_streams s on s.workstream_id = o.workstream_id
+      join public.work_items w on w.id = o.workstream_id
+      left join public.roadmap_categories rc on rc.id = w.category_id
+     where o.level = 'workstream'
+       and (v_stream is null or o.workstream_id = v_stream)
+     order by o.sprint_rank
+  loop
+    n_streams := n_streams + 1;
+
+    -- The stream's own block: its outcomes for the company roadmap, or
+    -- its Feature for DevOps (skipped when one item was asked for).
+    if p_part = 'roadmap' or v_item is null then
+      body := body || nl || case p_part
+          when 'roadmap' then st.no || '. ' || st.title || ' (' || st.span || ')' || nl ||
+            coalesce(nullif(btrim(st.summary), '') || nl, '')
+          else 'FEATURE ' || st.no || ': ' || st.title || nl ||
+            'Parent: Epic ' || coalesce(st.epic, '(no roadmap category)') || nl ||
+            'Iteration: ' || st.span || nl end;
+      if st.user_stories is null then
+        body := body || case p_part when 'roadmap' then 'Outcomes not yet written.'
+          else 'Epic story not yet written.' end || nl;
+      else
+        body := body ||
+          case when st.stories_status = 'drafted' then draft || nl else '' end ||
+          (select string_agg(case p_part when 'roadmap' then '' else 'Description: ' end ||
+                    (e.story->>'story'), nl order by e.k)
+             from jsonb_array_elements(st.user_stories) with ordinality as e(story, k)) || nl ||
+          case p_part when 'roadmap' then 'Outcomes:' else 'Acceptance Criteria:' end || nl ||
+          (select string_agg('- ' || (c.criterion #>> '{}'), nl order by e.k, c.j)
+             from jsonb_array_elements(st.user_stories) with ordinality as e(story, k)
+             cross join lateral jsonb_array_elements(e.story->'criteria')
+               with ordinality as c(criterion, j)) || nl;
+      end if;
+    end if;
+    if p_part = 'roadmap' then continue; end if;
+
+    for f in
+      select x.* from public.sprint_story_fields(st.id) x
+       where v_item is null or x.work_item_id = v_item
+       order by x.item_no, x.n
+    loop
+      body := body || nl ||
+        case f.kind when 'bug' then 'BUG ' else 'BACKLOG ITEM ' end ||
+        f.stream_no || '.' || f.item_no || '.' || f.n || ': ' || f.title || nl ||
+        'Parent: Feature ' || f.stream_no || nl ||
+        'Iteration: ' || f.sprint_label || nl ||
+        coalesce('Effort: ' || f.points || nl, '') ||
+        case when f.built_by is not null then 'Built by: ' || f.built_by || nl
+             when not f.is_build then 'Not developer work: it stays on the roadmap.' || nl
+             else '' end ||
+        case when f.stories_status = 'drafted' then draft || nl else '' end ||
+        'Description: ' || case when f.shape_ok
+          then f.role_line || nl || f.want_line || nl || f.outcome_line
+          else '(the story does not split at "I want" and "so that")' end || nl ||
+        coalesce('Purpose: ' || f.purpose || nl, '') ||
+        coalesce('Scope: ' || f.scope || nl, '') ||
+        case when cardinality(f.out_of_scope) > 0 then 'Out of scope:' || nl || '- ' ||
+          array_to_string(f.out_of_scope, nl || '- ') || nl else '' end ||
+        'Acceptance Criteria:' || nl || '- ' || array_to_string(f.criteria, nl || '- ') || nl ||
+        case when cardinality(f.clarifications) > 0 then 'Needs clarification:' || nl || '- ' ||
+          array_to_string(f.clarifications, nl || '- ') || nl else '' end ||
+        coalesce((select 'Dependencies:' || nl ||
+                         string_agg('- Needs: ' || (d->>'title') ||
+                           coalesce(' (' || (d->>'outside') || ')', ''), nl) || nl
+                    from jsonb_array_elements(f.needs) as d
+                  having count(*) > 0), '') ||
+        coalesce('Technical notes (code snapshot ' || f.notes_snapshot || '):' || nl ||
+          f.technical_notes || nl, '');
+    end loop;
+
+    body := body || coalesce((
+      select string_agg(nl || 'ITEM ' || st.no || '.' || (o.sprint_rank / 10) || ': ' ||
+               v.title || nl || 'User stories not yet written.', nl order by o.sprint_rank)
+        from public.v_sprint_plan_items v
+        join public.work_items w on w.id = v.work_item_id
+        join public.v_sprint_plan_order o
+          on o.level = 'item' and o.work_item_id = v.work_item_id
+       where v.workstream_id = st.id and w.user_stories is null
+         and (v_item is null or v.work_item_id = v_item)) || nl, '');
+  end loop;
+
+  if n_streams = 0 then
+    return 'Nothing is on the sprint plan yet.';
+  end if;
+  -- The whole plan opens with what it holds and how far the stories
+  -- have got; a single stream or item is just its blocks.
+  if p_id is null then
+    body := case p_part
+        when 'devops' then 'SPRINT ROADMAP FOR AZURE DEVOPS' || nl ||
+          (select n_streams || ' features, ' || count(*) || ' work items. Stories written for ' ||
+                  count(*) filter (where v.stories_status is not null) || ', ' ||
+                  count(*) filter (where v.stories_status = 'confirmed') || ' confirmed.'
+             from public.v_sprint_plan_items v)
+        else 'SPRINT ROADMAP FOR THE COMPANY ROADMAP' || nl ||
+          n_streams || ' workstreams in sprint order.'
+      end || nl ||
+      case when (select sp.anchor_sprint is null from public.sprint_plan sp
+                  where sp.key = 'default')
+        then 'Sprint numbers count from the plan''s first sprint until the plan is anchored.' || nl
+        else '' end ||
+      body;
+  end if;
+  return btrim(body, nl);
+end $$;
+
+create or replace function public.ado_push_payload(p_id uuid default null)
+returns jsonb
+language plpgsql
+stable
+security invoker
+set search_path = public
+as $$
+declare
+  prof public.ado_profile%rowtype;
+  body jsonb;
+begin
+  select * into prof from public.ado_profile where key = 'default';
+  if not found then
+    raise exception 'ado_push_payload: no ado_profile row is visible (admin only)';
+  end if;
+
+  -- Delivery order: the sprint, then the item's place in it
+  -- (sequence_position), then the board's numbering. Items are created
+  -- in this order, and Azure DevOps ranks a new backlog item below the
+  -- last, so the backlog opens in the order the developer works it.
+  with f as (
+    select x.*, v.effective_slot as d_slot, v.sequence_position as d_seq
+      from public.sprint_story_fields(p_id) x
+      join public.v_sprint_plan_items v on v.work_item_id = x.work_item_id
+     where x.is_build and (x.ado->>'id') is null
+  ),
+  ready as (
+    select * from f
+     where stories_status = 'confirmed' and shape_ok and epic_key is not null
+  ),
+  items as (
+    select coalesce(jsonb_agg(jsonb_build_object(
+        'key', r.story_key,
+        'type', r.kind,
+        'feature_key', 'workstream:' || r.workstream_id,
+        'hash', r.content_hash,
+        'iteration', prof.iteration_root || case when r.sprint_code = any (prof.team_sprints)
+          then '\Sprint ' || r.sprint_code else '' end,
+        'sprint_missing', case when r.sprint_code is not null
+          and not (r.sprint_code = any (prof.team_sprints)) then r.sprint_code end,
+        'fields', jsonb_strip_nulls(jsonb_build_object(
+          'title', r.title,
+          'description', case when r.kind = 'story' then
+            public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]) end,
+          'repro_steps', case when r.kind = 'bug' then
+            public.ado_html('div', array[r.scope]) ||
+            public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]) end,
+          'purpose', case when r.kind = 'story' then
+            public.ado_html('div', array[r.purpose]) end,
+          'scope', case when r.kind = 'story' then
+            public.ado_html('list', array[r.scope]) end,
+          'out_of_scope', case when r.kind = 'story' then
+            public.ado_html('list', r.out_of_scope) end,
+          'criteria', public.ado_html('checklist', r.criteria),
+          'clarifications', public.ado_html('checklist', r.clarifications),
+          'dependencies', public.ado_html('list', array(
+            select 'Needs: ' || (d->>'title') ||
+                   coalesce(' (' || (d->>'outside') || ')',
+                            ' ({{ado:' || (d->>'key') || '}})', '')
+              from jsonb_array_elements(r.needs) as d)),
+          'technical_notes', public.ado_notes_html(r.technical_notes, r.notes_snapshot),
+          'effort', coalesce(r.points, 0))),
+        'needs', (select coalesce(jsonb_agg(d->>'key'), '[]'::jsonb)
+                    from jsonb_array_elements(r.needs) as d
+                   where (d->>'key') is not null),
+        'link', jsonb_build_object(
+          'url', prof.lpio_base_url || '/modules/roadmap/index.html?item=' || r.work_item_id,
+          'comment', 'LPio ' || r.story_key),
+        'attachments', (select coalesce(jsonb_agg(jsonb_build_object(
+                           'id', s.id, 'path', s.storage_path, 'kind', s.kind,
+                           'caption', s.caption) order by s.captured_on, s.kind), '[]'::jsonb)
+                          from public.knowledge_links l
+                          join public.screenshots s on s.id = l.from_id
+                         where l.kind = 'about' and l.valid_to is null
+                           and l.from_type = 'screenshot' and l.to_type = 'work_item'
+                           and l.to_id = r.work_item_id)
+      ) order by r.d_slot, r.d_seq nulls last, r.stream_no, r.item_no, r.n), '[]'::jsonb) as j
+    from ready r
+  ),
+  features as (
+    select coalesce(jsonb_agg(jsonb_build_object(
+        'key', 'workstream:' || w.id,
+        'epic_key', 'category:' || rc.key,
+        'ado_id', w.attributes #> '{ado,feature_id}',
+        'fields', jsonb_strip_nulls(jsonb_build_object(
+          'title', w.title,
+          'description', public.ado_html('div', array[w.summary] || array(
+            select e.story->>'story'
+              from jsonb_array_elements(w.user_stories) with ordinality as e(story, k)
+             order by e.k)),
+          'criteria', public.ado_html('list', array(
+            select c.criterion #>> '{}'
+              from jsonb_array_elements(w.user_stories) with ordinality as e(story, k)
+              cross join lateral jsonb_array_elements(e.story->'criteria')
+                with ordinality as c(criterion, j)
+             order by e.k, c.j)),
+          'start_date', (select sp.starts_on from public.sprints sp where sp.code = s.start_code),
+          'target_date', (select sp.ends_on from public.sprints sp where sp.code = s.end_code))),
+        'link', jsonb_build_object(
+          'url', prof.lpio_base_url || '/modules/roadmap/index.html?item=' || w.id,
+          'comment', 'LPio workstream:' || w.id)
+      ) order by s.first_slot, w.title), '[]'::jsonb) as j
+    from public.work_items w
+    join public.v_sprint_plan_streams s on s.workstream_id = w.id
+    join public.roadmap_categories rc on rc.id = w.category_id
+    where w.id in (select workstream_id from ready)
+  ),
+  epics as (
+    select coalesce(jsonb_agg(jsonb_build_object(
+        'key', 'category:' || rc.key,
+        'ado_id', prof.epic_ids -> rc.key,
+        'fields', jsonb_strip_nulls(jsonb_build_object(
+          'title', rc.label,
+          'description', public.ado_html('div', array[rc.description]))),
+        'link', jsonb_build_object(
+          'url', prof.lpio_base_url || '/modules/roadmap/index.html',
+          'comment', 'LPio category:' || rc.key)
+      ) order by rc.sort_order), '[]'::jsonb) as j
+    from public.roadmap_categories rc
+    where rc.key in (select epic_key from ready)
+  ),
+  held as (
+    select coalesce(jsonb_agg(jsonb_build_object(
+        'key', f.story_key, 'title', f.title,
+        'reason', case
+          when f.stories_status <> 'confirmed' then 'Drafted and not yet confirmed by the owner.'
+          when not f.shape_ok then 'The story does not split at "I want" and "so that".'
+          else 'Its workstream has no roadmap category, so there is no Epic.' end
+      ) order by f.d_slot, f.d_seq nulls last, f.stream_no, f.item_no, f.n), '[]'::jsonb) as j
+    from f
+    where not (f.stories_status = 'confirmed' and f.shape_ok and f.epic_key is not null)
+  )
+  select jsonb_build_object(
+      'epics', epics.j, 'features', features.j, 'items', items.j, 'held_back', held.j)
+    into body
+    from epics, features, items, held;
+
+  return jsonb_build_object(
+    'version', 1,
+    'generated_at', now(),
+    'hash', md5((body - 'held_back')::text),
+    'profile', to_jsonb(prof) - 'key' - 'note' - 'created_at' - 'updated_at' - 'epic_ids') || body;
+end $$;

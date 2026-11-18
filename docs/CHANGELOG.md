@@ -49,6 +49,11 @@ is the git history; what is unfinished is docs/STATE.md.
   its check cannot settle; a stream is confirmed on the owner's word.
 
 ### Changed
+- Sprint stories: a decision held on parallel work now shows on each
+  developer story it gates, as "Decision: ..." under Clarifications, and
+  a dependency outside development says who holds it rather than
+  waiting for an Azure DevOps id. The push creates backlog items in
+  delivery order.
 - Roadmap: the Now column lists work in the order the Sprint Roadmap runs
   it - priority now leads span length in the Now band, and is kept equal
   to the sprint order.

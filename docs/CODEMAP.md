@@ -151,7 +151,7 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | portal-review/render.js | 249 | portal-review/render.js - The portal review board's HTML builders (App.portalReviewRender). |
 | portal-review/triage.js | 108 | portal-review/triage.js - modules/portal-review/triage.html. |
 | portal-review/waves.js | 129 | portal-review/waves.js - modules/portal-review/index.html. |
-| reference/reference.js | 309 | reference/reference.js - The reference viewer ("swagger") for modules/reference/. |
+| reference/reference.js | 315 | reference/reference.js - The reference viewer ("swagger") for modules/reference/. |
 | reference/render.js | 288 | reference/render.js - Pure HTML builders for the reference viewer. |
 | reference/topics.js | 48 | reference/topics.js - Pure HTML builders for api_topics rows: the narrative sections of a spec (overview, conventions, runbooks, accepted values, gap registers). |
 | roadmap/detail-brief.js | 237 | roadmap/detail-brief.js - "Where it stands": the current state of a piece of planned work, at the top of its drawer. |
@@ -352,6 +352,9 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20261117100000_restricted_accounts_explicit_denials.sql | 34 | Restricted accounts: explicit denials as well (2026-11-17). |
 | 20261117120000_glossary_module.sql | 53 | ------------------------------------------------------------- Glossary module (17 Nov 2026). |
 | 20261117140000_context_completeness_checks.sql | 300 | ------------------------------------------------------------- Context completeness checks on the plan (17 Nov 2026). |
+| 20261117160000_planned_spec_status.sql | 14 | ------------------------------------------------------------- A spec can be 'planned' (17 Nov 2026). |
+| 20261117170000_sprint_plan_snapshot.sql | 43 | ------------------------------------------------------------- Snapshots of the Sprint Roadmap (17 Nov 2026): one dated document per snapshot, so how the plan moved can be read back later. |
+| 20261118100000_decisions_and_delivery_order.sql | 432 | Decisions surface on the stories they gate, dependencies outside development say who holds them, and the push follows delivery order. |
 
 ### supabase/schema/
 
@@ -360,7 +363,7 @@ Schema, one file per domain, run in lexical order.
 | File | Lines | Purpose |
 |---|---:|---|
 | 00_core.sql | 102 | ---------------------------------------------------------------- 00_core.sql - Users, access grants and shared plumbing. |
-| 10_reference.sql | 145 | ---------------------------------------------------------------- 10_reference.sql - The API reference domain: specs, endpoints, tag catalogue and narrative topics. |
+| 10_reference.sql | 148 | ---------------------------------------------------------------- 10_reference.sql - The API reference domain: specs, endpoints, tag catalogue and narrative topics. |
 | 20_portal.sql | 325 | ---------------------------------------------------------------- 20_portal.sql - Portal content domains: the integrations overview, the prototype gallery registry and the nav's outbound tool links. |
 | 30_work.sql | 546 | ---------------------------------------------------------------- 30_work.sql - The working-record domain: shared area taxonomy, roadmap/backlog work items, intake and notes (see docs/WORKFLOW.md). |
 | 31_roadmap_search.sql | 289 | Roadmap search: the contextualisation read surface. |
@@ -369,9 +372,9 @@ Schema, one file per domain, run in lexical order.
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
 | 35_sprints.sql | 391 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
 | 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
-| 37_sprint_delivery.sql | 321 | ------------------------------------------------------------------ |
-| 38_sprint_handoff.sql | 328 | ------------------------------------------------------------------ |
-| 39_ado_push.sql | 350 | ------------------------------------------------------------------ |
+| 37_sprint_delivery.sql | 365 | ------------------------------------------------------------------ |
+| 38_sprint_handoff.sql | 353 | ------------------------------------------------------------------ |
+| 39_ado_push.sql | 357 | ------------------------------------------------------------------ |
 | 39_sprint_checks.sql | 381 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
@@ -390,9 +393,9 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
 | knowledge-coverage.json | 129 |  |
-| policies.sql | 636 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
+| policies.sql | 637 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1898 |  |
+| schema-snapshot.json | 1911 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -414,7 +417,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | security.test.js | 230 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 157 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
-| sprint-stories.test.js | 118 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
+| sprint-stories.test.js | 140 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -549,7 +552,7 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 373 | Architecture How the portal fits together. |
-| CHANGELOG.md | 266 | Changelog All notable user-facing changes to LPIO, newest first. |
+| CHANGELOG.md | 274 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
 | DEVOPS.md | 207 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
@@ -566,11 +569,11 @@ Architecture, security, design, and the operating protocols.
 | ROADMAP-REVIEW.md | 172 | Roadmap review The review ritual: "let's go through the roadmap", or `/roadmap`. |
 | ROADMAP.md | 309 | Roadmap Future direction for the hub, plus the working guide for the roadmap board. |
 | SCREENSHOTS.md | 91 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
-| SECURITY.md | 126 | Security model This repository is public. |
+| SECURITY.md | 129 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINT-DELIVERY.md | 473 | Sprint delivery |
+| SPRINT-DELIVERY.md | 510 | Sprint delivery |
 | SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 38 | Current state Updated: 2026-11-17 (developer-readiness run: story context review done) # In progress Developer-readiness run (developer started 16 Nov 2026); Sprint Roadmap live from 26-24. |
+| STATE.md | 40 | Current state Updated: 2026-11-17 (developer-readiness run: phases 6 and 7 done) # In progress Developer-readiness run (developer started 16 Nov 2026); Sprint Roadmap live from 26-24. |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
@@ -580,12 +583,16 @@ Slash commands and the permission settings a session runs under.
 
 | File | Lines | Purpose |
 |---|---:|---|
+| commands/ado-push.md | 19 | Print the Azure DevOps push - the engine and the payload with its hash - for the owner to run in the browser console |
 | commands/app-review.md | 45 | Work an application review wave - extract screenshots into rows, classify, reconcile against the mail trail |
 | commands/portal-review.md | 49 | Work a portal review wave - walk the area map, record findings as they are made, fold in answers, triage into roadmap work |
 | commands/prototype-idea.md | 43 | Capture a prototype idea in one line, or run the review pass that prioritises and plans them |
 | commands/roadmap-add.md | 56 | Quick-capture or update roadmap work from a one-line request, applied straight to Supabase |
 | commands/roadmap.md | 39 | Run the roadmap review ritual - a quick, clickable pass over Now/Next, promotions, new work and decisions |
-| commands/sprint-stories.md | 69 | Prepare the Sprint Roadmap for its sprint - order and readiness checks, user stories and acceptance criteria drafted and confirmed per workstream, then the packs for Azure DevOps and the company roadmap |
+| commands/sprint-close.md | 27 | Close a sprint - build the end-of-sprint summary from the read-back, apply what corroborates, recalibrate capacity, roll the plan and refresh platform knowledge |
+| commands/sprint-ready.md | 31 | Get a sprint ready before it starts - checks clean, items ready, load and pull-forward list set, payload built, start-of-sprint summary written |
+| commands/sprint-status.md | 19 | Answer a question about past, current or future sprints from the sprint ledger and the sprint documents |
+| commands/sprint-stories.md | 77 | Prepare the Sprint Roadmap for its sprint - order and readiness checks, user stories and acceptance criteria drafted and confirmed per workstream, then the packs for Azure DevOps and the company roadmap |
 | settings.json | 50 | Committed, shared permissions for a session in this repo: an allow list covering the routine commands (npm/node, read-only and write git, the search tools, a local http server, file reads and edits) and a deny list that blocks the hard rules mechanically - reading config.js or .env, force-pushing, git add -f, rm -rf. .claude/settings.local.json is per-developer and gitignored. |
 
 ### .github/
@@ -602,10 +609,10 @@ Repository root.
 
 | File | Lines | Purpose |
 |---|---:|---|
-| .githooks/pre-commit | 29 | Pre-commit gate. Fast, zero dependencies. |
+| .githooks/pre-commit | 38 | Pre-commit gate. Fast, zero dependencies. |
 | .gitignore | 24 | Local configuration containing Supabase keys. Never commit. |
 | .gitmessage | 12 | <type>: <imperative summary, max 60 chars> |
-| CLAUDE.md | 277 |  |
+| CLAUDE.md | 278 |  |
 | README.md | 29 | LPIO A login-gated project hub: dashboard, API reference material and prototypes, organised as modules around a central dashboard. |
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |

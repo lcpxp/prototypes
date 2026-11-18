@@ -166,8 +166,14 @@ begin
     raise exception 'ado_push_payload: no ado_profile row is visible (admin only)';
   end if;
 
+  -- Delivery order: the sprint, then the item's place in it
+  -- (sequence_position), then the board's numbering. Items are created
+  -- in this order, and Azure DevOps ranks a new backlog item below the
+  -- last, so the backlog opens in the order the developer works it.
   with f as (
-    select x.* from public.sprint_story_fields(p_id) x
+    select x.*, v.effective_slot as d_slot, v.sequence_position as d_seq
+      from public.sprint_story_fields(p_id) x
+      join public.v_sprint_plan_items v on v.work_item_id = x.work_item_id
      where x.is_build and (x.ado->>'id') is null
   ),
   ready as (
@@ -201,7 +207,8 @@ begin
           'clarifications', public.ado_html('checklist', r.clarifications),
           'dependencies', public.ado_html('list', array(
             select 'Needs: ' || (d->>'title') ||
-                   coalesce(' ({{ado:' || (d->>'key') || '}})', '')
+                   coalesce(' (' || (d->>'outside') || ')',
+                            ' ({{ado:' || (d->>'key') || '}})', '')
               from jsonb_array_elements(r.needs) as d)),
           'technical_notes', public.ado_notes_html(r.technical_notes, r.notes_snapshot),
           'effort', coalesce(r.points, 0))),
@@ -219,7 +226,7 @@ begin
                          where l.kind = 'about' and l.valid_to is null
                            and l.from_type = 'screenshot' and l.to_type = 'work_item'
                            and l.to_id = r.work_item_id)
-      ) order by r.stream_no, r.item_no, r.n), '[]'::jsonb) as j
+      ) order by r.d_slot, r.d_seq nulls last, r.stream_no, r.item_no, r.n), '[]'::jsonb) as j
     from ready r
   ),
   features as (
@@ -271,7 +278,7 @@ begin
           when f.stories_status <> 'confirmed' then 'Drafted and not yet confirmed by the owner.'
           when not f.shape_ok then 'The story does not split at "I want" and "so that".'
           else 'Its workstream has no roadmap category, so there is no Epic.' end
-      ) order by f.stream_no, f.item_no, f.n), '[]'::jsonb) as j
+      ) order by f.d_slot, f.d_seq nulls last, f.stream_no, f.item_no, f.n), '[]'::jsonb) as j
     from f
     where not (f.stories_status = 'confirmed' and f.shape_ok and f.epic_key is not null)
   )

@@ -115,3 +115,25 @@ test("the paste layout has one home, and it is the SQL", () => {
   assert.match(read("assets/js/pages/shared/work-items-data.js"),
     /App\.db\.rpc\("sprint_story_pack"/);
 });
+
+test("Azure DevOps carries development only, in the order it is delivered", () => {
+  // A decision is held once, on the parallel or external row that owns
+  // it, and reaches the developer as a clarification on each build story
+  // it gates - never as a work item of its own. A blocker outside
+  // development is named with who holds it, so the push never writes a
+  // dependency that waits for an id it will never get. And the backlog
+  // is created in delivery order, so it opens the way it is worked.
+  const handoff = read("supabase/schema/38_sprint_handoff.sql");
+  assert.match(handoff, /'Decision: ' \|\| split_part/,
+    "decisions on a blocker surface as clarifications");
+  assert.match(handoff, /'decision' = any \(q\.tags\)/, "only questions tagged decision travel");
+  assert.match(handoff, /'outside', case/, "a blocker outside development says who holds it");
+  assert.match(handoff, /'key', case when bv\.is_build/, "only developer work gets a dependency key");
+  const push = read("supabase/schema/39_ado_push.sql");
+  assert.match(push, /order by r\.d_slot, r\.d_seq nulls last/, "items go in delivery order");
+  assert.match(push, /coalesce\(' \(' \|\| \(d->>'outside'\) \|\| '\)'/,
+    "an outside dependency is written as text, never a pending link");
+  const doc = read(DOC);
+  assert.match(doc, /Only development is a story for Azure DevOps/);
+  assert.match(doc, /Order within a sprint/);
+});
