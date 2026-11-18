@@ -207,9 +207,54 @@ as one `decision` note per stream.
 never written over what was pushed. The one exception is `update`, for
 items still in their first state whose revision has not moved.
 
+## Every sprint
+
+The whole round for one sprint in Azure DevOps, in order: nothing a
+sprint needs is left to memory. /sprint-ready runs steps 1 to 5 and
+/sprint-close steps 9 to 11.
+
+Capacity is planned in points, in LPio (docs/ESTIMATION.md). Hours
+capacity on the Capacity tab is not set: Tasks are the developer's own
+breakdown, and Azure DevOps measures that capacity only against task
+hours. The burndown runs on Effort instead, so it needs only the days
+off.
+
+Before the sprint starts:
+
+1. **Sprints ahead.** The sprint and the two after it exist and are
+   selected for the team: `sprints.js` `plan`, then `apply` for any
+   missing, and their codes added to `ado_profile.team_sprints`.
+2. **Short sprints.** Public holidays and leave are in
+   `sprint_plan.capacity_overrides`.
+3. **Stories.** Checks clear, every item Ready, payload, preflight, push,
+   then the receipt applied (/ado-push).
+4. **Verify.** `verify` shows zero differences, and the read-back
+   (`sprint`) shows nothing in the sprint that LPio did not put there.
+5. **Days off.** The sprint's Capacity tab carries the team's public
+   holidays and the developer's leave, so the burndown's ideal line is
+   right.
+
+During the sprint:
+
+6. The developer assigns a story to himself when he starts it, and
+   moves it to Done when it meets Done (below). Nothing is assigned in
+   advance, so the board shows what is really in progress.
+7. **Next sprint pushed by mid-sprint.** Steps 3 and 4 run for the next
+   sprint by the middle Friday of the one before, so pulling a story
+   forward is moving it on the board, not waiting for a push.
+8. A story that will not finish is said early and moves to the next
+   sprint.
+
+At the close (the sprint's last day):
+
+9. **Read-back.** `sprint` for the code, handed to /sprint-close.
+10. **Unfinished work** moves to the next sprint in Azure DevOps, and
+    LPio rolls the plan to match.
+11. **Recalibrate** capacity from what reached Done (docs/ESTIMATION.md).
+
 ## Before the first push
 
-Four one-off steps, each the owner's to run or request:
+Five one-off steps, each the owner's to run or request:
 
 1. **Sprints.** `tools/ado/sprints.js` creates each sprint the plan
    uses as "Sprint <code>" under `iteration_root`, with the dates in
@@ -233,3 +278,6 @@ Four one-off steps, each the owner's to run or request:
    definitions, from the section above.
 4. **Run preflight.** It checks every item's fields against its type,
    so a field the form lacks is named before anything is created.
+5. **Burndown on Effort.** The team dashboard's Sprint Burndown widget
+   sums Effort on backlog items and bugs, so it reads in points without
+   Tasks or hours capacity (Every sprint, above).

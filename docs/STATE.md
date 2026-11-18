@@ -14,9 +14,9 @@ Decisions: `work_notes` tagged `developer-readiness` on the run's
 decision log, each with undo values; one push note per stream.
 
 ## Next steps
-1. Before sprint 2 (26-26): run /sprint-stories for it with the step 10
-   rules, then preview with `ado_push_payload(null, '26-26', true)`,
-   rehearse, owner confirms, push, apply the receipt.
+1. Sprint 2 (26-26) pushed by Fri 27 Nov (docs/DEVOPS.md, Every sprint,
+   step 7): /sprint-stories with the step 10 rules, preview, rehearse,
+   push, receipt, verify. Sprints 27-02 and 27-03 created by 21 Dec.
 2. Owner answers the three highlighted decisions on the PDF cover.
 3. Refresh embeddings once Supabase compute allows
    (`select roadmap_embed_refresh();` failed on a worker limit 18 Nov).
