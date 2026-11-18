@@ -78,9 +78,11 @@ the form shows them; `ado_profile.fields` maps each to its reference.
 | Link back | a hyperlink to the item's drawer | Its comment, `LPio <item id>#<n>`, is the idempotency key. |
 | Attachments | the screenshot register | Images linked `about` the item. |
 
-A **Bug** carries its title, criteria, technical notes and effort the
-same way, and puts what happens, what should and the story in the repro
-steps. It has no Purpose or Scope.
+A **Bug** carries its title, criteria, clarifications, dependencies,
+technical notes and effort the same way, and puts what happens (the
+item's summary), where (the story's scope, when it has its own) and the
+story in the repro steps. It has no Purpose or Scope. The item's summary
+is therefore written as the fault as it shows today.
 
 A **Feature** carries the workstream's title, its summary and epic
 story as the description, the epic's outcomes as a plain list, and the
@@ -230,6 +232,7 @@ Four one-off steps, each the owner's to run or request:
 3. **Ready and Done** go to the team's wiki and the board's column
    definitions, from the section above.
 4. **The form carries every field.** Each field the profile names exists
-   on each type that carries it: Technical Implementation Details sits
-   on Bug as well as on Product Backlog Item, added in the process as an
-   existing field. Preflight names any that is missing.
+   on each type that carries it: Technical Implementation Details,
+   Assumptions (clarifications) and Dependencies sit on Bug as well as on
+   Product Backlog Item, added in the process as existing fields.
+   Preflight checks every item's fields and names any that is missing.

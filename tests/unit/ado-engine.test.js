@@ -303,3 +303,11 @@ test("bugs must sit on the backlog, and a hidden Epics backlog is named", async 
   assert.equal(hidden.ok, true, "a hidden backlog level warns, it does not fail");
   assert.ok(hidden.checks.some((c) => c.check === "Epics backlog is shown for the team" && c.result === "warn"));
 });
+
+test("preflight checks the fields every item writes, not one sample's", async () => {
+  const later = story("i1#2", "workstream:w1", {
+    fields: Object.assign({}, story("x", "y").fields, { clarifications: "<div><span>[ ]</span><span> Which partner?</span> </div>" }) });
+  const pf = await mock({ dropField: "Custom.Clarify" }).api.preflight(payload([story("i1#1", "workstream:w1"), later]));
+  assert.equal(pf.ok, false, "a field only the second item carries still fails preflight");
+  assert.ok(pf.checks.some((c) => c.result === "FAIL" && /Custom\.Clarify/.test(c.detail)));
+});

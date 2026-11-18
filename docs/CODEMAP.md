@@ -356,6 +356,7 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20261117170000_sprint_plan_snapshot.sql | 43 | ------------------------------------------------------------- Snapshots of the Sprint Roadmap (17 Nov 2026): one dated document per snapshot, so how the plan moved can be read back later. |
 | 20261118100000_decisions_and_delivery_order.sql | 432 | Decisions surface on the stories they gate, dependencies outside development say who holds them, and the push follows delivery order. |
 | 20261118160000_push_through_sprint_and_preview.sql | 161 | The push can stop at a sprint, and can be previewed before the owner confirms. |
+| 20261118200000_bug_repro_steps_lead_with_the_fault.sql | 159 | A bug's repro steps open with what happens. |
 
 ### supabase/schema/
 
@@ -375,7 +376,7 @@ Schema, one file per domain, run in lexical order.
 | 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
 | 37_sprint_delivery.sql | 365 | ------------------------------------------------------------------ |
 | 38_sprint_handoff.sql | 353 | ------------------------------------------------------------------ |
-| 39_ado_push.sql | 367 | ------------------------------------------------------------------ |
+| 39_ado_push.sql | 372 | ------------------------------------------------------------------ |
 | 39_sprint_checks.sql | 381 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
@@ -396,7 +397,7 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 | knowledge-coverage.json | 129 |  |
 | policies.sql | 637 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1915 |  |
+| schema-snapshot.json | 1919 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -418,7 +419,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | security.test.js | 230 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 157 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
-| sprint-stories.test.js | 144 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
+| sprint-stories.test.js | 146 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -429,7 +430,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 
 | File | Lines | Purpose |
 |---|---:|---|
-| ado-engine.test.js | 306 | tests/unit/ado-engine.test.js - Benchmarks for tools/ado/engine.js, driven against a mocked Azure DevOps. |
+| ado-engine.test.js | 314 | tests/unit/ado-engine.test.js - Benchmarks for tools/ado/engine.js, driven against a mocked Azure DevOps. |
 | ado-sprints.test.js | 210 | tests/unit/ado-sprints.test.js - Benchmarks for tools/ado/sprints.js, driven against a mocked Azure DevOps. |
 | ado-survey.test.js | 93 | tests/unit/ado-survey.test.js - Benchmarks for tools/ado/survey.js, driven against a mocked Azure DevOps. |
 | app-review/detail.test.js | 130 | tests/unit/app-review/detail.test.js - The application drawer's Record block, on the completeness contract (docs/plan/40-SURFACING.md). |
@@ -558,7 +559,7 @@ Architecture, security, design, and the operating protocols.
 | CHANGELOG.md | 274 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
-| DEVOPS.md | 236 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
+| DEVOPS.md | 239 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
 | ESTIMATION.md | 106 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
@@ -620,7 +621,7 @@ Repository root.
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |
 | package.json | 17 | LPIO - static shell of a login-gated project hub. Content lives in Supabase. |
-| tools/ado/engine.js | 568 | tools/ado/engine.js - Carries a push payload from LPio into Azure DevOps, and reads Azure DevOps back. |
+| tools/ado/engine.js | 573 | tools/ado/engine.js - Carries a push payload from LPio into Azure DevOps, and reads Azure DevOps back. |
 | tools/ado/sprints.js | 303 | tools/ado/sprints.js - Creates the sprints the Sprint Roadmap uses in Azure DevOps and selects them for the team, so the push can file each backlog item in its sprint (docs/DEVOPS.md, Before the first push). |
 | tools/ado/survey.js | 221 | tools/ado/survey.js - Reads how a project's existing work is written, |
 

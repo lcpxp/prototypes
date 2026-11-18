@@ -268,8 +268,13 @@
               "/fields?$expand=all&" + API).then(function (r) {
               var refs = {};
               (r.value || []).forEach(function (f) { refs[f.referenceName] = f; });
-              var sample = objects(payload).filter(function (x) { return x.kind === kind; })[0];
-              var set = fieldSet(p, kind, sample.o, {});
+              // Every field any object of this kind writes, not one
+              // sample's: a field only a later item carries would
+              // otherwise fail mid-push.
+              var set = {};
+              objects(payload).filter(function (x) { return x.kind === kind; }).forEach(function (x) {
+                Object.assign(set, fieldSet(p, kind, x.o, {}));
+              });
               var missing = Object.keys(set).filter(function (ref) { return !refs[ref]; });
               note("fields on " + p.types[kind], missing.length === 0, missing.join(", "));
               var unset = Object.keys(refs).filter(function (ref) {

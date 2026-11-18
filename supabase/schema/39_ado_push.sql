@@ -179,9 +179,11 @@ begin
   -- in this order, and Azure DevOps ranks a new backlog item below the
   -- last, so the backlog opens in the order the developer works it.
   with f as (
-    select x.*, v.effective_slot as d_slot, v.sequence_position as d_seq
+    select x.*, v.effective_slot as d_slot, v.sequence_position as d_seq,
+           nullif(btrim(wi.summary), '') as item_summary
       from public.sprint_story_fields(p_id) x
       join public.v_sprint_plan_items v on v.work_item_id = x.work_item_id
+      join public.work_items wi on wi.id = x.work_item_id
      where x.is_build and (x.ado->>'id') is null
        and (p_through is null or x.sprint_code <= p_through)
   ),
@@ -203,8 +205,11 @@ begin
           'title', r.title,
           'description', case when r.kind = 'story' then
             public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]) end,
+          -- A bug says what happens first (the item's summary), then where
+          -- (the story's scope, when it has its own), then the story.
           'repro_steps', case when r.kind = 'bug' then
-            public.ado_html('div', array[r.scope]) ||
+            public.ado_html('div', array[r.item_summary,
+              case when r.scope is distinct from r.item_summary then r.scope end]) ||
             public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]) end,
           'purpose', case when r.kind = 'story' then
             public.ado_html('div', array[r.purpose]) end,
