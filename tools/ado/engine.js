@@ -358,6 +358,12 @@
     }
 
     function push(payload) {
+      // A preview carries drafted stories so preflight can rehearse them;
+      // only a payload built from confirmed stories may create anything.
+      if (payload.preview) {
+        env.log("This payload is a preview of drafted stories: run preflight with it, then confirm the stories in LPio and build the payload again to push.");
+        return Promise.resolve(null);
+      }
       var p = payload.profile;
       var receipt = { payload_hash: payload.hash, pushed_at: new Date().toISOString(), entries: [] };
       return preflight(payload).then(function (pf) {

@@ -44,7 +44,7 @@
   "functions": [
     "ado_html(p_kind text, p_lines text[])",
     "ado_notes_html(p_notes text, p_snapshot date)",
-    "ado_push_payload(p_id uuid)",
+    "ado_push_payload(p_id uuid, p_through text, p_preview boolean)",
     "ado_receipt_apply(p_receipt jsonb)",
     "dashboard_counts()",
     "dashboard_summary()",
@@ -466,6 +466,10 @@
     {
       "name": "decisions_and_delivery_order",
       "version": "20261118133939"
+    },
+    {
+      "name": "push_through_sprint_and_preview",
+      "version": "20261118181526"
     }
   ],
   "policies": [

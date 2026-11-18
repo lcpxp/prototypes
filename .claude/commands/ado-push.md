@@ -11,7 +11,10 @@ the definition, not a summary of one.
 1. Clear the hand-off rows in `v_sprint_plan_checks` first; a push with
    a `fix` row open is refused.
 2. Build the payload in Supabase (project ref `zlmkofbkobmhnslfnqsf`):
-   `select ado_push_payload();` or `select ado_push_payload('<id>');`.
+   `select ado_push_payload(null, '<last sprint>');`, or with `'<id>'` for
+   one workstream or item. Before the owner confirms, a preview
+   (`select ado_push_payload(null, '<last sprint>', true);`) lets
+   preflight rehearse the push; the engine will not push it.
 3. Print `tools/ado/engine.js` and the payload with its hash, ready to
    paste. The owner runs it; this session never reaches Azure DevOps.
 4. When the receipt comes back, apply it as docs/DEVOPS.md says, which

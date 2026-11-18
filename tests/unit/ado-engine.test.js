@@ -217,6 +217,15 @@ test("nothing is created when preflight fails or the owner says no", async () =>
   assert.equal(declined.store.size, 0);
 });
 
+test("a preview of drafted stories rehearses preflight and is never pushed", async () => {
+  const { api, store } = mock();
+  const preview = Object.assign(payload(), { preview: true });
+  const pf = await api.preflight(preview);
+  assert.equal(pf.ok, true, "preflight reads a preview like any payload");
+  assert.equal(await api.push(preview), null);
+  assert.equal(store.size, 0, "nothing is created from a preview");
+});
+
 test("it stops at the first failure, and a re-run skips what exists", async () => {
   const p = payload();
   p.items[1].fields.title = "Fails a rule";

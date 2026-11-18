@@ -25,7 +25,7 @@ const LIST = [
 ];
 
 function ado(seed) {
-  const state = { nodes: (seed && seed.nodes) || [], team: (seed && seed.team) || [], calls: [], failOn: seed && seed.failOn };
+  const state = { nodes: (seed && seed.nodes) || [], team: (seed && seed.team) || [], calls: [], logs: [], failOn: seed && seed.failOn };
   let next = 1;
   function reply(status, body) {
     return Promise.resolve({ ok: status < 300, status, headers: { get: () => null },
@@ -35,8 +35,9 @@ function ado(seed) {
     origin: "https://ado.example",
     sleep: () => Promise.resolve(),
     confirm: () => (seed && seed.answer === false ? false : true),
-    log: () => {},
+    log: (line) => state.logs.push(line),
     table: () => {},
+    today: () => (seed && seed.today) || "2030-01-09",
     fetch(url, opts) {
       const path = url.replace("https://ado.example", "").split("?")[0];
       const body = opts.body ? JSON.parse(opts.body) : undefined;
@@ -126,4 +127,15 @@ test("a root below the project creates the sprints in that folder", async () => 
   const { state, run } = ado();
   await run.apply(LIST.slice(0, 1), Object.assign({}, PROFILE, { iteration_root: "Demo\\Delivery Sprints" }));
   assert.equal(writes(state)[0].path, "/demo-org/Demo/_apis/wit/classificationnodes/iterations/Delivery%20Sprints");
+});
+
+test("it says which sprint today is in, and will not add one over a sprint the team already runs", async () => {
+  const { state, run } = ado({ today: "2030-01-09", nodes: [
+    { id: 3, identifier: "guid-3", name: "Iteration 41",
+      attributes: { startDate: "2030-01-06T00:00:00Z", finishDate: "2030-01-17T00:00:00Z" } },
+  ] });
+  const out = await run.apply(LIST, PROFILE);
+  assert.ok(state.logs.some((l) => /Azure DevOps is in: Iteration 41\. LPio's calendar puts today in Sprint 30-01/.test(l)));
+  assert.deepEqual(out.left, ["Sprint 30-01"], "nothing is created over the team's own sprint");
+  assert.deepEqual(out.created, ["Sprint 30-02"], "a sprint clear of it still goes ahead");
 });

@@ -119,14 +119,41 @@
         call("GET", nodes(p) + "?$depth=1&" + API),
         call("GET", teamIterations(p) + "?" + API),
       ]).then(function (r) {
+        var children = (r[0] && r[0].children) || [];
         var byName = {};
-        ((r[0] && r[0].children) || []).forEach(function (n) { byName[n.name] = n; });
+        children.forEach(function (n) { byName[n.name] = n; });
         var selected = {};
         ((r[1] && r[1].value) || []).forEach(function (t) { selected[t.id] = true; });
+        // What Azure DevOps already holds, and which sprint it counts today
+        // in, so the calendar is checked against the project before
+        // anything is added beside it.
+        var today = env.today();
+        var current = [];
+        var existing = children.map(function (n) {
+          var a = n.attributes || {};
+          var start = day(a.startDate), end = day(a.finishDate);
+          var now = start && end && start <= today && today <= end;
+          if (now) current.push(n.name);
+          return { sprint: n.name, start: start || "-", end: end || "-",
+            team: selected[n.identifier] ? "selected" : "", today: now ? "today" : "" };
+        });
+        env.log("Already in Azure DevOps under " + p.iteration_root + ": " + existing.length + " sprint(s).");
+        if (existing.length) env.table(existing);
+        env.log("Today, " + today + ", Azure DevOps is in: " + (current.join(", ") || "no sprint") +
+          ". LPio's calendar puts today in " + (sprints.filter(function (s) {
+            return s.start <= today && today <= s.end; }).map(function (s) { return name(s.code); })[0] || "none of the listed sprints") + ".");
         var rows = sprints.map(function (s) {
           var node = byName[name(s.code)];
           var row = { sprint: name(s.code), start: s.start, end: s.end, action: "", node: node || null };
-          if (!node) row.action = "create and select";
+          var clash = children.filter(function (n) {
+            var a = n.attributes || {};
+            return n.name !== row.sprint && day(a.startDate) && day(a.finishDate) &&
+              day(a.startDate) <= s.end && s.start <= day(a.finishDate);
+          })[0];
+          if (!node && clash) {
+            row.action = "leave: its dates overlap " + clash.name + " (" + day(clash.attributes.startDate) +
+              " to " + day(clash.attributes.finishDate) + "); settle which naming the team uses first";
+          } else if (!node) row.action = "create and select";
           else {
             var a = node.attributes || {};
             if (day(a.startDate) !== s.start || day(a.finishDate) !== s.end) {
@@ -200,5 +227,6 @@
     confirm: function (question) { return root.confirm(question); },
     log: function (line) { root.console.log(line); },
     table: function (rows) { root.console.table(rows); },
+    today: function () { return new Date().toISOString().slice(0, 10); },
   });
 })(typeof window !== "undefined" ? window : globalThis);

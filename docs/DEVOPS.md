@@ -131,6 +131,13 @@ selected for the team, and is listed in `ado_profile.team_sprints`.
 
     select ado_push_payload();              -- the whole plan
     select ado_push_payload('<id>');        -- one workstream or one item
+    select ado_push_payload(null, '26-25'); -- sprints up to 26-25 only
+    select ado_push_payload(null, '26-25', true);  -- preview: drafted too
+
+A push normally names its last sprint, so stories confirmed for later
+sprints wait for their own push. A preview treats drafted stories as
+confirmed and is marked `preview`: preflight rehearses it against Azure
+DevOps before the owner confirms, and `push` refuses it.
 
 Rendering lives in the database. The payload holds confirmed stories
 with no Azure DevOps id, every field already rendered, with their

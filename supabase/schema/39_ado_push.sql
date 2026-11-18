@@ -150,7 +150,15 @@ end $$;
 -- admin-only profile there is nothing to build.
 -- ---------------------------------------------------------------
 
-create or replace function public.ado_push_payload(p_id uuid default null)
+-- p_through limits the push to stories whose sprint starts no later
+-- than that code ('26-25' for this week and sprint 1), so stories
+-- confirmed for later sprints wait for their own push. p_preview treats
+-- drafted stories as confirmed and marks the payload preview: true, so
+-- preflight can rehearse a push against Azure DevOps before the owner
+-- confirms; the engine refuses to push a preview.
+drop function if exists public.ado_push_payload(uuid);
+create or replace function public.ado_push_payload(
+  p_id uuid default null, p_through text default null, p_preview boolean default false)
 returns jsonb
 language plpgsql
 stable
@@ -175,10 +183,11 @@ begin
       from public.sprint_story_fields(p_id) x
       join public.v_sprint_plan_items v on v.work_item_id = x.work_item_id
      where x.is_build and (x.ado->>'id') is null
+       and (p_through is null or x.sprint_code <= p_through)
   ),
   ready as (
     select * from f
-     where stories_status = 'confirmed' and shape_ok and epic_key is not null
+     where (stories_status = 'confirmed' or p_preview) and shape_ok and epic_key is not null
   ),
   items as (
     select coalesce(jsonb_agg(jsonb_build_object(
@@ -280,7 +289,7 @@ begin
           else 'Its workstream has no roadmap category, so there is no Epic.' end
       ) order by f.d_slot, f.d_seq nulls last, f.stream_no, f.item_no, f.n), '[]'::jsonb) as j
     from f
-    where not (f.stories_status = 'confirmed' and f.shape_ok and f.epic_key is not null)
+    where not ((f.stories_status = 'confirmed' or p_preview) and f.shape_ok and f.epic_key is not null)
   )
   select jsonb_build_object(
       'epics', epics.j, 'features', features.j, 'items', items.j, 'held_back', held.j)
@@ -291,11 +300,12 @@ begin
     'version', 1,
     'generated_at', now(),
     'hash', md5((body - 'held_back')::text),
-    'profile', to_jsonb(prof) - 'key' - 'note' - 'created_at' - 'updated_at' - 'epic_ids') || body;
+    'profile', to_jsonb(prof) - 'key' - 'note' - 'created_at' - 'updated_at' - 'epic_ids') || body ||
+    case when p_preview then jsonb_build_object('preview', true) else '{}'::jsonb end;
 end $$;
 
-comment on function public.ado_push_payload(uuid) is
-  'The Azure DevOps push payload: confirmed, unpushed stories of developer work with every field rendered, their Features and Epics, and what is held back and why. p_id null for the whole plan, a workstream, or an item. Admin only, through ado_profile (docs/DEVOPS.md).';
+comment on function public.ado_push_payload(uuid, text, boolean) is
+  'The Azure DevOps push payload: confirmed, unpushed stories of developer work with every field rendered, their Features and Epics, and what is held back and why. p_id null for the whole plan, a workstream, or an item; p_through the last sprint code to include; p_preview true for a preflight rehearsal of drafted stories, which the engine will not push. Admin only, through ado_profile (docs/DEVOPS.md).';
 
 -- ---------------------------------------------------------------
 -- ado_receipt_apply: the write-back. The engine hands back a receipt -

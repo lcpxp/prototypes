@@ -21,7 +21,7 @@ run through the Supabase MCP.
    answered in proportion to each story's size.
 3. Points against capacity (`v_sprint_plan_load`): loaded full, with an
    ordered pull-forward list.
-4. Build the payload: `select ado_push_payload();`.
+4. Build the payload for the sprint: `select ado_push_payload(null, '<sprint code>');`.
 5. Take a snapshot of the plan: `select sprint_plan_snapshot('<code> start');`.
 6. Write the start-of-sprint summary as a `work_documents` row of kind
    `sprint`, linked `about` each stream, ending with a one-line sprint

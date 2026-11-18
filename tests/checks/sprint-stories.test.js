@@ -131,6 +131,10 @@ test("Azure DevOps carries development only, in the order it is delivered", () =
   assert.match(handoff, /'key', case when bv\.is_build/, "only developer work gets a dependency key");
   const push = read("supabase/schema/39_ado_push.sql");
   assert.match(push, /order by r\.d_slot, r\.d_seq nulls last/, "items go in delivery order");
+  assert.match(push, /p_through is null or x\.sprint_code <= p_through/,
+    "a push can stop at a sprint, so later confirmed stories wait for their own");
+  assert.match(push, /jsonb_build_object\('preview', true\)/, "a preview says it is one");
+  assert.match(read("tools/ado/engine.js"), /if \(payload\.preview\)/, "and the engine will not push it");
   assert.match(push, /coalesce\(' \(' \|\| \(d->>'outside'\) \|\| '\)'/,
     "an outside dependency is written as text, never a pending link");
   const doc = read(DOC);
