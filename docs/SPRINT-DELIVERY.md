@@ -186,6 +186,22 @@ every row, with each fix recorded in a `decision` note that is its undo:
    Before stories go to the owner, every claim without a file reference
    and every count is re-checked, and the corrections go in one
    `decision` note.
+10. **Proportion.** A story fixes what was reported, where it is broken,
+   and nothing beside it:
+   - each place it changes is one the code shows is broken; "both" or
+     "every" needs the fault read in each place, and a place that already
+     works is named as unchanged;
+   - nothing is added that nobody asked for - no rewording of contract
+     or legal clauses, no new format rules, no data clean-up, no hiding
+     of whole sections - unless the owner asked or the fix cannot work
+     without it, and then the note says why;
+   - behaviour that already works is not restated as a requirement;
+   - the scope is the narrowest that solves the report (service fees,
+     not every fee; people's countries, not every list) and says what
+     stays as it is;
+   - a format is given as its rule with an example each way;
+   - a fault found next to the reported one goes to the owner as a
+     question, never into the story.
 
 ## Confirming and freezing
 

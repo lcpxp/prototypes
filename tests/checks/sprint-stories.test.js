@@ -143,5 +143,7 @@ test("Azure DevOps carries development only, in the order it is delivered", () =
     "an outside dependency is written as text, never a pending link");
   const doc = read(DOC);
   assert.match(doc, /Only development is a story for Azure DevOps/);
+  assert.match(doc, /\*\*Proportion\.\*\* A story fixes what was reported, where it is broken/,
+    "a story fixes what was reported and nothing beside it");
   assert.match(doc, /Order within a sprint/);
 });

@@ -421,7 +421,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | security.test.js | 230 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 157 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
-| sprint-stories.test.js | 148 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
+| sprint-stories.test.js | 150 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -577,7 +577,7 @@ Architecture, security, design, and the operating protocols.
 | SCREENSHOTS.md | 91 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
 | SECURITY.md | 129 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINT-DELIVERY.md | 510 | Sprint delivery |
+| SPRINT-DELIVERY.md | 526 | Sprint delivery |
 | SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
 | STATE.md | 40 | Current state Updated: 2026-11-18 (first Azure DevOps load prepared) # In progress Developer-readiness run (developer started 16 Nov 2026); Sprint Roadmap live from 26-24. |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
@@ -598,7 +598,7 @@ Slash commands and the permission settings a session runs under.
 | commands/sprint-close.md | 27 | Close a sprint - build the end-of-sprint summary from the read-back, apply what corroborates, recalibrate capacity, roll the plan and refresh platform knowledge |
 | commands/sprint-ready.md | 31 | Get a sprint ready before it starts - checks clean, items ready, load and pull-forward list set, payload built, start-of-sprint summary written |
 | commands/sprint-status.md | 19 | Answer a question about past, current or future sprints from the sprint ledger and the sprint documents |
-| commands/sprint-stories.md | 77 | Prepare the Sprint Roadmap for its sprint - order and readiness checks, user stories and acceptance criteria drafted and confirmed per workstream, then the packs for Azure DevOps and the company roadmap |
+| commands/sprint-stories.md | 78 | Prepare the Sprint Roadmap for its sprint - order and readiness checks, user stories and acceptance criteria drafted and confirmed per workstream, then the packs for Azure DevOps and the company roadmap |
 | settings.json | 50 | Committed, shared permissions for a session in this repo: an allow list covering the routine commands (npm/node, read-only and write git, the search tools, a local http server, file reads and edits) and a deny list that blocks the hard rules mechanically - reading config.js or .env, force-pushing, git add -f, rm -rf. .claude/settings.local.json is per-developer and gitignored. |
 
 ### .github/

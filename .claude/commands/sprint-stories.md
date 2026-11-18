@@ -43,8 +43,9 @@ Run it in this order:
    context completeness check in proportion to each story's size (the
    `ctx_` findings and `tech_notes_stale` in `v_sprint_plan_checks`), and
    the accuracy re-check of every claim without a file reference and
-   every count. A placement the owner directed is never moved by the
-   check.
+   every count, and the proportion check: each change is where the code
+   shows the fault, and nothing is added that was not asked for. A
+   placement the owner directed is never moved by the check.
 7. **Write** through the MCP as `drafted`: `user_stories` and
    `stories_status` together, then one `decision` note per stream naming
    what was written. Where a set is overwritten, the previous JSON goes in
