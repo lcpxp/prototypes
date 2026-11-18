@@ -23,7 +23,7 @@ run through the Supabase MCP.
    ordered pull-forward list.
 4. Build the payload for the sprint: `select ado_push_payload(null, '<sprint code>');`.
 5. Take a snapshot of the plan: `select sprint_plan_snapshot('<code> start');`.
-6. Azure DevOps: steps 1 to 4 of docs/DEVOPS.md, Every sprint, and step 6
+6. Azure DevOps: steps 1 to 4 of docs/DEVOPS.md, Every sprint, and the push in step 7
    for the sprint after this one. Give the owner each step that is his to run.
 7. Write the start-of-sprint summary as a `work_documents` row of kind
    `sprint`, linked `about` each stream, ending with a one-line sprint

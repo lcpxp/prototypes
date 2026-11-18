@@ -12,8 +12,8 @@ Read them and follow them; they are the definition, not a summary of one.
 The owner hands over the sprint's read-back from Azure DevOps and fresh
 code zips. The data is in Supabase (project ref `zlmkofbkobmhnslfnqsf`).
 
-0. Azure DevOps: steps 8 to 10 of docs/DEVOPS.md, Every sprint. The
-   read-back is step 8; unfinished work moves to the next sprint at 9.
+0. Azure DevOps: steps 8 to 10 of docs/DEVOPS.md, Every sprint. Unfinished
+   work moves on at 8 with its effort re-set; the read-back is 9.
 1. Build the end-of-sprint summary: Delivered (Done, every criterion
    ticked), Progressed, Blocked, Slipped, Changed about the plan.
 2. Class each line as corroborates, updates, contradicts or new. Apply

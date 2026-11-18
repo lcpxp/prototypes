@@ -14,9 +14,9 @@ Decisions: `work_notes` tagged `developer-readiness` on the run's
 decision log, each with undo values; one push note per stream.
 
 ## Next steps
-1. Sprint 2 (26-26) pushed by Fri 27 Nov (docs/DEVOPS.md, Every sprint,
-   step 6): /sprint-stories with the step 10 rules, preview, rehearse,
-   push, receipt, verify. Sprints 27-02 and 27-03 created by 21 Dec.
+1. Sprint 2 (26-26): stories drafted with the step 10 rules for the
+   mid-sprint review Fri 27 Nov, then pushed before 4 Dec (docs/DEVOPS.md,
+   Every sprint, step 7). Sprints 27-02 and 27-03: script 7 sent 18 Nov.
 2. Owner answers the three highlighted decisions on the PDF cover.
 3. Refresh embeddings once Supabase compute allows
    (`select roadmap_embed_refresh();` failed on a worker limit 18 Nov).

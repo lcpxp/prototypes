@@ -210,8 +210,8 @@ items still in their first state whose revision has not moved.
 ## Every sprint
 
 The whole round for one sprint in Azure DevOps, in order: nothing a
-sprint needs is left to memory. /sprint-ready runs steps 1 to 4 and 6,
-/sprint-close steps 8 to 10.
+sprint needs is left to memory. /sprint-ready runs steps 1 to 4 (and,
+for the next sprint, the push in 7); /sprint-close runs 8 to 10.
 
 Capacity is planned in points, in LPio (docs/ESTIMATION.md), with
 holidays and leave as overrides there. Nothing is set on the Capacity
@@ -231,24 +231,30 @@ Before the sprint starts:
 4. **Verify.** `verify` shows zero differences, and the read-back
    (`sprint`) shows nothing in the sprint that LPio did not put there.
 
-During the sprint:
+The sprint, as the owner runs it:
 
-5. The developer assigns a story to himself when he starts it, keeps
-   one or two in progress at a time, and moves each to Done when it
-   meets Done (below). The board is his daily update; a blocker is
-   raised the same day.
-6. **Refine and push the next sprint by mid-sprint.** Its stories are
-   walked through and sized together, then steps 3 and 4 run for it by
-   the middle Friday of the sprint before, so pulling a story forward
-   is moving a card, not waiting for a push.
-7. A story that will not finish is said by that Friday and moves on.
+5. **Planning, the first Monday.** Owner and developer go through the
+   sprint's stories together, adjust any effort and agree who does
+   what; stories are assigned there. An effort changed in the meeting
+   is changed in Azure DevOps, and the read-back carries it to LPio.
+6. **Build, test, release.** Each story is tested together as it is
+   finished and released as soon as it passes, not saved up for the
+   sprint's end. It moves to Done the same day it meets Done (below).
+   A blocker is raised the same day.
+7. **Mid-sprint review, the middle Friday.** Progress against the
+   sprint, anything that will spill named and moved, and the next
+   sprint's stories discussed and sized together. Steps 3 and 4 then
+   run for that sprint before this one ends, so a story can be pulled
+   forward by moving a card.
+8. **Close, the last Friday.** A recap of what was delivered and one
+   thing to change in how the sprint ran; unfinished work moves to the
+   next sprint with its effort re-set to what is left, and where an
+   estimate was off is noted for the next planning.
 
-At the close (the sprint's last day):
+At the close:
 
-8. **Read-back.** `sprint` for the code, handed to /sprint-close.
-9. **Review and retrospective.** What was delivered, and one thing to
-   change in how the sprint ran. Unfinished work moves to the next
-   sprint in Azure DevOps, and LPio rolls the plan to match.
+9. **Read-back.** `sprint` for the code, handed to /sprint-close, and
+   LPio rolls the plan to match.
 10. **Recalibrate** capacity from what reached Done (docs/ESTIMATION.md,
     Capacity).
 
