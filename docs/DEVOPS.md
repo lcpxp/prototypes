@@ -194,9 +194,13 @@ items still in their first state whose revision has not moved.
 
 Three one-off steps, each the owner's to run or request:
 
-1. **Sprints.** A project administrator creates the sprints the plan
-   uses; the owner selects them for the team. Then list them in
-   `ado_profile.team_sprints`.
+1. **Sprints.** `tools/ado/sprints.js` creates each sprint the plan
+   uses as "Sprint <code>" under `iteration_root`, with the dates in
+   docs/SPRINTS.md, and selects it for the team: `plan` is read-only,
+   `apply` asks once and adds only. A sprint that already exists with
+   other dates is reported and left alone. Its result names the codes;
+   the session lists them in `ado_profile.team_sprints`.
+   `tests/unit/ado-sprints.test.js` holds it to that.
 2. **Reconcile what is stale.** Open items left in finished sprints,
    unscheduled or without a parent are grouped in short tables, each
    with one recommendation: superseded by a roadmap row, wanted and not
