@@ -89,7 +89,11 @@ sprint; an item spanning several sprints spreads its points evenly.
 After every sprint, at the close (docs/SPRINT-DELIVERY.md Part B):
 
 1. Read the points actually delivered from the sprint read-back.
-2. Set `capacity_points` from recent actuals, not from hope.
+2. Set `capacity_points` from recent actuals, not from hope: the points
+   that reached Done, averaged over the last three sprints once there
+   are three. Before then, read each sprint as a range, not a figure.
+   Points forecast; they are never a target for the developer, because
+   a target is what inflates them.
 3. Record the old and new figure in a `decision` note. That note is the
    undo.
 

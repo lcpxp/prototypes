@@ -210,14 +210,14 @@ items still in their first state whose revision has not moved.
 ## Every sprint
 
 The whole round for one sprint in Azure DevOps, in order: nothing a
-sprint needs is left to memory. /sprint-ready runs steps 1 to 5 and
-/sprint-close steps 9 to 11.
+sprint needs is left to memory. /sprint-ready runs steps 1 to 4 and 6,
+/sprint-close steps 8 to 10.
 
-Capacity is planned in points, in LPio (docs/ESTIMATION.md). Hours
-capacity on the Capacity tab is not set: Tasks are the developer's own
-breakdown, and Azure DevOps measures that capacity only against task
-hours. The burndown runs on Effort instead, so it needs only the days
-off.
+Capacity is planned in points, in LPio (docs/ESTIMATION.md), with
+holidays and leave as overrides there. Nothing is set on the Capacity
+tab: Tasks are the developer's own breakdown, and that tab measures
+hours against task Remaining Work only. The burndown is the Analytics
+Burndown widget on a sum of Effort, which needs neither.
 
 Before the sprint starts:
 
@@ -230,27 +230,27 @@ Before the sprint starts:
    then the receipt applied (/ado-push).
 4. **Verify.** `verify` shows zero differences, and the read-back
    (`sprint`) shows nothing in the sprint that LPio did not put there.
-5. **Days off.** The sprint's Capacity tab carries the team's public
-   holidays and the developer's leave, so the burndown's ideal line is
-   right.
 
 During the sprint:
 
-6. The developer assigns a story to himself when he starts it, and
-   moves it to Done when it meets Done (below). Nothing is assigned in
-   advance, so the board shows what is really in progress.
-7. **Next sprint pushed by mid-sprint.** Steps 3 and 4 run for the next
-   sprint by the middle Friday of the one before, so pulling a story
-   forward is moving it on the board, not waiting for a push.
-8. A story that will not finish is said early and moves to the next
-   sprint.
+5. The developer assigns a story to himself when he starts it, keeps
+   one or two in progress at a time, and moves each to Done when it
+   meets Done (below). The board is his daily update; a blocker is
+   raised the same day.
+6. **Refine and push the next sprint by mid-sprint.** Its stories are
+   walked through and sized together, then steps 3 and 4 run for it by
+   the middle Friday of the sprint before, so pulling a story forward
+   is moving a card, not waiting for a push.
+7. A story that will not finish is said by that Friday and moves on.
 
 At the close (the sprint's last day):
 
-9. **Read-back.** `sprint` for the code, handed to /sprint-close.
-10. **Unfinished work** moves to the next sprint in Azure DevOps, and
-    LPio rolls the plan to match.
-11. **Recalibrate** capacity from what reached Done (docs/ESTIMATION.md).
+8. **Read-back.** `sprint` for the code, handed to /sprint-close.
+9. **Review and retrospective.** What was delivered, and one thing to
+   change in how the sprint ran. Unfinished work moves to the next
+   sprint in Azure DevOps, and LPio rolls the plan to match.
+10. **Recalibrate** capacity from what reached Done (docs/ESTIMATION.md,
+    Capacity).
 
 ## Before the first push
 
@@ -278,6 +278,6 @@ Five one-off steps, each the owner's to run or request:
    definitions, from the section above.
 4. **Run preflight.** It checks every item's fields against its type,
    so a field the form lacks is named before anything is created.
-5. **Burndown on Effort.** The team dashboard's Sprint Burndown widget
-   sums Effort on backlog items and bugs, so it reads in points without
-   Tasks or hours capacity (Every sprint, above).
+5. **Burndown on Effort.** Add the Analytics Burndown widget to the
+   team dashboard, set to the current sprint and a sum of Effort. The
+   older Sprint Burndown widget counts task hours only (Every sprint).

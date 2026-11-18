@@ -15,14 +15,14 @@ decision log, each with undo values; one push note per stream.
 
 ## Next steps
 1. Sprint 2 (26-26) pushed by Fri 27 Nov (docs/DEVOPS.md, Every sprint,
-   step 7): /sprint-stories with the step 10 rules, preview, rehearse,
+   step 6): /sprint-stories with the step 10 rules, preview, rehearse,
    push, receipt, verify. Sprints 27-02 and 27-03 created by 21 Dec.
 2. Owner answers the three highlighted decisions on the PDF cover.
 3. Refresh embeddings once Supabase compute allows
    (`select roadmap_embed_refresh();` failed on a worker limit 18 Nov).
 4. Sprint 2 needs one screening report mockup (MATCH).
 5. Effort: owner reviews sizes with the developer; recalibrate capacity at
-   /sprint-close after two sprints (history note 618cc096).
+   /sprint-close, on three sprints (history note 618cc096).
 
 ## Blocked on the owner
 - PFAC stage diagrams: not found in LPio or the repo; check S1-07/S1-08.
