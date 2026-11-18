@@ -1,6 +1,6 @@
 # Current state
 
-Updated: 2026-11-18 (owner review of the drafted stories applied)
+Updated: 2026-11-18 (first Azure DevOps load prepared)
 
 ## In progress
 Developer-readiness run (developer started 16 Nov 2026); Sprint Roadmap
@@ -10,24 +10,24 @@ Next, DaoPay split in the owner's order, EIT tracking rebuilt on the
 existing hourly job, Orders tab and timeline, and decisions moved off
 Azure DevOps onto the stories they gate (docs/SPRINT-DELIVERY.md Part A,
 Writing them). Stories DRAFTED, no Azure DevOps ids, nothing pushed.
-Snapshots before and after are in work_documents (kind sprint).
-Decisions: `work_notes` tagged `developer-readiness`, on the run's
-decision log document, each with undo values.
+Snapshots: work_documents kind sprint. Decisions: `work_notes` tagged
+`developer-readiness` on the run's decision log, each with undo values.
 
 ## Next steps
-1. Owner confirms the drafted stories, this week first (the 18 Nov
-   preview PDFs mirror the Azure DevOps fields).
-2. Owner answers the three highlighted decisions: inbound caller
-   identity, Unity service identity, and EIT GetShippingData on live.
-3. At push time, generate the mockups the stories need: the partner-type
-   switches page and one screening report (MATCH).
-4. **Phase 5**: `ado_profile.team_sprints`, then `/ado-push` once the
-   sprints exist and stories are confirmed.
-5. Answer the `ctx_` findings in v_sprint_plan_checks as each sprint
-   comes within two sprints, in proportion to each story's size.
+1. Owner runs the sprint file (tools/ado/sprints.js with the profile):
+   plan, then fix the mistaken 25-30 into 26-24, then apply for 26-24
+   to 27-01. Hand-back: the team_sprints line; set
+   `ado_profile.team_sprints` from it.
+2. Owner runs the preflight rehearsal
+   (`ado_push_payload(null, '26-25', true)`, 17 stories); fix any FAIL.
+3. Owner's final review, then confirms this week and sprint 1 in words;
+   set those items confirmed, build `ado_push_payload(null, '26-25')`
+   and print the push file. Receipt back: `ado_receipt_apply`.
+4. Owner answers the three highlighted decisions on the PDF cover.
+5. Sprint 2 push: one screening report mockup (MATCH); answer `ctx_`
+   findings as each sprint comes within two sprints.
 
 ## Blocked on the owner
-- Azure DevOps: sprints 26-24 to 27-04 must exist and be selected.
 - Legal: the DaoPay approval clause wording; the per-MCC addenda list.
 - Enable leaked-password protection in Supabase Auth.
 - Tag: `git tag -a v0.1.0 ab0e78b -m "0.1.0"`, then `git push origin v0.1.0`.
