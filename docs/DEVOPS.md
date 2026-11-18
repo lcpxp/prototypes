@@ -177,6 +177,14 @@ so every call below is one the owner runs after seeing the plan.
 | `update` | The one-off correction: as `cleanup`, and only for items still in their first state. |
 | `sprint` | Read-only. What a sprint holds, for the sprint close: state, effort, criteria and how many are ticked, pull request links. No names. |
 
+`tools/ado/survey.js` is the third paste, read-only like `preflight`:
+it reads the project's existing Epics, Features, backlog items and
+Bugs and reports how each type is written - fields used, picklist
+values, the headings long fields use, title shape, parents and a few
+samples - with every person removed. A session reads it before the
+first push, and whenever the team's conventions may have moved, so
+what is pushed matches the work already there.
+
 `push` downloads `ado-push-receipt-<date>.json` and copies it to the
 clipboard. Each entry holds the LPio key, the id, type, revision, hash
 and outcome.
