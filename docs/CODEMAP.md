@@ -359,6 +359,8 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20261118200000_bug_repro_steps_lead_with_the_fault.sql | 159 | A bug's repro steps open with what happens. |
 | 20261118210000_bug_notes_in_repro_steps.sql | 169 | A bug is written the way the team's bugs already are: title, criteria and effort as fields, everything else in the repro steps. |
 | 20261118220000_notes_dated_by_plan_snapshot.sql | 168 | Technical notes that carry no snapshot date of their own are dated by the plan's code snapshot, the code they were checked against, rather than printed as "undated". |
+| 20261118230000_ado_carries_development_only.sql | 126 | Azure DevOps carries the development only. |
+| 20261118231000_ado_carries_development_only_payload.sql | 165 | The payload half of ado_carries_development_only (applied as its own migration): no clarifications, no dependency on work outside development. |
 
 ### supabase/schema/
 
@@ -377,8 +379,8 @@ Schema, one file per domain, run in lexical order.
 | 35_sprints.sql | 391 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
 | 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
 | 37_sprint_delivery.sql | 365 | ------------------------------------------------------------------ |
-| 38_sprint_handoff.sql | 353 | ------------------------------------------------------------------ |
-| 39_ado_push.sql | 384 | ------------------------------------------------------------------ |
+| 38_sprint_handoff.sql | 350 | ------------------------------------------------------------------ |
+| 39_ado_push.sql | 382 | ------------------------------------------------------------------ |
 | 39_sprint_checks.sql | 381 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
@@ -421,7 +423,7 @@ Repo-wide gates. These encode the CLAUDE.md rules as executable checks, so they 
 | security.test.js | 230 | tests/checks/security.test.js - Security gates. |
 | size.test.js | 126 | tests/checks/size.test.js - File size budgets. |
 | sprint-contract.test.js | 157 | tests/checks/sprint-contract.test.js - The Sprint Roadmap's view reads a set of column names. |
-| sprint-stories.test.js | 150 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
+| sprint-stories.test.js | 153 | tests/checks/sprint-stories.test.js - The sprint hand-off, held as claims about the command and the SQL rather than about any data. |
 | structure.test.js | 319 | tests/checks/structure.test.js - Page structure gates. |
 | style.test.js | 89 | tests/checks/style.test.js - Design-system gates. |
 | surface.test.js | 128 | tests/checks/surface.test.js - The refactor safety net. |
@@ -561,7 +563,7 @@ Architecture, security, design, and the operating protocols.
 | CHANGELOG.md | 274 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
-| DEVOPS.md | 237 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
+| DEVOPS.md | 236 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
 | ESTIMATION.md | 106 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
@@ -577,7 +579,7 @@ Architecture, security, design, and the operating protocols.
 | SCREENSHOTS.md | 91 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
 | SECURITY.md | 129 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINT-DELIVERY.md | 526 | Sprint delivery |
+| SPRINT-DELIVERY.md | 528 | Sprint delivery |
 | SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
 | STATE.md | 40 | Current state Updated: 2026-11-18 (first Azure DevOps load prepared) # In progress Developer-readiness run (developer started 16 Nov 2026); Sprint Roadmap live from 26-24. |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |

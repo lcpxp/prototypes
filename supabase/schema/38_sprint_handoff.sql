@@ -27,8 +27,9 @@
 --   scope          the story's own scope line, else the item's summary.
 --                  work_items.scope is NOT read: it says whether a
 --                  stream ends (finite, staged, continuous)
---   out_of_scope   'Out of scope:' lines in details, then each sibling
---                  story as 'Covered separately: <title>'
+--   out_of_scope   'Out of scope:' lines in details: only what a
+--                  developer might otherwise do. Sibling stories are not
+--                  listed; they sit beside it under the same Feature
 --   clarifications open question notes on the item or its deliverables,
 --                  then 'Decision: ' and each open question tagged
 --                  decision on whatever blocks the item. A decision is
@@ -108,11 +109,7 @@ as $$
       coalesce(nullif(btrim(x.story->>'scope'), ''), nullif(btrim(x.summary), '')) as scope,
       array(select btrim(r.hit[1])
               from regexp_matches(coalesce(x.details, ''),
-                     '^\s*Out of scope:\s*(.+)$', 'gin') as r(hit))
-        || array(select 'Covered separately: ' || btrim(o.story->>'title')
-                   from jsonb_array_elements(x.user_stories)
-                     with ordinality as o(story, k)
-                  where o.k <> x.n order by o.k) as out_of_scope,
+                     '^\s*Out of scope:\s*(.+)$', 'gin') as r(hit)) as out_of_scope,
       array(select btrim(c.criterion #>> '{}')
               from jsonb_array_elements(x.story->'criteria')
                 with ordinality as c(criterion, k) order by c.k) as criteria,

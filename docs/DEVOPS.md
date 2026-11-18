@@ -64,10 +64,9 @@ the form shows them; `ado_profile.fields` maps each to its reference.
 | Description | the story | Three lines: the role, "I want", "So that". A story that will not split is a check failure. |
 | Purpose | the story's own `purpose` line, else the first sentence of the item's benefit, else the story's outcome | Never a placeholder. |
 | Scope | the story's own `scope` line, else the item's `summary` | One bullet. `work_items.scope` is not read: it says whether a stream ends. |
-| Out of scope | `Out of scope:` lines in `details`, then each sibling story as "Covered separately" | Blank if none. |
+| Out of scope | `Out of scope:` lines in `details`: only what a developer might otherwise do | Blank if none. Sibling stories are not listed; they sit under the same Feature. |
 | Acceptance criteria | the story's criteria, verbatim | A checklist, one box per criterion. |
-| Clarifications | open `question` notes on the item, then each open question tagged `decision` on whatever blocks it, as "Decision: ..." | A checklist, one unticked line each. Only the checklist is written, never the plain box beside it. |
-| Dependencies | `blocks` links into the item | "Needs: title (#id)". A blocker outside development has no id and never will: "Needs: title (EIT)", "(the product manager)" or "(not yet on the sprint plan)". |
+| Dependencies | `blocks` links into the item from other developer work | "Needs: title (#id)". Work outside development - a decision, an agreement, another team's build - is never written here; it stays in LPio and the story packs. |
 | Technical implementation details | the story's own technical notes, else the item's | Under the heading "Suggested approach (code snapshot date): confirm or challenge in refinement". |
 | Effort | the story's points | docs/ESTIMATION.md. |
 | Area | `ado_profile` | The team's area. |
@@ -82,8 +81,8 @@ A **Bug** is written the way the team's bugs already are: its title,
 criteria and effort as fields, and everything else in the repro steps -
 what happens (the item's summary, so it is written as the fault as it
 shows today), where (the story's scope, when it has its own), the story,
-then any open questions, dependencies and the suggested approach. It
-has no Purpose or Scope.
+then any development dependency and the suggested approach. It has no
+Purpose or Scope.
 
 A **Feature** carries the workstream's title, its summary and epic
 story as the description, the epic's outcomes as a plain list, and the

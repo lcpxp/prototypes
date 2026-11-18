@@ -139,8 +139,11 @@ test("Azure DevOps carries development only, in the order it is delivered", () =
   assert.match(push, /'technical_notes', case when r\.kind = 'story' then/,
     "a bug keeps its suggested approach in the repro steps, as the team's bugs do");
   assert.match(read("tools/ado/engine.js"), /if \(payload\.preview\)/, "and the engine will not push it");
-  assert.match(push, /coalesce\(' \(' \|\| \(d->>'outside'\) \|\| '\)'/,
-    "an outside dependency is written as text, never a pending link");
+  assert.match(push, /from jsonb_array_elements\(r\.needs\) as d where d->>'outside' is null/,
+    "a dependency on work outside development never reaches Azure DevOps");
+  assert.doesNotMatch(push, /'clarifications', /,
+    "the product manager's questions and decisions stay in LPio");
+  assert.doesNotMatch(handoff, /'Covered separately: '/, "sibling stories are not listed as out of scope");
   const doc = read(DOC);
   assert.match(doc, /Only development is a story for Azure DevOps/);
   assert.match(doc, /\*\*Proportion\.\*\* A story fixes what was reported, where it is broken/,

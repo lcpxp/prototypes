@@ -112,9 +112,11 @@ and an item that needs five stories is two items.
   `external_party_id` when another party builds it, so it never reaches
   Azure DevOps. Its decision is held once, as a `work_notes` question
   tagged `decision` on that row, with a `blocks` link to each build row
-  it gates. The build story then shows it under Clarifications as
-  "Decision: ...", and its dependency says who holds it. Write the story
-  for the development that follows the decision, never for the decision.
+  it gates. LPio and the story packs show it on that build story as
+  "Decision: ...", for the product manager; Azure DevOps carries none of
+  it - no decision, open question or dependency on work outside
+  development. Write the story for the development that follows the
+  decision, never for the decision.
 - **Stories in priority order.** Within an item the most important story
   comes first and the least important last, so the last is the one that
   spills.
