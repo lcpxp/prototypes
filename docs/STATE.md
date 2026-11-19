@@ -1,28 +1,28 @@
 # Current state
 
-Updated: 2026-11-18 (first Azure DevOps push done)
+Updated: 2026-11-19 (stories reworked, correction script sent)
 
 ## In progress
 Developer-readiness run (developer started 16 Nov 2026). This week
-(26-24) and sprint 1 (26-25) are in Azure DevOps: 4 Epics, 5 Features
-and 16 stories, #325985 to #326009, receipt applied, stories frozen
-(later LPio changes show as `ado_changed`). Sprints 26-24 to 27-01 exist
-and are in `ado_profile.team_sprints`. Sprint 2 onwards is DRAFTED.
-Story rules from the owner's reviews are in docs/SPRINT-DELIVERY.md
-Part A (step 10, Proportion) and docs/DEVOPS.md (development only).
-Decisions: `work_notes` tagged `developer-readiness` on the run's
-decision log, each with undo values; one push note per stream.
+(26-24) and sprint 1 (26-25) are in Azure DevOps: 4 Epics, 5 Features,
+16 stories (#325985 to #326009). Sprints 26-24 to 27-01 exist and are in
+`ado_profile.team_sprints`. Sprint 2 onwards is DRAFTED. Story rules:
+docs/SPRINT-DELIVERY.md Part A; hand-off: docs/DEVOPS.md. Decisions are
+`work_notes` tagged `developer-readiness`, each with its undo.
+Stories reworked 19 Nov (several user stories per item; undo note
+e9ffcdea): 10 items DRAFTED until the owner runs script 8 (correct.js +
+`ado_correction_payload(null, true)`); then apply its receipt with
+`ado_receipt_apply` and set those items confirmed.
 
 ## Next steps
 1. Sprint 2 (26-26): stories drafted with the step 10 rules for the
-   mid-sprint review Fri 27 Nov, then pushed before 4 Dec (docs/DEVOPS.md,
+   mid-sprint review Fri 27 Nov, pushed before 4 Dec (docs/DEVOPS.md,
    Every sprint, step 7). Sprints 27-02 and 27-03: script 7 sent 18 Nov.
 2. Owner answers the three highlighted decisions on the PDF cover.
-3. Refresh embeddings once Supabase compute allows
-   (`select roadmap_embed_refresh();` failed on a worker limit 18 Nov).
-4. Sprint 2 needs one screening report mockup (MATCH).
-5. Effort: owner reviews sizes with the developer; recalibrate capacity at
-   /sprint-close, on three sprints (history note 618cc096).
+3. Sprint 2 needs one screening report mockup (MATCH).
+4. Effort: owner reviews sizes with the developer; recalibrate at
+   /sprint-close on three sprints (history note 618cc096).
+5. Embeddings: `roadmap_embed_refresh(1, 3)`, small batches only.
 
 ## Blocked on the owner
 - PFAC stage diagrams: not found in LPio or the repo; check S1-07/S1-08.
@@ -33,6 +33,7 @@ decision log, each with undo values; one push note per stream.
 - Tag: `git tag -a v0.1.0 ab0e78b -m "0.1.0"`, then `git push origin v0.1.0`.
 
 ## Open decisions
-- The push tags items `LPio` and links each back to its LPio row: keep,
-  or use a neutral tag and drop the link? The link is how a re-run finds
-  what exists, so dropping it needs another idempotency key.
+- #325997: a service with only zero Event fees stays listed, or goes?
+  DaoPay clause 2.1 says "Fee in € / transaction" for all: a story?
+- Keep the `LPio` tag and link-back on pushed items? The link is how a
+  re-run finds what exists; dropping it needs another idempotency key.
