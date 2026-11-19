@@ -42,10 +42,13 @@
     }
   ],
   "functions": [
+    "ado_correction_payload(p_id uuid, p_preview boolean)",
     "ado_html(p_kind text, p_lines text[])",
     "ado_notes_html(p_notes text, p_snapshot date)",
+    "ado_payload_build(p_id uuid, p_through text, p_preview boolean, p_pushed boolean)",
     "ado_push_payload(p_id uuid, p_through text, p_preview boolean)",
     "ado_receipt_apply(p_receipt jsonb)",
+    "ado_story_html(p_story jsonb)",
     "dashboard_counts()",
     "dashboard_summary()",
     "embed_texts(p_texts text[], p_timeout_ms integer)",
@@ -75,6 +78,7 @@
     "sprint_plan_sync_order()",
     "sprint_story_fields(p_id uuid)",
     "sprint_story_pack(p_id uuid, p_part text)",
+    "story_parts(p_story jsonb)",
     "work_item_delete_guard()",
     "work_item_embed_text(p_title text, p_summary text, p_details text, p_resolution text)",
     "work_item_points(p jsonb)",
@@ -490,6 +494,30 @@
     {
       "name": "ado_carries_development_only_payload",
       "version": "20261118213319"
+    },
+    {
+      "name": "stories_shape_and_parts",
+      "version": "20261119165052"
+    },
+    {
+      "name": "story_fields_read_parts",
+      "version": "20261119165114"
+    },
+    {
+      "name": "story_pack_and_description",
+      "version": "20261119165145"
+    },
+    {
+      "name": "payload_builder_and_correction",
+      "version": "20261119165223"
+    },
+    {
+      "name": "receipt_records_corrections",
+      "version": "20261119165238"
+    },
+    {
+      "name": "checks_count_criteria_per_story",
+      "version": "20261119165329"
     }
   ],
   "policies": [

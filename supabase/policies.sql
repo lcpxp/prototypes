@@ -557,8 +557,12 @@ grant execute on function public.sprint_story_pack(uuid, text) to authenticated;
 -- an admin session, so no REST caller may reach it.
 revoke execute on function public.sprint_story_fields(uuid) from public, anon;
 grant execute on function public.sprint_story_fields(uuid) to authenticated;
-revoke execute on function public.ado_push_payload(uuid, text, boolean, boolean) from public, anon;
-grant execute on function public.ado_push_payload(uuid, text, boolean, boolean) to authenticated;
+revoke execute on function public.ado_push_payload(uuid, text, boolean) from public, anon;
+grant execute on function public.ado_push_payload(uuid, text, boolean) to authenticated;
+revoke execute on function public.ado_payload_build(uuid, text, boolean, boolean) from public, anon;
+grant execute on function public.ado_payload_build(uuid, text, boolean, boolean) to authenticated;
+revoke execute on function public.ado_correction_payload(uuid, boolean) from public, anon;
+grant execute on function public.ado_correction_payload(uuid, boolean) to authenticated;
 revoke execute on function public.ado_story_html(jsonb) from public, anon;
 grant execute on function public.ado_story_html(jsonb) to authenticated;
 revoke execute on function public.story_parts(jsonb) from public, anon;

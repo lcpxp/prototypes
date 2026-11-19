@@ -173,11 +173,10 @@ end $$;
 -- confirms; the engine refuses to push a preview. p_pushed renders the
 -- stories already in Azure DevOps instead, each with its id and the
 -- revision it was pushed at, for a correction (docs/DEVOPS.md).
+-- ado_push_payload and ado_correction_payload, below, are its two doors.
 drop function if exists public.ado_push_payload(uuid);
-drop function if exists public.ado_push_payload(uuid, text, boolean);
-create or replace function public.ado_push_payload(
-  p_id uuid default null, p_through text default null, p_preview boolean default false,
-  p_pushed boolean default false)
+create or replace function public.ado_payload_build(
+  p_id uuid, p_through text, p_preview boolean, p_pushed boolean)
 returns jsonb
 language plpgsql
 stable
@@ -342,8 +341,39 @@ begin
     case when p_pushed then jsonb_build_object('correction', true) else '{}'::jsonb end;
 end $$;
 
-comment on function public.ado_push_payload(uuid, text, boolean, boolean) is
-  'The Azure DevOps push payload: confirmed, unpushed stories of developer work with every field rendered, their Features and Epics, and what is held back and why. p_id null for the whole plan, a workstream, or an item; p_through the last sprint code to include; p_preview true for a preflight rehearsal of drafted stories, which the engine will not push; p_pushed true renders the stories already pushed instead, with their ids, for a correction. Admin only, through ado_profile (docs/DEVOPS.md).';
+comment on function public.ado_payload_build(uuid, text, boolean, boolean) is
+  'Builds an Azure DevOps payload: stories of developer work with every field rendered, their Features and Epics, and what is held back and why. Called through ado_push_payload (unpushed stories) and ado_correction_payload (pushed ones). Admin only, through ado_profile (docs/DEVOPS.md).';
+
+create or replace function public.ado_push_payload(
+  p_id uuid default null, p_through text default null, p_preview boolean default false)
+returns jsonb
+language sql
+stable
+security invoker
+set search_path = public
+as $$
+  select public.ado_payload_build(p_id, p_through, p_preview, false);
+$$;
+
+comment on function public.ado_push_payload(uuid, text, boolean) is
+  'The Azure DevOps push payload: confirmed, unpushed stories of developer work with every field rendered, their Features and Epics, and what is held back and why. p_id null for the whole plan, a workstream, or an item; p_through the last sprint code to include; p_preview true for a preflight rehearsal of drafted stories, which the engine will not push. Admin only, through ado_profile (docs/DEVOPS.md).';
+
+-- A correction: the stories already in Azure DevOps, rendered by the same
+-- builder, each with its id and the revision it was pushed at, so a
+-- change made in LPio after the push can be carried across.
+create or replace function public.ado_correction_payload(
+  p_id uuid default null, p_preview boolean default false)
+returns jsonb
+language sql
+stable
+security invoker
+set search_path = public
+as $$
+  select public.ado_payload_build(p_id, null, p_preview, true);
+$$;
+
+comment on function public.ado_correction_payload(uuid, boolean) is
+  'The correction payload: stories already pushed to Azure DevOps, rendered as a push would render them now, each with its id and pushed revision (docs/DEVOPS.md). p_preview includes drafted stories. Admin only, through ado_profile.';
 
 -- ---------------------------------------------------------------
 -- ado_receipt_apply: the write-back. The engine hands back a receipt -
