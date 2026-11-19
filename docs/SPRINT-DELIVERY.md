@@ -72,8 +72,10 @@ Read these before writing anything:
 
 ## Where they live
 
-`work_items.user_stories` holds an array of `{title, story, criteria[]}`
-and `stories_status` says `drafted` or `confirmed`; one is never set
+`work_items.user_stories` holds an array of backlog items, each
+`{title, story, criteria[]}` or, when it asks for several distinct
+things, `{title, stories: [{label, story, criteria[]}]}`, and
+`stories_status` says `drafted` or `confirmed`; one is never set
 without the other. A workstream holds its epic; a work item holds its own
 stories; a deliverable's content becomes a story on its parent item. The
 database refuses an empty or runaway set (`work_item_stories_valid`);
@@ -82,8 +84,16 @@ how much to write is the judgement below.
 ## How much to write
 
 - **A workstream:** exactly one epic story, with 3-5 outcome criteria.
-- **A work item:** 1-3 stories, each with 2-5 criteria. An item with
-  deliverables takes one story per deliverable instead, up to five.
+- **A work item:** 1-3 stories, each a backlog item with 2-5 criteria.
+  An item with deliverables takes one story per deliverable instead, up
+  to five.
+- **One thing per user story.** A backlog item that asks the developer
+  to build several distinct things - a sites table, a clause change and
+  a currency fix on one contract - holds one user story for each, 2 to
+  4, each with a short label and 1-5 criteria of its own. Each story is
+  then detailed enough to carry its nuances, and Azure DevOps shows
+  them under their labels in one item. One change is never split to
+  fill the shape: two criteria about one behaviour are one story.
 - **Titles** are imperative and ten words at most.
 
 More than this is bloat: a story that needs eight criteria is two stories,
@@ -211,9 +221,13 @@ every row, with each fix recorded in a `decision` note that is its undo:
    - guidance grows with the work: a large item (an integration, a new
      flow, screening) names each place the build touches, file:line,
      and any fact the developer would otherwise trip on;
+   - one thing per user story (How much to write), and the story
+     sentence stays broad - who, what they get, why - with the detail
+     in its criteria;
    - criteria state behaviour. Test set-up (sandboxes, data to seed)
-     goes in the technical notes; a test line stays a criterion only
-     when it is the behaviour it proves, said as that behaviour;
+     goes in the technical notes, and what stays as it is goes in the
+     scope; a test line stays a criterion only when it is the behaviour
+     it proves, said as that behaviour;
    - out of scope names only what a developer might otherwise do, never
      what anyone would assume.
 

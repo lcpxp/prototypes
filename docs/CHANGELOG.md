@@ -12,6 +12,8 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Roadmap drawer: a backlog item can hold several user stories, each under
+  its label with its own acceptance criteria.
 - API reference: a spec can be planned - the agreed design being built -
   and reads for anyone with the API reference, with a notice that it is
   not built yet; drafts stay internal.

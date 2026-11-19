@@ -144,13 +144,20 @@
     workstream: "Epic and acceptance criteria" };
   var STORIES_NONE = "Not written yet. Stories are written for sprint work " +
     "before its sprint starts.";
-  function storyHtml(s) {
-    var criteria = (s.criteria || []).map(function (c) {
+  // A backlog item holds one user story, or - when it asks for several
+  // distinct things - one per label, each with its own criteria.
+  function partHtml(part) {
+    var criteria = (part.criteria || []).map(function (c) {
       return "<li>" + esc(c) + "</li>";
     }).join("");
-    return '<div class="rmd-story"><h4>' + esc(s.title) + "</h4><p>" +
-      esc(s.story) + "</p>" +
-      (criteria ? '<ul class="rmd-points">' + criteria + "</ul>" : "") + "</div>";
+    return (part.label ? "<p><strong>" + esc(part.label) + "</strong></p>" : "") +
+      "<p>" + esc(part.story) + "</p>" +
+      (criteria ? '<ul class="rmd-points">' + criteria + "</ul>" : "");
+  }
+  function storyHtml(s) {
+    var parts = Array.isArray(s.stories) ? s.stories : [s];
+    return '<div class="rmd-story"><h4>' + esc(s.title) + "</h4>" +
+      parts.map(partHtml).join("") + "</div>";
   }
   // Copying runs through the database's own paste format
   // (sprint_story_pack), so drawer.js binds these by data attribute and

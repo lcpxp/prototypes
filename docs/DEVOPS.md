@@ -61,11 +61,11 @@ the form shows them; `ado_profile.fields` maps each to its reference.
 | Field | From | Rule |
 | --- | --- | --- |
 | Title | the story's title | Imperative, readable alone on a board card. |
-| Description | the story | Three lines: the role, "I want", "So that". A story that will not split is a check failure. |
+| Description | the story | Three lines: the role, "I want", "So that"; an item holding several user stories shows each under its label in bold. A story that will not split is a check failure. |
 | Purpose | the story's own `purpose` line, else the first sentence of the item's benefit, else the story's outcome | Never a placeholder. |
 | Scope | the story's own `scope` line, else the item's `summary` | One bullet. `work_items.scope` is not read: it says whether a stream ends. |
 | Out of scope | `Out of scope:` lines in `details`: only what a developer might otherwise do | Blank if none. Sibling stories are not listed; they sit under the same Feature. |
-| Acceptance criteria | the story's criteria, verbatim | A checklist, one box per criterion. |
+| Acceptance criteria | the story's criteria, verbatim | A checklist, one box per criterion, each led by its story's label when the item holds several. |
 | Dependencies | `blocks` links into the item from other developer work | "Needs: title (#id)". Work outside development - a decision, an agreement, another team's build - is never written here; it stays in LPio and the story packs. |
 | Technical implementation details | the story's own technical notes, else the item's | Under the heading "Suggested approach (code snapshot date): confirm or challenge in refinement". |
 | Effort | the story's points | docs/ESTIMATION.md. |
@@ -135,6 +135,7 @@ selected for the team, and is listed in `ado_profile.team_sprints`.
     select ado_push_payload('<id>');        -- one workstream or one item
     select ado_push_payload(null, '26-25'); -- sprints up to 26-25 only
     select ado_push_payload(null, '26-25', true);  -- preview: drafted too
+    select ado_correction_payload('<id>');  -- pushed stories, for a correction
 
 A push normally names its last sprint, so stories confirmed for later
 sprints wait for their own push. A preview treats drafted stories as
@@ -204,8 +205,19 @@ as one `decision` note per stream.
 
 **A story with an id is frozen.** A later change in LPio shows as
 `ado_changed` and is reported as a difference to make in Azure DevOps,
-never written over what was pushed. The one exception is `update`, for
-items still in their first state whose revision has not moved.
+never written over what was pushed - unless the owner asks for the
+change to be carried across, as a correction.
+
+**Corrections.** The story changes in LPio first, then
+`ado_correction_payload('<id>')` renders the pushed stories as a push
+would render them now, with each id and pushed revision, and
+`tools/ado/correct.js` carries them across: it writes only the fields
+whose text differs, never Effort or Dependencies (Azure DevOps owns
+those after the push), asks before overwriting an item edited in Azure
+DevOps since the push or already started, and guards every write by
+the revision it just read. Its receipt goes through
+`ado_receipt_apply`, which takes each story's new revision and hash, so
+`ado_changed` clears. `tests/unit/ado-correct.test.js` holds it to that.
 
 ## Every sprint
 

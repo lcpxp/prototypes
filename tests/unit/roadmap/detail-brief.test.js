@@ -122,6 +122,11 @@ test("the brief says how far the stories have got, and where they went", () => {
     /Stories<\/dt><dd>Confirmed</, "the status alone until the stories arrive");
   assert.match(App.roadmapDetail.drawerHtml(byId(data, "s3"), ctxOf(App, data), "ready"),
     /Stories<\/dt><dd>Not written yet</);
+  s1.user_stories = [{ title: "A", stories: [
+    { label: "One", story: "As a, I want b, so that c.", criteria: ["x"] },
+    { label: "Two", story: "As a, I want d, so that e.", criteria: ["y", "z"] }] }];
+  assert.match(App.roadmapDetail.drawerHtml(s1, ctxOf(App, data), "ready"),
+    /Stories<\/dt><dd>Drafted - 2 stories, 3 criteria</, "each user story in an item counts");
   const ws = App.roadmapDetail.drawerHtml(byId(data, "ws"), ctxOf(App, data), "ready");
   assert.match(ws, /Stories<\/dt><dd>Epic not written yet; 2 of 3 steps written, 1 confirmed</);
 });

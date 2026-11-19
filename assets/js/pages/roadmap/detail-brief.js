@@ -105,10 +105,14 @@
     var label = item.stories_status === "confirmed" ? "Confirmed" : "Drafted";
     var list = Array.isArray(item.user_stories) ? item.user_stories : null;
     if (!list) return label;
-    var criteria = list.reduce(function (n, st) {
+    // An item holding several user stories counts each of them.
+    var parts = list.reduce(function (all, st) {
+      return all.concat(Array.isArray(st.stories) ? st.stories : [st]);
+    }, []);
+    var criteria = parts.reduce(function (n, st) {
       return n + (st.criteria || []).length;
     }, 0);
-    return label + " - " + list.length + (list.length === 1 ? " story, " : " stories, ") +
+    return label + " - " + parts.length + (parts.length === 1 ? " story, " : " stories, ") +
       criteria + (criteria === 1 ? " criterion" : " criteria");
   }
   function streamStories(ws, steps) {

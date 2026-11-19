@@ -119,6 +119,20 @@ test("stories: each one reads title, sentence, then its criteria", () => {
   assert.doesNotMatch(html, /rmd-benefit-draft/, "a confirmed set reads plain");
 });
 
+test("stories: an item holding several user stories draws each under its label", () => {
+  const P = load().roadmapDetailProse;
+  const item = { id: "i1", level: "item", stories_status: "confirmed", user_stories: [{
+    title: "DaoPay contract terms",
+    stories: [
+      { label: "Sites", story: "As a reviewer, I want every site, so that nothing is missing.",
+        criteria: ["Each site is listed."] },
+      { label: "Tier", story: "As a reviewer, I want the tier in euro, so that it matches.",
+        criteria: ["The tier shows in euro.", "The bands are unchanged."] }] }] };
+  const html = P.storiesHtml(item, true, "ready");
+  assert.match(html, /<div class="rmd-story"><h4>DaoPay contract terms<\/h4><p><strong>Sites<\/strong><\/p><p>As a reviewer, I want every site, so that nothing is missing\.<\/p><ul class="rmd-points"><li>Each site is listed\.<\/li><\/ul><p><strong>Tier<\/strong><\/p>/);
+  assert.match(html, /<li>The bands are unchanged\.<\/li><\/ul><\/div>/, "each label keeps its own criteria");
+});
+
 test("stories: a drafted set says so, as a drafted benefit does", () => {
   const P = load().roadmapDetailProse;
   const html = P.storiesHtml({ id: "i1", level: "item", user_stories: [STORY],

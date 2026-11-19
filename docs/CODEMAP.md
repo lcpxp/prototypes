@@ -63,8 +63,8 @@ Everything one file can call in another. A surface in
 | `App.registry` | assets/js/core/registry.js:21 |
 | `App.requireAuth` | assets/js/core/guard.js:31 |
 | `App.roadmapDetail` | assets/js/pages/roadmap/detail-export.js:227 (+5 more) |
-| `App.roadmapDetailBrief` | assets/js/pages/roadmap/detail-brief.js:231 |
-| `App.roadmapDetailProse` | assets/js/pages/roadmap/detail-prose.js:237 |
+| `App.roadmapDetailBrief` | assets/js/pages/roadmap/detail-brief.js:235 |
+| `App.roadmapDetailProse` | assets/js/pages/roadmap/detail-prose.js:244 |
 | `App.roadmapDetailValues` | assets/js/pages/roadmap/detail-values.js:229 |
 | `App.roadmapDrawer` | assets/js/pages/roadmap/drawer.js:19 |
 | `App.roadmapExport` | assets/js/pages/roadmap/export.js:99 |
@@ -154,9 +154,9 @@ Page modules, one directory per module, mirroring modules/. A file here attaches
 | reference/reference.js | 315 | reference/reference.js - The reference viewer ("swagger") for modules/reference/. |
 | reference/render.js | 288 | reference/render.js - Pure HTML builders for the reference viewer. |
 | reference/topics.js | 48 | reference/topics.js - Pure HTML builders for api_topics rows: the narrative sections of a spec (overview, conventions, runbooks, accepted values, gap registers). |
-| roadmap/detail-brief.js | 237 | roadmap/detail-brief.js - "Where it stands": the current state of a piece of planned work, at the top of its drawer. |
+| roadmap/detail-brief.js | 241 | roadmap/detail-brief.js - "Where it stands": the current state of a piece of planned work, at the top of its drawer. |
 | roadmap/detail-export.js | 232 | roadmap/detail-export.js - The AI-optimised JSON and the flat CSV exports for the roadmap (App.roadmapDetail.toKpiItem / toKpiRoadmap / toCsvRoadmap). |
-| roadmap/detail-prose.js | 250 | roadmap/detail-prose.js - The drawer's late-arriving sections: an item's written detail, its user stories and acceptance criteria, and the notes recorded against it. |
+| roadmap/detail-prose.js | 257 | roadmap/detail-prose.js - The drawer's late-arriving sections: an item's written detail, its user stories and acceptance criteria, and the notes recorded against it. |
 | roadmap/detail-values.js | 269 | roadmap/detail-values.js - Formatting and derivation for the roadmap item drawer and both of its exports (App.roadmapDetailValues). |
 | roadmap/detail.js | 471 | roadmap/detail.js - Pure builders for the roadmap item drawer and the AI-optimised JSON export (App.roadmapDetail). |
 | roadmap/drawer.js | 109 | roadmap/drawer.js - The item detail drawer surface for the roadmap home: open/close, the ?item=<id> deep-link URL sync, and in-drawer navigation (a related-item link or a nested step row swaps the drawer to that item). |
@@ -361,6 +361,12 @@ Applied migrations. Immutable once run - never edited, never reflowed.
 | 20261118220000_notes_dated_by_plan_snapshot.sql | 168 | Technical notes that carry no snapshot date of their own are dated by the plan's code snapshot, the code they were checked against, rather than printed as "undated". |
 | 20261118230000_ado_carries_development_only.sql | 126 | Azure DevOps carries the development only. |
 | 20261118231000_ado_carries_development_only_payload.sql | 165 | The payload half of ado_carries_development_only (applied as its own migration): no clarifications, no dependency on work outside development. |
+| 20261119100000_stories_shape_and_parts.sql | 88 | Several user stories in one backlog item (owner, 19 Nov 2026), part 1 of 6. |
+| 20261119100100_story_fields_read_parts.sql | 130 | Several user stories in one backlog item (owner, 19 Nov 2026), part 2 of 6. |
+| 20261119100200_story_pack_and_description.sql | 179 | Several user stories in one backlog item (owner, 19 Nov 2026), part 3 of 6. |
+| 20261119100300_payload_builder_and_correction.sql | 213 | Several user stories in one backlog item (owner, 19 Nov 2026), part 4 of 6. |
+| 20261119100400_receipt_records_corrections.sql | 67 | Several user stories in one backlog item (owner, 19 Nov 2026), part 5 of 6. |
+| 20261119100500_checks_count_criteria_per_story.sql | 327 | Several user stories in one backlog item (owner, 19 Nov 2026), part 6 of 6. |
 
 ### supabase/schema/
 
@@ -378,10 +384,10 @@ Schema, one file per domain, run in lexical order.
 | 34_embeddings.sql | 240 | ---------------------------------------------------------------- 34_embeddings.sql - The semantic channel's store and its plumbing. |
 | 35_sprints.sql | 391 | ---------------------------------------------------------------- 35_sprints.sql - The Sprint Roadmap: the sprint calendar, the plan anchor and the per-item allocation. |
 | 36_value.sql | 120 | ---------------------------------------------------------------- 36_value.sql - work_item_metrics: the countable half of business value. |
-| 37_sprint_delivery.sql | 365 | ------------------------------------------------------------------ |
-| 38_sprint_handoff.sql | 350 | ------------------------------------------------------------------ |
-| 39_ado_push.sql | 382 | ------------------------------------------------------------------ |
-| 39_sprint_checks.sql | 381 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
+| 37_sprint_delivery.sql | 383 | ------------------------------------------------------------------ |
+| 38_sprint_handoff.sql | 387 | ------------------------------------------------------------------ |
+| 39_ado_push.sql | 450 | ------------------------------------------------------------------ |
+| 39_sprint_checks.sql | 389 | ---------------------------------------------------------------- 39_sprint_checks.sql - What is read before and after a sprint: what the Sprint Roadmap still needs, finding by finding, and the ledger of what each sprint held and delivered. |
 | 40_platform.sql | 105 | ---------------------------------------------------------------- 40_platform.sql - Platform product-knowledge domain. |
 | 41_platform_context.sql | 273 | ---------------------------------------------------------------- 41_platform_context.sql - The retrieval surface for platform knowledge: everything the system knows about one area, in one call. |
 | 45_context.sql | 67 | ---------------------------------------------------------------- 45_context.sql - Platform context that is neither a capability nor roadmap work: the terminology glossary and the canonical onboarding lifecycle. |
@@ -399,9 +405,9 @@ Policies, seed data, Edge Functions, and the generated snapshot the drift gate r
 |---|---:|---|
 | functions/embed/index.ts | 61 |  |
 | knowledge-coverage.json | 129 |  |
-| policies.sql | 637 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
+| policies.sql | 645 | ---------------------------------------------------------------- policies.sql - Row Level Security. |
 | reference-coverage.json | 80 |  |
-| schema-snapshot.json | 1935 |  |
+| schema-snapshot.json | 1963 |  |
 | seed.sql | 514 | ---------------------------------------------------------------- seed.sql - OPTIONAL sample data. |
 
 ### tests/checks/
@@ -434,6 +440,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 
 | File | Lines | Purpose |
 |---|---:|---|
+| ado-correct.test.js | 108 | tests/unit/ado-correct.test.js - Benchmarks for tools/ado/correct.js, driven against a mocked Azure DevOps. |
 | ado-engine.test.js | 314 | tests/unit/ado-engine.test.js - Benchmarks for tools/ado/engine.js, driven against a mocked Azure DevOps. |
 | ado-sprints.test.js | 210 | tests/unit/ado-sprints.test.js - Benchmarks for tools/ado/sprints.js, driven against a mocked Azure DevOps. |
 | ado-survey.test.js | 93 | tests/unit/ado-survey.test.js - Benchmarks for tools/ado/survey.js, driven against a mocked Azure DevOps. |
@@ -464,10 +471,10 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 | registry.test.js | 92 | tests/unit/registry.test.js - Benchmarks for the module registry, the single source of truth for navigation, dashboard cards and access-control keys. |
 | render-fallbacks.test.js | 163 | tests/unit/render-fallbacks.test.js - Two renderers that handled the values they were written for and quietly mishandled the rest. |
 | roadmap/child-order.test.js | 102 | tests/unit/roadmap/child-order.test.js - Benchmarks for how a workstream's nested work items stack and colour. |
-| roadmap/detail-brief.test.js | 239 | tests/unit/roadmap/detail-brief.test.js - Benchmarks for "Where it |
+| roadmap/detail-brief.test.js | 244 | tests/unit/roadmap/detail-brief.test.js - Benchmarks for "Where it |
 | roadmap/detail-delivery.test.js | 116 | tests/unit/roadmap/detail-delivery.test.js - Benchmarks for the owner's delivery detail: the drawer's estimate, technical notes and images (App.roadmapDetailProse.deliveryHtml) and the sprint page's points line (App.roadmapView.sprintLoad). |
 | roadmap/detail-export.test.js | 230 | tests/unit/roadmap/detail-export.test.js - Benchmarks for the AI-optimised JSON export and the CSV builders (toKpiItem, toKpiRoadmap, toCsvRoadmap, csvFromRows). |
-| roadmap/detail-prose.test.js | 157 | tests/unit/roadmap/detail-prose.test.js - Benchmarks for the drawer's late-arriving sections (App.roadmapDetailProse): the written detail and the notes. |
+| roadmap/detail-prose.test.js | 171 | tests/unit/roadmap/detail-prose.test.js - Benchmarks for the drawer's late-arriving sections (App.roadmapDetailProse): the written detail and the notes. |
 | roadmap/detail.test.js | 551 | tests/unit/roadmap/detail.test.js - Benchmarks for the item detail drawer (App.roadmapDetail.drawerHtml). |
 | roadmap/export.test.js | 124 | tests/unit/roadmap/export.test.js - The roadmap's export dropdown wiring (App.roadmapExport.wire). |
 | roadmap/run-on.test.js | 192 | tests/unit/roadmap/run-on.test.js - The run-on into Next |
@@ -507,7 +514,7 @@ Shared fixtures and the budgets the gates read.
 | lib/roadmap.js | 93 | tests/lib/roadmap.js - Shared loader and dataset for the roadmap view benchmarks (roadmap-views.test.js, roadmap-views-custom.test.js). |
 | page-weight-budget.json | 114 | Per-page ceilings on local CSS+JS: the number of requests and their total uncompressed bytes. Seeded from the measured weight on 2026-08-29 with ~15% headroom, so a page cannot quietly double. This is a ratchet, not a target - lowering a ceiling after real work is welcome; raising one means saying why in the commit. The site has no build step, so these are the bytes a visitor actually fetches. |
 | reference-budget.json | 28 | Declared allowances for API reference drift, enforced by tests/checks/reference-drift.test.js against the generated supabase/reference-coverage.json. Each number is a CEILING, not a target: a session that fixes rows lowers the ceiling in the same commit, and the ceiling can never rise without the owner agreeing to it in the commit message. This is the size-budget.json idiom applied to content: the gate cannot be turned on at zero because the work has not been done yet, but it can stop things getting worse from the day it lands. |
-| size-budget.json | 114 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
+| size-budget.json | 117 | Line budgets per file type, enforced by tests/checks/size.test.js. soft = a warning that a split is due; hard = a failure, split before extending. Line count is only a PROXY for what actually degrades a reader, which is one concept stated in two places saying slightly different things - and that is enforced directly by the one-home gate. Where the two disagree, the one-home gate wins: a longer single file beats the same rule restated in three shorter ones. |
 | surface-baseline.json | 914 | Generated baseline read by tests/checks/surface.test.js. Regenerate DELIBERATELY with `npm run surface` when a surface or an include genuinely changes, and read the diff: the point of this file is that such a change is a reviewable line, not a silent side effect. |
 
 ### scripts/
@@ -560,11 +567,11 @@ Architecture, security, design, and the operating protocols.
 |---|---:|---|
 | APP-REVIEW.md | 258 | Application review playbook The operating manual for a review wave. |
 | ARCHITECTURE.md | 373 | Architecture How the portal fits together. |
-| CHANGELOG.md | 274 | Changelog All notable user-facing changes to LPIO, newest first. |
+| CHANGELOG.md | 276 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
-| DEVOPS.md | 236 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
-| ESTIMATION.md | 106 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
+| DEVOPS.md | 302 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
+| ESTIMATION.md | 110 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
 | KNOWLEDGE-MODEL.md | 230 | The knowledge model Why the roadmap and platform knowledge are shaped the way they are. |
@@ -579,9 +586,9 @@ Architecture, security, design, and the operating protocols.
 | SCREENSHOTS.md | 91 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
 | SECURITY.md | 129 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINT-DELIVERY.md | 540 | Sprint delivery |
+| SPRINT-DELIVERY.md | 554 | Sprint delivery |
 | SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 40 | Current state Updated: 2026-11-18 (first Azure DevOps load prepared) # In progress Developer-readiness run (developer started 16 Nov 2026); Sprint Roadmap live from 26-24. |
+| STATE.md | 39 | Current state Updated: 2026-11-18 (first Azure DevOps push done) # In progress Developer-readiness run (developer started 16 Nov 2026). |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
@@ -597,8 +604,8 @@ Slash commands and the permission settings a session runs under.
 | commands/prototype-idea.md | 43 | Capture a prototype idea in one line, or run the review pass that prioritises and plans them |
 | commands/roadmap-add.md | 56 | Quick-capture or update roadmap work from a one-line request, applied straight to Supabase |
 | commands/roadmap.md | 39 | Run the roadmap review ritual - a quick, clickable pass over Now/Next, promotions, new work and decisions |
-| commands/sprint-close.md | 27 | Close a sprint - build the end-of-sprint summary from the read-back, apply what corroborates, recalibrate capacity, roll the plan and refresh platform knowledge |
-| commands/sprint-ready.md | 31 | Get a sprint ready before it starts - checks clean, items ready, load and pull-forward list set, payload built, start-of-sprint summary written |
+| commands/sprint-close.md | 29 | Close a sprint - build the end-of-sprint summary from the read-back, apply what corroborates, recalibrate capacity, roll the plan and refresh platform knowledge |
+| commands/sprint-ready.md | 33 | Get a sprint ready before it starts - checks clean, items ready, load and pull-forward list set, payload built, start-of-sprint summary written |
 | commands/sprint-status.md | 19 | Answer a question about past, current or future sprints from the sprint ledger and the sprint documents |
 | commands/sprint-stories.md | 78 | Prepare the Sprint Roadmap for its sprint - order and readiness checks, user stories and acceptance criteria drafted and confirmed per workstream, then the packs for Azure DevOps and the company roadmap |
 | settings.json | 50 | Committed, shared permissions for a session in this repo: an allow list covering the routine commands (npm/node, read-only and write git, the search tools, a local http server, file reads and edits) and a deny list that blocks the hard rules mechanically - reading config.js or .env, force-pushing, git add -f, rm -rf. .claude/settings.local.json is per-developer and gitignored. |
@@ -625,6 +632,7 @@ Repository root.
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |
 | package.json | 17 | LPIO - static shell of a login-gated project hub. Content lives in Supabase. |
+| tools/ado/correct.js | 172 | tools/ado/correct.js - Carries a change made in LPio after a push across to the work items already in Azure DevOps (docs/DEVOPS.md, Corrections). |
 | tools/ado/engine.js | 575 | tools/ado/engine.js - Carries a push payload from LPio into Azure DevOps, and reads Azure DevOps back. |
 | tools/ado/sprints.js | 303 | tools/ado/sprints.js - Creates the sprints the Sprint Roadmap uses in Azure DevOps and selects them for the team, so the push can file each backlog item in its sprint (docs/DEVOPS.md, Before the first push). |
 | tools/ado/survey.js | 221 | tools/ado/survey.js - Reads how a project's existing work is written, |
