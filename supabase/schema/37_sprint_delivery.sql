@@ -46,15 +46,33 @@ as $$
       where case
         when jsonb_typeof(s.story) <> 'object' then true
         when coalesce(btrim(s.story->>'title'), '') = '' then true
-        when coalesce(btrim(s.story->>'story'), '') = '' then true
-        when jsonb_typeof(s.story->'criteria') is distinct from 'array' then true
-        when jsonb_array_length(s.story->'criteria') not between 1 and 8 then true
         when exists (
           select 1 from (values ('points'), ('points_low'), ('points_high')) as k(name)
           where s.story ? k.name and jsonb_typeof(s.story->k.name) <> 'number') then true
         when s.story ? 'technical_notes'
           and jsonb_typeof(s.story->'technical_notes') <> 'string' then true
         when s.story ? 'ado' and jsonb_typeof(s.story->'ado') <> 'object' then true
+        -- A backlog item that asks for several distinct things holds one
+        -- user story for each: {label, story, criteria[]}, 2 to 4 of them,
+        -- in place of its own story and criteria.
+        when s.story ? 'stories' then
+          s.story ? 'story' or s.story ? 'criteria'
+          or jsonb_typeof(s.story->'stories') is distinct from 'array'
+          or jsonb_array_length(s.story->'stories') not between 2 and 4
+          or exists (
+            select 1 from jsonb_array_elements(s.story->'stories') as u(part)
+            where jsonb_typeof(u.part) <> 'object'
+               or coalesce(btrim(u.part->>'label'), '') = ''
+               or coalesce(btrim(u.part->>'story'), '') = ''
+               or jsonb_typeof(u.part->'criteria') is distinct from 'array'
+               or jsonb_array_length(u.part->'criteria') not between 1 and 8
+               or exists (
+                 select 1 from jsonb_array_elements(u.part->'criteria') as c(criterion)
+                 where jsonb_typeof(c.criterion) <> 'string'
+                    or btrim(c.criterion #>> '{}') = ''))
+        when coalesce(btrim(s.story->>'story'), '') = '' then true
+        when jsonb_typeof(s.story->'criteria') is distinct from 'array' then true
+        when jsonb_array_length(s.story->'criteria') not between 1 and 8 then true
         else exists (
           select 1 from jsonb_array_elements(s.story->'criteria') as c(criterion)
           where jsonb_typeof(c.criterion) <> 'string'
@@ -64,7 +82,7 @@ as $$
 $$;
 
 comment on function public.work_item_stories_valid(jsonb) is
-  'The shape of work_items.user_stories: 1-5 stories, each {title, story, criteria[1-8]}, nothing empty; optionally points, points_low, points_high (numbers), technical_notes (text) and ado (the DevOps association). Hard ceilings only; docs/SPRINT-DELIVERY.md holds how much to write.';
+  'The shape of work_items.user_stories: 1-5 backlog items, each {title} with either {story, criteria[1-8]} or stories[2-4] of {label, story, criteria[1-8]}, nothing empty; optionally points, points_low, points_high (numbers), technical_notes (text) and ado (the DevOps association). Hard ceilings only; docs/SPRINT-DELIVERY.md holds how much to write.';
 
 alter table public.work_items drop constraint if exists work_items_user_stories_shape;
 alter table public.work_items add constraint work_items_user_stories_shape

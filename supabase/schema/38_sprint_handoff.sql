@@ -12,6 +12,32 @@
 -- ------------------------------------------------------------------
 
 -- ---------------------------------------------------------------
+-- story_parts: the user stories one backlog item carries, each split
+-- into its three lines, with its own criteria. A single story is one
+-- part with no label; an item holding several gives one part per label.
+-- The renderer, the payload, the pack and the checks all read stories
+-- through this, so they lay several stories out the same way.
+-- ---------------------------------------------------------------
+create or replace function public.story_parts(p_story jsonb)
+returns table (k integer, label text, role_line text, want_line text,
+               outcome_line text, shape_ok boolean, criteria text[])
+language sql
+immutable
+set search_path = public
+as $$
+  select u.k::integer, nullif(btrim(u.part->>'label'), ''),
+         r.m[1], 'I want ' || r.m[2], 'So that ' || r.m[3], r.m is not null,
+         array(select btrim(c.criterion #>> '{}')
+                 from jsonb_array_elements(u.part->'criteria')
+                   with ordinality as c(criterion, j) order by c.j)
+    from jsonb_array_elements(case when p_story ? 'stories' then p_story->'stories'
+                                   else jsonb_build_array(p_story) end)
+           with ordinality as u(part, k)
+    cross join lateral (select regexp_match(btrim(u.part->>'story'),
+                          '^(As an? .+?), I want (.+), so that (.+)$') as m) r;
+$$;
+
+-- ---------------------------------------------------------------
 -- sprint_story_fields: one row per story on the Sprint Roadmap, every
 -- field derived once.
 --
@@ -21,7 +47,10 @@
 -- nothing; its stories share its sprint.
 --
 --   story_key      '<item uuid>#<n>' - the association with DevOps
---   shape_ok       the story splits at ', I want ' and ', so that '
+--   shape_ok       every user story splits at ', I want ' and ', so that '.
+--                  A backlog item may hold several user stories, one per
+--                  thing it asks for (story_parts); their criteria join
+--                  the item's, each led by its story's label
 --   purpose        the story's own purpose line; else the first sentence
 --                  of the item's benefit; else the story's own outcome
 --   scope          the story's own scope line, else the item's summary.
@@ -92,8 +121,10 @@ as $$
   ),
   split as (
     select b.*, s.story, s.n::integer as n,
-           regexp_match(btrim(s.story->>'story'),
-             '^(As an? .+?), I want (.+), so that (.+)$') as m
+           regexp_match(btrim(coalesce(s.story->>'story', s.story->'stories'->0->>'story')),
+             '^(As an? .+?), I want (.+), so that (.+)$') as m,
+           not exists (select 1 from public.story_parts(s.story) p
+                        where not p.shape_ok) as parts_ok
       from base b
       cross join lateral jsonb_array_elements(b.user_stories)
         with ordinality as s(story, n)
@@ -110,9 +141,10 @@ as $$
       array(select btrim(r.hit[1])
               from regexp_matches(coalesce(x.details, ''),
                      '^\s*Out of scope:\s*(.+)$', 'gin') as r(hit)) as out_of_scope,
-      array(select btrim(c.criterion #>> '{}')
-              from jsonb_array_elements(x.story->'criteria')
-                with ordinality as c(criterion, k) order by c.k) as criteria,
+      array(select coalesce(p.label || ': ', '') || c.t
+              from public.story_parts(x.story) p
+              cross join lateral unnest(p.criteria) with ordinality as c(t, j)
+             order by p.k, c.j) as criteria,
       coalesce(nullif(btrim(x.story->>'technical_notes'), ''), x.item_notes) as notes,
       case when jsonb_typeof(x.story->'points') = 'number'
         then (x.story->>'points')::numeric end as points
@@ -124,7 +156,7 @@ as $$
     d.epic_key, d.epic_label,
     case when d.type = 'bug' then 'bug' else 'story' end,
     d.story_title,
-    d.m[1], 'I want ' || d.m[2], 'So that ' || d.m[3], d.m is not null,
+    d.m[1], 'I want ' || d.m[2], 'So that ' || d.m[3], d.m is not null and d.parts_ok,
     d.purpose, d.scope, d.out_of_scope, d.criteria,
     array(select cl.line from (
             select split_part(btrim(q.body), chr(10), 1) as line, 1 as grp, q.created_at
@@ -167,7 +199,8 @@ as $$
       else 'Sprints ' || coalesce(d.start_code, (d.effective_slot + 1)::text) ||
            ' to ' || coalesce(d.end_code, (d.effective_end_slot + 1)::text) end,
     d.stories_status, d.is_build, d.external_party, d.story->'ado',
-    md5(concat_ws(chr(31), d.story_title, btrim(d.story->>'story'), d.purpose, d.scope,
+    md5(concat_ws(chr(31), d.story_title,
+      coalesce(btrim(d.story->>'story'), (d.story->'stories')::text), d.purpose, d.scope,
       array_to_string(d.out_of_scope, chr(30)), array_to_string(d.criteria, chr(30)),
       d.notes, d.points::text))
   from derived d;
@@ -292,7 +325,11 @@ begin
              else '' end ||
         case when f.stories_status = 'drafted' then draft || nl else '' end ||
         'Description: ' || case when f.shape_ok
-          then f.role_line || nl || f.want_line || nl || f.outcome_line
+          then (select string_agg(coalesce(p.label || nl, '') || p.role_line || nl ||
+                                  p.want_line || nl || p.outcome_line, nl || nl order by p.k)
+                  from public.work_items w
+                  cross join lateral public.story_parts(w.user_stories -> (f.n - 1)) p
+                 where w.id = f.work_item_id)
           else '(the story does not split at "I want" and "so that")' end || nl ||
         coalesce('Purpose: ' || f.purpose || nl, '') ||
         coalesce('Scope: ' || f.scope || nl, '') ||

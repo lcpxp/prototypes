@@ -185,10 +185,18 @@ found as (
     from sf s where not s.shape_ok
    group by s.work_item_id, s.workstream_title, s.item_title
   union all
+  -- 2 to 5 criteria for a backlog item with one user story; 1 to 5 for
+  -- each user story when it holds several (docs/SPRINT-DELIVERY.md).
   select 'ado_criteria_count', 'fix', s.work_item_id, s.workstream_title, s.item_title,
          'Story ' || string_agg(s.n::text, ', ' order by s.n) ||
-         ' has fewer than 2 or more than 5 acceptance criteria.'
-    from sf s where cardinality(s.criteria) not between 2 and 5
+         ' has fewer than 2 or more than 5 acceptance criteria' ||
+         ' (1 to 5 for each user story in an item that holds several).'
+    from sf s
+    join public.work_items cw on cw.id = s.work_item_id
+   where case when cw.user_stories -> (s.n - 1) ? 'stories'
+           then exists (select 1 from public.story_parts(cw.user_stories -> (s.n - 1)) p
+                         where cardinality(p.criteria) not between 1 and 5)
+           else cardinality(s.criteria) not between 2 and 5 end
    group by s.work_item_id, s.workstream_title, s.item_title
   union all
   select 'ado_no_purpose', 'fix', s.work_item_id, s.workstream_title, s.item_title,

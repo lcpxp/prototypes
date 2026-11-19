@@ -99,6 +99,21 @@ as $$
   having count(*) > 0;
 $$;
 
+-- A backlog item's Description: its user story as three lines, or, when
+-- it holds several, each under its label in bold (story_parts).
+create or replace function public.ado_story_html(p_story jsonb)
+returns text
+language sql
+immutable
+set search_path = public
+as $$
+  select string_agg(
+           coalesce('<p><strong>' || public.ado_html('lines', array[p.label]) || '</strong></p>', '') ||
+           public.ado_html('lines', array[p.role_line, p.want_line, p.outcome_line]),
+           '' order by p.k)
+    from public.story_parts(p_story) p;
+$$;
+
 create or replace function public.ado_notes_html(p_notes text, p_snapshot date)
 returns text
 language plpgsql
@@ -155,10 +170,14 @@ end $$;
 -- confirmed for later sprints wait for their own push. p_preview treats
 -- drafted stories as confirmed and marks the payload preview: true, so
 -- preflight can rehearse a push against Azure DevOps before the owner
--- confirms; the engine refuses to push a preview.
+-- confirms; the engine refuses to push a preview. p_pushed renders the
+-- stories already in Azure DevOps instead, each with its id and the
+-- revision it was pushed at, for a correction (docs/DEVOPS.md).
 drop function if exists public.ado_push_payload(uuid);
+drop function if exists public.ado_push_payload(uuid, text, boolean);
 create or replace function public.ado_push_payload(
-  p_id uuid default null, p_through text default null, p_preview boolean default false)
+  p_id uuid default null, p_through text default null, p_preview boolean default false,
+  p_pushed boolean default false)
 returns jsonb
 language plpgsql
 stable
@@ -183,11 +202,12 @@ begin
   -- last, so the backlog opens in the order the developer works it.
   with f as (
     select x.*, v.effective_slot as d_slot, v.sequence_position as d_seq,
-           nullif(btrim(wi.summary), '') as item_summary
+           nullif(btrim(wi.summary), '') as item_summary,
+           wi.user_stories -> (x.n - 1) as story_json
       from public.sprint_story_fields(p_id) x
       join public.v_sprint_plan_items v on v.work_item_id = x.work_item_id
       join public.work_items wi on wi.id = x.work_item_id
-     where x.is_build and (x.ado->>'id') is null
+     where x.is_build and ((x.ado->>'id') is null) = not p_pushed
        and (p_through is null or x.sprint_code <= p_through)
   ),
   ready as (
@@ -207,7 +227,7 @@ begin
         'fields', jsonb_strip_nulls(jsonb_build_object(
           'title', r.title,
           'description', case when r.kind = 'story' then
-            public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]) end,
+            public.ado_story_html(r.story_json) end,
           -- A bug is written the way the team's bugs are: everything in
           -- the repro steps. What happens first (the item's summary), then
           -- where (the story's scope, when it has its own), the story, any
@@ -215,7 +235,7 @@ begin
           'repro_steps', case when r.kind = 'bug' then
             coalesce(public.ado_html('div', array[r.item_summary,
               case when r.scope is distinct from r.item_summary then r.scope end]), '') ||
-            coalesce(public.ado_html('lines', array[r.role_line, r.want_line, r.outcome_line]), '') ||
+            coalesce(public.ado_story_html(r.story_json), '') ||
             coalesce('<p><strong>Dependencies</strong></p>' || public.ado_html('list', array(
               select 'Needs: ' || (d->>'title')
                 from jsonb_array_elements(r.needs) as d where d->>'outside' is null)), '') ||
@@ -250,7 +270,9 @@ begin
                          where l.kind = 'about' and l.valid_to is null
                            and l.from_type = 'screenshot' and l.to_type = 'work_item'
                            and l.to_id = r.work_item_id)
-      ) order by r.d_slot, r.d_seq nulls last, r.stream_no, r.item_no, r.n), '[]'::jsonb) as j
+      ) || case when p_pushed then jsonb_build_object('id', (r.ado->>'id')::integer,
+             'pushed_rev', (r.ado->>'rev')::integer) else '{}'::jsonb end
+      order by r.d_slot, r.d_seq nulls last, r.stream_no, r.item_no, r.n), '[]'::jsonb) as j
     from ready r
   ),
   features as (
@@ -316,11 +338,12 @@ begin
     'generated_at', now(),
     'hash', md5((body - 'held_back')::text),
     'profile', to_jsonb(prof) - 'key' - 'note' - 'created_at' - 'updated_at' - 'epic_ids') || body ||
-    case when p_preview then jsonb_build_object('preview', true) else '{}'::jsonb end;
+    case when p_preview then jsonb_build_object('preview', true) else '{}'::jsonb end ||
+    case when p_pushed then jsonb_build_object('correction', true) else '{}'::jsonb end;
 end $$;
 
-comment on function public.ado_push_payload(uuid, text, boolean) is
-  'The Azure DevOps push payload: confirmed, unpushed stories of developer work with every field rendered, their Features and Epics, and what is held back and why. p_id null for the whole plan, a workstream, or an item; p_through the last sprint code to include; p_preview true for a preflight rehearsal of drafted stories, which the engine will not push. Admin only, through ado_profile (docs/DEVOPS.md).';
+comment on function public.ado_push_payload(uuid, text, boolean, boolean) is
+  'The Azure DevOps push payload: confirmed, unpushed stories of developer work with every field rendered, their Features and Epics, and what is held back and why. p_id null for the whole plan, a workstream, or an item; p_through the last sprint code to include; p_preview true for a preflight rehearsal of drafted stories, which the engine will not push; p_pushed true renders the stories already pushed instead, with their ids, for a correction. Admin only, through ado_profile (docs/DEVOPS.md).';
 
 -- ---------------------------------------------------------------
 -- ado_receipt_apply: the write-back. The engine hands back a receipt -
@@ -348,7 +371,22 @@ declare
 begin
   for e in select x from jsonb_array_elements(p_receipt->'entries') as x loop
     v_key := e->>'key';
-    if (e->>'id') is null or e->>'outcome' not in ('created', 'exists') then
+    if (e->>'id') is null or e->>'outcome' not in ('created', 'exists', 'updated') then
+      continue;
+    end if;
+    -- A correction: the story keeps its id and push date, and takes the
+    -- revision and hash it now has in Azure DevOps.
+    if e->>'outcome' = 'updated' then
+      if v_key not like '%#%' then continue; end if;
+      v_n := split_part(v_key, '#', 2)::integer;
+      update public.work_items
+         set user_stories = jsonb_set(user_stories, array[(v_n - 1)::text, 'ado'],
+               (user_stories -> (v_n - 1) -> 'ado') ||
+               jsonb_build_object('rev', (e->>'rev')::integer, 'hash', e->>'hash',
+                                  'corrected_at', p_receipt->>'pushed_at'))
+       where id = split_part(v_key, '#', 1)::uuid
+         and (user_stories -> (v_n - 1) -> 'ado' ->> 'id')::integer = (e->>'id')::integer;
+      if found then written := written + 1; end if;
       continue;
     end if;
     if v_key like 'category:%' then
@@ -378,4 +416,4 @@ begin
 end $$;
 
 comment on function public.ado_receipt_apply(jsonb) is
-  'Writes a push receipt back: each story''s DevOps id, type, revision and hash onto the story, each Feature id onto its workstream, each Epic id into ado_profile. Run from an admin session; returns the associations written (docs/DEVOPS.md).';
+  'Writes a push receipt back: each story''s DevOps id, type, revision and hash onto the story (a correction, outcome updated, refreshes only the revision and hash), each Feature id onto its workstream, each Epic id into ado_profile. Run from an admin session; returns the associations written (docs/DEVOPS.md).';
