@@ -105,3 +105,23 @@ test("correct: a ticked criterion is not a difference", () => {
   assert.equal(correct.text("<div><span>[x] {Done}</span><span> Works.</span></div>"),
     correct.text("<div><span>[ ]</span><span> Works.</span> </div>"));
 });
+
+test("correct: an edit made since the push is kept, unless it is already folded into LPio", async () => {
+  const pl = payload();
+  pl.items[1].pushed_fields = { title: "Old title", description: "As a merchant" };
+  pl.items[1].folded = ["description"];
+  pl.items[0].pushed_fields = { criteria: "pushed", description: "As a reviewer" };
+  const m = ado([true]);
+  const receipt = await m.run.run(pl);
+  const patch102 = m.calls.find((c) => c.method === "PATCH" && /102/.test(c.path));
+  const refs102 = patch102.body.slice(1).map((o) => o.path);
+  assert.deepEqual(refs102.sort(), ["/fields/System.Description", "/fields/System.Title"],
+    "the folded description and the untouched title are written");
+  const patch101 = m.calls.find((c) => c.method === "PATCH" && /101/.test(c.path));
+  assert.deepEqual(patch101.body.slice(1).map((o) => o.path), ["/fields/System.Description"],
+    "criteria edited since the push are kept");
+  const e101 = receipt.entries.find((e) => e.id === 101);
+  assert.equal(e101.outcome, "kept");
+  assert.deepEqual(e101.kept, ["criteria"]);
+  assert.equal(m.asked.length, 1, "pushed text known: nothing to ask about the edited item");
+});

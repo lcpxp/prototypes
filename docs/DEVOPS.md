@@ -213,9 +213,11 @@ change to be carried across, as a correction.
 would render them now, with each id and pushed revision, and
 `tools/ado/correct.js` carries them across: it writes only the fields
 whose text differs, never Effort or Dependencies (Azure DevOps owns
-those after the push), asks before overwriting an item edited in Azure
-DevOps since the push or already started, and guards every write by
-the revision it just read. Its receipt goes through
+those after the push), and guards every write by the revision it just
+read. Given the text as pushed, it keeps any field edited in Azure
+DevOps since and lists it, unless that edit is already folded into LPio;
+without it, it asks before overwriting an edited or started item. A
+story with a kept edit stays `ado_changed` until the edit is folded. Its receipt goes through
 `ado_receipt_apply`, which takes each story's new revision and hash, so
 `ado_changed` clears. `tests/unit/ado-correct.test.js` holds it to that.
 

@@ -12,8 +12,11 @@
 //
 // Rules: only fields whose text differs are written; Effort and
 // Dependencies are never touched, because Azure DevOps owns them after
-// the push. An item edited in Azure DevOps since the push, or no longer
-// New, is listed separately and asked about before it is overwritten.
+// the push. When an item carries pushed_fields (the text as pushed), a
+// field someone edited in Azure DevOps since is kept and reported, never
+// overwritten, unless its name is in the item's folded list (the edit is
+// already in LPio). Without them, an item edited since the push, or no
+// longer New, is asked about before it is overwritten.
 // Every write is guarded by the revision just read, so nothing changed
 // in the meantime is lost. The receipt (outcome "updated") goes back
 // through ado_receipt_apply, which takes each story's new revision and
@@ -37,15 +40,23 @@
       .replace(/\s+/g, " ").trim();
   }
 
-  // The fields to write for one item: those whose text differs.
+  // The fields to write for one item: those whose text differs, less any
+  // field edited in Azure DevOps since the push and not yet folded into
+  // LPio, which is kept and reported instead.
   function changes(p, item, current) {
     var set = {};
+    var kept = [];
+    var folded = item.folded || [];
     Object.keys(item.fields || {}).forEach(function (name) {
       var ref = p.fields[name];
       if (NEVER[name] || !ref) return;
-      if (text(item.fields[name]) !== text((current || {})[ref])) set[ref] = item.fields[name];
+      var now = text((current || {})[ref]);
+      if (text(item.fields[name]) === now) return;
+      if (item.pushed_fields && name in item.pushed_fields && folded.indexOf(name) < 0 &&
+          text(item.pushed_fields[name]) !== now) { kept.push(name); return; }
+      set[ref] = item.fields[name];
     });
-    return set;
+    return { set: set, kept: kept };
   }
 
   function create(env) {
@@ -81,12 +92,13 @@
         return payload.items.map(function (item) {
           var w = byId[item.id];
           if (!w) return { item: item, action: "skip: not found" };
-          var set = changes(p, item, w.fields);
-          var moved = w.rev !== item.pushed_rev;
+          var c = changes(p, item, w.fields);
+          var set = c.set;
+          var moved = w.rev !== item.pushed_rev && !item.pushed_fields;
           var started = w.fields["System.State"] !== "New";
           return {
-            item: item, rev: w.rev, set: set,
-            action: !Object.keys(set).length ? "nothing to change"
+            item: item, rev: w.rev, set: set, kept: c.kept,
+            action: !Object.keys(set).length ? (c.kept.length ? "kept your edit" : "nothing to change")
               : moved || started ? "ask: " + (moved ? "edited in Azure DevOps since the push" : "no longer New")
               : "correct",
           };
@@ -99,16 +111,24 @@
       return plan(payload).then(function (rows) {
         env.table(rows.map(function (r) {
           return { id: r.item.id, title: text(r.item.fields.title).slice(0, 60), action: r.action,
-            fields: Object.keys(r.set || {}).map(function (ref) { return ref.split(".").pop(); }).join(", ") };
+            fields: Object.keys(r.set || {}).map(function (ref) { return ref.split(".").pop(); }).join(", "),
+            "kept (your edit)": (r.kept || []).join(", ") };
         }));
         var clean = rows.filter(function (r) { return r.action === "correct"; });
         var asked = rows.filter(function (r) { return r.action.indexOf("ask") === 0; });
         if (asked.length && env.confirm("These were edited in Azure DevOps since the push, or have started: " +
             asked.map(function (r) { return "#" + r.item.id; }).join(", ") +
             ". Overwrite the fields listed with the LPio version?")) clean = clean.concat(asked);
-        var entries = rows.filter(function (r) { return r.action === "nothing to change"; }).map(function (r) {
-          return { key: r.item.key, id: r.item.id, type: r.item.type, rev: r.rev, hash: r.item.hash, outcome: "updated" };
-        });
+        // A story whose edit was kept still differs from LPio: it is
+        // recorded as kept, so ado_changed stays until the edit is folded.
+        function entry(r, rev) {
+          return r.kept && r.kept.length
+            ? { key: r.item.key, id: r.item.id, type: r.item.type, rev: rev, outcome: "kept", kept: r.kept }
+            : { key: r.item.key, id: r.item.id, type: r.item.type, rev: rev, hash: r.item.hash, outcome: "updated" };
+        }
+        var entries = rows.filter(function (r) {
+          return r.action === "nothing to change" || r.action === "kept your edit";
+        }).map(function (r) { return entry(r, r.rev); });
         if (!clean.length || !env.confirm("Correct " + clean.length + " work items in Azure DevOps?")) {
           env.log("Nothing was written.");
           return finish(entries, rows);
@@ -121,8 +141,7 @@
             return call("PATCH", base + "/_apis/wit/workitems/" + r.item.id + "?" + API, ops,
               "application/json-patch+json").then(function (w) {
               r.action = "corrected";
-              entries.push({ key: r.item.key, id: r.item.id, type: r.item.type,
-                rev: (w && w.rev) || r.rev + 1, hash: r.item.hash, outcome: "updated" });
+              entries.push(entry(r, (w && w.rev) || r.rev + 1));
             });
           });
         }, Promise.resolve()).then(function () { return finish(entries, rows); }, function (e) {

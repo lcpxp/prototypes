@@ -440,7 +440,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 
 | File | Lines | Purpose |
 |---|---:|---|
-| ado-correct.test.js | 108 | tests/unit/ado-correct.test.js - Benchmarks for tools/ado/correct.js, driven against a mocked Azure DevOps. |
+| ado-correct.test.js | 128 | tests/unit/ado-correct.test.js - Benchmarks for tools/ado/correct.js, driven against a mocked Azure DevOps. |
 | ado-engine.test.js | 314 | tests/unit/ado-engine.test.js - Benchmarks for tools/ado/engine.js, driven against a mocked Azure DevOps. |
 | ado-sprints.test.js | 210 | tests/unit/ado-sprints.test.js - Benchmarks for tools/ado/sprints.js, driven against a mocked Azure DevOps. |
 | ado-survey.test.js | 93 | tests/unit/ado-survey.test.js - Benchmarks for tools/ado/survey.js, driven against a mocked Azure DevOps. |
@@ -570,7 +570,7 @@ Architecture, security, design, and the operating protocols.
 | CHANGELOG.md | 276 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
-| DEVOPS.md | 302 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
+| DEVOPS.md | 304 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
 | ESTIMATION.md | 110 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
@@ -586,9 +586,9 @@ Architecture, security, design, and the operating protocols.
 | SCREENSHOTS.md | 91 | Screenshots and mockups How images of LaunchPad screens are captured, made safe, registered and attached to work. |
 | SECURITY.md | 129 | Security model This repository is public. |
 | SETUP.md | 54 | Setup and day-to-day use The app ships with the public Supabase config built into assets/js/core/supabase.js, so it runs and deploys with no configuration step. |
-| SPRINT-DELIVERY.md | 554 | Sprint delivery |
+| SPRINT-DELIVERY.md | 556 | Sprint delivery |
 | SPRINTS.md | 127 | Sprints and dates How the roadmap connects sprints, calendar dates, quarters and the high-level Now / Next / Later bands. |
-| STATE.md | 39 | Current state Updated: 2026-11-18 (first Azure DevOps push done) # In progress Developer-readiness run (developer started 16 Nov 2026). |
+| STATE.md | 38 | Current state Updated: 2026-11-20 (final correction script sent) # In progress Developer-readiness run (developer started 16 Nov 2026). |
 | VALUE-CAPTURE.md | 216 | Business benefit: the capture manual How to fill the fields that say WHY a roadmap row exists, and how to keep them honest. |
 | WORKFLOW.md | 135 | Work intake and backlog workflow How working sessions between the repo owner and Claude turn supplied material and discussion into durable, queryable records. |
 
@@ -632,7 +632,7 @@ Repository root.
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |
 | package.json | 17 | LPIO - static shell of a login-gated project hub. Content lives in Supabase. |
-| tools/ado/correct.js | 172 | tools/ado/correct.js - Carries a change made in LPio after a push across to the work items already in Azure DevOps (docs/DEVOPS.md, Corrections). |
+| tools/ado/correct.js | 191 | tools/ado/correct.js - Carries a change made in LPio after a push across to the work items already in Azure DevOps (docs/DEVOPS.md, Corrections). |
 | tools/ado/engine.js | 575 | tools/ado/engine.js - Carries a push payload from LPio into Azure DevOps, and reads Azure DevOps back. |
 | tools/ado/sprints.js | 303 | tools/ado/sprints.js - Creates the sprints the Sprint Roadmap uses in Azure DevOps and selects them for the team, so the push can file each backlog item in its sprint (docs/DEVOPS.md, Before the first push). |
 | tools/ado/survey.js | 221 | tools/ado/survey.js - Reads how a project's existing work is written, |
