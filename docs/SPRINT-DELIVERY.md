@@ -87,13 +87,15 @@ how much to write is the judgement below.
 - **A work item:** 1-3 stories, each a backlog item with 2-5 criteria.
   An item with deliverables takes one story per deliverable instead, up
   to five.
-- **One thing per user story.** A backlog item that asks the developer
-  to build several distinct things - a sites table, a clause change and
-  a currency fix on one contract - holds one user story for each, 2 to
-  4, each with a short label and 1-5 criteria of its own. Each story is
-  then detailed enough to carry its nuances, and Azure DevOps shows
-  them under their labels in one item. One change is never split to
-  fill the shape: two criteria about one behaviour are one story.
+- **One thing per user story, from 3 points.** A backlog item of 3
+  points or more that asks for several distinct things - a sites table,
+  a clause change and a currency fix on one contract - holds one user
+  story for each, 2 to 4, each with 2-3 criteria of its own (1 where the
+  behaviour is single) and a label of a few words naming the thing,
+  which leads each of its criteria in Azure DevOps. At 1 or 2 points
+  the item stays one story, its criteria grouped by thing. The owner
+  may ask for a split below 3 points. One change is never split to fill
+  the shape: two criteria about one behaviour are one story.
 - **Titles** are imperative and ten words at most.
 
 More than this is bloat: a story that needs eight criteria is two stories,
@@ -221,7 +223,7 @@ every row, with each fix recorded in a `decision` note that is its undo:
    - guidance grows with the work: a large item (an integration, a new
      flow, screening) names each place the build touches, file:line,
      and any fact the developer would otherwise trip on;
-   - one thing per user story (How much to write), and the story
+   - one thing per user story from 3 points (How much to write), and the story
      sentence stays broad - who, what they get, why - with the detail
      in its criteria;
    - criteria state behaviour. Test set-up (sandboxes, data to seed)
