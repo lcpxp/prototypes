@@ -1,6 +1,6 @@
 # Current state
 
-Updated: 2026-11-19 (stories reworked, correction script sent)
+Updated: 2026-11-20 (final correction script sent)
 
 ## In progress
 Developer-readiness run (developer started 16 Nov 2026). This week
@@ -33,7 +33,5 @@ e9ffcdea): 10 items DRAFTED until the owner runs script 8 (correct.js +
 - Tag: `git tag -a v0.1.0 ab0e78b -m "0.1.0"`, then `git push origin v0.1.0`.
 
 ## Open decisions
-- #325997: a service with only zero Event fees stays listed, or goes?
-  DaoPay clause 2.1 says "Fee in € / transaction" for all: a story?
 - Keep the `LPio` tag and link-back on pushed items? The link is how a
   re-run finds what exists; dropping it needs another idempotency key.
