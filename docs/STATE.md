@@ -10,8 +10,8 @@ Developer-readiness run (developer started 16 Nov 2026). This week
 docs/SPRINT-DELIVERY.md Part A; hand-off: docs/DEVOPS.md. Decisions are
 `work_notes` tagged `developer-readiness`, each with its undo.
 Stories corrected in Azure DevOps 20 Nov (all 16 in step). 26-24 closed
-22 Nov with nothing done: its 5 items re-mapped to 26-25 in LPio (32 of
-24 points); script 11 moves and assigns the 7 stories in Azure DevOps.
+22 Nov with nothing done: week-one items top of 26-25 (30 of 24 points),
+#325999 to 26-26 (29 of 24). Script 11 mirrors it in Azure DevOps.
 
 ## Next steps
 1. Sprint 2 (26-26): stories drafted with the step 10 rules for the
