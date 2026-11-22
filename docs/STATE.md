@@ -1,6 +1,6 @@
 # Current state
 
-Updated: 2026-11-20 (correction applied, close of 26-24 under way)
+Updated: 2026-11-22 (26-24 closed; sprint 1 planning on 23 Nov)
 
 ## In progress
 Developer-readiness run (developer started 16 Nov 2026). This week
@@ -9,9 +9,9 @@ Developer-readiness run (developer started 16 Nov 2026). This week
 `ado_profile.team_sprints`. Sprint 2 onwards is DRAFTED. Story rules:
 docs/SPRINT-DELIVERY.md Part A; hand-off: docs/DEVOPS.md. Decisions are
 `work_notes` tagged `developer-readiness`, each with its undo.
-Stories reworked and corrected in Azure DevOps 20 Nov (receipt applied,
-all 16 in step, reworked items confirmed; #325999 keeps the owner's
-"Low Priority - Can spill"). Close of 26-24 today: script 10 sent.
+Stories corrected in Azure DevOps 20 Nov (all 16 in step). 26-24 closed
+22 Nov with nothing done: its 5 items re-mapped to 26-25 in LPio (32 of
+24 points); script 11 moves and assigns the 7 stories in Azure DevOps.
 
 ## Next steps
 1. Sprint 2 (26-26): stories drafted with the step 10 rules for the
