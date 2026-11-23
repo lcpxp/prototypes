@@ -1,6 +1,6 @@
 # Current state
 
-Updated: 2026-11-22 (26-24 closed; sprint 1 planning on 23 Nov)
+Updated: 2026-11-23 (sprint 1 started; developer setup guide v2)
 
 ## In progress
 Developer-readiness run (developer started 16 Nov 2026). This week
@@ -24,6 +24,8 @@ Stories corrected in Azure DevOps 20 Nov (all 16 in step). 26-24 closed
 5. Embeddings: `roadmap_embed_refresh(1, 3)`, small batches only.
 
 ## Blocked on the owner
+- Developer access: development Key Vault read and the database firewall
+  rule; the API cannot start without the vault (decision 51d364fb).
 - PFAC stage diagrams: not found in LPio or the repo; check S1-07/S1-08.
 - Small story for the PXP price sheet's percentage lines? (5 Oct report.)
 - New Epics kept beside the 20 existing ones: re-parent later if wanted.
