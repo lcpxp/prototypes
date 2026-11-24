@@ -10,12 +10,12 @@ Developer-readiness run (developer started 16 Nov 2026). This week
 docs/SPRINT-DELIVERY.md Part A; hand-off: docs/DEVOPS.md. Decisions are
 `work_notes` tagged `developer-readiness`, each with its undo.
 26-24 closed 22 Nov with nothing done. 26-25 committed 24 Nov at 11
-stories, 19 of 24 points, all assigned (decision 3f2c6d0f; scripts 12
-and 13). Pre-screening and PFAC moved to the top of 26-26: 40 of 24.
+stories, 19 of 24 points, all assigned; pre-screening and PFAC stay in
+it uncommitted, 30 planned (scripts 12 to 14; latest decision 24 Nov).
 
 ## Next steps
-1. Sprint 2 (26-26): trim from 40 to capacity and size its drafted
-   stories at the mid-sprint review Fri 27 Nov, then push before 4 Dec
+1. Sprint 2 (26-26): 29 of 24; size its drafted stories and settle its
+   load at the mid-sprint review Fri 27 Nov, then push before 4 Dec
    (docs/DEVOPS.md, Every sprint, step 7); the push also sets its board
    order (#325999 last). Sprints 27-02 and 27-03: script 7 sent 18 Nov.
 2. Owner answers the three highlighted decisions on the PDF cover.
