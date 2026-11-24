@@ -82,9 +82,12 @@ the next recalibration.
 
 `sprint_plan.capacity_points` is what one sprint holds.
 `sprint_plan.capacity_overrides` holds a different figure for a sprint
-that is not a full one - a short sprint over public holidays - keyed by
-sprint code. `v_sprint_plan_load` sums planned points against it per
-sprint; an item spanning several sprints spreads its points evenly.
+that is not a full one - a short sprint over public holidays, or days
+lost to leave, set-up or blocked access - keyed by sprint code.
+`v_sprint_plan_load` sums planned points against it per sprint; an item
+spanning several sprints spreads its points evenly. The commitment at
+planning is sized to that figure, and stories beyond it stay in the
+sprint uncommitted (docs/DEVOPS.md, Every sprint, step 5).
 
 After every sprint, at the close (docs/SPRINT-DELIVERY.md Part B):
 

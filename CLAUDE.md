@@ -105,6 +105,27 @@ gitignored. Pause and ask only for actions that are destructive or hard to
 reverse, that add a dependency, that change live-data schema, or that a
 deny rule blocks (force-push, git add -f, committing config.js).
 
+## Working with the owner
+
+- Bring decisions, not homework: at most four questions at a time, each
+  with a recommendation. Anything the owner runs comes as short,
+  numbered steps.
+- Verify before stating. Nothing is a fact unless it was read in the
+  code, the data or a source; say plainly what was not verified.
+- Plain, concise British English, in sentence case.
+- A file the owner opens or runs has a short name. One that names the
+  organisation, a person or an id goes in scratch/, which git ignores,
+  so it opens from the project and can never be committed. If a file
+  will not open, give it inline.
+- Azure DevOps changes only through a script the owner runs after
+  seeing its plan, then the setup check (docs/DEVOPS.md, Every sprint).
+- Never ask for a browser recording (HAR): it carries the sign-in
+  session. If one arrives, read no headers or cookies, and delete it.
+- What concerns named people - how each is written to, whose account
+  work is assigned to - lives in LPio as `work_notes` tagged
+  `working-practices`, never in the repo. Read them before drafting for
+  anyone or preparing the setup check.
+
 ## Working with large files
 
 - Read targeted ranges, not whole files. Locate the region with grep

@@ -1,23 +1,24 @@
 # Current state
 
-Updated: 2026-11-24 (sprint 1 committed: 11 stories, 19 points)
+Updated: 2026-11-24 (sprint 1 committed; practices written down)
 
 ## In progress
-Developer-readiness run (developer started 16 Nov 2026). This week
-(26-24) and sprint 1 (26-25) are in Azure DevOps: 4 Epics, 5 Features,
-16 stories (#325985 to #326009). Sprints 26-24 to 27-01 exist and are in
-`ado_profile.team_sprints`. Sprint 2 onwards is DRAFTED. Story rules:
-docs/SPRINT-DELIVERY.md Part A; hand-off: docs/DEVOPS.md. Decisions are
-`work_notes` tagged `developer-readiness`, each with its undo.
-26-24 closed 22 Nov with nothing done. 26-25 committed 24 Nov at 11
-stories, 19 of 24 points, all assigned; pre-screening and PFAC stay in
-it uncommitted, 30 planned (scripts 12 to 14; latest decision 24 Nov).
+Developer-readiness run (developer started 16 Nov 2026). Azure DevOps
+holds 4 Epics, 5 Features and 16 stories (#325985 to #326009); sprints
+26-24 to 27-01 exist; sprint 2 onwards is DRAFTED. Decisions are
+`work_notes` tagged `developer-readiness`, each with its undo. 26-24
+closed 22 Nov with nothing done. 26-25 committed 24 Nov at 11 stories,
+19 points, its capacity after two lost days (36d2de2d), all assigned;
+pre-screening and PFAC stay in it uncommitted, 30 planned. Practices for
+every sprint: CLAUDE.md (Working with the owner), docs/DEVOPS.md (Every
+sprint, setup check), LPio note 4a427177.
 
 ## Next steps
-1. Sprint 2 (26-26): 29 of 24; size its drafted stories and settle its
-   load at the mid-sprint review Fri 27 Nov, then push before 4 Dec
-   (docs/DEVOPS.md, Every sprint, step 7); the push also sets its board
-   order (#325999 last). Sprints 27-02 and 27-03: script 7 sent 18 Nov.
+1. Mid-sprint review Fri 27 Nov: setup check first; commit pre-screening
+   or PFAC if vault access has landed; settle sprint 2 (29 of 24), size
+   and push it before 4 Dec (docs/DEVOPS.md, Every sprint, step 7), which
+   sets its board order (#325999 last). Before 7 Dec, add sprints 27-02
+   and 27-03 with tools/ado/sprints.js, so two sprints stay ahead.
 2. Owner answers the three highlighted decisions on the PDF cover.
 3. Sprint 2 needs one screening report mockup (MATCH).
 4. Effort: owner reviews sizes with the developer; recalibrate at

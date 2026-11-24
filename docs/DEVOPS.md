@@ -255,7 +255,8 @@ The sprint, as the owner runs it:
    The stories agreed are set to Committed there: Committed is the
    sprint's promise, not "being worked on". A story kept in the sprint
    beyond the promise stays New, below the committed ones on the board,
-   until a review commits it.
+   until a review commits it. A story that changes nothing without
+   another is committed with it, as a pair.
 6. **Build, test, release.** Each story is tested together as it is
    finished and released as soon as it passes, not saved up for the
    sprint's end. It moves to Done the same day it meets Done (below).
@@ -293,7 +294,12 @@ Read-only and data-free: it never keeps a person, only
 whether an item is the developer's. It runs at planning, at the
 mid-sprint review and at the close, and whenever the board looks wrong,
 in place of a browser recording, which carries the sign-in session.
-`tests/unit/ado-check.test.js` holds it to that.
+`tests/unit/ado-check.test.js` holds it to that. A change made in Azure
+DevOps during the sprint - a commitment, a move, an assignment - is a
+paste of the engine's shape: it reads first, shows a row per item, asks
+once, guards each write with the revision it read and is safe to run
+twice. LPio's plan follows it only once the check confirms it, in a
+`decision` note that holds the undo.
 
 ## Before the first push
 
