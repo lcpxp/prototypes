@@ -440,7 +440,7 @@ Behaviour benchmarks, mirroring assets/js/pages/.
 
 | File | Lines | Purpose |
 |---|---:|---|
-| ado-check.test.js | 169 | tests/unit/ado-check.test.js - Benchmarks for tools/ado/check.js, driven against a mocked Azure DevOps. |
+| ado-check.test.js | 177 | tests/unit/ado-check.test.js - Benchmarks for tools/ado/check.js, driven against a mocked Azure DevOps. |
 | ado-correct.test.js | 128 | tests/unit/ado-correct.test.js - Benchmarks for tools/ado/correct.js, driven against a mocked Azure DevOps. |
 | ado-engine.test.js | 314 | tests/unit/ado-engine.test.js - Benchmarks for tools/ado/engine.js, driven against a mocked Azure DevOps. |
 | ado-sprints.test.js | 210 | tests/unit/ado-sprints.test.js - Benchmarks for tools/ado/sprints.js, driven against a mocked Azure DevOps. |
@@ -571,7 +571,7 @@ Architecture, security, design, and the operating protocols.
 | CHANGELOG.md | 276 | Changelog All notable user-facing changes to LPIO, newest first. |
 | COPILOT.md | 211 | Copilot capture protocol How a knowledge round with an external document assistant runs: choosing the gaps, writing the request, validating the answer, storing what survives. |
 | DESIGN.md | 140 | Design standards The visual and writing rules for every page in this portal. |
-| DEVOPS.md | 330 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
+| DEVOPS.md | 331 | Azure DevOps hand-off How ready work leaves the Sprint Roadmap for Azure DevOps, how the push is verified, and how the two stay associated afterwards. |
 | ESTIMATION.md | 110 | Estimation How work on the Sprint Roadmap is sized, and what a sprint holds. |
 | HANDOVER-CONTEXT.md | 188 | Context-gathering handover A prompt for a claude.ai session with the Supabase connector. |
 | HARNESS.md | 171 | Verification harness and working process How every change to this repository is made, verified and recorded. |
@@ -633,7 +633,7 @@ Repository root.
 | dashboard.html | 121 | Dashboard - LPIO |
 | index.html | 50 | Sign in - LPIO |
 | package.json | 17 | LPIO - static shell of a login-gated project hub. Content lives in Supabase. |
-| tools/ado/check.js | 377 | tools/ado/check.js - Reads how the project and the sprints around today are set up, and checks them against how we run a sprint (docs/DEVOPS.md, Every sprint, and its board rules). |
+| tools/ado/check.js | 393 | tools/ado/check.js - Reads how the project and the sprints around today are set up, and checks them against how we run a sprint (docs/DEVOPS.md, Every sprint, and its board rules). |
 | tools/ado/correct.js | 191 | tools/ado/correct.js - Carries a change made in LPio after a push across to the work items already in Azure DevOps (docs/DEVOPS.md, Corrections). |
 | tools/ado/engine.js | 575 | tools/ado/engine.js - Carries a push payload from LPio into Azure DevOps, and reads Azure DevOps back. |
 | tools/ado/sprints.js | 303 | tools/ado/sprints.js - Creates the sprints the Sprint Roadmap uses in Azure DevOps and selects them for the team, so the push can file each backlog item in its sprint (docs/DEVOPS.md, Before the first push). |

@@ -78,9 +78,15 @@ function ado(fail) {
       if (/\/work\/boards\?/.test(url)) return reply({ value: [{ id: "b1", name: "Backlog items" }] });
       if (/Entries\/me\/BurndownReport/.test(url)) return reply({ AggregationSettings: { identifier: 1, settings: "Microsoft.VSTS.Scheduling.OriginalEstimate" },
         WorkItemTypeFilter: { identifier: "BacklogCategory", settings: "Microsoft.TaskCategory" } });
-      if (/\/dashboards\/d1\?/.test(url)) return reply({ widgets: [{ name: "Burndown",
-        contributionId: "ms.vss-dashboards-web.Microsoft.VisualStudioOnline.Dashboards.BurndownWidget",
-        settings: JSON.stringify({ aggregation: { field: "Effort" }, setBy: "owner@example.com" }) }] });
+      if (/\/dashboards\/d1\?/.test(url)) return reply({ widgets: [
+        { name: "Story Burndown", contributionId: "ms.vss-dashboards-web.Microsoft.VisualStudioOnline.Dashboards.AnalyticsSprintBurndownWidget",
+          settings: JSON.stringify({ aggregation: { identifier: 1, settings: "Microsoft.VSTS.Scheduling.Effort" },
+            workItemTypeFilter: { identifier: "BacklogCategory", settings: "Microsoft.RequirementCategory" },
+            iterationPath: "Demo\\Sprint 2", isCustomized: true, setBy: "owner@example.com" }) },
+        { name: "Task Burndown", contributionId: "ms.vss-dashboards-web.Microsoft.VisualStudioOnline.Dashboards.AnalyticsSprintBurndownWidget",
+          settings: JSON.stringify({ aggregation: { identifier: 0, settings: "" },
+            workItemTypeFilter: { identifier: "BacklogCategory", settings: "Microsoft.TaskCategory" },
+            iterationPath: "Demo\\Sprint 0", isCustomized: true }) }] });
       if (/\/dashboard\/dashboards\?/.test(url)) return reply({ value: [{ id: "d1", name: "Overview" }] });
       if (/\/wit\/wiql\?/.test(url)) {
         const name = JSON.parse(opts.body).query.match(/Sprint \d/)[0];
@@ -100,6 +106,7 @@ test("check: reads only - no writes, and POSTs only to the WIQL query", async ()
   assert.ok(m.calls.length > 10);
   assert.ok(m.calls.every((c) => c.method === "GET" || c.method === "POST"));
   assert.ok(m.calls.filter((c) => c.method === "POST").every((c) => /\/_apis\/wit\/wiql\?/.test(c.url)));
+  assert.ok(!m.calls.some((c) => /analytics\.dev\.azure\.com/.test(c.url)), "Analytics is read only when asked");
   assert.match(m.saved[0].name, /^ado-check-\d{4}-\d{2}-\d{2}\.json$/);
 });
 
@@ -114,7 +121,7 @@ test("check: keeps no person", async () => {
 
 test("check: the verdict names each broken rule", async () => {
   const m = ado();
-  const out = await m.run.run(PROFILE, { developer: "dev@example.com", capacity: 24 });
+  const out = await m.run.run(PROFILE, { developer: "dev@example.com", capacity: 24, analytics: true });
   const v = out.verdict.join("\n");
   assert.match(v, /OK +Bugs are managed with requirements/);
   assert.match(v, /CHECK +Not assigned to the developer: #23\./);
@@ -127,7 +134,8 @@ test("check: the verdict names each broken rule", async () => {
   assert.match(v, /NOTE +Committed: 1 items, 2 points \(capacity 24\)\./);
   assert.match(v, /NOTE +In the sprint, not committed: #23\./);
   assert.match(v, /NOTE +Ready for test: #21\./);
-  assert.match(v, /OK +1 burndown widget\(s\) on the dashboards, 1 on Effort\./);
+  assert.match(v, /OK +Widget 'Story Burndown' on Overview shows Effort on backlog items for this sprint\./);
+  assert.match(v, /CHECK +Widget 'Task Burndown' on Overview counts items, covers Tasks, is pinned to Sprint 0: set it to Backlog items, Sum of Effort and the current sprint\./);
   assert.match(v, /NOTE +Analytics burndown, 2026-11-24: 3 points remaining, 1 completed\./);
   assert.match(out.verdict[out.verdict.length - 1], /^Something needs a look/);
 });
@@ -138,7 +146,7 @@ test("check: a failing section is reported and the rest still runs", async () =>
     if (/analytics\.dev\.azure\.com/.test(url)) return Promise.reject(new TypeError("Failed to fetch"));
     return null;
   });
-  const out = await m.run.run(PROFILE, { developer: "dev@example.com" });
+  const out = await m.run.run(PROFILE, { developer: "dev@example.com", analytics: true });
   const v = out.verdict.join("\n");
   assert.match(v, /CHECK +Could not read dashboards: boom\./);
   assert.match(v, /NOTE +Could not read analytics: Failed to fetch\./, "Analytics is a note, not a fault");

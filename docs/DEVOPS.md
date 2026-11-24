@@ -287,8 +287,9 @@ above, line by line: bugs managed with requirements (or they drop out
 of the backlog and the burndown), two sprints ahead selected for the
 team, the board's columns, each item's state, Effort, assignment,
 ticked criteria and linked pull requests, the sprint burndown setting
-of whoever runs it, the dashboards' widgets, and the Effort burndown
-from Analytics. Read-only and data-free: it never keeps a person, only
+of whoever runs it, and each dashboard burndown widget: Effort, backlog
+items and the current sprint, never one pinned to an old sprint.
+Read-only and data-free: it never keeps a person, only
 whether an item is the developer's. It runs at planning, at the
 mid-sprint review and at the close, and whenever the board looks wrong,
 in place of a browser recording, which carries the sign-in session.

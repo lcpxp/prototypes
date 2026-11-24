@@ -13,9 +13,10 @@
 // PROFILE is ado_profile's organisation, project, team and fields. It
 // reads the process's states, the team's settings and sprints, the
 // board's columns, the sprint burndown setting of whoever runs it, the
-// dashboards' widgets, the current sprint's capacity, every item in the
-// sprints either side of today and the Effort burndown from Analytics,
-// then prints a verdict: OK, NOTE or CHECK per line. The result
+// dashboards' widgets, the current sprint's capacity and every item in
+// the sprints either side of today (and, with { analytics: true }, the
+// Effort burndown from Analytics, which a browser may refuse across
+// sites), then prints a verdict: OK, NOTE or CHECK per line. The result
 // downloads as ado-check-<date>.json to hand back to the session.
 // ------------------------------------------------------------------
 (function (root) {
@@ -159,9 +160,18 @@
     var widgets = [];
     (d.dashboards || []).forEach(function (x) { (x.widgets || []).forEach(function (w) { widgets.push(w); }); });
     var burn = widgets.filter(function (w) { return /burn(down|up)/i.test(w.contribution || ""); });
-    var onEffort = burn.filter(function (w) { return String(w.settings || "").indexOf(effortName) >= 0; });
     if (!burn.length) say("NOTE", "No burndown widget on the team's dashboards; one on " + effortName + " gives everyone the same view.");
-    else say(onEffort.length ? "OK" : "CHECK", burn.length + " burndown widget(s) on the dashboards, " + onEffort.length + " on " + effortName + ".");
+    burn.forEach(function (w) {
+      var faults = [];
+      if (w.sums !== effortRef && !(!w.sums && String(w.settings || "").indexOf(effortName) >= 0)) {
+        faults.push(w.sums === "count" ? "counts items" : "sums " + String(w.sums || "something else").split(".").pop());
+      }
+      if (w.over && w.over !== REQUIREMENTS) faults.push("covers " + w.over.replace(/^Microsoft\./, "").replace(/Category$/, "s"));
+      if (w.pinned && current && w.sprint && w.sprint !== current.path) faults.push("is pinned to " + w.sprint.split("\\").pop());
+      var where = "Widget '" + w.name + "'" + (w.dashboard ? " on " + w.dashboard : "");
+      say(faults.length ? "CHECK" : "OK", where + (faults.length ? " " + faults.join(", ") + ": set it to Backlog items, Sum of " +
+        effortName + " and the current sprint." : " shows " + effortName + " on backlog items for this sprint."));
+    });
     var a = (d.analytics || []).slice(-1)[0];
     if (a) say("NOTE", "Analytics burndown, " + a.date + ": " + a.remaining + " points remaining, " + a.completed + " completed.");
     v.push(checks ? "Something needs a look: see the CHECK lines." : "ALL GOOD: the setup matches how we run a sprint.");
@@ -270,7 +280,13 @@
             return Promise.all((r.value || r.dashboardEntries || []).map(function (x) {
               return call("GET", team + "/_apis/dashboard/dashboards/" + encodeURIComponent(x.id) + "?" + DASHBOARDS).then(function (full) {
                 return { name: x.name, widgets: (full.widgets || []).map(function (w) {
-                  return { name: w.name, contribution: w.contributionId, settings: anon(String(w.settings || "")).slice(0, 1500) }; }) };
+                  var s = {};
+                  try { s = JSON.parse(w.settings || "{}") || {}; } catch (e) { s = {}; }
+                  var agg = s.aggregation || null;
+                  return { name: w.name, contribution: w.contributionId, dashboard: x.name,
+                    sums: agg ? (agg.identifier === 1 ? agg.settings : "count") : null,
+                    over: (s.workItemTypeFilter || {}).settings || null, sprint: s.iterationPath || null, pinned: !!s.isCustomized,
+                    settings: anon(String(w.settings || "")).slice(0, 1500) }; }) };
               });
             })).then(function (ds) { out.dashboards = ds; });
           });
@@ -310,7 +326,7 @@
         }))
         .then(step("analytics", function () {
           var cur = out.sprints.current;
-          if (!cur) return null;
+          if (!cur || !o.analytics) return null;
           if (!/\/\/dev\.azure\.com$/.test(env.origin)) throw new Error("it is read only from dev.azure.com");
           var types = out.requirement_types.length ? out.requirement_types : ["Product Backlog Item", "Bug"];
           var today = new Date().toISOString().slice(0, 10);
