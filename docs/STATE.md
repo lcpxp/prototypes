@@ -27,7 +27,6 @@ and 13). Pre-screening and PFAC moved to the top of 26-26: 40 of 24.
 ## Blocked on the owner
 - Developer access: Key Vault read and network access requested from the
   Azure admin 24 Nov (decision 33080952); the API cannot start without it.
-- PFAC stage diagrams: not found in LPio or the repo; check S1-07/S1-08.
 - Small story for the PXP price sheet's percentage lines? (5 Oct report.)
 - New Epics kept beside the 20 existing ones: re-parent later if wanted.
 - Legal: the DaoPay approval clause wording; the per-MCC addenda list.
