@@ -244,6 +244,7 @@ Before the sprint starts:
    then the receipt applied (/ado-push).
 4. **Verify.** `verify` shows zero differences, and the read-back
    (`sprint`) shows nothing in the sprint that LPio did not put there.
+   The setup check (below) then reads ALL GOOD.
 
 The sprint, as the owner runs it:
 
@@ -251,19 +252,27 @@ The sprint, as the owner runs it:
    sprint's stories together, adjust any effort and agree who does
    what; stories are assigned there. An effort changed in the meeting
    is changed in Azure DevOps, and the read-back carries it to LPio.
+   The stories agreed are set to Committed there: Committed is the
+   sprint's promise, not "being worked on". A story kept in the sprint
+   beyond the promise stays New, below the committed ones on the board,
+   until a review commits it.
 6. **Build, test, release.** Each story is tested together as it is
    finished and released as soon as it passes, not saved up for the
    sprint's end. It moves to Done the same day it meets Done (below).
-   A blocker is raised the same day.
-7. **Mid-sprint review, the middle Friday.** Progress against the
-   sprint, anything that will spill named and moved, and the next
-   sprint's stories discussed and sized together. Steps 3 and 4 then
-   run for that sprint before this one ends, so a story can be pulled
-   forward by moving a card.
-8. **Close, the last Friday.** A recap of what was delivered and one
-   thing to change in how the sprint ran; unfinished work moves to the
-   next sprint with its effort re-set to what is left, and where an
-   estimate was off is noted for the next planning.
+   A blocker is raised the same day, with the state Blocked where the
+   type has it. Ready for test is the tag `Ready for test`: the process
+   has no such state. Not Completed, Deferred and Rejected never tidy a
+   sprint, and nothing is deleted.
+7. **Mid-sprint review, the middle Friday.** The setup check, then
+   progress against the sprint, anything that will spill named and
+   moved, and the next sprint's stories discussed and sized together.
+   Steps 3 and 4 then run for that sprint before this one ends, so a
+   story can be pulled forward by moving a card.
+8. **Close, the last Friday.** The setup check, then a recap of what
+   was delivered and one thing to change in how the sprint ran;
+   unfinished work moves to the next sprint with its effort re-set to
+   what is left, and where an estimate was off is noted for the next
+   planning.
 
 At the close:
 
@@ -271,6 +280,19 @@ At the close:
    LPio rolls the plan to match.
 10. **Recalibrate** capacity from what reached Done (docs/ESTIMATION.md,
     Capacity).
+
+**The setup check.** `tools/ado/check.js` reads the setup and the
+sprints either side of today and prints a verdict against the rules
+above, line by line: bugs managed with requirements (or they drop out
+of the backlog and the burndown), two sprints ahead selected for the
+team, the board's columns, each item's state, Effort, assignment,
+ticked criteria and linked pull requests, the sprint burndown setting
+of whoever runs it, the dashboards' widgets, and the Effort burndown
+from Analytics. Read-only and data-free: it never keeps a person, only
+whether an item is the developer's. It runs at planning, at the
+mid-sprint review and at the close, and whenever the board looks wrong,
+in place of a browser recording, which carries the sign-in session.
+`tests/unit/ado-check.test.js` holds it to that.
 
 ## Before the first push
 
@@ -301,3 +323,7 @@ Five one-off steps, each the owner's to run or request:
 5. **Burndown on Effort.** Add the Analytics Burndown widget to the
    team dashboard, set to the current sprint and a sum of Effort. The
    older Sprint Burndown widget counts task hours only (Every sprint).
+   The sprint page's own burndown is saved per person: each person
+   opens its full report and sets Backlog items and Sum of Effort. One
+   left on Tasks or hours shows a flat line at zero, as tasks carry no
+   hours here; the setup check names it.
