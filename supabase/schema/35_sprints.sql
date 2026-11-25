@@ -326,7 +326,11 @@ create view public.v_sprint_plan_items with (security_invoker = on) as
     -- allocation that is neither external nor parallel. Only that work
     -- consumes points and is handed to DevOps (docs/DEVOPS.md).
     public.work_item_points(w.user_stories) as points,
-    (a.external_party_id is null and a.overlap <> 'parallel') as is_build
+    (a.external_party_id is null and a.overlap <> 'parallel') as is_build,
+    -- Part of its workstream's MVP: the item carries the mvp tag. The
+    -- board draws the MVP window from these rows (docs/SPRINT-DELIVERY.md,
+    -- Part C, "The MVP").
+    ('mvp' = any(w.tags)) as is_mvp
   from public.work_item_sprints a
   join public.work_items w on w.id = a.work_item_id
   left join public.work_items p on p.id = w.parent_id
@@ -340,7 +344,7 @@ revoke all on public.v_sprint_plan_items from public, anon;
 grant select on public.v_sprint_plan_items to authenticated;
 
 comment on view public.v_sprint_plan_items is
-  'The Sprint Roadmap delivery view: one row per live allocation of a Now work item, with its points and whether it is developer work (is_build). The board reads this. See docs/SPRINT-DELIVERY.md.';
+  'The Sprint Roadmap delivery view: one row per live allocation of a Now work item, with its points, whether it is developer work (is_build) and whether it is part of its workstream''s MVP (is_mvp, the item''s mvp tag). The board reads this. See docs/SPRINT-DELIVERY.md.';
 
 drop view if exists public.v_sprint_plan_streams;
 create view public.v_sprint_plan_streams with (security_invoker = on) as

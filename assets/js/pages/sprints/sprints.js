@@ -96,7 +96,7 @@
   function render(host) {
     var opts = { wide: wide, hideMode: hideMode, hidden: hidden,
       priorityLabels: priorityLabels };
-    host.innerHTML = App.roadmapView.sprintLegend() +
+    host.innerHTML = App.roadmapView.sprintLegend(data) +
       (current === "delivery"
         ? App.roadmapView.sprintItems(data, opts)
         : App.roadmapView.sprintStreams(data, opts));

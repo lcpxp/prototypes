@@ -518,6 +518,10 @@
     {
       "name": "checks_count_criteria_per_story",
       "version": "20261119165329"
+    },
+    {
+      "name": "sprint_plan_items_mvp",
+      "version": "20261125120339"
     }
   ],
   "policies": [
@@ -1824,6 +1828,7 @@
       "external_status",
       "is_build",
       "is_external",
+      "is_mvp",
       "level",
       "overlap",
       "placement",

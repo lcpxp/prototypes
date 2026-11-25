@@ -1,6 +1,6 @@
 # Current state
 
-Updated: 2026-11-25 (company roadmap mapped; extraction script ready)
+Updated: 2026-11-25 (sprint plan re-mapped; MVP marking built)
 
 ## In progress
 Developer-readiness run (developer started 16 Nov 2026). Azure DevOps
@@ -10,21 +10,22 @@ holds 4 Epics, 5 Features and 16 stories (#325985 to #326009); sprints
 committed 24 Nov at 11 stories, 19 points (36d2de2d), all assigned;
 pre-screening and PFAC stay in it uncommitted. Practices: CLAUDE.md
 (Working with the owner), docs/DEVOPS.md (Every sprint), note 4a427177.
-Company roadmap (KPI portal): model, rules and a draft of eight Turing
-rows in LPio work_documents 49ecdef5; the read-only extraction script and
-brief are in scratch/kpi/, which git ignores.
+Re-map of 25 Nov is live in LPio (decision 69b34957, MVP narrowed in
+54e280d5): Payment Service and Unity from 26-26, Risk ahead of PFAC,
+EIT's build closed as covered, 7 items tagged mvp. The MVP line is on
+this branch and draws once main deploys.
 
 ## Next steps
 1. Mid-sprint review Fri 27 Nov: setup check first; commit pre-screening
-   or PFAC if vault access has landed; settle sprint 2 (29 of 24), size
-   and push it before 4 Dec (docs/DEVOPS.md, Every sprint, step 7; #325999
-   last). Before 7 Dec, add sprints 27-02 and 27-03 (tools/ado/sprints.js).
-2. Owner runs scratch/kpi/extract.js on the portal and attaches its file;
-   then settle the rows. Import script only on "Make my import script".
-3. Owner answers the three highlighted decisions on the PDF cover.
-4. Sprint 2: one screening report mockup (MATCH). Effort: owner reviews
-   sizes with the developer; recalibrate at /sprint-close (618cc096).
-   Embeddings: `roadmap_embed_refresh(1, 3)`, small batches only.
+   or PFAC if vault access has landed; settle sprint 2 at 29 of 24 (the
+   non-MVP 5 points - hidden characters, Simple Fees, term length - move
+   first), size and push it before 4 Dec (docs/DEVOPS.md, Every sprint,
+   step 7; #325999 last). Before 7 Dec add sprints 27-02 and 27-03.
+2. 27-01 holds 25 of 17 points; 27-02 has 20 build items, 19 unsized.
+3. Owner answers the three highlighted decisions on the PDF cover. Sprint
+   2 needs one screening report mockup (MATCH).
+4. Effort: owner reviews sizes with the developer; recalibrate at
+   /sprint-close (618cc096). Embeddings: `roadmap_embed_refresh(1, 3)`.
 
 ## Blocked on the owner
 - Developer access: Key Vault read and network access requested 24 Nov
@@ -35,5 +36,4 @@ brief are in scratch/kpi/, which git ignores.
 
 ## Open decisions
 - Keep the `LPio` tag and link-back on pushed items (the re-run key)?
-- Company roadmap (49ecdef5): LaunchPad channel; ask the portal team to
-  set Turing up; eight rows; Q1 2027 launch windows.
+- Company roadmap (KPI portal): on hold; brief 49ecdef5, scratch/kpi/.

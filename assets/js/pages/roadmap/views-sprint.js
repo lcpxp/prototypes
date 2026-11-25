@@ -39,6 +39,9 @@
   window.App = window.App || {};
   var R = App.roadmapViewsShared;
   function C() { return App.roadmapSprintCards; }
+  // The MVP marking (views-sprint-mvp.js): read when drawing, and
+  // absent-safe, so a page that does not load it simply draws none.
+  function M() { return App.roadmapSprintMvp || null; }
 
   var EMPTY = '<p class="notice">No work is on the sprint plan yet. An ' +
     "item joins it automatically when it moves into Now under a " +
@@ -153,12 +156,14 @@
   // The key to the board. It READS as a key: a labelled list of
   // swatches, not a strip of pills that look like filters and are not.
   // Nothing here is clickable and nothing here pretends to be.
-  function legend() {
+  function legend(data) {
     var keys = [
       ["planned", "Planned"], ["active", "In flight"],
       ["done", "Delivered"], ["blocked", "Blocked"],
       ["ext", "Built elsewhere"], ["provisional", "Not yet placed"],
     ];
+    // The MVP line is named only when the plan carries one to read.
+    if (M() && M().any(data && data.sprintItems)) keys.push(["mvp", "MVP"]);
     return '<div class="rmv-sp-legend">' +
       '<span class="rmv-sp-legend-head">Key</span><ul class="rmv-sp-keys">' +
       keys.map(function (k) {
@@ -306,11 +311,23 @@
   // The label lane. A full title at body size on its own line, a colour
   // chip and the stream's number - no truncation, because a title that
   // ends in an ellipsis is a title nobody can say out loud.
-  function labelCell(no, title, cat, child) {
+  function labelCell(no, title, cat, child, after) {
     return '<span class="rmv-tl-label rmv-sp-label' +
       (child ? " rmv-sp-label--child" : "") + R.catClass(cat) + '">' +
       (no ? '<span class="rmv-sp-no" aria-hidden="true">' + no + "</span>" : "") +
-      '<span class="rmv-sp-name">' + App.escape(title) + "</span></span>";
+      '<span class="rmv-sp-name">' + App.escape(title) + (after || "") +
+      "</span></span>";
+  }
+
+  // A stream's MVP line, placed on the axis's own coordinates. Under the
+  // priority reading the columns are not sprints, so the line is named
+  // without them rather than talking in sprints over a scale.
+  function mvpLine(win, cat, ax, opts) {
+    if (!M() || !win) return "";
+    var words = opts && opts.priorityLabels ? "the marked columns"
+      : slotLabel(win.first, ax.codeBySlot) + (win.last > win.first
+        ? " to " + slotLabel(win.last, ax.codeBySlot) : "");
+    return M().bracket(win, R.catClass(cat), colStyle(win.first, win.last), words);
   }
 
   // ----------------------------------------------------------------
@@ -344,6 +361,7 @@
       // sprints while the columns above it are a priority scale.
       byPriority: !!opts.priorityLabels,
     };
+    var mvp = M() ? M().windows(rows) : {};
 
     var ordered = streams.slice().sort(function (a, b) {
       return num(a.first_slot, 0) - num(b.first_slot, 0) ||
@@ -380,6 +398,7 @@
       return '<div class="rmv-tl-row rmv-sp-row' + hiddenCls(id, opts) + '">' +
         labelCell(ctx.no[id], st.workstream_title, catByStream[id]) + bar +
         externalSegs(ctx.ext[id], catByStream[id]) +
+        mvpLine(mvp[id], catByStream[id], ax, opts) +
         eye(id, opts, st.workstream_title) +
         "</div>";
     }).join("");
@@ -442,6 +461,7 @@
       // sprints while the columns above it are a priority scale.
       byPriority: !!opts.priorityLabels,
     };
+    var mvp = M() ? M().windows(rows) : {};
 
     var body = order.filter(function (key) {
       return !dropped(grouped.byStream[key][0].workstream_id, opts);
@@ -461,7 +481,8 @@
         '"' + (wsId ? ' data-item-id="' + App.escape(wsId) + '"' : "") +
         ' style="' + colStyle(first, last) + '"><span class="rmv-sp-count">' +
         C().countText(items.length) + "</span></span>" +
-        externalSegs(ctx.ext[wsId], cat) + eye(wsId, opts, title) + "</div>";
+        externalSegs(ctx.ext[wsId], cat) + mvpLine(mvp[wsId], cat, ax, opts) +
+        eye(wsId, opts, title) + "</div>";
 
       var bars = items.filter(function (r) {
         return !dropped(r.work_item_id, opts);
@@ -481,7 +502,7 @@
           '" style="' + colStyle(s, e) + '">' + ext + "</span>";
         return '<div class="rmv-tl-row rmv-tl-row--child rmv-sp-row' + off +
           hiddenCls(r.work_item_id, opts) + '">' +
-          labelCell(0, r.title, r.category_key, true) + bar +
+          labelCell(0, r.title, r.category_key, true, M() ? M().flag(r) : "") + bar +
           eye(r.work_item_id, opts, r.title) + "</div>";
       }).join("");
       return head + bars;

@@ -498,6 +498,27 @@ developer-days, no velocity - not on a bar, not in a tooltip, not in a
 drawer, not in an export, not in a sprint summary. The planning constants
 exist to produce the mapping, not to be published with it.
 
+## The MVP
+
+A workstream's MVP is the set of its items without which its headline
+outcome is not delivered. Each such item carries the tag `mvp`: one fact,
+on the item, chosen by the owner and recorded as a `work_notes`
+`decision`. `v_sprint_plan_items.is_mvp` states it, and the board reads
+it twice. Inside the workstream bar, on both tabs, a line runs end stop
+to end stop over the first to the last sprint its MVP items occupy; on
+the Work items tab each MVP item reads "(MVP)" after its title. A stream
+with no tagged item carries neither. An MVP is the stream's first
+deliverables, so its line normally covers one sprint.
+
+    update work_items set tags = array_append(tags, 'mvp')
+     where id = '<id>' and not ('mvp' = any(tags));
+    update work_items set tags = array_remove(tags, 'mvp')
+     where id = '<id>';
+
+The window is derived, never stored: move an MVP item and the line moves
+with it. What it is for: when a sprint is over capacity, work outside the
+MVP is the first to move, and an MVP item moves only on the owner's word.
+
 ---
 
 # Part D - Keeping the two roadmaps in one order

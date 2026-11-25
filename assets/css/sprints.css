@@ -301,6 +301,45 @@
 }
 .rmv-sp-bar--has-ext { border-inline-end: 2px dashed var(--rm-a, var(--line-strong)); }
 
+/* The MVP window (assets/js/pages/roadmap/views-sprint-mvp.js): a
+   dimension line INSIDE the stream's bar, end stop to end stop over the
+   sprints that deliver its MVP, with the word on the line. Stops, line
+   and word are three encodings of one fact, so it reads at a distance
+   and in greyscale. Positioned for the reason the external segment is:
+   without a stacking position it paints under the bar it marks. It
+   lets clicks through, so the bar still opens its drawer. */
+.rmv-sp-mvp {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  block-size: var(--s-4);
+  margin-inline: var(--s-2);
+  border-inline: 2px solid var(--rm-a, var(--ink));
+  pointer-events: none;
+}
+.rmv-sp-mvp::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 50%;
+  border-block-start: 2px solid var(--rm-a, var(--ink));
+}
+.rmv-sp-mvp-tag {
+  position: relative;
+  padding-inline: var(--s-2);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+.rmv-sp-mvp-flag {
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
 /* Overlappable: the first and last sprint of the bar may be shared with
    the item before or after it. The hatch marks exactly those edges, so
    what the property MEANS is visible rather than asserted. */
@@ -402,6 +441,11 @@
 .rmv-sp-key--provisional::before {
   outline: 2px dotted var(--ink);
   outline-offset: -4px;
+}
+.rmv-sp-key--mvp::before {
+  border-radius: 0;
+  border-inline: 2px solid var(--ink);
+  background: linear-gradient(var(--ink), var(--ink)) center / 100% 2px no-repeat;
 }
 
 /* --- hiding a row ------------------------------------------------- */

@@ -30,6 +30,7 @@ function loadView() {
     "assets/js/pages/roadmap/detail-values.js",
     "assets/js/pages/roadmap/views-sprint-cards.js",
     "assets/js/pages/roadmap/views-sprint-hide.js",
+    "assets/js/pages/roadmap/views-sprint-mvp.js",
     "assets/js/pages/roadmap/views-sprint.js",
   ]) vm.runInContext(read(f), sandbox, { filename: f });
   return sandbox.App.roadmapView;

@@ -12,6 +12,9 @@ is the git history; what is unfinished is docs/STATE.md.
 ## [Unreleased]
 
 ### Added
+- Sprint Roadmap: a workstream's MVP is marked inside its bar, over the
+  sprints that deliver it, and each MVP item reads "(MVP)" on the Work
+  items tab.
 - Roadmap drawer: a backlog item can hold several user stories, each under
   its label with its own acceptance criteria.
 - API reference: a spec can be planned - the agreed design being built -
