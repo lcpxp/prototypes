@@ -1,6 +1,6 @@
 # Current state
 
-Updated: 2026-11-25 (sprint plan re-mapped; MVP marking built)
+Updated: 2026-11-25 (sprint plan re-mapped; MVP live; pre-screening split)
 
 ## In progress
 Developer-readiness run (developer started 16 Nov 2026). Azure DevOps
@@ -10,10 +10,10 @@ holds 4 Epics, 5 Features and 16 stories (#325985 to #326009); sprints
 committed 24 Nov at 11 stories, 19 points (36d2de2d), all assigned;
 pre-screening and PFAC stay in it uncommitted. Practices: CLAUDE.md
 (Working with the owner), docs/DEVOPS.md (Every sprint), note 4a427177.
-Re-map of 25 Nov is live in LPio (decision 69b34957, MVP narrowed in
-54e280d5): Payment Service and Unity from 26-26, Risk ahead of PFAC,
-EIT's build closed as covered, 7 items tagged mvp. The MVP line is on
-this branch and draws once main deploys.
+The 25 Nov re-map is live (69b34957; MVP narrowed in 54e280d5): Payment
+Service and Unity from 26-26, Risk ahead of PFAC, EIT's build closed,
+8 items tagged mvp, MVP line on main. Pre-screening is two items in 26-25
+(eedf45b0); at the read-back match #326006 by id: its link names the check.
 
 ## Next steps
 1. Mid-sprint review Fri 27 Nov: setup check first; commit pre-screening
